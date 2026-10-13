@@ -15,7 +15,7 @@ filler:
     name: "{muted}No more lines"
     lore:
       - ""
-      - " {letters_black}▎ {letters}Add text, an item or a block below."
+      - " {letters_black}▎ {letters}Add text, an item, a block or a head below."
       - ""
     hide_tooltip: false
 
@@ -112,6 +112,49 @@ items:
       - ""
     actions:
       - "exyliadisplays:holo_add_block"
+
+  add-head:
+    slot: 51
+    material: PLAYER_HEAD
+    name: "{primary}&lADD HEAD"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}A player head, by name, UUID,"
+      - " {letters_black}▎ {letters}texture or skin URL. Make it"
+      - " {letters_black}▎ {letters}small or large with its {highlight}size{letters}."
+      - ""
+      - "{warning}➥ Click to pick it"
+      - ""
+    actions:
+      - "exyliadisplays:holo_add_head"
+
+  pages:
+    slot: 52
+    material: BOOK
+    name: "{primary}&lPAGE {letters_black}[{info}%holo_page%{letters_black}/{info}%holo_pages%{letters_black}]"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}Each player sees one page at a"
+      - " {letters_black}▎ {letters}time; a {highlight}[PAGE] next {letters}click turns it."
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}Editing {letters_black}» {info}page %holo_page%"
+      - " {letters_black}▎ {letters}Turns every {letters_black}» {info}%holo_page_interval% ticks ⌚"
+      - ""
+      - "{warning}➥ Left-click {letters_black}» {letters}next page"
+      - "{warning}➥ Right-click {letters_black}» {letters}previous page"
+      - "{warning}➥ Shift-left-click {letters_black}» {letters}add a page"
+      - "{warning}➥ Shift-right-click {letters_black}» {letters}this page's click actions"
+      - "{error}➥ Q {letters_black}» {letters}remove this page"
+      - "{letters_black}You will be asked to confirm."
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_page_next"
+      - "right: exyliadisplays:holo_page_previous"
+      - "shift_left: exyliadisplays:holo_page_add"
+      - "shift_right: exyliadisplays:holo_page_click"
+      - "drop: exyliadisplays:holo_page_delete"
 
   back:
     slot: 49

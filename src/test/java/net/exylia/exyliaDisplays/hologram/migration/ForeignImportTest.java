@@ -48,6 +48,55 @@ class ForeignImportTest {
     }
 
     @Test
+    @DisplayName("DecentHolograms: every page with its page turns, and heads with their owner")
+    void decentPages() throws IOException {
+        Path holograms = Files.createDirectories(folder.resolve("holograms"));
+        Files.writeString(holograms.resolve("Rules.yml"), """
+                location: world:0.5:70.0:0.5
+                pages:
+                - lines:
+                  - content: '#HEAD: PLAYER_HEAD (Notch)'
+                  - content: 'Rules'
+                  actions: {}
+                - lines:
+                  - content: '#SMALLHEAD: PLAYER_HEAD ({player})'
+                  - content: 'No griefing'
+                  actions:
+                    LEFT:
+                    - 'PREV_PAGE:Rules'
+                    RIGHT:
+                    - 'PAGE:Rules:1'
+                    - 'MESSAGE:&aBack to the start'
+                """);
+        StoredHologram rules = ForeignImport.decent(holograms.toFile()).holograms().get("Rules");
+        assertEquals(List.of("<head:Notch>", "Rules"), rules.lines());
+        assertEquals(2, rules.pageCount());
+        assertEquals(List.of("<item:PLAYER_HEAD><size:0.5>", "No griefing"), rules.pageView(1).lines());
+        assertEquals(List.of("left: [PAGE] previous", "right: [PAGE] 1", "right: [MESSAGE] &aBack to the start"),
+                rules.pages().get(0).click());
+        assertEquals("<head:abc><size:0.5>", ForeignImport.decentLine("#SMALLHEAD: abc"));
+        assertEquals("[PAGE] next", ForeignImport.decentPageAction("NEXT_PAGE:Rules"));
+    }
+
+    @Test
+    @DisplayName("FancyHolograms: the multiple pages trait becomes pages that turn on their own")
+    void fancyPages() throws IOException {
+        Path data = Files.createDirectories(folder.resolve("data/holograms"));
+        Files.writeString(data.resolve("holograms.json"), """
+                [{"hologram_data": {"name": "news", "type": "TEXT", "world_name": "world",
+                   "location": {"world": "world", "x": 0.0, "y": 64.0, "z": 0.0, "yaw": 0.0, "pitch": 0.0}},
+                  "display_data": {}, "text_data": {"text": ["placeholder"]}}]
+                """);
+        Path traits = Files.createDirectories(folder.resolve("data/traits/multiple_pages_trait"));
+        Files.writeString(traits.resolve("news.json"), """
+                {"mode": "CYCLE", "cycleDelay": 2000, "pages": [{"lines": ["One"]}, {"lines": ["Two", "2b"]}]}
+                """);
+        StoredHologram news = ForeignImport.fancy(folder.toFile()).holograms().get("news");
+        assertEquals(List.of(List.of("One"), List.of("Two", "2b")), news.allPages());
+        assertEquals(40, news.pageInterval());
+    }
+
+    @Test
     @DisplayName("HolographicDisplays: version 3 positions and version 2 strings")
     void holographic() throws IOException {
         Path database = folder.resolve("database.yml");

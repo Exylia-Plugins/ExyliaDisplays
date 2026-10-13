@@ -25,6 +25,8 @@ public final class HologramViews {
 
     /** The context key every screen about one hologram carries. */
     public static final String NAME = "holo_name";
+    /** The context key of the lines screen: which page it edits, from 0. */
+    public static final String PAGE = "holo_page_index";
 
     private HologramViews() {
         throw new AssertionError("No instances.");
@@ -84,6 +86,8 @@ public final class HologramViews {
         context.put("holo_interval", hologram.refresh().updateInterval());
         context.put("holo_click_width", number(click.width()));
         context.put("holo_hover", number(click.hoverScale()));
+        context.put("holo_pages", hologram.pageCount());
+        context.put("holo_page_interval", hologram.pageInterval());
         return context;
     }
 
@@ -102,6 +106,7 @@ public final class HologramViews {
                 .put("xyz", xyz(hologram))
                 .put("facing", facing(hologram))
                 .put("lines", hologram.lines().size())
+                .put("pages", hologram.pageCount())
                 .put("status", status(name, hologram))
                 .putText("permission_node", hologram.permission())
                 .put("permission", hologram.permission().isBlank() ? states.everyone()
@@ -167,13 +172,19 @@ public final class HologramViews {
     // ------------------------------------------------------------------
 
     public static void openLines(Player player, String name) {
+        openLines(player, name, 0);
+    }
+
+    /** One page's lines; a page that no longer exists shows the last one. */
+    public static void openLines(Player player, String name, int page) {
         StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
         if (hologram == null) {
             openList(player);
             return;
         }
+        int shown = Math.clamp(page, 0, hologram.pageCount() - 1);
         List<UiEntry> rows = new ArrayList<>();
-        List<String> lines = hologram.lines();
+        List<String> lines = hologram.pageView(shown).lines();
         for (int i = 0; i < lines.size(); i++) {
             HologramLine line = HologramLine.parse(lines.get(i));
             String tags = line.raw().substring(0, line.raw().length() - line.text().length());
@@ -185,7 +196,10 @@ public final class HologramViews {
                     .withFormatted("line_style", tags.isEmpty() ? HologramsMessages.get().states().noStyle() : "")
                     .build());
         }
-        plugin().getMenus().show(player, HologramModule.MENU_LINES, context(name, hologram), rows);
+        Map<String, Object> context = context(name, hologram);
+        context.put(PAGE, shown);
+        context.put("holo_page", shown + 1);
+        plugin().getMenus().show(player, HologramModule.MENU_LINES, context, rows);
     }
 
     /** How a line reads in a lore: its text, or what model it is. */
@@ -193,10 +207,17 @@ public final class HologramViews {
         HologramsMessages.States states = HologramsMessages.get().states();
         if (line.item() != null) return Values.of("material", line.item()).apply(states.itemLine());
         if (line.block() != null) return Values.of("material", line.block()).apply(states.blockLine());
+        if (line.head() != null) return Values.of().putText("head", shortHead(line.head())).apply(states.headLine());
         return line.text().isBlank() ? states.emptyLine() : line.text();
     }
 
+    /** A head as a lore can show it: a long texture is cut short. */
+    private static String shortHead(String head) {
+        return head.length() > 24 ? head.substring(0, 21) + "..." : head;
+    }
+
     private static String lineIcon(HologramLine line) {
+        if (line.head() != null) return "PLAYER_HEAD";
         String model = line.item() != null ? line.item() : line.block();
         if (model != null && Material.matchMaterial(model) != null) return model;
         if (line.text().isBlank()) return "LIGHT_GRAY_STAINED_GLASS_PANE";
@@ -214,6 +235,7 @@ public final class HologramViews {
     static String icon(StoredHologram hologram) {
         for (String raw : hologram.lines()) {
             HologramLine line = HologramLine.parse(raw);
+            if (line.head() != null) return "PLAYER_HEAD";
             String model = line.item() != null ? line.item() : line.block();
             if (model != null && Material.matchMaterial(model) != null) return model;
         }

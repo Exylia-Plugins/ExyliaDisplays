@@ -5,6 +5,7 @@ import net.exylia.exyliaDisplays.Permissions;
 import net.exylia.exyliaDisplays.common.store.Position;
 import net.exylia.lib.hologram.HologramConfig;
 import net.exylia.lib.hologram.HologramLine;
+import net.exylia.lib.hologram.Holograms;
 import net.exylia.lib.text.Values;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -44,7 +45,7 @@ import java.util.regex.Pattern;
 public final class HologramCommand {
 
     /** The tags {@code /holo <name> line <n> <tag>} sets, as a line writes them. */
-    private static final List<String> TAGS = List.of("text", "size", "opacity", "background", "shadow", "glow",
+    private static final List<String> TAGS = List.of("text", "size", "head", "opacity", "background", "shadow", "glow",
             "spin", "bob", "pulse", "typewriter", "shine", "flow", "range", "permission", "condition");
     private static final Pattern COLOUR = Pattern.compile("#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})");
 
@@ -89,9 +90,15 @@ public final class HologramCommand {
             return;
         }
         ExyliaDisplays.getInstance().getMessages().send(sender, messages().info(), HologramViews.values(name, hologram));
-        for (int i = 0; i < hologram.lines().size(); i++) {
-            HologramLine line = HologramLine.parse(hologram.lines().get(i));
-            send(sender, messages().infoLine(), Values.of().put("line", i + 1).put("text", HologramViews.lineText(line)));
+        List<List<String>> pages = hologram.allPages();
+        for (int page = 0; page < pages.size(); page++) {
+            List<String> lines = pages.get(page);
+            for (int i = 0; i < lines.size(); i++) {
+                HologramLine line = HologramLine.parse(lines.get(i));
+                // With pages, a line is numbered page.line: 2.1 is the first line of page 2.
+                String number = pages.size() > 1 ? (page + 1) + "." + (i + 1) : String.valueOf(i + 1);
+                send(sender, messages().infoLine(), Values.of().put("line", number).put("text", HologramViews.lineText(line)));
+            }
         }
         List<String> click = hologram.click().commands();
         for (int i = 0; i < click.size(); i++) {
@@ -208,43 +215,27 @@ public final class HologramCommand {
 
     @Subcommand("<name> addline")
     public void addLine(CommandSender sender, @SuggestWith(Names.class) String name, String text) {
-        StoredHologram saved = edited(sender, name, current -> current.addLine(text), null, Values.of());
-        if (saved != null) {
-            send(sender, messages().lineAdded(), Values.of().putText("name", name).put("line", saved.lines().size()));
-        }
+        addLine(sender, name, 1, text);
     }
 
     @Subcommand("<name> setline")
     public void setLine(CommandSender sender, @SuggestWith(Names.class) String name, int line, String text) {
-        if (hasLine(sender, name, line)) {
-            edited(sender, name, current -> current.setLine(line - 1, text), messages().lineSet(), Values.of("line", line));
-        }
+        setLine(sender, name, 1, line, text);
     }
 
     @Subcommand("<name> insertline")
     public void insertLine(CommandSender sender, @SuggestWith(Names.class) String name, int line, String text) {
-        StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
-        if (hologram == null) {
-            send(sender, messages().notFound(), Values.of().putText("name", name));
-            return;
-        }
-        int at = Math.clamp(line - 1, 0, hologram.lines().size());
-        edited(sender, name, current -> current.insertLine(at, text), messages().lineAdded(), Values.of("line", at + 1));
+        insertLine(sender, name, 1, line, text);
     }
 
     @Subcommand("<name> removeline")
     public void removeLine(CommandSender sender, @SuggestWith(Names.class) String name, int line) {
-        if (hasLine(sender, name, line)) {
-            edited(sender, name, current -> current.removeLine(line - 1), messages().lineRemoved(), Values.of("line", line));
-        }
+        removeLine(sender, name, 1, line);
     }
 
     @Subcommand("<name> moveline")
     public void moveLine(CommandSender sender, @SuggestWith(Names.class) String name, int from, int to) {
-        if (hasLine(sender, name, from) && hasLine(sender, name, to)) {
-            edited(sender, name, current -> current.moveLine(from - 1, to - 1), messages().lineMoved(),
-                    Values.of().put("line", from).put("to", to));
-        }
+        moveLine(sender, name, 1, from, to);
     }
 
     /**
@@ -253,17 +244,106 @@ public final class HologramCommand {
      */
     @Subcommand("<name> line")
     public void lineTag(CommandSender sender, @SuggestWith(Names.class) String name, int line,
-                        @Suggest({"text", "size", "opacity", "background", "shadow", "glow", "spin", "bob", "pulse",
+                        @Suggest({"text", "size", "head", "opacity", "background", "shadow", "glow", "spin", "bob", "pulse",
                                 "typewriter", "shine", "flow", "range", "permission", "condition"}) String tag,
                         @Optional String value) {
-        if (!hasLine(sender, name, line)) return;
-        String raw = HologramModule.get().store().get(name).orElseThrow().lines().get(line - 1);
+        lineTag(sender, name, 1, line, tag, value);
+    }
+
+    // ------------------------------------------------------------------
+    // Pages: the line commands above, on another page
+    // ------------------------------------------------------------------
+
+    @Subcommand("<name> page add")
+    public void pageAdd(CommandSender sender, @SuggestWith(Names.class) String name) {
+        StoredHologram saved = edited(sender, name, StoredHologram::addPage, null, Values.of());
+        if (saved != null) pagesSet(sender, name, saved);
+    }
+
+    @Subcommand("<name> page remove")
+    public void pageRemove(CommandSender sender, @SuggestWith(Names.class) String name, int page) {
+        if (!hasPage(sender, name, page)) return;
+        StoredHologram saved = edited(sender, name, current -> current.removePage(page - 1), null, Values.of());
+        if (saved != null) pagesSet(sender, name, saved);
+    }
+
+    /** Opens that page's lines, and turns the hologram to it for the player who asked. */
+    @Subcommand("<name> page")
+    public void page(Player player, @SuggestWith(Names.class) String name, int page) {
+        if (!hasPage(player, name, page)) return;
+        Holograms.get(ExyliaDisplays.getInstance().getPlugin(), name).ifPresent(live -> live.page(player, page - 1));
+        HologramViews.openLines(player, name, page - 1);
+    }
+
+    @Subcommand("<name> pageinterval")
+    public void pageInterval(CommandSender sender, @SuggestWith(Names.class) String name, long ticks) {
+        if (ticks < 0) {
+            invalid(sender, "page-interval", String.valueOf(ticks), "0+");
+            return;
+        }
+        property(sender, name, "page-interval", String.valueOf(ticks), current -> current.withPageInterval(ticks));
+    }
+
+    @Subcommand("<name> page <page> addline")
+    public void addLine(CommandSender sender, @SuggestWith(Names.class) String name, int page, String text) {
+        if (!hasPage(sender, name, page)) return;
+        StoredHologram saved = edited(sender, name, current -> current.onPage(page - 1, view -> view.addLine(text)), null, Values.of());
+        if (saved != null) {
+            send(sender, messages().lineAdded(), Values.of().putText("name", name)
+                    .put("line", saved.pageView(page - 1).lines().size()));
+        }
+    }
+
+    @Subcommand("<name> page <page> setline")
+    public void setLine(CommandSender sender, @SuggestWith(Names.class) String name, int page, int line, String text) {
+        if (hasLine(sender, name, page, line)) {
+            edited(sender, name, current -> current.onPage(page - 1, view -> view.setLine(line - 1, text)),
+                    messages().lineSet(), Values.of("line", line));
+        }
+    }
+
+    @Subcommand("<name> page <page> insertline")
+    public void insertLine(CommandSender sender, @SuggestWith(Names.class) String name, int page, int line, String text) {
+        if (!hasPage(sender, name, page)) return;
+        int count = HologramModule.get().store().get(name).orElseThrow().pageView(page - 1).lines().size();
+        int at = Math.clamp(line - 1, 0, count);
+        edited(sender, name, current -> current.onPage(page - 1, view -> view.insertLine(at, text)),
+                messages().lineAdded(), Values.of("line", at + 1));
+    }
+
+    @Subcommand("<name> page <page> removeline")
+    public void removeLine(CommandSender sender, @SuggestWith(Names.class) String name, int page, int line) {
+        if (hasLine(sender, name, page, line)) {
+            edited(sender, name, current -> current.onPage(page - 1, view -> view.removeLine(line - 1)),
+                    messages().lineRemoved(), Values.of("line", line));
+        }
+    }
+
+    @Subcommand("<name> page <page> moveline")
+    public void moveLine(CommandSender sender, @SuggestWith(Names.class) String name, int page, int from, int to) {
+        if (hasLine(sender, name, page, from) && hasLine(sender, name, page, to)) {
+            edited(sender, name, current -> current.onPage(page - 1, view -> view.moveLine(from - 1, to - 1)),
+                    messages().lineMoved(), Values.of().put("line", from).put("to", to));
+        }
+    }
+
+    @Subcommand("<name> page <page> line")
+    public void lineTag(CommandSender sender, @SuggestWith(Names.class) String name, int page, int line,
+                        @Suggest({"text", "size", "head", "opacity", "background", "shadow", "glow", "spin", "bob", "pulse",
+                                "typewriter", "shine", "flow", "range", "permission", "condition"}) String tag,
+                        @Optional String value) {
+        if (!hasLine(sender, name, page, line)) return;
+        String raw = HologramModule.get().store().get(name).orElseThrow().pageView(page - 1).lines().get(line - 1);
         String set = value == null || value.isBlank() || value.equalsIgnoreCase("reset") ? null : value.trim();
         HologramLine.Builder edited = HologramLine.parse(raw).toBuilder();
         try {
             switch (tag.toLowerCase(Locale.ROOT)) {
                 case "text" -> edited.text(set == null ? "" : set);
                 case "size" -> edited.size(decimal(set, 1));
+                case "head" -> {
+                    if (set == null) throw new IllegalArgumentException("a head needs a value");
+                    edited.head(set);
+                }
                 case "opacity" -> edited.opacity(set == null ? null : within(Integer.parseInt(set), 0, 255));
                 case "background" -> edited.background(colour(set));
                 case "shadow" -> edited.shadow(set == null ? null : bool(set));
@@ -287,8 +367,14 @@ public final class HologramCommand {
             return;
         }
         String styled = edited.build().raw();
-        edited(sender, name, current -> current.hasLine(line - 1) ? current.setLine(line - 1, styled) : current,
+        edited(sender, name, current -> current.onPage(page - 1,
+                        view -> view.hasLine(line - 1) ? view.setLine(line - 1, styled) : view),
                 messages().lineSet(), Values.of("line", line));
+    }
+
+    private static void pagesSet(CommandSender sender, String name, StoredHologram saved) {
+        send(sender, messages().propertySet(), Values.of().putText("name", name).putText("property", "pages")
+                .put("value", saved.pageCount()));
     }
 
     // ------------------------------------------------------------------
@@ -704,14 +790,24 @@ public final class HologramCommand {
         return false;
     }
 
-    private static boolean hasLine(CommandSender sender, String name, int line) {
+    private static boolean hasPage(CommandSender sender, String name, int page) {
         StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
         if (hologram == null) {
             send(sender, messages().notFound(), Values.of().putText("name", name));
             return false;
         }
-        if (!hologram.hasLine(line - 1)) {
-            send(sender, messages().lineNotFound(), Values.of().put("line", line).put("count", hologram.lines().size()));
+        if (!hologram.hasPage(page - 1)) {
+            invalid(sender, "page", String.valueOf(page), "1 - " + hologram.pageCount());
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean hasLine(CommandSender sender, String name, int page, int line) {
+        if (!hasPage(sender, name, page)) return false;
+        StoredHologram view = HologramModule.get().store().get(name).orElseThrow().pageView(page - 1);
+        if (!view.hasLine(line - 1)) {
+            send(sender, messages().lineNotFound(), Values.of().put("line", line).put("count", view.lines().size()));
             return false;
         }
         return true;

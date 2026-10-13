@@ -150,7 +150,9 @@ public record HologramsMessages(
                         " {warning}rename <new> {letters_black}· {warning}clone <new> {letters_black}· {warning}enable {letters_black}· {warning}disable {letters_black}· {warning}delete",
                         " {warning}addline <text> {letters_black}· {warning}setline <n> <text> {letters_black}· {warning}insertline <n> <text>",
                         " {warning}removeline <n> {letters_black}· {warning}moveline <from> <to> {letters_black}· {warning}lines",
-                        " {warning}line <n> <tag> [value] {letters_black}» {letters}size, shadow, spin, shine... {muted}(no value resets)",
+                        " {warning}line <n> <tag> [value] {letters_black}» {letters}size, head, shadow, spin, shine... {muted}(no value resets)",
+                        " {warning}page add {letters_black}· {warning}page remove <n> {letters_black}· {warning}page <n> {letters_black}· {warning}pageinterval <ticks>",
+                        " {warning}page <n> addline|setline|insertline|removeline|moveline|line ... {letters_black}» {letters}edit another page",
                         " {warning}billboard {letters_black}· {warning}alignment {letters_black}· {warning}scale <x> [y z] {letters_black}· {warning}shadow {letters_black}· {warning}seethrough",
                         " {warning}linewidth {letters_black}· {warning}spacing {letters_black}· {warning}opacity {letters_black}· {warning}background {letters_black}· {warning}brightness",
                         " {warning}viewdistance {letters_black}· {warning}permission [perm] {letters_black}· {warning}perplayer {letters_black}· {warning}refresh <ticks> {letters_black}· {warning}autoupdate",
@@ -203,6 +205,7 @@ public record HologramsMessages(
      * @param itemLine   what an item line reads as. Placeholder: %material%
      * @param blockLine  what a block line reads as. Placeholder: %material%
      * @param emptyLine  what a blank line reads as
+     * @param headLine   what a player head line reads as. Placeholder: %head%
      */
     public record States(
             String enabled,
@@ -219,7 +222,9 @@ public record HologramsMessages(
             String itemLine,
             @Comment("Placeholder: %material%.")
             String blockLine,
-            String emptyLine) {
+            String emptyLine,
+            @Comment("Placeholder: %head%.")
+            String headLine) {
 
         public States() {
             this("{success}Shown", "{error}Hidden", "{warning}Waiting for its world",
@@ -227,7 +232,8 @@ public record HologramsMessages(
                     "{info}%count% {letters}action(s)", "{muted}No tags",
                     "{info}Item {letters_black}» {letters}%material%",
                     "{info}Block {letters_black}» {letters}%material%",
-                    "{muted}(empty line)");
+                    "{muted}(empty line)",
+                    "{info}Head {letters_black}» {letters}%head%");
         }
     }
 
@@ -312,7 +318,17 @@ public record HologramsMessages(
             @Comment("Placeholder: %line%.")
             String confirmDeleteLine,
             String itemTitle,
-            String blockTitle) {
+            String blockTitle,
+            String headTitle,
+            String headLabel,
+            String headHint,
+            String pageIntervalLabel,
+            String pageIntervalHint,
+            @Comment("Placeholder: %page%.")
+            String confirmDeletePage,
+            @Comment("Placeholder: %page%.")
+            String pageClickTitle,
+            String pageClickHint) {
 
         public Dialogs() {
             this("{primary}&lNEW HOLOGRAM",
@@ -325,7 +341,7 @@ public record HologramsMessages(
                     "Colours (& codes and {colour} names), MiniMessage and %placeholders% all work.",
                     "{primary}&lALL LINES",
                     "Lines",
-                    "One per row, top first. Tags go at the start of a row: <size:2> <opacity:160> <background:#66000000> <shadow:false> · <item:DIAMOND> <block:BEACON> <glow> <glow:#8a51c4> · <spin> <bob> <pulse> <shine> <flow> <typewriter> · <range:8> <perm:node> <perm:!node> <if:\"%player_level% >= 10\">. Colours, MiniMessage and %placeholders% work in the text.",
+                    "One per row, top first. Tags go at the start of a row: <size:2> <opacity:160> <background:#66000000> <shadow:false> · <item:DIAMOND> <block:BEACON> <head:Notch> <glow> <glow:#8a51c4> · <spin> <bob> <pulse> <shine> <flow> <typewriter> · <range:8> <perm:node> <perm:!node> <if:\"%player_level% >= 10\">. Colours, MiniMessage and %placeholders% work in the text.",
                     "{primary}&lLINE %line% {letters_black}» {highlight}STYLE",
                     "Size (1 = normal)",
                     "Opacity (0-255)",
@@ -388,7 +404,15 @@ public record HologramsMessages(
                     "{error}Delete the hologram {highlight}%name%{error}? This cannot be undone.",
                     "{error}Remove line {highlight}%line%{error}?",
                     "{primary}&lITEM LINE",
-                    "{primary}&lBLOCK LINE");
+                    "{primary}&lBLOCK LINE",
+                    "{primary}&lHEAD LINE",
+                    "Head",
+                    "A player's name or UUID, a base64 texture, or a textures.minecraft.net URL.",
+                    "Turn pages every (ticks, 0 = never)",
+                    "Each player moves to the next page on their own after this long.",
+                    "{error}Remove page {highlight}%page% {error}and its lines?",
+                    "{primary}&lPAGE %page% {letters_black}» {highlight}CLICK",
+                    "One per row, run while a player is on this page. [PAGE] next, [PAGE] previous or [PAGE] 2 turns it; 'right:' or 'left:' first limits a row to that click. Commands, [SERVER] lobby, [MESSAGE] text and [SOUND] name work as on the hologram.");
         }
     }
 

@@ -101,8 +101,9 @@ public final class HologramRenderer implements Listener {
                 shown.put(name, hologram);
                 return;
             }
-            if (before.withLines(hologram.lines()).equals(hologram)) {
-                live.get().lines(hologram.lines());
+            if (before.withPageLines(hologram.allPages()).equals(hologram)) {
+                // Swapped in place, so each viewer stays on the page they were reading.
+                live.get().pages(hologram.allPages());
                 shown.put(name, hologram);
                 return;
             }

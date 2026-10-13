@@ -2,6 +2,7 @@ package net.exylia.exyliaDisplays.hologram;
 
 import net.exylia.exyliaDisplays.common.store.Position;
 import net.exylia.lib.config.Comment;
+import net.exylia.lib.config.Time;
 import net.exylia.lib.hologram.HologramConfig;
 
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.UnaryOperator;
 
 /**
  * One hologram as {@code holograms.yml} writes it.
@@ -19,7 +21,9 @@ import java.util.UUID;
  *
  * @param enabled      whether it is shown
  * @param location     where its bottom line stands
- * @param lines        its lines, top first, with their tags
+ * @param lines        its lines, top first, with their tags: page 1
+ * @param pages        the pages after the first, each with its lines and click actions
+ * @param pageInterval ticks before a viewer is turned to the next page on their own; 0 never
  * @param permission   who sees it; empty for everyone
  * @param viewDistance how far away it is seen
  * @param perPlayer    whether each viewer gets their own placeholder values
@@ -42,7 +46,15 @@ public record StoredHologram(
         @Comment("  models: <item:DIAMOND> <block:BEACON> <glow> <glow:#8a51c4>")
         @Comment("  motion: <spin> <bob> <pulse> <typewriter> <shine> <flow>")
         @Comment("  who sees it: <range:8> <perm:vip.rank> <perm:!vip.rank> <if:\"%player_level% >= 10\">")
+        @Comment("  heads: <head:Notch> <head:<uuid, base64 texture or textures.minecraft.net url>>")
         List<String> lines,
+
+        @Comment("More pages after the lines above, each with its own 'lines' and 'click' actions.")
+        @Comment("Every player sees one page at a time; a '[PAGE] next' click action turns it.")
+        List<HologramConfig.Page> pages,
+
+        @Comment("Ticks before each player is turned to the next page on their own (20 = one second). 0 never.")
+        @Time(Time.Unit.TICKS) long pageInterval,
 
         @Comment("Only players with this permission see it. Leave empty for everyone.")
         String permission,
@@ -72,13 +84,15 @@ public record StoredHologram(
         Attachment attach) {
 
     public StoredHologram() {
-        this(true, new Position(), List.of(), "", 48.0, false,
+        this(true, new Position(), List.of(), List.of(), 0, "", 48.0, false,
                 new HologramConfig.Properties(), new HologramConfig.Refresh(), new HologramConfig.Click(),
                 new Visibility(), new Attachment());
     }
 
     public StoredHologram {
         lines = lines == null ? List.of() : List.copyOf(lines);
+        pages = pages == null ? List.of() : List.copyOf(pages);
+        pageInterval = Math.max(0, pageInterval);
         if (location == null) {
             location = new Position();
         }
@@ -127,29 +141,30 @@ public record StoredHologram(
 
     /** {@link #toConfig()}, raised: how high above its mount an attached hologram rides. */
     public HologramConfig toConfig(double offsetY) {
-        boolean personal = perPlayer || lines.stream().anyMatch(line -> PLACEHOLDER.matcher(line).find());
+        boolean personal = perPlayer || allPages().stream().flatMap(List::stream)
+                .anyMatch(line -> PLACEHOLDER.matcher(line).find());
         return new HologramConfig(enabled, HologramConfig.Kind.TEXT, lines, "", "", personal,
-                viewDistance, 0, offsetY, 0, appearance, refresh, click);
+                viewDistance, 0, offsetY, 0, appearance, refresh, click, pages, pageInterval);
     }
 
     public StoredHologram withEnabled(boolean value) {
-        return new StoredHologram(value, location, lines, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach);
+        return new StoredHologram(value, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach);
     }
 
     public StoredHologram withLocation(Position value) {
-        return new StoredHologram(enabled, value, lines, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach);
+        return new StoredHologram(enabled, value, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach);
     }
 
     public StoredHologram withLines(List<String> value) {
-        return new StoredHologram(enabled, location, value, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach);
+        return new StoredHologram(enabled, location, value, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach);
     }
 
     public StoredHologram withPermission(String value) {
-        return new StoredHologram(enabled, location, lines, value, viewDistance, perPlayer, appearance, refresh, click, visibility, attach);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, value, viewDistance, perPlayer, appearance, refresh, click, visibility, attach);
     }
 
     public StoredHologram withViewDistance(double value) {
-        return new StoredHologram(enabled, location, lines, permission, value, perPlayer, appearance, refresh, click, visibility, attach);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, value, perPlayer, appearance, refresh, click, visibility, attach);
     }
 
     /**
@@ -167,27 +182,99 @@ public record StoredHologram(
     }
 
     public StoredHologram withPerPlayer(boolean value) {
-        return new StoredHologram(enabled, location, lines, permission, viewDistance, value, appearance, refresh, click, visibility, attach);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, value, appearance, refresh, click, visibility, attach);
     }
 
     public StoredHologram withAppearance(HologramConfig.Properties value) {
-        return new StoredHologram(enabled, location, lines, permission, viewDistance, perPlayer, value, refresh, click, visibility, attach);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, value, refresh, click, visibility, attach);
     }
 
     public StoredHologram withRefresh(HologramConfig.Refresh value) {
-        return new StoredHologram(enabled, location, lines, permission, viewDistance, perPlayer, appearance, value, click, visibility, attach);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, value, click, visibility, attach);
     }
 
     public StoredHologram withClick(HologramConfig.Click value) {
-        return new StoredHologram(enabled, location, lines, permission, viewDistance, perPlayer, appearance, refresh, value, visibility, attach);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, value, visibility, attach);
     }
 
     public StoredHologram withVisibility(Visibility value) {
-        return new StoredHologram(enabled, location, lines, permission, viewDistance, perPlayer, appearance, refresh, click, value, attach);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, value, attach);
     }
 
     public StoredHologram withAttach(Attachment value) {
-        return new StoredHologram(enabled, location, lines, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, value);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, value);
+    }
+
+    public StoredHologram withPages(List<HologramConfig.Page> value) {
+        return new StoredHologram(enabled, location, lines, value, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach);
+    }
+
+    public StoredHologram withPageInterval(long value) {
+        return new StoredHologram(enabled, location, lines, pages, value, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach);
+    }
+
+    // ------------------------------------------------------------------
+    // Pages, by zero-based index: page 0 is lines and click, the rest are pages.
+    // ------------------------------------------------------------------
+
+    public int pageCount() {
+        return pages.size() + 1;
+    }
+
+    public boolean hasPage(int page) {
+        return page >= 0 && page < pageCount();
+    }
+
+    /** Every page's lines, the first page first. */
+    public List<List<String>> allPages() {
+        List<List<String>> all = new ArrayList<>(pageCount());
+        all.add(lines);
+        pages.forEach(page -> all.add(page.lines()));
+        return all;
+    }
+
+    /** One page as if it were the whole hologram, so the line methods below read it. */
+    public StoredHologram pageView(int page) {
+        return page <= 0 || !hasPage(page) ? this : withLines(pages.get(page - 1).lines());
+    }
+
+    /** Applies a line change to one page, leaving the others as they are. */
+    public StoredHologram onPage(int page, UnaryOperator<StoredHologram> change) {
+        if (page <= 0) return change.apply(this);
+        if (!hasPage(page)) return this;
+        List<String> edited = change.apply(pageView(page)).lines();
+        List<HologramConfig.Page> all = new ArrayList<>(pages);
+        all.set(page - 1, new HologramConfig.Page(edited, all.get(page - 1).click()));
+        return withPages(all);
+    }
+
+    /** Every page's lines replaced at once, each page keeping its click actions. */
+    public StoredHologram withPageLines(List<List<String>> all) {
+        List<HologramConfig.Page> rest = new ArrayList<>();
+        for (int i = 1; i < all.size(); i++) {
+            rest.add(new HologramConfig.Page(all.get(i), i - 1 < pages.size() ? pages.get(i - 1).click() : List.of()));
+        }
+        return withLines(all.isEmpty() ? List.of() : all.get(0)).withPages(rest);
+    }
+
+    /** A new, empty page at the end. */
+    public StoredHologram addPage() {
+        List<HologramConfig.Page> all = new ArrayList<>(pages);
+        all.add(new HologramConfig.Page());
+        return withPages(all);
+    }
+
+    /** Removes a page; removing the first makes the second the first, click actions included. */
+    public StoredHologram removePage(int page) {
+        if (!hasPage(page) || pageCount() == 1) return this;
+        List<HologramConfig.Page> all = new ArrayList<>(pages);
+        if (page > 0) {
+            all.remove(page - 1);
+            return withPages(all);
+        }
+        HologramConfig.Page second = all.remove(0);
+        return withLines(second.lines()).withPages(all).withClick(new HologramConfig.Click(
+                second.click(), click.width(), click.cooldown(), click.hoverScale()));
     }
 
     // ------------------------------------------------------------------

@@ -59,6 +59,8 @@ public final class HologramDialogs {
     private static final FormKey<BigDecimal> RANGE = FormKey.decimal("range");
     private static final FormKey<String> PERMISSION = FormKey.text("permission");
     private static final FormKey<String> CONDITION = FormKey.text("condition");
+    private static final FormKey<String> HEAD = FormKey.text("head");
+    private static final FormKey<Long> PAGE_INTERVAL = FormKey.integer("page_interval");
     private static final FormKey<String> BILLBOARD = FormKey.text("billboard");
     private static final FormKey<String> ALIGNMENT = FormKey.text("alignment");
     private static final FormKey<BigDecimal> SCALE_X = FormKey.decimal("scale_x");
@@ -160,38 +162,39 @@ public final class HologramDialogs {
     // ------------------------------------------------------------------
 
     /** The text of one line; its tags are kept as they are. */
-    public static void lineText(Player player, String name, int index) {
-        Optional<StoredHologram> hologram = HologramModule.get().store().get(name).filter(h -> h.hasLine(index));
+    public static void lineText(Player player, String name, int page, int index) {
+        Optional<StoredHologram> hologram = HologramModule.get().store().get(name).map(h -> h.pageView(page))
+                .filter(h -> h.hasLine(index));
         if (hologram.isEmpty()) {
-            HologramViews.openLines(player, name);
+            HologramViews.openLines(player, name, page);
             return;
         }
         HologramLine line = HologramLine.parse(hologram.get().lines().get(index));
-        Runnable back = () -> HologramViews.openLines(player, name);
+        Runnable back = () -> HologramViews.openLines(player, name, page);
         EditorForm form = form(player, Values.of("line", index + 1).apply(words().lineTitle()))
                 .text(TEXT, words().textLabel(), line.text(), 3)
                 .hint(words().textHint());
         answer(player, form.ask(values -> values.getOr(TEXT, "")), back, text -> {
             String raw = line.toBuilder().text(text).build().raw();
-            save(player, name, current -> current.hasLine(index) ? current.setLine(index, raw) : current, back);
+            save(player, name, current -> current.onPage(page, view -> view.hasLine(index) ? view.setLine(index, raw) : view), back);
         });
     }
 
     /** A new text line at the bottom. */
-    public static void addLine(Player player, String name) {
-        Runnable back = () -> HologramViews.openLines(player, name);
+    public static void addLine(Player player, String name, int page) {
+        Runnable back = () -> HologramViews.openLines(player, name, page);
         EditorForm form = form(player, words().newLineTitle())
                 .text(TEXT, words().textLabel(), "", 3)
                 .hint(words().textHint());
         answer(player, form.ask(values -> values.getOr(TEXT, "")), back,
-                text -> save(player, name, current -> current.addLine(text), back));
+                text -> save(player, name, current -> current.onPage(page, view -> view.addLine(text)), back));
     }
 
     /** Every line in one box, one per row: the fastest way to write a whole hologram. */
-    public static void allLines(Player player, String name) {
-        Optional<StoredHologram> hologram = HologramModule.get().store().get(name);
+    public static void allLines(Player player, String name, int page) {
+        Optional<StoredHologram> hologram = HologramModule.get().store().get(name).map(h -> h.pageView(page));
         if (hologram.isEmpty()) return;
-        Runnable back = () -> HologramViews.openLines(player, name);
+        Runnable back = () -> HologramViews.openLines(player, name, page);
         EditorForm form = form(player, words().allLinesTitle())
                 .text(TEXT, words().allLinesLabel(), String.join("\n", hologram.get().lines()), 12)
                 .hint(words().allLinesHint());
@@ -200,16 +203,16 @@ public final class HologramDialogs {
             while (!lines.isEmpty() && lines.get(lines.size() - 1).isBlank()) {
                 lines.remove(lines.size() - 1);
             }
-            HologramModule.get().store().edit(name, current -> current.withLines(lines)).ifPresent(saved ->
+            HologramModule.get().store().edit(name, current -> current.onPage(page, view -> view.withLines(lines))).ifPresent(saved ->
                     plugin().getMessages().send(player, HologramsMessages.get().linesSaved(),
-                            Values.of().putText("name", name).put("count", saved.lines().size())));
+                            Values.of().putText("name", name).put("count", lines.size())));
             back.run();
         });
     }
 
     /** A floating item or block added at the bottom, picked from ExyliaLib's icon picker. */
-    public static void addModel(Player player, String name, boolean block) {
-        Runnable back = () -> HologramViews.openLines(player, name);
+    public static void addModel(Player player, String name, int page, boolean block) {
+        Runnable back = () -> HologramViews.openLines(player, name, page);
         plugin().getInputs().answered(player,
                 plugin().getInputs().icon(player, block ? words().blockTitle() : words().itemTitle()).open(),
                 picked -> {
@@ -222,9 +225,23 @@ public final class HologramDialogs {
                     }
                     HologramLine.Builder line = HologramLine.builder();
                     String raw = (block ? line.block(material.name()) : line.item(material.name())).build().raw();
-                    save(player, name, current -> current.addLine(raw), back);
+                    save(player, name, current -> current.onPage(page, view -> view.addLine(raw)), back);
                 },
                 back);
+    }
+
+    /** A player head added at the bottom: a player's name, a UUID, a texture or a skin URL. */
+    public static void addHead(Player player, String name, int page) {
+        Runnable back = () -> HologramViews.openLines(player, name, page);
+        EditorForm form = form(player, words().headTitle())
+                .field(HEAD, FormField.text(HEAD, words().headLabel())
+                        .defaultValue(player.getName())
+                        .validate(value -> !value.isBlank(), words().headHint()))
+                .hint(words().headHint());
+        answer(player, form.ask(values -> values.getOr(HEAD, "").trim()), back, head -> {
+            String raw = HologramLine.builder().head(head).build().raw();
+            save(player, name, current -> current.onPage(page, view -> view.addLine(raw)), back);
+        });
     }
 
     /**
@@ -233,21 +250,25 @@ public final class HologramDialogs {
      * <p>Empty boxes and zeroes write no tag, so the line keeps following the hologram's own
      * settings for whatever the window left alone.
      */
-    public static void lineStyle(Player player, String name, int index) {
-        Optional<StoredHologram> hologram = HologramModule.get().store().get(name).filter(h -> h.hasLine(index));
+    public static void lineStyle(Player player, String name, int page, int index) {
+        Optional<StoredHologram> hologram = HologramModule.get().store().get(name).map(h -> h.pageView(page))
+                .filter(h -> h.hasLine(index));
         if (hologram.isEmpty()) {
-            HologramViews.openLines(player, name);
+            HologramViews.openLines(player, name, page);
             return;
         }
         HologramLine line = HologramLine.parse(hologram.get().lines().get(index));
         HologramsMessages.Dialogs words = words();
-        Runnable back = () -> HologramViews.openLines(player, name);
+        Runnable back = () -> HologramViews.openLines(player, name, page);
         List<FormField.Option> shadows = List.of(
                 new FormField.Option("inherit", words.inherit()),
                 new FormField.Option("on", words.on()),
                 new FormField.Option("off", words.off()));
-        EditorForm form = form(player, Values.of("line", index + 1).apply(words.styleTitle()))
-                .decimal(SIZE, words.sizeLabel(), decimal(line.size(), 1))
+        EditorForm form = form(player, Values.of("line", index + 1).apply(words.styleTitle()));
+        if (line.head() != null) {
+            form.text(HEAD, words.headLabel(), line.head()).hint(words.headHint());
+        }
+        form.decimal(SIZE, words.sizeLabel(), decimal(line.size(), 1))
                 .field(OPACITY, FormField.text(OPACITY, words.opacityLabel())
                         .defaultValue(line.opacity() == null ? "" : String.valueOf(line.opacity()))
                         .optional()
@@ -277,8 +298,8 @@ public final class HologramDialogs {
                 .text(CONDITION, words.conditionLabel(), line.condition(), 2)
                 .hint(words.conditionHint());
         answer(player, form.ask(values -> styled(line, values)), back,
-                styled -> save(player, name, current -> current.hasLine(index)
-                        ? current.setLine(index, styled.raw()) : current, back));
+                styled -> save(player, name, current -> current.onPage(page, view -> view.hasLine(index)
+                        ? view.setLine(index, styled.raw()) : view), back));
     }
 
     /** The line with what the style window answered. */
@@ -306,6 +327,7 @@ public final class HologramDialogs {
             String shine = values.getOr(SHINE, "").trim();
             edited.shine(shine.isEmpty() ? null : shine.equalsIgnoreCase("on") ? "" : shine);
         }
+        if (values.has(HEAD) && !values.getOr(HEAD, "").isBlank()) edited.head(values.getOr(HEAD, "").trim());
         if (values.has(FLOW)) edited.flow(unlessDefault(values.getOr(FLOW, BigDecimal.ZERO), 0));
         if (values.has(TYPEWRITER)) edited.typewriter(unlessDefault(values.getOr(TYPEWRITER, BigDecimal.ZERO), 0));
         return edited.build();
@@ -368,14 +390,17 @@ public final class HologramDialogs {
                 .hint(words.permissionHint())
                 .flag(PER_PLAYER, words.perPlayerLabel(), hologram.perPlayer())
                 .integer(INTERVAL, words.intervalLabel(), hologram.refresh().updateInterval())
-                .flag(AUTO_UPDATE, words.autoUpdateLabel(), hologram.refresh().autoUpdate());
+                .flag(AUTO_UPDATE, words.autoUpdateLabel(), hologram.refresh().autoUpdate())
+                .integer(PAGE_INTERVAL, words.pageIntervalLabel(), hologram.pageInterval())
+                .hint(words.pageIntervalHint());
         audienceFields(form, hologram.visibility());
         answer(player, form.ask(values -> values), back, values -> save(player, name, current -> audience(current, values)
                 .withViewDistance(positive(values.getDecimal(VIEW_DISTANCE), current.viewDistance()))
                 .withPermission(values.getOr(PERMISSION, "").trim())
                 .withPerPlayer(values.getBoolean(PER_PLAYER))
                 .withRefresh(new HologramConfig.Refresh(Math.max(1, values.getLong(INTERVAL)),
-                        values.getBoolean(AUTO_UPDATE))), back));
+                        values.getBoolean(AUTO_UPDATE)))
+                .withPageInterval(Math.max(0, values.getLong(PAGE_INTERVAL))), back));
     }
 
     /** The mode, and a switch that empties the list it reads, which the hint names. */
@@ -573,20 +598,71 @@ public final class HologramDialogs {
     }
 
     /** Asks before removing a line. */
-    public static void deleteLine(Player player, String name, int index) {
-        Runnable back = () -> HologramViews.openLines(player, name);
+    public static void deleteLine(Player player, String name, int page, int index) {
+        Runnable back = () -> HologramViews.openLines(player, name, page);
         plugin().getInputs().answered(player,
                 plugin().getInputs().confirm(player,
                         Values.of("line", index + 1).apply(words().confirmDeleteLine())).dangerous().open(),
                 confirmed -> {
                     if (confirmed) {
-                        HologramModule.get().store().edit(name, current -> current.hasLine(index) ? current.removeLine(index) : current);
+                        HologramModule.get().store().edit(name, current -> current.onPage(page,
+                                view -> view.hasLine(index) ? view.removeLine(index) : view));
                         plugin().getMessages().send(player, HologramsMessages.get().lineRemoved(),
                                 Values.of().putText("name", name).put("line", index + 1));
                     }
                     back.run();
                 },
                 back);
+    }
+
+    // ------------------------------------------------------------------
+    // Pages
+    // ------------------------------------------------------------------
+
+    /** Asks before removing a page and its lines, then shows the page before it. */
+    public static void deletePage(Player player, String name, int page) {
+        Runnable back = () -> HologramViews.openLines(player, name, page);
+        StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
+        if (hologram == null || hologram.pageCount() == 1) {
+            plugin().getMessages().send(player, HologramsMessages.get().invalidValue(), Values.of()
+                    .putText("property", "page").put("value", page + 1).putText("expected", "2+ pages"));
+            back.run();
+            return;
+        }
+        plugin().getInputs().answered(player,
+                plugin().getInputs().confirm(player,
+                        Values.of("page", page + 1).apply(words().confirmDeletePage())).dangerous().open(),
+                confirmed -> {
+                    if (confirmed) {
+                        HologramModule.get().store().edit(name, current -> current.removePage(page));
+                        plugin().getMessages().send(player, HologramsMessages.get().propertySet(), Values.of()
+                                .putText("name", name).putText("property", "pages").put("value", hologram.pageCount() - 1));
+                    }
+                    HologramViews.openLines(player, name, confirmed ? Math.max(0, page - 1) : page);
+                },
+                back);
+    }
+
+    /** What clicking does while a player is on one page. The first page's are the hologram's. */
+    public static void pageClick(Player player, String name, int page) {
+        StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
+        if (hologram == null || !hologram.hasPage(page)) return;
+        Runnable back = () -> HologramViews.openLines(player, name, page);
+        List<String> commands = page == 0 ? hologram.click().commands() : hologram.pages().get(page - 1).click();
+        EditorForm form = form(player, Values.of("page", page + 1).apply(words().pageClickTitle()))
+                .text(COMMANDS, words().commandsLabel(), String.join("\n", commands), 6)
+                .hint(words().pageClickHint());
+        answer(player, form.ask(values -> Arrays.stream(values.getOr(COMMANDS, "").split("\\R")).map(String::trim)
+                .filter(command -> !command.isEmpty()).toList()), back, edited -> save(player, name, current -> {
+            if (page == 0) {
+                HologramConfig.Click click = current.click();
+                return current.withClick(new HologramConfig.Click(edited, click.width(), click.cooldown(), click.hoverScale()));
+            }
+            if (!current.hasPage(page)) return current;
+            List<HologramConfig.Page> pages = new ArrayList<>(current.pages());
+            pages.set(page - 1, new HologramConfig.Page(pages.get(page - 1).lines(), edited));
+            return current.withPages(pages);
+        }, back));
     }
 
     // ------------------------------------------------------------------

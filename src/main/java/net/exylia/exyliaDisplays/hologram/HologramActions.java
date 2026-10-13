@@ -97,31 +97,50 @@ public final class HologramActions {
         hub("clone", HologramDialogs::cloneHologram);
         hub("delete", (player, name) -> HologramDialogs.delete(player, name, () -> HologramViews.openHub(player, name)));
 
-        // The lines.
-        hub("add_line", HologramDialogs::addLine);
-        hub("add_item", (player, name) -> HologramDialogs.addModel(player, name, false));
-        hub("add_block", (player, name) -> HologramDialogs.addModel(player, name, true));
-        hub("all_lines", HologramDialogs::allLines);
+        // The lines, one page of them at a time.
+        paged("add_line", HologramDialogs::addLine);
+        paged("add_item", (player, name, page) -> HologramDialogs.addModel(player, name, page, false));
+        paged("add_block", (player, name, page) -> HologramDialogs.addModel(player, name, page, true));
+        paged("add_head", HologramDialogs::addHead);
+        paged("all_lines", HologramDialogs::allLines);
         line("line_text", HologramDialogs::lineText);
         line("line_style", HologramDialogs::lineStyle);
         line("line_delete", HologramDialogs::deleteLine);
-        line("line_up", (player, name, index) -> moveLine(player, name, index, index - 1));
-        line("line_down", (player, name, index) -> moveLine(player, name, index, index + 1));
-        line("line_duplicate", (player, name, index) -> {
-            HologramModule.get().store().edit(name, current -> current.hasLine(index) ? current.duplicateLine(index) : current)
+        line("line_up", (player, name, page, index) -> moveLine(player, name, page, index, index - 1));
+        line("line_down", (player, name, page, index) -> moveLine(player, name, page, index, index + 1));
+
+        line("line_duplicate", (player, name, page, index) -> {
+            HologramModule.get().store().edit(name, current -> current.onPage(page,
+                            view -> view.hasLine(index) ? view.duplicateLine(index) : view))
                     .ifPresent(saved -> plugin.getMessages().send(player, HologramsMessages.get().lineAdded(),
                             Values.of().putText("name", name).put("line", index + 2)));
-            HologramViews.openLines(player, name);
+            HologramViews.openLines(player, name, page);
         });
+
+        // The pages.
+        paged("page_next", (player, name, page) -> HologramViews.openLines(player, name, page + 1 < pages(name) ? page + 1 : 0));
+        paged("page_previous", (player, name, page) -> HologramViews.openLines(player, name, page > 0 ? page - 1 : pages(name) - 1));
+        paged("page_add", (player, name, page) -> HologramModule.get().store().edit(name, StoredHologram::addPage)
+                .ifPresent(saved -> {
+                    plugin.getMessages().send(player, HologramsMessages.get().propertySet(), Values.of()
+                            .putText("name", name).putText("property", "pages").put("value", saved.pageCount()));
+                    HologramViews.openLines(player, name, saved.pageCount() - 1);
+                }));
+        paged("page_delete", HologramDialogs::deletePage);
+        paged("page_click", HologramDialogs::pageClick);
 
         registerAudienceAndAttach();
     }
 
+    private static int pages(String name) {
+        return HologramModule.get().store().get(name).map(StoredHologram::pageCount).orElse(1);
+    }
+
     /** Moves a line one step and redraws the list in place, keeping the page. */
-    private void moveLine(Player player, String name, int from, int to) {
-        HologramModule.get().store().edit(name, current -> current.hasLine(from) && current.hasLine(to)
-                ? current.moveLine(from, to) : current);
-        HologramViews.openLines(player, name);
+    private void moveLine(Player player, String name, int page, int from, int to) {
+        HologramModule.get().store().edit(name, current -> current.onPage(page,
+                view -> view.hasLine(from) && view.hasLine(to) ? view.moveLine(from, to) : view));
+        HologramViews.openLines(player, name, page);
     }
 
     /** Goes to a hologram, a little in front of it so it is in view. */
@@ -261,7 +280,28 @@ public final class HologramActions {
 
     @FunctionalInterface
     private interface LineAction {
-        void run(Player player, String name, int index);
+        void run(Player player, String name, int page, int index);
+    }
+
+    @FunctionalInterface
+    private interface PageAction {
+        void run(Player player, String name, int page);
+    }
+
+    /** A button of the lines screen, which edits the page the screen shows. */
+    private void paged(String id, PageAction action) {
+        actions.registerSync(PREFIX + id, Permissions.HOLOGRAMS, (ctx, args) -> {
+            String name = screenHologram(ctx);
+            if (name == null) {
+                return ActionResult.success();
+            }
+            if (HologramModule.get().store().get(name).isEmpty()) {
+                HologramViews.openList(ctx.player());
+                return ActionResult.success();
+            }
+            action.run(ctx.player(), name, screenPage(ctx));
+            return ActionResult.success();
+        });
     }
 
     private void simple(String id, BiConsumer<Player, String> action) {
@@ -302,10 +342,15 @@ public final class HologramActions {
             String name = screenHologram(ctx);
             Integer index = ctx.get(UiKeys.ENTRY).filter(Integer.class::isInstance).map(Integer.class::cast).orElse(null);
             if (name != null && index != null) {
-                action.run(ctx.player(), name, index);
+                action.run(ctx.player(), name, screenPage(ctx), index);
             }
             return ActionResult.success();
         });
+    }
+
+    /** The page the lines screen shows, from 0. */
+    private static int screenPage(ActionContext ctx) {
+        return ctx.get(UiKeys.SESSION).flatMap(session -> session.context(HologramViews.PAGE, Integer.class)).orElse(0);
     }
 
     private static String screenHologram(ActionContext ctx) {

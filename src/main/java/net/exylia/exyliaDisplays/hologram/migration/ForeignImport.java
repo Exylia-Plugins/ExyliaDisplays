@@ -28,9 +28,9 @@ import java.util.regex.Pattern;
  * Holograms brought over from the other hologram plugins, read from their files.
  *
  * <p>Their files are read and never changed, so trying an import costs nothing: the original
- * plugin keeps working until it is removed. What only those plugins have (pages, animations of
- * their own, entity lines) is left out; text and item lines, places, view distances and the
- * common display settings come across.
+ * plugin keeps working until it is removed. What only those plugins have (animations of their
+ * own, entity lines) is left out; text, item and head lines, pages, places, view distances and
+ * the common display settings come across.
  */
 public final class ForeignImport {
 
@@ -123,6 +123,7 @@ public final class ForeignImport {
                     .withEnabled(yaml.getBoolean("enabled", true))
                     .withPermission(yaml.getString("permission", ""))
                     .withRefresh(new HologramConfig.Refresh(Math.max(1, yaml.getLong("update-interval", 20)), true));
+            hologram = hologram.withPages(decentPages(pages));
             found.put(file.getName().substring(0, file.getName().length() - 4), hologram);
         }
         return new Result(found, skipped);
@@ -136,13 +137,121 @@ public final class ForeignImport {
             return "<item:" + material(trimmed.substring(6)) + ">";
         }
         if (upper.startsWith("#SMALLHEAD:") || upper.startsWith("#HEAD:")) {
-            return "<item:PLAYER_HEAD>";
+            return decentHead(trimmed.substring(trimmed.indexOf(':') + 1).trim(), upper.startsWith("#SMALLHEAD:"));
         }
         if (upper.startsWith("#ENTITY:")) {
             return "";
         }
         Matcher hex = DECENT_HEX.matcher(content);
         return hex.replaceAll("<#$1>");
+    }
+
+    /** DecentHolograms' {@code #SMALLHEAD} next to a {@code #HEAD}. */
+    private static final double DECENT_SMALL_HEAD = 0.5;
+
+    /**
+     * {@code #HEAD: PLAYER_HEAD (Notch)} into {@code <head:Notch>}: the owner, texture or URL is
+     * what DecentHolograms writes in brackets. A head drawn per viewer ({@code {player}}) or from
+     * HeadDatabase has nothing to carry over and stays a plain head.
+     */
+    static String decentHead(String value, boolean small) {
+        int open = value.indexOf('(');
+        int close = value.lastIndexOf(')');
+        String owner = open >= 0 && close > open ? value.substring(open + 1, close).trim()
+                : value.split(" ", 2)[0].replaceFirst("(?i)^minecraft:", "");
+        boolean plain = owner.isEmpty() || owner.equalsIgnoreCase("PLAYER_HEAD") || owner.contains("{")
+                || owner.contains("%") || owner.toUpperCase(Locale.ROOT).startsWith("HEADDATABASE_");
+        HologramLine.Builder line = HologramLine.builder();
+        if (plain) {
+            line.item("PLAYER_HEAD");
+        } else {
+            line.head(owner);
+        }
+        if (small) {
+            line.size(DECENT_SMALL_HEAD);
+        }
+        return line.build().raw();
+    }
+
+    /** Every DecentHolograms page after the first, with the click actions each one has. */
+    static List<HologramConfig.Page> decentPages(List<Map<?, ?>> pages) {
+        List<HologramConfig.Page> found = new ArrayList<>();
+        for (int i = 1; i < pages.size(); i++) {
+            Map<?, ?> page = pages.get(i);
+            List<String> lines = new ArrayList<>();
+            if (page.get("lines") instanceof List<?> list) {
+                for (Object entry : list) {
+                    if (entry instanceof Map<?, ?> line && line.get("content") != null) {
+                        lines.add(decentLine(String.valueOf(line.get("content"))));
+                    }
+                }
+            }
+            found.add(new HologramConfig.Page(lines, decentPageClick(page.get("actions"))));
+        }
+        return found;
+    }
+
+    /**
+     * A page's {@code actions}, by click type, into click lines. Page turns become {@code [PAGE]};
+     * the common actions are carried over and the ones with no counterpart are left out.
+     */
+    static List<String> decentPageClick(Object actions) {
+        List<String> click = new ArrayList<>();
+        if (!(actions instanceof Map<?, ?> byClick)) {
+            return click;
+        }
+        byClick.forEach((type, list) -> {
+            String filter = switch (String.valueOf(type).toUpperCase(Locale.ROOT)) {
+                case "LEFT" -> "left: ";
+                case "RIGHT" -> "right: ";
+                case "SHIFT_LEFT" -> "shift_left: ";
+                case "SHIFT_RIGHT" -> "shift_right: ";
+                default -> "";
+            };
+            if (list instanceof List<?> entries) {
+                for (Object entry : entries) {
+                    String action = String.valueOf(entry);
+                    String line = decentPageAction(action);
+                    if (line == null) {
+                        line = decentPlainAction(action);
+                    }
+                    if (line != null) {
+                        click.add(filter + line);
+                    }
+                }
+            }
+        });
+        return click;
+    }
+
+    /**
+     * {@code NEXT_PAGE:holo}, {@code PREV_PAGE:holo} and {@code PAGE:holo:2} into {@code [PAGE]}
+     * lines, or {@code null} for any other action.
+     */
+    static String decentPageAction(String action) {
+        String[] parts = action.trim().split(":");
+        return switch (parts[0].trim().toUpperCase(Locale.ROOT)) {
+            case "NEXT_PAGE" -> "[PAGE] next";
+            case "PREV_PAGE" -> "[PAGE] previous";
+            case "PAGE" -> parts.length >= 3 ? "[PAGE] " + parts[2].trim() : null;
+            default -> null;
+        };
+    }
+
+    /** The DecentHolograms actions every hologram plugin has, or {@code null}. */
+    private static String decentPlainAction(String action) {
+        int colon = action.indexOf(':');
+        if (colon < 0) {
+            return null;
+        }
+        String value = action.substring(colon + 1).trim();
+        return switch (action.substring(0, colon).trim().toUpperCase(Locale.ROOT)) {
+            case "COMMAND" -> value.startsWith("/") ? value.substring(1) : value;
+            case "CONSOLE" -> "console: " + (value.startsWith("/") ? value.substring(1) : value);
+            case "MESSAGE" -> "[MESSAGE] " + value;
+            case "CONNECT" -> "[SERVER] " + value;
+            default -> null;
+        };
     }
 
     // ------------------------------------------------------------------
@@ -199,6 +308,7 @@ public final class ForeignImport {
         Result json = fancyJson(new File(folder, "data/holograms"));
         Map<String, StoredHologram> found = new LinkedHashMap<>(yaml.holograms());
         found.putAll(json.holograms());
+        fancyPages(found, new File(folder, "data/traits/multiple_pages_trait"));
         Map<String, String> links = new LinkedHashMap<>(yaml.links());
         links.putAll(json.links());
         return new Result(found, yaml.skipped() + json.skipped(), links);
@@ -286,6 +396,39 @@ public final class ForeignImport {
             if (!fancy.npc().isBlank()) links.put(name, fancy.npc());
         }
         return new Result(found, skipped, links);
+    }
+
+    /**
+     * FancyHolograms 3's {@code multiple_pages_trait}: one JSON file per hologram,
+     * {@code {"mode":"CYCLE","cycleDelay":1000,"pages":[{"lines":[...]}]}}. The trait replaces
+     * the hologram's text with the page it shows, so its first page is the lines here. It turns
+     * everybody's page together; here each player's page turns on its own, every
+     * {@code cycleDelay}. {@code MANUAL} never turns.
+     */
+    static void fancyPages(Map<String, StoredHologram> found, File directory) {
+        found.replaceAll((name, hologram) -> {
+            File file = new File(directory, name + ".json");
+            if (!file.isFile()) return hologram;
+            try {
+                JsonObject trait = JsonParser.parseString(java.nio.file.Files.readString(file.toPath())).getAsJsonObject();
+                List<List<String>> pages = new ArrayList<>();
+                if (trait.get("pages") instanceof JsonArray array) {
+                    for (JsonElement page : array) {
+                        List<String> lines = new ArrayList<>();
+                        if (page.getAsJsonObject().get("lines") instanceof JsonArray text) {
+                            text.forEach(line -> lines.add(line.getAsString()));
+                        }
+                        pages.add(lines);
+                    }
+                }
+                if (pages.isEmpty()) return hologram;
+                boolean manual = "MANUAL".equalsIgnoreCase(string(trait, "mode", "CYCLE"));
+                long ticks = manual ? 0 : Math.max(1, Math.round(number(trait, "cycleDelay", 1000) / 50));
+                return hologram.withPageLines(pages).withPageInterval(ticks);
+            } catch (Exception unreadable) {
+                return hologram;
+            }
+        });
     }
 
     static Result fancyJson(File directory) {

@@ -14,12 +14,13 @@ Built on [ExyliaLib](https://github.com/DiGround-s/ExyliaLib): everything is pac
 | **Looks at each of you** | In `each-viewer` mode, every player sees the NPC turn its head toward them, not toward someone else |
 | **Labels that are holograms** | An NPC's name is a hologram with every line tag (size, shine, typewriter, per-player lines), and clicking it does what clicking the NPC does. Link any hologram to an NPC and it follows the NPC wherever you move it |
 | **Per-line size** | `<size:2.2>` makes one hologram line bigger, and the lines above move up to make room |
-| **Models in the stack** | `<item:DIAMOND>` and `<block:BEACON>` lines between text lines, with glow outlines |
+| **Models in the stack** | `<item:DIAMOND>`, `<block:BEACON>` and `<head:Notch>` lines between text lines, with glow outlines |
+| **Pages per player** | A hologram can have several pages and every player reads their own: a `[PAGE] next` click turns it for them alone, or each player's page turns on its own every `page-interval` |
 | **Motion** | `<spin>`, `<bob>`, `<pulse>`: the client interpolates between keyframes, so the server sends two packets a second, not twenty |
 | **Colour that moves** | `<shine>` sweeps a band of light across a title; `<flow>` makes a gradient's colours run along it |
 | **Lines for some players** | `<range:8>`, `<perm:vip>`, `<if:"%player_level% >= 10">`: the stack re-lays itself out for each viewer |
 | **Three ways to edit** | Screens and dialogs, `/holo` and `/npc` commands, or `holograms.yml` and `npcs.yml`, which are applied as soon as you save them |
-| **Imports** | DecentHolograms, HolographicDisplays, FancyHolograms, Citizens and FancyNpcs. Their files are read and never changed. Import NPCs before holograms so a FancyHolograms hologram linked to an NPC stays linked |
+| **Imports** | DecentHolograms, HolographicDisplays, FancyHolograms, Citizens and FancyNpcs, pages and heads included. Their files are read and never changed. Import NPCs before holograms so a FancyHolograms hologram linked to an NPC stays linked |
 | **Modular** | Turn holograms or NPCs off in `config.yml`. New modules plug into the same core |
 
 ## Requirements
@@ -115,6 +116,7 @@ lines:
 | `<background:#66000000>` | the line's own background, `#AARRGGBB` |
 | `<shadow:false>` | shadow off (or `<shadow>` on) for this line |
 | `<item:DIAMOND>` / `<block:BEACON>` | a floating item or block instead of text |
+| `<head:Notch>` | a player head: a name, a UUID, a base64 texture or a `textures.minecraft.net` URL. `<size:0.5>` makes it small, `<size:2>` large |
 | `<glow>` / `<glow:#8a51c4>` | glow outline on an item or block line |
 | `<spin>` / `<spin:180>` | turns, in degrees a second |
 | `<bob>` / `<bob:0.15>` | floats up and down, in blocks |
@@ -130,13 +132,40 @@ Anything else at the start of a line, such as `<gradient:...>`, stays as text. C
 
 Anything else at the start of a line, such as `<gradient:...>`, stays as text. Colours use ExyliaLib's palette tokens (`{primary}`, `{highlight}`...) as well as `&` codes, hex and MiniMessage.
 
+## Pages
+
+`lines` is page 1, so a hologram written before pages existed is unchanged; `pages` adds more.
+Every player sees one page at a time. `click` runs on page 1 and each page's own `click` on that
+page, so the same box can say different things on each.
+
+```yaml
+holograms:
+  rules:
+    lines:
+      - '<head:Notch><size:0.8>'
+      - '{primary}&lWELCOME'
+      - '{warning}➥ Click for the rules'
+    pages:
+      - lines:
+          - '{primary}&lRULES'
+          - '{letters}No griefing, no cheating.'
+        click: ['left: [PAGE] previous', 'right: [PAGE] 1']
+    page-interval: 200          # ticks; each player's page turns on its own. 0 never
+    click:
+      commands: ['[PAGE] next']
+```
+
+`[PAGE] next`, `[PAGE] previous`, `[PAGE] first`, `[PAGE] last` and `[PAGE] 2` turn the page of
+the player who clicked. In game, the book on the lines screen moves between pages (left and right
+click), adds one (shift-left), edits that page's click actions (shift-right) or removes it (Q).
+
 ## Commands
 
 | Command | Permission | |
 | --- | --- | --- |
 | `/displays help\|modules\|reload` | `exyliadisplays.admin` | The plugin as a whole |
 | `/holoadmin` (`/hologramadmin`) | `exyliadisplays.holograms` | Every hologram, on a screen, plus what is not about one hologram: `create`, `list`, `near`, `import`, `reload`, `help` |
-| `/holo <name> [setting] ...` (`/hologram`) | `exyliadisplays.holograms` | One hologram: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `adjust` (see below), `rename`, `clone`, `enable`, `disable`, `delete`; lines with `addline`, `setline`, `insertline`, `removeline`, `moveline`, `lines`, and one tag of one line with `line <n> <tag> [value]`; the look with `billboard`, `alignment`, `scale`, `shadow`, `seethrough`, `linewidth`, `spacing`, `opacity`, `background`, `brightness`; who sees it with `viewdistance`, `permission`, `perplayer`, `refresh`, `autoupdate`; which players see it with `visibility all\|manual`, `show\|hide <player\|@a>`, `viewers [clear]`; what it rides with `attach <player\|uuid\|nearest>`, `detach`, `attachoffset <blocks>`; clicks with `click add\|remove\|clear\|width\|cooldown\|hover` |
+| `/holo <name> [setting] ...` (`/hologram`) | `exyliadisplays.holograms` | One hologram: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `adjust` (see below), `rename`, `clone`, `enable`, `disable`, `delete`; lines with `addline`, `setline`, `insertline`, `removeline`, `moveline`, `lines`, and one tag of one line with `line <n> <tag> [value]`; pages with `page add`, `page remove <n>`, `page <n>` (opens it and turns it for you), `pageinterval <ticks>`, and any line command on another page as `page <n> addline\|setline\|insertline\|removeline\|moveline\|line ...`; the look with `billboard`, `alignment`, `scale`, `shadow`, `seethrough`, `linewidth`, `spacing`, `opacity`, `background`, `brightness`; who sees it with `viewdistance`, `permission`, `perplayer`, `refresh`, `autoupdate`; which players see it with `visibility all\|manual`, `show\|hide <player\|@a>`, `viewers [clear]`; what it rides with `attach <player\|uuid\|nearest>`, `detach`, `attachoffset <blocks>`; clicks with `click add\|remove\|clear\|width\|cooldown\|hover` |
 | `/npcadmin` (`/npcsadmin`) | `exyliadisplays.npcs` | Every NPC, on a screen, plus what is not about one NPC: `create <name> [skin]`, `list`, `near`, `import`, `reload`, `help` |
 | `/npc <name> [setting] ...` (`/npcs`) | `exyliadisplays.npcs` | One NPC: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `rename`, `clone`, `enable`, `disable`, `delete`; the look with `skin`, `texture <value> [signature]`, `pose`, `scale`, `glow`, `equip <slot\|clear> [item]`, `equipment`; `look <mode> [range]`, `viewdistance`, `permission`; the label with `label set\|add\|remove\|clear\|height`, or a whole hologram with `link`, `unlink`; clicks with `action add\|remove\|clear\|list` and `action permission\|cooldown\|denymessage\|cooldownmessage\|faceclicker` |
 

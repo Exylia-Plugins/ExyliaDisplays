@@ -15,7 +15,7 @@ filler:
     name: "{muted}No hay más líneas"
     lore:
       - ""
-      - " {letters_black}▎ {letters}Añade texto, un ítem o un bloque abajo."
+      - " {letters_black}▎ {letters}Añade texto, un ítem, un bloque o una cabeza abajo."
       - ""
     hide_tooltip: false
 
@@ -112,6 +112,49 @@ items:
       - ""
     actions:
       - "exyliadisplays:holo_add_block"
+
+  add-head:
+    slot: 51
+    material: PLAYER_HEAD
+    name: "{primary}&lAÑADIR CABEZA"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}La cabeza de un jugador, por nombre,"
+      - " {letters_black}▎ {letters}UUID, textura o URL de skin. Hazla"
+      - " {letters_black}▎ {letters}pequeña o grande con su {highlight}tamaño{letters}."
+      - ""
+      - "{warning}➥ Clic para elegirla"
+      - ""
+    actions:
+      - "exyliadisplays:holo_add_head"
+
+  pages:
+    slot: 52
+    material: BOOK
+    name: "{primary}&lPÁGINA {letters_black}[{info}%holo_page%{letters_black}/{info}%holo_pages%{letters_black}]"
+    lore:
+      - ""
+      - "{secondary}Información:"
+      - " {letters_black}▎ {letters}Cada jugador ve una página a la"
+      - " {letters_black}▎ {letters}vez; un clic {highlight}[PAGE] next {letters}la pasa."
+      - ""
+      - "{secondary}Estado:"
+      - " {letters_black}▎ {letters}Editando {letters_black}» {info}página %holo_page%"
+      - " {letters_black}▎ {letters}Pasa cada {letters_black}» {info}%holo_page_interval% ticks ⌚"
+      - ""
+      - "{warning}➥ Clic izquierdo {letters_black}» {letters}página siguiente"
+      - "{warning}➥ Clic derecho {letters_black}» {letters}página anterior"
+      - "{warning}➥ Shift + clic izquierdo {letters_black}» {letters}añadir una página"
+      - "{warning}➥ Shift + clic derecho {letters_black}» {letters}acciones de clic de esta página"
+      - "{error}➥ Q {letters_black}» {letters}quitar esta página"
+      - "{letters_black}Se te pedirá confirmación."
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_page_next"
+      - "right: exyliadisplays:holo_page_previous"
+      - "shift_left: exyliadisplays:holo_page_add"
+      - "shift_right: exyliadisplays:holo_page_click"
+      - "drop: exyliadisplays:holo_page_delete"
 
   back:
     slot: 49

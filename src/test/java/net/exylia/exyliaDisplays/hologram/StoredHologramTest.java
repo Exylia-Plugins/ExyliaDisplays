@@ -35,6 +35,29 @@ class StoredHologramTest {
     }
 
     @Test
+    @DisplayName("lines is page 1, pages are edited one at a time and removing the first promotes the second")
+    void pages() {
+        StoredHologram hologram = lines("a").addPage().onPage(1, view -> view.addLine("b").addLine("c"));
+        assertEquals(2, hologram.pageCount());
+        assertEquals(List.of("a"), hologram.lines());
+        assertEquals(List.of("b", "c"), hologram.pageView(1).lines());
+        assertEquals(List.of(List.of("a"), List.of("c", "b")),
+                hologram.onPage(1, view -> view.moveLine(0, 1)).allPages());
+        assertEquals(hologram, hologram.onPage(5, view -> view.addLine("x")), "a page that is not there is left alone");
+
+        StoredHologram clicked = hologram.withPages(List.of(new net.exylia.lib.hologram.HologramConfig.Page(
+                List.of("b", "c"), List.of("[PAGE] 1"))));
+        StoredHologram promoted = clicked.removePage(0);
+        assertEquals(List.of("b", "c"), promoted.lines());
+        assertEquals(List.of("[PAGE] 1"), promoted.click().commands());
+        assertEquals(1, promoted.pageCount());
+        assertEquals(List.of("a"), clicked.removePage(1).allPages().get(0));
+        assertEquals(List.of("[PAGE] 1"), clicked.withPageLines(List.of(List.of("z"), List.of("y"))).pages().get(0).click(),
+                "replacing the lines keeps each page's click actions");
+        assertEquals(2, clicked.toConfig().allPages().size());
+    }
+
+    @Test
     @DisplayName("a line with a placeholder is drawn for each viewer, so it can be about them")
     void placeholdersArePersonal() {
         assertTrue(lines("{primary}Welcome", "%player_name%").toConfig().perPlayer());
