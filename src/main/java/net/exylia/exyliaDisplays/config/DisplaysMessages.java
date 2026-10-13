@@ -44,7 +44,7 @@ public record DisplaysMessages(
                         "[center]{letters_black}Holograms and NPCs, edited in game or in YAML",
                         "",
                         " <click:run_command:'/holoadmin'>{warning}/holoadmin</click> {letters_black}» {letters}holograms, on a screen {letters_black}· <click:run_command:'/holoadmin help'>{info}[help]</click>",
-                        " <click:run_command:'/npc'>{warning}/npc</click> {letters_black}» {letters}NPCs, on a screen {letters_black}· <click:run_command:'/npc help'>{info}[help]</click>",
+                        " <click:run_command:'/npcadmin'>{warning}/npcadmin</click> {letters_black}» {letters}NPCs, on a screen {letters_black}· <click:run_command:'/npcadmin help'>{info}[help]</click>",
                         " <click:run_command:'/displays modules'>{warning}/displays modules</click> {letters_black}» {letters}what is running",
                         " <click:run_command:'/displays reload'>{warning}/displays reload</click> {letters_black}» {letters}read every file again",
                         ""),

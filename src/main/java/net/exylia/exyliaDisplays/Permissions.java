@@ -9,7 +9,7 @@ public final class Permissions {
     /** Create, edit, move and import holograms with /holo and /holoadmin. */
     public static final String HOLOGRAMS = "exyliadisplays.holograms";
 
-    /** Create, edit, move and import NPCs with /npc. */
+    /** Create, edit, move and import NPCs with /npc and /npcadmin. */
     public static final String NPCS = "exyliadisplays.npcs";
 
     private Permissions() {

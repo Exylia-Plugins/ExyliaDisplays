@@ -41,9 +41,9 @@ ExyliaLib keeps both itself and this plugin up to date from their GitHub release
 **A hologram:** stand where you want it and run `/holoadmin create spawn`, or open `/holoadmin` and click **CREATE HOLOGRAM** to start from a preset. In its editor, **LINES**:
 - left-click a line to change its text;
 - right-click it for size, motion and visibility, all in one window;
-- shift-click to move it up or down; press Q to remove it.
+- shift-click to move it up or down; press F to duplicate it, Q to remove it.
 
-**An NPC:** `/npc create guide Notch`, or open `/npc` and start from a preset. The presets are a guide that greets you, a server portal, a shopkeeper and a mirror. Its editor has cards for:
+**An NPC:** `/npcadmin create guide Notch`, or open `/npcadmin` and click **CREATE NPC** to start from a preset. The presets are a guide that greets you, a server portal, a shopkeeper and a mirror. Its editor has cards for:
 - appearance: skin, pose, scale, glow;
 - equipment: wear the item in your hand;
 - label: the hologram above its head;
@@ -137,9 +137,10 @@ Anything else at the start of a line, such as `<gradient:...>`, stays as text. C
 | `/displays help\|modules\|reload` | `exyliadisplays.admin` | The plugin as a whole |
 | `/holoadmin` (`/hologramadmin`) | `exyliadisplays.holograms` | Every hologram, on a screen, plus what is not about one hologram: `create`, `list`, `near`, `import`, `reload`, `help` |
 | `/holo <name> [setting] ...` (`/hologram`) | `exyliadisplays.holograms` | One hologram: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `rename`, `clone`, `enable`, `disable`, `delete`; lines with `addline`, `setline`, `insertline`, `removeline`, `moveline`, `lines`, and one tag of one line with `line <n> <tag> [value]`; the look with `billboard`, `alignment`, `scale`, `shadow`, `seethrough`, `linewidth`, `spacing`, `opacity`, `background`, `brightness`; who sees it with `viewdistance`, `permission`, `perplayer`, `refresh`, `autoupdate`; clicks with `click add\|remove\|clear\|width\|cooldown\|hover` |
-| `/npc` (`/npcs`) | `exyliadisplays.npcs` | Every NPC, on a screen. `/npc help` lists the rest: `create`, `edit`, `equipment`, `skin`, `pose`, `look`, `glow`, `scale`, `equip`, `label`, `action`, `link`, `unlink`, `movehere`, `face`, `tp`, `near`, `info`, `list`, `enable`, `disable`, `clone`, `rename`, `delete`, `import`, `reload` |
+| `/npcadmin` (`/npcsadmin`) | `exyliadisplays.npcs` | Every NPC, on a screen, plus what is not about one NPC: `create <name> [skin]`, `list`, `near`, `import`, `reload`, `help` |
+| `/npc <name> [setting] ...` (`/npcs`) | `exyliadisplays.npcs` | One NPC: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `rename`, `clone`, `enable`, `disable`, `delete`; the look with `skin`, `texture <value> [signature]`, `pose`, `scale`, `glow`, `equip <slot\|clear> [item]`, `equipment`; `look <mode> [range]`, `viewdistance`, `permission`; the label with `label set\|add\|remove\|clear\|height`, or a whole hologram with `link`, `unlink`; clicks with `action add\|remove\|clear\|list` and `action permission\|cooldown\|denymessage\|cooldownmessage\|faceclicker` |
 
-`exyliadisplays.admin` includes both module permissions; `exyliadisplays.*` grants everything. If Citizens is installed too, its `/npc` and this one compete for the name; use `/npcs`.
+`exyliadisplays.admin` includes both module permissions; `exyliadisplays.*` grants everything. If Citizens is installed too, its `/npc` and this one compete for the name; use `/npcs <name>` (`/npcadmin` does not clash).
 
 ## Files
 

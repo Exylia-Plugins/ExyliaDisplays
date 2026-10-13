@@ -104,6 +104,7 @@ public final class NpcViews {
                 .put("y", number(npc.location().y()))
                 .put("z", number(npc.location().z()))
                 .put("yaw", number(npc.location().yaw()))
+                .put("pitch", number(npc.location().pitch()))
                 .put("xyz", xyz(npc))
                 .put("status", status(name, npc))
                 .put("skin", skin(npc))

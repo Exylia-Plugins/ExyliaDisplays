@@ -17,7 +17,7 @@ import java.util.Map;
  * @param faceCreator         whether a new NPC faces whoever created it
  * @param sayDuration         how long a {@code [SAY]} bubble stays when the line names no time
  * @param turnBack            how long an NPC keeps facing whoever clicked it
- * @param nearRadius          the radius /npc near uses when none is given
+ * @param nearRadius          the radius /npcadmin near uses when none is given
  * @param presets             what a new NPC can start from
  */
 public record NpcsConfig(
@@ -36,7 +36,7 @@ public record NpcsConfig(
         @Comment("How long an NPC keeps facing whoever clicked it before turning back. Reads 4s.")
         Duration turnBack,
 
-        @Comment("The radius /npc near uses when none is given, in blocks.")
+        @Comment("The radius /npcadmin near uses when none is given, in blocks.")
         double nearRadius,
 
         @Comment("What an NPC created from the menu can start from. Add your own:")

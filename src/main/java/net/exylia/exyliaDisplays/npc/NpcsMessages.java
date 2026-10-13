@@ -62,7 +62,7 @@ public record NpcsMessages(
         String actionsCleared,
         @Comment("An action number that does not exist. Placeholders: %index%, %count%.")
         String actionNotFound,
-        @Comment("/npc action list. Placeholders: %name%, %count%.")
+        @Comment("/npc <name> action list. Placeholders: %name%, %count%.")
         String actionsHeader,
         @Comment("Placeholders: %index%, %action%.")
         String actionLine,
@@ -90,9 +90,9 @@ public record NpcsMessages(
         String importDone,
         @Comment("Nothing found to import. Placeholders: %source%, %folder%.")
         String importNothing,
-        @Comment("/npc help. Lines with <click> run or suggest the command.")
+        @Comment("/npc help and /npcadmin help. Lines with <click> run or suggest the command.")
         List<String> help,
-        @Comment("/npc list for the console, and /npc near. Placeholders: %count%, %radius%.")
+        @Comment("/npcadmin list for the console, and /npcadmin near. Placeholders: %count%, %radius%.")
         String listHeader,
         @Comment("One line per NPC. Placeholders: %name%, %world%, %x%, %y%, %z%, %skin%, %status%, %distance%.")
         String listLine,
@@ -100,10 +100,14 @@ public record NpcsMessages(
         String nearHeader,
         String nearLine,
         String nearEmpty,
-        @Comment("/npc info. Placeholders: %name%, %status%, %world%, %x%, %y%, %z%, %skin%, %pose%, %scale%,")
+        @Comment("/npc <name> info. Placeholders: %name%, %status%, %world%, %x%, %y%, %z%, %skin%, %pose%, %scale%,")
         @Comment("%glow%, %look%, %look_range%, %view_distance%, %permission%, %label%, %link%, %actions%,")
         @Comment("%use_permission%, %cooldown%, %equipment%.")
         List<String> info,
+        @Comment("A setting changed with /npc <name> <setting>. Placeholders: %name%, %property%, %value%.")
+        String propertySet,
+        @Comment("A value a setting does not take. Placeholders: %property%, %value%, %expected%.")
+        String invalidValue,
         States states,
         Dialogs dialogs) {
 
@@ -146,7 +150,7 @@ public record NpcsMessages(
                 NO + "{error}There is no action {highlight}%index%{error}; it has {highlight}%count%{error}.",
                 "%prefix% {letters}Actions of {highlight}%name% {letters_black}({info}%count%{letters_black})",
                 "   {letters_black}%index%. {letters}%action%",
-                "%prefix% {letters}It does nothing on click yet. {warning}<click:suggest_command:'/npc action add '>[Add an action]</click>",
+                "%prefix% {letters}It does nothing on click yet. {warning}<click:suggest_command:'/npc %name% action add '>[Add an action]</click>",
                 OK + "{highlight}%hologram% {success}now floats above {highlight}%name%{success}.",
                 "%prefix% {warning}{highlight}%name% {warning}carries no hologram now.",
                 NO + "{error}There is no hologram called {highlight}%hologram%{error}.",
@@ -164,25 +168,30 @@ public record NpcsMessages(
                         "[center]{primary}&lEXYLIA NPCS",
                         "[center]{letters_black}Click a command to use it",
                         "",
-                        " <click:run_command:'/npc'>{warning}/npc</click> {letters_black}» {letters}every NPC, on a screen",
-                        " <click:suggest_command:'/npc create '>{warning}/npc create <name> [skin]</click> {letters_black}» {letters}a new one here",
-                        " <click:suggest_command:'/npc edit '>{warning}/npc edit <name></click> {letters_black}» {letters}its editor",
-                        " <click:suggest_command:'/npc skin '>{warning}/npc skin <name> <player|@mirror|@none></click>",
-                        " <click:suggest_command:'/npc pose '>{warning}/npc pose</click> {letters_black}· <click:suggest_command:'/npc look '>{warning}look</click> {letters_black}· <click:suggest_command:'/npc glow '>{warning}glow</click> {letters_black}· <click:suggest_command:'/npc scale '>{warning}scale</click> {letters_black}» {letters}how it looks",
-                        " <click:suggest_command:'/npc equip '>{warning}/npc equip <name> <slot|clear></click> {letters_black}» {letters}from your hand",
-                        " <click:suggest_command:'/npc label set '>{warning}/npc label set|add|clear <name> [text]</click>",
-                        " <click:suggest_command:'/npc action add '>{warning}/npc action add|remove|clear|list <name></click>",
-                        " <click:suggest_command:'/npc link '>{warning}/npc link <name> <hologram></click> {letters_black}· <click:suggest_command:'/npc unlink '>{warning}unlink</click>",
-                        " <click:suggest_command:'/npc movehere '>{warning}/npc movehere <name></click> {letters_black}· <click:suggest_command:'/npc tp '>{warning}tp</click> {letters_black}· <click:run_command:'/npc near'>{warning}near</click>",
-                        " <click:suggest_command:'/npc clone '>{warning}/npc clone <name> <new></click> {letters_black}· <click:suggest_command:'/npc rename '>{warning}rename</click> {letters_black}· <click:suggest_command:'/npc delete '>{warning}delete</click>",
-                        " <click:suggest_command:'/npc import '>{warning}/npc import <plugin></click> {letters_black}» {letters}Citizens, FancyNpcs",
-                        " <click:run_command:'/npc reload'>{warning}/npc reload</click> {letters_black}» {letters}read npcs.yml again",
+                        " {secondary}Manage",
+                        " <click:run_command:'/npcadmin'>{warning}/npcadmin</click> {letters_black}» {letters}every NPC, on a screen",
+                        " <click:suggest_command:'/npcadmin create '>{warning}/npcadmin create <name> [skin]</click> {letters_black}» {letters}a new one here",
+                        " <click:run_command:'/npcadmin near'>{warning}/npcadmin near [radius]</click> {letters_black}» {letters}the ones around you",
+                        " <click:suggest_command:'/npcadmin import '>{warning}/npcadmin import <plugin> [replace]</click> {letters_black}» {letters}Citizens, FancyNpcs",
+                        " <click:run_command:'/npcadmin reload'>{warning}/npcadmin reload</click> {letters_black}» {letters}read npcs.yml again",
+                        "",
+                        " {secondary}Edit one {letters_black}» {warning}/npc <name> {letters_black}opens its editor",
+                        " {warning}info {letters_black}· {warning}tp {letters_black}· {warning}movehere {letters_black}· {warning}move <x> <y> <z> [world] {letters_black}· {warning}center",
+                        " {warning}rotate <yaw> [pitch] {letters_black}· {warning}face {letters_black}» {letters}turn it, or turn it to you",
+                        " {warning}rename <new> {letters_black}· {warning}clone <new> {letters_black}· {warning}enable {letters_black}· {warning}disable {letters_black}· {warning}delete",
+                        " {warning}skin <player|@mirror|@none> {letters_black}· {warning}texture <value> [signature]",
+                        " {warning}pose {letters_black}· {warning}scale {letters_black}· {warning}glow <#RRGGBB|none> {letters_black}· {warning}look <mode> [range]",
+                        " {warning}equip <slot|clear> [item] {letters_black}» {letters}that item, or the one in your hand {letters_black}· {warning}equipment",
+                        " {warning}label set|add <text> {letters_black}· {warning}label remove <n> {letters_black}· {warning}label clear {letters_black}· {warning}label height",
+                        " {warning}link <hologram> {letters_black}· {warning}unlink {letters_black}· {warning}viewdistance {letters_black}· {warning}permission [perm]",
+                        " {warning}action add <line> {letters_black}· {warning}action remove <n> {letters_black}· {warning}action clear {letters_black}· {warning}action list",
+                        " {warning}action permission|cooldown|denymessage|cooldownmessage|faceclicker",
                         ""),
                 "%prefix% {letters}NPCs {letters_black}({info}%count%{letters_black})",
-                " <click:run_command:'/npc edit %name%'><hover:show_text:'{letters}Click to edit'>{highlight}%name%</hover></click> {letters_black}» {letters}%world% {info}%x% %y% %z% {letters_black}· %skin% {letters_black}· %status%",
-                "%prefix% {letters}There are no NPCs yet. {warning}<click:suggest_command:'/npc create '>[Create one]</click>",
+                " <click:run_command:'/npc %name%'><hover:show_text:'{letters}Click to edit'>{highlight}%name%</hover></click> {letters_black}» {letters}%world% {info}%x% %y% %z% {letters_black}· %skin% {letters_black}· %status%",
+                "%prefix% {letters}There are no NPCs yet. {warning}<click:suggest_command:'/npcadmin create '>[Create one]</click>",
                 "%prefix% {letters}NPCs within {info}%radius% {letters}blocks {letters_black}({info}%count%{letters_black})",
-                " <click:run_command:'/npc edit %name%'><hover:show_text:'{letters}Click to edit'>{highlight}%name%</hover></click> {letters_black}» {info}%distance%m {letters_black}· %skin% {letters_black}· <click:run_command:'/npc tp %name%'>{warning}[TP]</click>",
+                " <click:run_command:'/npc %name%'><hover:show_text:'{letters}Click to edit'>{highlight}%name%</hover></click> {letters_black}» {info}%distance%m {letters_black}· %skin% {letters_black}· <click:run_command:'/npc %name% tp'>{warning}[TP]</click>",
                 "%prefix% {letters}No NPCs within {info}%radius% {letters}blocks.",
                 List.of(
                         "",
@@ -198,6 +207,8 @@ public record NpcsMessages(
                         " {letters_black}▎ {letters}Label {letters_black}» %label% {letters_black}· {letters}Hologram %link%",
                         " {letters_black}▎ {letters}On click {letters_black}» %actions% {letters_black}· %use_permission% {letters_black}· {info}%cooldown%s ⌚",
                         ""),
+                OK + "{highlight}%name% {letters_black}» {letters}%property% {letters_black}» {info}%value%",
+                NO + "{highlight}%value% {error}does not fit {highlight}%property%{error}. {letters_black}Use: {info}%expected%",
                 new States(),
                 new Dialogs());
     }
@@ -298,7 +309,7 @@ public record NpcsMessages(
         public Dialogs() {
             this("{primary}&lNEW NPC",
                     "Name",
-                    "Lowercase letters, numbers, - and _. Used in /npc commands.",
+                    "Lowercase letters, numbers, - and _. Used in /npc <name> commands.",
                     "Start from",
                     "Skin",
                     "An account name, @mirror for each viewer's own, or empty for the default.",

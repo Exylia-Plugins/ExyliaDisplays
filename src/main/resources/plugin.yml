@@ -21,7 +21,7 @@ softdepend:
   # and asks for a restart.
   - ExyliaLib
   - PlaceholderAPI
-  # Read by /holoadmin import and /npc import; never changed. Listed so they load first when both are
+  # Read by /holoadmin import and /npcadmin import; never changed. Listed so they load first when both are
   # installed during a move.
   - DecentHolograms
   - HolographicDisplays
@@ -36,7 +36,7 @@ permissions:
     description: Create, edit, move and import holograms with /holo and /holoadmin.
     default: op
   exyliadisplays.npcs:
-    description: Create, edit, move and import NPCs with /npc.
+    description: Create, edit, move and import NPCs with /npc and /npcadmin.
     default: op
   exyliadisplays.admin:
     description: Every module, plus /displays reload and modules.

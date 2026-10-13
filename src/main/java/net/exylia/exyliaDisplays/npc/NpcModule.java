@@ -15,7 +15,7 @@ import java.io.File;
 import java.util.List;
 
 /**
- * NPCs: {@code npcs.yml}, {@code /npc}, and the screens and windows that edit them.
+ * NPCs: {@code npcs.yml}, {@code /npc}, {@code /npcadmin}, and the screens and windows that edit them.
  *
  * <p>Starts after holograms: its labels are holograms, and a linked hologram is moved through the
  * hologram module's own store.
@@ -69,6 +69,7 @@ public final class NpcModule implements DisplayModule {
 
         new NpcActions(core).registerAll();
         core.getLamp().register(new NpcCommand());
+        core.getLamp().register(new NpcAdminCommand());
         core.getDebug().log("NPCs: " + store.all().size());
     }
 

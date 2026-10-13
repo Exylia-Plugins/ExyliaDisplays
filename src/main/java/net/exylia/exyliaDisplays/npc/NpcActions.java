@@ -71,6 +71,12 @@ public final class NpcActions {
             plugin.getMessages().send(player, NpcsMessages.get().moved(), Values.of().putText("name", name));
             NpcViews.openHub(player, name);
         });
+        hub("centre", (player, name) -> {
+            NpcModule.get().store().edit(name, current -> current.withLocation(current.location().centred()))
+                    .ifPresent(saved -> plugin.getMessages().send(player, NpcsMessages.get().propertySet(), Values.of()
+                            .putText("name", name).putText("property", "location").putText("value", NpcViews.xyz(saved))));
+            NpcViews.openHub(player, name);
+        });
         hub("face_me", (player, name) -> {
             NpcDialogs.faceMe(player, player, name);
             NpcViews.openHub(player, name);
