@@ -98,9 +98,10 @@ items:
     lore:
       - ""
       - "{secondary}Información:"
-      - " {letters_black}▎ {letters}Comandos que se ejecutan cuando un"
-      - " {letters_black}▎ {letters}jugador hace clic. Crece un poco al"
-      - " {letters_black}▎ {letters}mirarlo, para que se lea como un botón."
+      - " {letters_black}▎ {letters}Qué hace un clic: enviar a un servidor,"
+      - " {letters_black}▎ {letters}ejecutar comandos, mostrar mensajes,"
+      - " {letters_black}▎ {letters}sonar, con {highlight}izquierdo {letters}y {highlight}derecho {letters}aparte."
+      - " {letters_black}▎ {letters}Crece un poco al mirarlo."
       - ""
       - "{secondary}Estado:"
       - " {letters_black}▎ {letters}Al clic {letters_black}» %click%"

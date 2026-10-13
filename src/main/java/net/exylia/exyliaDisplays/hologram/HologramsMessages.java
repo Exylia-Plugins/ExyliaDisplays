@@ -191,7 +191,7 @@ public record HologramsMessages(
         public States() {
             this("{success}Shown", "{error}Hidden", "{warning}Waiting for its world",
                     "{success}Yes", "{error}No", "{letters}Everyone", "{muted}Nothing",
-                    "{info}%count% {letters}command(s)", "{muted}No tags",
+                    "{info}%count% {letters}action(s)", "{muted}No tags",
                     "{info}Item {letters_black}» {letters}%material%",
                     "{info}Block {letters_black}» {letters}%material%",
                     "{muted}(empty line)");
@@ -336,8 +336,8 @@ public record HologramsMessages(
                     "Refresh every (ticks, 20 = 1s)",
                     "Refresh on its own",
                     "{primary}&lCLICK ACTIONS",
-                    "Commands",
-                    "One per row. 'console: ...' runs from the console, a bare line as the player. %player_name% is who clicked.",
+                    "Actions",
+                    "One per row, run in order. 'right:' or 'left:' first limits a row to that click. A bare line is a command as the player, 'console: ...' from the console; [SERVER] lobby, [MESSAGE] text, [SOUND] name, [TITLE] a;b, [DELAY] 1s, [TELEPORT] world;x;y;z.",
                     "Click box width (blocks)",
                     "Cooldown (milliseconds)",
                     "Grow when looked at",

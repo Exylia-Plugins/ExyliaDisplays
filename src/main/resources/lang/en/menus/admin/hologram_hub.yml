@@ -98,9 +98,10 @@ items:
     lore:
       - ""
       - "{secondary}Information:"
-      - " {letters_black}▎ {letters}Commands that run when a player"
-      - " {letters_black}▎ {letters}clicks it. It grows a little while"
-      - " {letters_black}▎ {letters}looked at, so it reads as a button."
+      - " {letters_black}▎ {letters}What a click does: send to a server,"
+      - " {letters_black}▎ {letters}run commands, show messages, play"
+      - " {letters_black}▎ {letters}sounds, with {highlight}left {letters}and {highlight}right {letters}apart."
+      - " {letters_black}▎ {letters}It grows a little while looked at."
       - ""
       - "{secondary}Status:"
       - " {letters_black}▎ {letters}On click {letters_black}» %click%"

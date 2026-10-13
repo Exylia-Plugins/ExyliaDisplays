@@ -55,7 +55,7 @@ public record StoredHologram(
         @Comment("How often the placeholders refresh, in ticks (20 = one second).")
         HologramConfig.Refresh refresh,
 
-        @Comment("What clicking it does. With no commands it cannot be clicked.")
+        @Comment("What clicking it does: actions such as 'right: [SERVER] lobby' or 'console: ...'. With none it cannot be clicked.")
         HologramConfig.Click click) {
 
     public StoredHologram() {
