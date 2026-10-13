@@ -70,4 +70,15 @@ class StoredHologramTest {
         assertEquals(10.123, at.x());
         assertEquals(new Position("world", 10.5, 64, -3.5), at.centred());
     }
+
+    @org.junit.jupiter.api.Test
+    void turningACentreHologramMakesItFixed() {
+        StoredHologram turned = new StoredHologram().withFacing(90f, -20f);
+        org.junit.jupiter.api.Assertions.assertEquals(90f, turned.location().yaw());
+        org.junit.jupiter.api.Assertions.assertEquals(-20f, turned.location().pitch());
+        org.junit.jupiter.api.Assertions.assertEquals("FIXED", turned.appearance().billboard(), "CENTER would never show it");
+        StoredHologram vertical = new StoredHologram().withAppearance(new net.exylia.lib.hologram.HologramConfig.Properties(
+                "VERTICAL", "CENTER", 1, 1, 1, true, false, 200, 0.25, 255, false, "#00000000", -1, false)).withFacing(45f, 0f);
+        org.junit.jupiter.api.Assertions.assertEquals("VERTICAL", vertical.appearance().billboard(), "only CENTER is changed");
+    }
 }

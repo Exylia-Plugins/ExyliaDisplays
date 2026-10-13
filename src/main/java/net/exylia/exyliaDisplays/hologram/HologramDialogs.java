@@ -83,6 +83,8 @@ public final class HologramDialogs {
     private static final FormKey<BigDecimal> X = FormKey.decimal("x");
     private static final FormKey<BigDecimal> Y = FormKey.decimal("y");
     private static final FormKey<BigDecimal> Z = FormKey.decimal("z");
+    private static final FormKey<BigDecimal> YAW = FormKey.decimal("yaw");
+    private static final FormKey<BigDecimal> PITCH = FormKey.decimal("pitch");
 
     private HologramDialogs() {
         throw new AssertionError("No instances.");
@@ -412,11 +414,19 @@ public final class HologramDialogs {
                 .choice(WORLD, words.worldLabel(), at.world(), worlds)
                 .decimal(X, "X", BigDecimal.valueOf(at.x()))
                 .decimal(Y, "Y", BigDecimal.valueOf(at.y()))
-                .decimal(Z, "Z", BigDecimal.valueOf(at.z()));
-        answer(player, form.ask(values -> new Position(values.getOr(WORLD, at.world()),
-                        values.getDecimal(X).doubleValue(), values.getDecimal(Y).doubleValue(),
-                        values.getDecimal(Z).doubleValue())), back,
-                position -> save(player, name, current -> current.withLocation(position), back));
+                .decimal(Z, "Z", BigDecimal.valueOf(at.z()))
+                .decimal(YAW, words.yawLabel(), BigDecimal.valueOf(at.yaw()))
+                .hint(words.facingHint())
+                .decimal(PITCH, words.pitchLabel(), BigDecimal.valueOf(at.pitch()));
+        answer(player, form.ask(values -> values), back, values -> {
+            Position position = new Position(values.getOr(WORLD, at.world()), values.getDecimal(X).doubleValue(),
+                    values.getDecimal(Y).doubleValue(), values.getDecimal(Z).doubleValue(), at.yaw(), at.pitch());
+            float yaw = values.getDecimal(YAW).floatValue();
+            float pitch = Math.clamp(values.getDecimal(PITCH).floatValue(), -90f, 90f);
+            boolean turned = yaw != at.yaw() || pitch != at.pitch();
+            save(player, name, current -> turned ? current.withLocation(position).withFacing(yaw, pitch)
+                    : current.withLocation(position), back);
+        });
     }
 
     /** A new name, keeping everything else. */

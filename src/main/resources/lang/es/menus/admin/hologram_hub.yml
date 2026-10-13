@@ -121,15 +121,18 @@ items:
       - "{secondary}Estado:"
       - " {letters_black}▎ {letters}Mundo {letters_black}» {info}%world%"
       - " {letters_black}▎ {letters}Posición {letters_black}» {info}%xyz%"
+      - " {letters_black}▎ {letters}Orientación {letters_black}» {info}%facing%"
       - ""
-      - "{warning}➥ Clic izquierdo {letters_black}» {letters}posición exacta"
+      - "{warning}➥ Clic izquierdo {letters_black}» {letters}posición y rotación exactas"
       - "{warning}➥ Clic derecho {letters_black}» {letters}mover aquí"
       - "{warning}➥ Shift + clic izquierdo {letters_black}» {letters}centrar en su bloque"
+      - "{warning}➥ Shift + clic derecho {letters_black}» {letters}girar hacia mí"
       - ""
     actions:
       - "left: exyliadisplays:holo_location"
       - "right: exyliadisplays:holo_move_here"
       - "shift_left: exyliadisplays:holo_centre"
+      - "shift_right: exyliadisplays:holo_face"
 
   teleport:
     slot: 36

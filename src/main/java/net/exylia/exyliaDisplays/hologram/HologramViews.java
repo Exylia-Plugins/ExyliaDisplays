@@ -100,6 +100,7 @@ public final class HologramViews {
                 .put("y", number(hologram.location().y()))
                 .put("z", number(hologram.location().z()))
                 .put("xyz", xyz(hologram))
+                .put("facing", facing(hologram))
                 .put("lines", hologram.lines().size())
                 .put("status", status(name, hologram))
                 .putText("permission_node", hologram.permission())
@@ -181,6 +182,11 @@ public final class HologramViews {
         HologramsMessages.States states = HologramsMessages.get().states();
         if (!hologram.enabled()) return states.disabled();
         return HologramModule.get().renderer().isWaiting(name) ? states.waiting() : states.enabled();
+    }
+
+    /** Which way it faces: turn, then tilt. */
+    static String facing(StoredHologram hologram) {
+        return number(hologram.location().yaw()) + "° " + number(hologram.location().pitch()) + "°";
     }
 
     static String xyz(StoredHologram hologram) {

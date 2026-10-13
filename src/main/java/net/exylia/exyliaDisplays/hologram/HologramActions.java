@@ -78,6 +78,14 @@ public final class HologramActions {
             plugin.getMessages().send(player, HologramsMessages.get().centred(), Values.of().putText("name", name));
             HologramViews.openHub(player, name);
         });
+        hub("face", (player, name) -> {
+            float yaw = Position.facing(player.getLocation()).yaw();
+            HologramModule.get().store().edit(name, current -> current.withFacing(yaw, 0f)).ifPresent(saved ->
+                    plugin.getMessages().send(player, HologramsMessages.get().propertySet(), Values.of()
+                            .putText("name", name).putText("property", "facing")
+                            .put("value", HologramViews.facing(saved))));
+            HologramViews.openHub(player, name);
+        });
         hub("teleport", HologramActions::teleport);
         hub("clone", HologramDialogs::cloneHologram);
         hub("delete", (player, name) -> HologramDialogs.delete(player, name, () -> HologramViews.openHub(player, name)));

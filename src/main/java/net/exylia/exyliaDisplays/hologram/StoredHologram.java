@@ -127,6 +127,20 @@ public record StoredHologram(
         return new StoredHologram(enabled, location, lines, permission, value, perPlayer, appearance, refresh, click);
     }
 
+    /**
+     * Faces another way. A CENTER hologram turns to every viewer and would never show it, so
+     * it becomes FIXED; the other billboards keep the axes they do not turn.
+     */
+    public StoredHologram withFacing(float yaw, float pitch) {
+        HologramConfig.Properties look = appearance;
+        if (look.billboard().equalsIgnoreCase("CENTER")) {
+            look = new HologramConfig.Properties("FIXED", look.alignment(), look.scaleX(), look.scaleY(), look.scaleZ(),
+                    look.shadow(), look.seeThrough(), look.lineWidth(), look.lineSpacing(), look.textOpacity(),
+                    look.defaultBackground(), look.backgroundColor(), look.brightness(), look.glowing());
+        }
+        return withLocation(location.withFacing(yaw, pitch)).withAppearance(look);
+    }
+
     public StoredHologram withPerPlayer(boolean value) {
         return new StoredHologram(enabled, location, lines, permission, viewDistance, value, appearance, refresh, click);
     }

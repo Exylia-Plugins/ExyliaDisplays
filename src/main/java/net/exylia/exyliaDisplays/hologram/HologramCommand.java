@@ -158,6 +158,31 @@ public final class HologramCommand {
         edited(sender, name, current -> current.withLocation(current.location().centred()), messages().centred(), Values.of());
     }
 
+    /** Turns it: yaw 0 south, 90 west, 180 north, -90 east; pitch tilts it, -90 to 90. */
+    @Subcommand("<name> rotate")
+    public void rotate(CommandSender sender, @SuggestWith(Names.class) String name, float yaw, @Optional Float pitch) {
+        float tilt = pitch == null ? 0f : pitch;
+        if (tilt < -90 || tilt > 90) {
+            invalid(sender, "pitch", HologramViews.number(tilt), "-90 - 90");
+            return;
+        }
+        StoredHologram saved = edited(sender, name, current -> current.withFacing(yaw, tilt), null, Values.of());
+        if (saved != null) facingSet(sender, name, saved);
+    }
+
+    /** Turns it to face the player, without moving it. */
+    @Subcommand("<name> face")
+    public void face(Player player, @SuggestWith(Names.class) String name) {
+        float yaw = Position.facing(player.getLocation()).yaw();
+        StoredHologram saved = edited(player, name, current -> current.withFacing(yaw, 0f), null, Values.of());
+        if (saved != null) facingSet(player, name, saved);
+    }
+
+    private static void facingSet(CommandSender sender, String name, StoredHologram saved) {
+        send(sender, messages().propertySet(), Values.of().putText("name", name).putText("property", "facing")
+                .put("value", HologramViews.facing(saved) + " " + saved.appearance().billboard()));
+    }
+
     // ------------------------------------------------------------------
     // Lines
     // ------------------------------------------------------------------
