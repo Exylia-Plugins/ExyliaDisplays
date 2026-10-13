@@ -31,7 +31,12 @@ import java.util.zip.ZipEntry;
 public final class ExyliaLibInstaller {
 
     static final String RELEASES_URL = "https://github.com/DiGround-s/ExyliaLib/releases";
-    /** The release this plugin was built against, never {@code latest}: a known jar, not whatever was pushed last. */
+    /**
+     * The newest release, under the name that never changes. What is installed is always the
+     * current library, the same one ExyliaLib's own updater would move the server to anyway.
+     */
+    static final String LATEST_URL = RELEASES_URL + "/latest/download/" + "ExyliaLib.jar";
+    /** The release this plugin was built against, for when the latest one cannot be had. */
     static final String DOWNLOAD_URL = RELEASES_URL + "/download/v%1$s/ExyliaLib-%1$s.jar";
     private static final String JAR_NAME = "ExyliaLib.jar";
     /** The whole download, not each read: a server that trickles bytes still gives up in time. */
@@ -64,12 +69,12 @@ public final class ExyliaLibInstaller {
                     + RELEASES_URL + ", put it in plugins/ and restart the server.");
             return;
         }
-        String url = String.format(DOWNLOAD_URL, version);
-        log.warning("ExyliaLib " + version + " is required and not installed; downloading it from " + url + ".");
+        log.warning("ExyliaLib is required and not installed; downloading the latest release from "
+                + RELEASES_URL + ".");
         Thread download = new Thread(() -> {
             try {
-                if (download(plugins, name, url, version)) {
-                    log.warning("Downloaded ExyliaLib " + version + " to plugins/" + JAR_NAME
+                if (downloadLatest(plugins, name, version, log)) {
+                    log.warning("Downloaded ExyliaLib to plugins/" + JAR_NAME
                             + " - restart the server to finish installing " + name + ".");
                 } else {
                     log.warning("Another plugin installed ExyliaLib " + version + " or newer meanwhile"
@@ -83,6 +88,21 @@ public final class ExyliaLibInstaller {
         }, name + "-ExyliaLib-download");
         download.setDaemon(true);
         download.start();
+    }
+
+    /**
+     * The latest release, or the one this plugin was built against when the latest cannot be
+     * downloaded or is somehow older than what this build needs.
+     */
+    private static boolean downloadLatest(Path plugins, String name, String version, Logger log) throws IOException {
+        try {
+            return download(plugins, name, LATEST_URL, version);
+        } catch (IOException latestFailed) {
+            String pinned = String.format(DOWNLOAD_URL, version);
+            log.warning("The latest ExyliaLib could not be installed (" + latestFailed.getMessage()
+                    + "); trying " + version + " from " + pinned + ".");
+            return download(plugins, name, pinned, version);
+        }
     }
 
     /** The {@code exylia-lib} version this jar's plugin.yml was built with. */

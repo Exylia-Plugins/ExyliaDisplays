@@ -10,7 +10,7 @@ You need Java 21. Then:
 ./gradlew build
 ```
 
-The plugin jar is written to `build/libs/`. ExyliaLib is downloaded from its GitHub releases at the version in `gradle.properties`; a copy published locally with `./gradlew publishToMavenLocal` in ExyliaLib takes its place, so a change to both can be built together.
+The plugin jar is written to `build/libs/`. The build always uses the newest ExyliaLib: its latest GitHub release, or a newer copy published locally with `./gradlew publishToMavenLocal` in ExyliaLib, so a change to both can be built together. `-PexyliaLibVersion=x.y.z` pins one.
 
 To have the jar written straight into a test server, set `exyliaOutputDir=/path/to/server` in `~/.gradle/gradle.properties`: the jar goes to its `plugins/` folder.
 

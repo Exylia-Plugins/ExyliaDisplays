@@ -22,7 +22,11 @@ Built on [ExyliaLib](https://github.com/DiGround-s/ExyliaLib)'s packet holograms
 
 - Paper or Folia 1.21+, Java 21 (dialog windows need 1.21.6+; older clients and Bedrock players get the same fields through chat or forms)
 - [PacketEvents](https://modrinth.com/plugin/packetevents)
-- [ExyliaLib](https://github.com/DiGround-s/ExyliaLib/releases), the version in `gradle.properties` or newer. If it is missing, the plugin downloads it on first start and asks for a restart.
+- [ExyliaLib](https://github.com/DiGround-s/ExyliaLib/releases). If it is missing, the plugin downloads the latest release on first start and asks for a restart.
+
+## Updates
+
+ExyliaLib keeps both itself and this plugin up to date from their GitHub releases: a new version is downloaded in the background and applied on the next restart. A new major version waits for you to install it by hand, and a release that needs a newer ExyliaLib waits until the library has updated. Turn it off or tune it under `plugin-updates` in `plugins/ExyliaLib/config.yml`; `/exylialib updates` shows what is pending.
 
 Optional: PlaceholderAPI, whose placeholders work in any line.
 
