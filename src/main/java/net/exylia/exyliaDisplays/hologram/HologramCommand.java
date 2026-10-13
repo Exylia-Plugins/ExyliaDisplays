@@ -181,6 +181,22 @@ public final class HologramCommand {
         if (saved != null) facingSet(player, name, saved);
     }
 
+    /** Fine adjustment with the mouse wheel; again saves it. See {@link HologramAdjust}. */
+    @Subcommand("<name> adjust")
+    public void adjust(Player player, @SuggestWith(Names.class) String name) {
+        HologramModule.get().adjust().toggle(player, name);
+    }
+
+    @Subcommand("<name> adjust save")
+    public void adjustSave(Player player, @SuggestWith(Names.class) String name) {
+        HologramModule.get().adjust().finish(player, name, true);
+    }
+
+    @Subcommand("<name> adjust cancel")
+    public void adjustCancel(Player player, @SuggestWith(Names.class) String name) {
+        HologramModule.get().adjust().finish(player, name, false);
+    }
+
     private static void facingSet(CommandSender sender, String name, StoredHologram saved) {
         send(sender, messages().propertySet(), Values.of().putText("name", name).putText("property", "facing")
                 .put("value", HologramViews.facing(saved) + " " + saved.appearance().billboard()));

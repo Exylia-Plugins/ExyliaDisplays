@@ -30,6 +30,7 @@ public final class HologramModule implements DisplayModule {
     private EntryStore<HologramFile, StoredHologram> store;
     private HologramRenderer renderer;
     private FileWatcher watcher;
+    private final HologramAdjust adjust = new HologramAdjust();
 
     /** The running module; only called by code that runs because the module does. */
     public static HologramModule get() {
@@ -53,9 +54,12 @@ public final class HologramModule implements DisplayModule {
         HologramsMessages.install(Configs.define(core.getPlugin(), "messages/holograms", HologramsMessages.class)
                 .translated().load());
 
-        renderer = new HologramRenderer(core.getPlugin(), core.getTasks());
+        renderer = new HologramRenderer(core.getPlugin(), core.getTasks(), adjust::preview);
         ConfigFile<HologramFile> file = Configs.define(core.getPlugin(), "holograms", HologramFile.class).load();
-        store = new EntryStore<>(file, HologramFile::holograms, HologramFile::new, renderer::apply);
+        store = new EntryStore<>(file, HologramFile::holograms, HologramFile::new, (name, hologram) -> {
+            if (hologram == null) adjust.removed(name);
+            renderer.apply(name, hologram);
+        });
         renderer.applyAll(store.all());
 
         watcher = new FileWatcher(new File(core.getPlugin().getDataFolder(), "holograms.yml").toPath(),
@@ -77,6 +81,7 @@ public final class HologramModule implements DisplayModule {
 
     @Override
     public void disable() {
+        adjust.saveAll();
         if (watcher != null) watcher.stop();
         if (renderer != null) renderer.clear();
         instance = null;
@@ -88,6 +93,10 @@ public final class HologramModule implements DisplayModule {
 
     public HologramRenderer renderer() {
         return renderer;
+    }
+
+    public HologramAdjust adjust() {
+        return adjust;
     }
 
     /**
@@ -102,6 +111,7 @@ public final class HologramModule implements DisplayModule {
                 .filter(issue -> issue.type() != ConfigIssue.Type.MISSING_KEY)
                 .toList();
         issues.forEach(issue -> core.getDebug().warn("holograms.yml: " + issue.describe()));
+        adjust.prune();
         renderer.applyAll(store.all());
         watcher.remember();
         return issues;

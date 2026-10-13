@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiFunction;
 
 /**
  * Keeps the holograms in the world equal to the file.
@@ -46,6 +47,8 @@ public final class HologramRenderer implements Listener {
 
     private final Plugin plugin;
     private final TaskScheduler tasks;
+    /** Lays a live adjustment over what the file says; see {@link HologramAdjust#preview}. */
+    private final BiFunction<String, StoredHologram, StoredHologram> overlay;
     /** What each hologram in the world was last drawn from. */
     private final Map<String, StoredHologram> shown = new ConcurrentHashMap<>();
     /** Holograms whose world is not loaded, drawn when it is. */
@@ -61,9 +64,10 @@ public final class HologramRenderer implements Listener {
     private record Mount(Entity entity, TaskHandle follow, AtomicBoolean pending) {
     }
 
-    public HologramRenderer(Plugin plugin, TaskScheduler tasks) {
+    public HologramRenderer(Plugin plugin, TaskScheduler tasks, BiFunction<String, StoredHologram, StoredHologram> overlay) {
         this.plugin = plugin;
         this.tasks = tasks;
+        this.overlay = overlay;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -74,6 +78,7 @@ public final class HologramRenderer implements Listener {
      * @param hologram  what it is now, or {@code null} once it was removed
      */
     public void apply(String name, StoredHologram hologram) {
+        hologram = overlay.apply(name, hologram);
         waiting.remove(name);
         if (hologram == null) {
             temporary.remove(name);

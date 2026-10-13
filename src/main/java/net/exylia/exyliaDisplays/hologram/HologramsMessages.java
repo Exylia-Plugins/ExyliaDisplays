@@ -12,6 +12,7 @@ import java.util.List;
  * @param dialogs  the titles, labels and hints of every window that asks something
  * @param audience /holo show, hide and the visibility mode
  * @param attach   /holo attach, detach and attachoffset
+ * @param adjust   fine adjustment with the mouse wheel: its messages, boss bars and axis names
  */
 @Comment("Messages of the hologram module of ExyliaDisplays.")
 @Comment("")
@@ -89,7 +90,10 @@ public record HologramsMessages(
         States states,
         Dialogs dialogs,
         Audience audience,
-        Attach attach) {
+        Attach attach,
+
+        @Comment("Fine adjustment with the mouse wheel: /holo <name> adjust.")
+        Adjust adjust) {
 
     public HologramsMessages {
         if (help == null) help = List.of();
@@ -98,6 +102,7 @@ public record HologramsMessages(
         if (dialogs == null) dialogs = new Dialogs();
         if (audience == null) audience = new Audience();
         if (attach == null) attach = new Attach();
+        if (adjust == null) adjust = new Adjust();
     }
 
     public HologramsMessages() {
@@ -141,6 +146,7 @@ public record HologramsMessages(
                         " {secondary}Edit one {letters_black}» {warning}/holo <name> {letters_black}opens its editor",
                         " {warning}info {letters_black}· {warning}tp {letters_black}· {warning}movehere {letters_black}· {warning}move <x> <y> <z> [world] {letters_black}· {warning}center",
                         " {warning}rotate <yaw> [pitch] {letters_black}· {warning}face {letters_black}» {letters}turn it, or turn it to you",
+                        " {warning}adjust {letters_black}» {letters}move, turn and scale it with the mouse wheel {muted}(again saves, adjust cancel undoes)",
                         " {warning}rename <new> {letters_black}· {warning}clone <new> {letters_black}· {warning}enable {letters_black}· {warning}disable {letters_black}· {warning}delete",
                         " {warning}addline <text> {letters_black}· {warning}setline <n> <text> {letters_black}· {warning}insertline <n> <text>",
                         " {warning}removeline <n> {letters_black}· {warning}moveline <from> <to> {letters_black}· {warning}lines",
@@ -177,7 +183,9 @@ public record HologramsMessages(
                 new States(),
                 new Dialogs(),
                 new Audience(),
-                new Attach());
+                new Attach(),
+
+                new Adjust());
     }
 
     /**
@@ -466,6 +474,54 @@ public record HologramsMessages(
                     "Player, entity UUID or 'nearest'",
                     "Empty to stand at its location again. A player is ridden again whenever they join; 'nearest' is the closest entity to you.",
                     "Height above it (blocks)");
+        }
+    }
+
+    /**
+     * Fine adjustment with the mouse wheel.
+     *
+     * <p>The boss bars take %subject% (the hologram), %axis%, %value%, %step%, %index% and %count%.
+     */
+    public record Adjust(
+            @Comment("Told when it starts. Placeholder: %name%.")
+            String started,
+            @Comment("Placeholder: %name%.")
+            String saved,
+            String cancelled,
+            @Comment("The hologram was deleted or renamed while being adjusted. Placeholder: %name%.")
+            String gone,
+            @Comment("Somebody else is adjusting it. Placeholders: %name%, %player%.")
+            String busy,
+            @Comment("Placeholder: %name%.")
+            String notAdjusting,
+            @Comment("The top boss bar.")
+            String hud,
+            @Comment("The second boss bar, with the keys. Empty to hide it.")
+            String hints,
+            String x,
+            String y,
+            String z,
+            @Comment("Moves it along where you look.")
+            String forward,
+            String yaw,
+            String pitch,
+            String scale,
+            String spacing) {
+
+        public Adjust() {
+            this("[sound:BLOCK_NOTE_BLOCK_PLING|0.6|1.6]%prefix% {letters}Adjusting {highlight}%name%{letters}: scroll to move it, {highlight}F {letters}for the next axis. "
+                            + "<click:run_command:'/holo %name% adjust save'>{success}&l[✔ SAVE]</click> "
+                            + "<click:run_command:'/holo %name% adjust cancel'>{error}&l[✘ UNDO]</click>",
+                    "[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Adjustment of {highlight}%name% {success}saved.",
+                    "%prefix% {warning}Adjustment of {highlight}%name% {warning}undone.",
+                    "[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%name% {error}was deleted or renamed; adjustment stopped.",
+                    "[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%player% {error}is already adjusting {highlight}%name%{error}.",
+                    "[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}You are not adjusting {highlight}%name%{error}.",
+                    "{primary}&l%subject% {letters_black}» {secondary}%axis% {info}%value% {letters_black}▎ {letters}Step {info}%step%",
+                    "{letters}Scroll {letters_black}» {info}adjust {letters_black}▎ {letters}Sneak+scroll {letters_black}» {info}step "
+                            + "{letters_black}▎ {letters}F {letters_black}» {info}axis {letters_black}▎ {letters}Sneak+click {letters_black}» {info}snap "
+                            + "{letters_black}▎ {letters}Click {letters_black}» {success}save",
+                    "X", "Y", "Z", "Forward", "Turn", "Tilt", "Scale", "Line spacing");
         }
     }
 

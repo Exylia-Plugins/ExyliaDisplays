@@ -92,6 +92,7 @@ public final class HologramActions {
                             .put("value", HologramViews.facing(saved))));
             HologramViews.openHub(player, name);
         });
+        hub("adjust", (player, name) -> HologramModule.get().adjust().toggle(player, name));
         hub("teleport", HologramActions::teleport);
         hub("clone", HologramDialogs::cloneHologram);
         hub("delete", (player, name) -> HologramDialogs.delete(player, name, () -> HologramViews.openHub(player, name)));

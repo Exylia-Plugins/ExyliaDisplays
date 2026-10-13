@@ -185,6 +185,28 @@ items:
     actions:
       - "exyliadisplays:holo_clone"
 
+  adjust:
+    slot: 38
+    material: SPYGLASS
+    name: "{primary}&lFINE ADJUST"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}Move, turn and scale it with the"
+      - " {letters_black}▎ {highlight}mouse wheel {letters}while you look at it."
+      - ""
+      - "{secondary}Controls:"
+      - " {letters_black}▎ {letters}Scroll {letters_black}» {info}change the value"
+      - " {letters_black}▎ {letters}Sneak + scroll {letters_black}» {info}step size"
+      - " {letters_black}▎ {letters}F {letters_black}» {info}next axis"
+      - " {letters_black}▎ {letters}Sneak + click {letters_black}» {info}snap"
+      - " {letters_black}▎ {letters}Click {letters_black}» {info}save"
+      - ""
+      - "{warning}➥ Click to start"
+      - ""
+    actions:
+      - "exyliadisplays:holo_adjust"
+
   back:
     slot: 40
     sound: "minecraft:item.bundle.remove_one|1.0|0.5"

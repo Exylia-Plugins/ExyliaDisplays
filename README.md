@@ -136,11 +136,26 @@ Anything else at the start of a line, such as `<gradient:...>`, stays as text. C
 | --- | --- | --- |
 | `/displays help\|modules\|reload` | `exyliadisplays.admin` | The plugin as a whole |
 | `/holoadmin` (`/hologramadmin`) | `exyliadisplays.holograms` | Every hologram, on a screen, plus what is not about one hologram: `create`, `list`, `near`, `import`, `reload`, `help` |
-| `/holo <name> [setting] ...` (`/hologram`) | `exyliadisplays.holograms` | One hologram: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `rename`, `clone`, `enable`, `disable`, `delete`; lines with `addline`, `setline`, `insertline`, `removeline`, `moveline`, `lines`, and one tag of one line with `line <n> <tag> [value]`; the look with `billboard`, `alignment`, `scale`, `shadow`, `seethrough`, `linewidth`, `spacing`, `opacity`, `background`, `brightness`; who sees it with `viewdistance`, `permission`, `perplayer`, `refresh`, `autoupdate`; which players see it with `visibility all\|manual`, `show\|hide <player\|@a>`, `viewers [clear]`; what it rides with `attach <player\|uuid\|nearest>`, `detach`, `attachoffset <blocks>`; clicks with `click add\|remove\|clear\|width\|cooldown\|hover` |
+| `/holo <name> [setting] ...` (`/hologram`) | `exyliadisplays.holograms` | One hologram: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `adjust` (see below), `rename`, `clone`, `enable`, `disable`, `delete`; lines with `addline`, `setline`, `insertline`, `removeline`, `moveline`, `lines`, and one tag of one line with `line <n> <tag> [value]`; the look with `billboard`, `alignment`, `scale`, `shadow`, `seethrough`, `linewidth`, `spacing`, `opacity`, `background`, `brightness`; who sees it with `viewdistance`, `permission`, `perplayer`, `refresh`, `autoupdate`; which players see it with `visibility all\|manual`, `show\|hide <player\|@a>`, `viewers [clear]`; what it rides with `attach <player\|uuid\|nearest>`, `detach`, `attachoffset <blocks>`; clicks with `click add\|remove\|clear\|width\|cooldown\|hover` |
 | `/npcadmin` (`/npcsadmin`) | `exyliadisplays.npcs` | Every NPC, on a screen, plus what is not about one NPC: `create <name> [skin]`, `list`, `near`, `import`, `reload`, `help` |
 | `/npc <name> [setting] ...` (`/npcs`) | `exyliadisplays.npcs` | One NPC: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `rename`, `clone`, `enable`, `disable`, `delete`; the look with `skin`, `texture <value> [signature]`, `pose`, `scale`, `glow`, `equip <slot\|clear> [item]`, `equipment`; `look <mode> [range]`, `viewdistance`, `permission`; the label with `label set\|add\|remove\|clear\|height`, or a whole hologram with `link`, `unlink`; clicks with `action add\|remove\|clear\|list` and `action permission\|cooldown\|denymessage\|cooldownmessage\|faceclicker` |
 
 `exyliadisplays.admin` includes both module permissions; `exyliadisplays.*` grants everything. If Citizens is installed too, its `/npc` and this one compete for the name; use `/npcs <name>` (`/npcadmin` does not clash).
+
+### Fine adjust
+
+`/holo <name> adjust` (or **FINE ADJUST** in the hologram's editor) lets you place a hologram with the mouse wheel while you look at it. Nothing is written until you finish; the hologram moves live as you scroll.
+
+| Key | Does |
+| --- | --- |
+| Scroll | Change the value by one step |
+| Sneak + scroll | Bigger or smaller step |
+| F | Next axis: X, Y, Z, forward (where you look), turn, tilt, scale, line spacing; sneak + F goes back |
+| Sneak + click | Snap: block centre, half block for height, nearest 15° |
+| Click, or `/holo <name> adjust` again | Save and finish |
+| `/holo <name> adjust cancel` (or **UNDO** in chat) | Put everything back |
+
+Two boss bars show the axis, value and step, and the keys. Leaving, dying, changing world or teleporting far saves and finishes; one player adjusts a hologram at a time.
 
 ## Files
 
