@@ -1,0 +1,459 @@
+package net.exylia.exyliaDisplays.npc;
+
+import net.exylia.exyliaDisplays.common.store.Place;
+import net.exylia.lib.config.Comment;
+import net.exylia.lib.config.Time;
+import net.exylia.lib.item.Items;
+import net.exylia.lib.npc.NpcLook;
+import net.exylia.lib.npc.NpcPose;
+import net.exylia.lib.npc.NpcSkin;
+import net.exylia.lib.npc.NpcSpec;
+import org.bukkit.inventory.EquipmentSlot;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+/**
+ * One NPC as {@code npcs.yml} writes it.
+ *
+ * <p>The file is the single source of truth, as for holograms: commands, the screens and a hand
+ * edit all change this record, and the NPC in the world is drawn from it. Every section has
+ * defaults, so a hand-written NPC only needs a location.
+ *
+ * @param enabled        whether it is shown
+ * @param location       where it stands and which way it faces
+ * @param skin           what it wears
+ * @param pose           how it holds itself
+ * @param scale          how big it is, 1 being a player
+ * @param glow           an outline colour as {@code #RRGGBB}, or empty
+ * @param equipment      what it wears and holds, by slot name, as icon strings
+ * @param look           where it turns its head
+ * @param viewDistance   how far away it is seen
+ * @param permission     who sees it; empty for everyone
+ * @param label          the lines floating above its head
+ * @param linkedHologram a hologram of holograms.yml kept above its head
+ * @param interactions   what clicking it does
+ */
+public record StoredNpc(
+        @Comment("Set to false to keep it in this file without showing it.")
+        boolean enabled,
+
+        @Comment("Where it stands, and which way it faces.")
+        Place location,
+
+        @Comment("What it wears.")
+        Skin skin,
+
+        @Comment("standing, sneaking, lying, crawling or spinning.")
+        NpcPose pose,
+
+        @Comment("Its size: 1 is a player's, from 0.0625 to 16.")
+        double scale,
+
+        @Comment("An outline colour such as '#8a51c4', drawn in the nearest team colour. Empty for none.")
+        String glow,
+
+        @Comment("What it wears and holds, by slot: head, chest, legs, feet, hand, off_hand.")
+        @Comment("A material (DIAMOND_SWORD), a head (playerhead-Notch, basehead-<texture>) or a bytes: item.")
+        Map<String, String> equipment,
+
+        @Comment("Where it turns its head.")
+        Look look,
+
+        @Comment("How far away it is seen, in blocks.")
+        double viewDistance,
+
+        @Comment("Only players with this permission see it. Leave empty for everyone.")
+        String permission,
+
+        @Comment("Lines floating above its head, the name players read. Every hologram line tag works.")
+        Label label,
+
+        @Comment("The name of a hologram in holograms.yml to keep above its head, following it when it moves.")
+        @Comment("Empty for none. Use it for a hologram edited on its own; for a simple name, use label.")
+        String linkedHologram,
+
+        @Comment("What clicking it does, and who may.")
+        Interactions interactions) {
+
+    /** Slot names as the file writes them, in the order screens show them. */
+    public static final List<String> SLOTS = List.of("head", "chest", "legs", "feet", "hand", "off_hand");
+
+    private static final Pattern HEX = Pattern.compile("#?[0-9a-fA-F]{6}");
+
+    public StoredNpc() {
+        this(true, new Place(), new Skin(), NpcPose.STANDING, 1.0, "", Map.of(), new Look(), 48.0, "",
+                new Label(), "", new Interactions());
+    }
+
+    public StoredNpc {
+        if (location == null) location = new Place();
+        if (skin == null) skin = new Skin();
+        if (pose == null) pose = NpcPose.STANDING;
+        scale = scale <= 0 ? 1.0 : Math.clamp(scale, 0.0625, 16.0);
+        if (glow == null) glow = "";
+        equipment = equipment == null ? Map.of() : java.util.Collections.unmodifiableMap(new LinkedHashMap<>(equipment));
+        if (look == null) look = new Look();
+        if (viewDistance <= 0) viewDistance = 48.0;
+        if (permission == null) permission = "";
+        if (label == null) label = new Label();
+        if (linkedHologram == null) linkedHologram = "";
+        if (interactions == null) interactions = new Interactions();
+    }
+
+    // ------------------------------------------------------------------
+    // Sections
+    // ------------------------------------------------------------------
+
+    /**
+     * What it wears.
+     *
+     * @param type      where the skin comes from
+     * @param player    the account, for {@code PLAYER}
+     * @param texture   the texture value, for {@code TEXTURE}
+     * @param signature the texture's signature, for {@code TEXTURE}
+     */
+    public record Skin(
+            @Comment("player: the skin an account wears. texture: the texture and signature below.")
+            @Comment("mirror: every viewer sees their own skin. none: the default skin.")
+            Type type,
+            @Comment("The account, for player.")
+            String player,
+            @Comment("The base64 texture value, for texture (mineskin.org gives both).")
+            String texture,
+            @Comment("Mojang's signature of the texture; without it the client draws the default skin.")
+            String signature) {
+
+        public enum Type { PLAYER, TEXTURE, MIRROR, NONE }
+
+        /** What a Minecraft account name may be. */
+        private static final Pattern ACCOUNT = Pattern.compile("[A-Za-z0-9_]{1,16}");
+
+        public Skin() {
+            this(Type.NONE, "", "", "");
+        }
+
+        public Skin {
+            if (type == null) type = Type.NONE;
+            if (player == null) player = "";
+            if (texture == null) texture = "";
+            if (signature == null) signature = "";
+        }
+
+        public static Skin player(String name) {
+            return new Skin(Type.PLAYER, name, "", "");
+        }
+
+        public static Skin texture(String value, String signature) {
+            return new Skin(Type.TEXTURE, "", value, signature);
+        }
+
+        public static Skin mirror() {
+            return new Skin(Type.MIRROR, "", "", "");
+        }
+
+        /**
+         * A skin as a command or a preset writes it: an account name, {@code @mirror}, or
+         * {@code @none} (or nothing).
+         *
+         * @return the skin, or {@code null} when it is not an account name
+         */
+        public static Skin parse(String written) {
+            String trimmed = written == null ? "" : written.trim();
+            if (trimmed.isEmpty() || trimmed.equalsIgnoreCase("@none")) return new Skin();
+            if (trimmed.equalsIgnoreCase("@mirror")) return mirror();
+            return ACCOUNT.matcher(trimmed).matches() ? player(trimmed) : null;
+        }
+
+        /** What ExyliaLib draws; a section missing what its type needs is the default skin. */
+        public NpcSkin toSkin() {
+            return switch (type) {
+                case PLAYER -> player.isBlank() ? NpcSkin.none() : NpcSkin.player(player);
+                case TEXTURE -> texture.isBlank() ? NpcSkin.none()
+                        : NpcSkin.texture(texture, signature.isBlank() ? null : signature);
+                case MIRROR -> NpcSkin.mirror();
+                case NONE -> NpcSkin.none();
+            };
+        }
+
+        /** A head that looks like this skin, as a menu's material; a plain head when there is none. */
+        public String head() {
+            return switch (type) {
+                case PLAYER -> player.isBlank() ? "PLAYER_HEAD" : "playerhead-" + player;
+                case TEXTURE -> texture.isBlank() ? "PLAYER_HEAD" : "basehead-" + texture;
+                default -> "PLAYER_HEAD";
+            };
+        }
+    }
+
+    /**
+     * Where it turns its head.
+     *
+     * @param mode  how
+     * @param range how close a player has to be for it to turn to them
+     */
+    public record Look(
+            @Comment("fixed: the way it faces. nearest: at the nearest player, the same for all.")
+            @Comment("each-viewer: every player sees it looking at them.")
+            NpcLook mode,
+            @Comment("How close a player has to be for it to turn to them, in blocks.")
+            double range) {
+
+        public Look() {
+            this(NpcLook.EACH_VIEWER, 8.0);
+        }
+
+        public Look {
+            if (mode == null) mode = NpcLook.EACH_VIEWER;
+            if (range < 0) range = 0;
+        }
+    }
+
+    /**
+     * The lines above its head.
+     *
+     * @param lines        top first; empty for no label
+     * @param heightOffset the gap between the top of its head and the bottom line
+     */
+    public record Label(
+            @Comment("Top first. Leave empty for no label.")
+            List<String> lines,
+            @Comment("The gap between the top of its head and the bottom line, in blocks.")
+            double heightOffset) {
+
+        public Label() {
+            this(List.of(), 0.25);
+        }
+
+        public Label {
+            lines = lines == null ? List.of() : List.copyOf(lines);
+        }
+
+        public Label withLines(List<String> value) {
+            return new Label(value, heightOffset);
+        }
+    }
+
+    /**
+     * What clicking it does.
+     *
+     * @param actions         interaction lines, run in order
+     * @param permission      what a player needs to use it
+     * @param cooldown        milliseconds between two uses by the same player
+     * @param denyMessage     told to a player without the permission
+     * @param cooldownMessage told to a player still waiting
+     * @param faceClicker     whether it turns to whoever clicked it
+     */
+    public record Interactions(
+            @Comment("One per line, run in order. 'left:', 'right:', 'shift_left:', 'shift_right:' or 'shift:'")
+            @Comment("first limits a line to that click. A bare line is a command as the player, 'console: ...'")
+            @Comment("from the console. [SERVER] lobby, [TELEPORT] world;x;y;z, [MESSAGE] text, [SOUND] name,")
+            @Comment("[TITLE] a;b, [DELAY] 1s, [ACTION] ns:id, plus [SAY] text;5s (a speech bubble only the")
+            @Comment("clicker sees), [ANIMATE] swing|hurt and [LOOK] (turn to the clicker). %npc% is its name.")
+            List<String> actions,
+            @Comment("Only players with this permission can use it. Leave empty for everyone.")
+            String permission,
+            @Comment("How long the same player waits between two uses. Reads 500ms, 2s, 1m.")
+            @Time(Time.Unit.MILLIS) long cooldown,
+            @Comment("Told to a player without the permission. Empty for the one in messages/npcs.yml.")
+            String denyMessage,
+            @Comment("Told to a player still waiting; %remaining% is the seconds left. Empty for the default.")
+            String cooldownMessage,
+            @Comment("Turn to whoever clicked it for a moment.")
+            boolean faceClicker) {
+
+        public Interactions() {
+            this(List.of(), "", 0, "", "", true);
+        }
+
+        public Interactions {
+            actions = actions == null ? List.of() : List.copyOf(actions);
+            if (permission == null) permission = "";
+            cooldown = Math.max(0, cooldown);
+            if (denyMessage == null) denyMessage = "";
+            if (cooldownMessage == null) cooldownMessage = "";
+        }
+
+        public Interactions withActions(List<String> value) {
+            return new Interactions(value, permission, cooldown, denyMessage, cooldownMessage, faceClicker);
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // What ExyliaLib draws
+    // ------------------------------------------------------------------
+
+    /** The spec ExyliaLib places. Reads the equipment's items, so it needs a running server. */
+    public NpcSpec toSpec() {
+        NpcSpec.Builder spec = NpcSpec.builder()
+                .skin(skin.toSkin())
+                .pose(pose)
+                .scale(scale)
+                .glow(glowRgb())
+                .look(look.mode())
+                .lookRange(look.range())
+                .viewDistance(viewDistance);
+        equipment.forEach((slot, icon) -> {
+            EquipmentSlot parsed = slot(slot);
+            if (parsed != null && !icon.isBlank()) spec.equip(parsed, Items.icon(icon));
+        });
+        return spec.build();
+    }
+
+    /** Whether another version of it would be drawn differently, apart from where it stands. */
+    public boolean looksLike(StoredNpc other) {
+        return other != null && skin.equals(other.skin) && pose == other.pose && scale == other.scale
+                && glow.equals(other.glow) && equipment.equals(other.equipment) && look.equals(other.look)
+                && viewDistance == other.viewDistance;
+    }
+
+    /** The outline as {@code 0xRRGGBB}, or -1 for none or a colour that cannot be read. */
+    public int glowRgb() {
+        return isColour(glow) ? Integer.parseInt(glow.trim().replace("#", ""), 16) : -1;
+    }
+
+    /** Whether a glow can be read; empty counts, as "no glow". */
+    public static boolean isColour(String written) {
+        return written != null && HEX.matcher(written.trim()).matches();
+    }
+
+    /**
+     * How high the top of its head is above its feet: a player's height in its pose, times its
+     * scale. Labels, linked holograms and speech bubbles all stand on it.
+     */
+    public double headHeight() {
+        double standing = switch (pose) {
+            case STANDING -> 1.8;
+            case SNEAKING -> 1.5;
+            case LYING, CRAWLING, SPINNING -> 0.6;
+        };
+        return standing * scale;
+    }
+
+    /** Where the label's bottom line stands, above its feet. */
+    public double labelHeight() {
+        return headHeight() + label.heightOffset();
+    }
+
+    /**
+     * Above everything already floating over its head: the label's lines, if any. Linked
+     * holograms and speech bubbles stand here so they never cover the label.
+     */
+    public double topHeight() {
+        return labelHeight() + label.lines().size() * 0.3;
+    }
+
+    /** A slot name as the file writes it, read; {@code null} for a name that is no slot. */
+    public static EquipmentSlot slot(String name) {
+        return switch (name == null ? "" : name.trim().toLowerCase(Locale.ROOT).replace('-', '_')) {
+            case "head", "helmet" -> EquipmentSlot.HEAD;
+            case "chest", "chestplate" -> EquipmentSlot.CHEST;
+            case "legs", "leggings" -> EquipmentSlot.LEGS;
+            case "feet", "boots" -> EquipmentSlot.FEET;
+            case "hand", "main_hand", "mainhand" -> EquipmentSlot.HAND;
+            case "off_hand", "offhand" -> EquipmentSlot.OFF_HAND;
+            default -> null;
+        };
+    }
+
+    /** The file's name for a slot. */
+    public static String slotName(EquipmentSlot slot) {
+        return slot.name().toLowerCase(Locale.ROOT);
+    }
+
+    // ------------------------------------------------------------------
+    // Withers
+    // ------------------------------------------------------------------
+
+    public StoredNpc withEnabled(boolean value) {
+        return new StoredNpc(value, location, skin, pose, scale, glow, equipment, look, viewDistance, permission, label, linkedHologram, interactions);
+    }
+
+    public StoredNpc withLocation(Place value) {
+        return new StoredNpc(enabled, value, skin, pose, scale, glow, equipment, look, viewDistance, permission, label, linkedHologram, interactions);
+    }
+
+    public StoredNpc withSkin(Skin value) {
+        return new StoredNpc(enabled, location, value, pose, scale, glow, equipment, look, viewDistance, permission, label, linkedHologram, interactions);
+    }
+
+    public StoredNpc withPose(NpcPose value) {
+        return new StoredNpc(enabled, location, skin, value, scale, glow, equipment, look, viewDistance, permission, label, linkedHologram, interactions);
+    }
+
+    public StoredNpc withScale(double value) {
+        return new StoredNpc(enabled, location, skin, pose, value, glow, equipment, look, viewDistance, permission, label, linkedHologram, interactions);
+    }
+
+    public StoredNpc withGlow(String value) {
+        return new StoredNpc(enabled, location, skin, pose, scale, value, equipment, look, viewDistance, permission, label, linkedHologram, interactions);
+    }
+
+    public StoredNpc withEquipment(Map<String, String> value) {
+        return new StoredNpc(enabled, location, skin, pose, scale, glow, value, look, viewDistance, permission, label, linkedHologram, interactions);
+    }
+
+    public StoredNpc withLook(Look value) {
+        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, value, viewDistance, permission, label, linkedHologram, interactions);
+    }
+
+    public StoredNpc withViewDistance(double value) {
+        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, look, value, permission, label, linkedHologram, interactions);
+    }
+
+    public StoredNpc withPermission(String value) {
+        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, look, viewDistance, value, label, linkedHologram, interactions);
+    }
+
+    public StoredNpc withLabel(Label value) {
+        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, look, viewDistance, permission, value, linkedHologram, interactions);
+    }
+
+    public StoredNpc withLinkedHologram(String value) {
+        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, look, viewDistance, permission, label, value, interactions);
+    }
+
+    public StoredNpc withInteractions(Interactions value) {
+        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, look, viewDistance, permission, label, linkedHologram, value);
+    }
+
+    // ------------------------------------------------------------------
+    // Edits commands and screens share
+    // ------------------------------------------------------------------
+
+    /** Puts an item in a slot, or empties it when the icon is blank or air. */
+    public StoredNpc equip(EquipmentSlot slot, String icon) {
+        Map<String, String> edited = new LinkedHashMap<>(equipment);
+        String key = slotName(slot);
+        // An old spelling of the same slot ("helmet") would otherwise survive next to the new one.
+        edited.keySet().removeIf(written -> slot(written) == slot);
+        if (icon != null && !icon.isBlank() && !icon.equalsIgnoreCase("AIR")) {
+            edited.put(key, icon);
+        }
+        return withEquipment(edited);
+    }
+
+    public boolean hasAction(int index) {
+        return index >= 0 && index < interactions.actions().size();
+    }
+
+    public StoredNpc addAction(String line) {
+        List<String> edited = new ArrayList<>(interactions.actions());
+        edited.add(line);
+        return withInteractions(interactions.withActions(edited));
+    }
+
+    public StoredNpc removeAction(int index) {
+        List<String> edited = new ArrayList<>(interactions.actions());
+        edited.remove(index);
+        return withInteractions(interactions.withActions(edited));
+    }
+
+    public StoredNpc withLabelLines(List<String> lines) {
+        return withLabel(label.withLines(lines));
+    }
+}

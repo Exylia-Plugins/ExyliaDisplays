@@ -1,0 +1,146 @@
+created: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}NPC {highlight}%name% {success}creado.'
+deleted: '%prefix% {warning}NPC {highlight}%name% {warning}eliminado.'
+not-found: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}No hay ningún NPC llamado {highlight}%name%{error}.'
+already-exists: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}Ya existe un NPC llamado {highlight}%name%{error}.'
+invalid-name: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}Usa minúsculas, números, {highlight}- {error}y {highlight}_{error}, 32 como máximo.'
+renamed: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}El NPC {highlight}%name% {success}ahora es {highlight}%new%{success}.'
+cloned: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Copiado {highlight}%name% {success}como {highlight}%new%{success}.'
+moved: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}{highlight}%name% {success}movido aquí.'
+faced: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {highlight}%name% {success}ahora te mira.'
+teleported: '%prefix% {letters}Teletransportado a {highlight}%name%{letters}.'
+world-missing: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}El mundo {highlight}%world% {error}no está cargado.'
+state-changed: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {letters}NPC {highlight}%name% {letters_black}» %status%'
+saved: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}{highlight}%name% {success}guardado.'
+invalid-skin: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%skin% {error}no es un nombre de cuenta. Usa un nombre, {highlight}@mirror {error}o {highlight}@none{error}.'
+invalid-colour: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%value% {error}no es un color. Usa {highlight}#RRGGBB{error}, o {highlight}none{error}.'
+invalid-slot: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%slot% {error}no es un hueco. Usa {highlight}%slots%{error}.'
+equipped: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}{highlight}%name% {success}ahora lo lleva en {highlight}%slot%{success}.'
+unequipped: '%prefix% {warning}Vaciado {highlight}%slot% {warning}de {highlight}%name%{warning}.'
+equipment-cleared: '%prefix% {warning}{highlight}%name% {warning}ya no lleva nada.'
+label-saved: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Guardadas {highlight}%count% {success}líneas de etiqueta en {highlight}%name%{success}.'
+label-cleared: '%prefix% {warning}{highlight}%name% {warning}ya no tiene etiqueta.'
+action-added: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Acción {highlight}%index% {success}añadida a {highlight}%name%{success}.'
+action-removed: '%prefix% {warning}Acción {highlight}%index% {warning}quitada de {highlight}%name%{warning}.'
+actions-cleared: '%prefix% {warning}{highlight}%name% {warning}ya no hace nada al hacer clic.'
+action-not-found: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}No existe la acción {highlight}%index%{error}; tiene {highlight}%count%{error}.'
+actions-header: '%prefix% {letters}Acciones de {highlight}%name% {letters_black}({info}%count%{letters_black})'
+action-line: '   {letters_black}%index%. {letters}%action%'
+actions-empty: '%prefix% {letters}Aún no hace nada al hacer clic. {warning}<click:suggest_command:''/npc action add ''>[Añadir una acción]</click>'
+linked: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {highlight}%hologram% {success}ahora flota sobre {highlight}%name%{success}.'
+unlinked: '%prefix% {warning}{highlight}%name% {warning}ya no lleva ningún holograma.'
+hologram-not-found: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}No hay ningún holograma llamado {highlight}%hologram%{error}.'
+holograms-off: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}El módulo de hologramas está desactivado en config.yml.'
+interaction-denied: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}No puedes usar esto.'
+interaction-cooldown: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}Espera {highlight}%remaining%s ⌚ {error}antes de volver a usarlo.'
+say-bubble: '<typewriter:30><background:#66000000>{letters}%text%'
+reloaded: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Recargados {highlight}%count% {success}NPCs. {letters_black}(%issues% avisos)'
+file-applied: '%prefix% {letters}npcs.yml cambió: {highlight}%count% {letters}NPCs aplicados.'
+file-issues: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}npcs.yml tiene {highlight}%issues% {error}error(es); mira la consola.'
+import-done: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Importados {highlight}%count% {success}NPCs de {highlight}%source%{success}. {letters_black}(%skipped% omitidos)'
+import-nothing: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}Nada que importar de {highlight}%source%{error}. Buscado en {letters_black}%folder%'
+help:
+  - ''
+  - '[center]{primary}&lEXYLIA NPCS'
+  - '[center]{letters_black}Haz clic en un comando para usarlo'
+  - ''
+  - ' <click:run_command:''/npc''>{warning}/npc</click> {letters_black}» {letters}todos los NPCs, en un menú'
+  - ' <click:suggest_command:''/npc create ''>{warning}/npc create <nombre> [skin]</click> {letters_black}» {letters}uno nuevo aquí'
+  - ' <click:suggest_command:''/npc edit ''>{warning}/npc edit <nombre></click> {letters_black}» {letters}su editor'
+  - ' <click:suggest_command:''/npc skin ''>{warning}/npc skin <nombre> <jugador|@mirror|@none></click>'
+  - ' <click:suggest_command:''/npc pose ''>{warning}/npc pose</click> {letters_black}· <click:suggest_command:''/npc look ''>{warning}look</click> {letters_black}· <click:suggest_command:''/npc glow ''>{warning}glow</click> {letters_black}· <click:suggest_command:''/npc scale ''>{warning}scale</click> {letters_black}» {letters}su aspecto'
+  - ' <click:suggest_command:''/npc equip ''>{warning}/npc equip <nombre> <hueco|clear></click> {letters_black}» {letters}desde tu mano'
+  - ' <click:suggest_command:''/npc label set ''>{warning}/npc label set|add|clear <nombre> [texto]</click>'
+  - ' <click:suggest_command:''/npc action add ''>{warning}/npc action add|remove|clear|list <nombre></click>'
+  - ' <click:suggest_command:''/npc link ''>{warning}/npc link <nombre> <holograma></click> {letters_black}· <click:suggest_command:''/npc unlink ''>{warning}unlink</click>'
+  - ' <click:suggest_command:''/npc movehere ''>{warning}/npc movehere <nombre></click> {letters_black}· <click:suggest_command:''/npc tp ''>{warning}tp</click> {letters_black}· <click:run_command:''/npc near''>{warning}near</click>'
+  - ' <click:suggest_command:''/npc clone ''>{warning}/npc clone <nombre> <nuevo></click> {letters_black}· <click:suggest_command:''/npc rename ''>{warning}rename</click> {letters_black}· <click:suggest_command:''/npc delete ''>{warning}delete</click>'
+  - ' <click:suggest_command:''/npc import ''>{warning}/npc import <plugin></click> {letters_black}» {letters}Citizens, FancyNpcs'
+  - ' <click:run_command:''/npc reload''>{warning}/npc reload</click> {letters_black}» {letters}volver a leer npcs.yml'
+  - ''
+list-header: '%prefix% {letters}NPCs {letters_black}({info}%count%{letters_black})'
+list-line: ' <click:run_command:''/npc edit %name%''><hover:show_text:''{letters}Clic para editar''>{highlight}%name%</hover></click> {letters_black}» {letters}%world% {info}%x% %y% %z% {letters_black}· %skin% {letters_black}· %status%'
+list-empty: '%prefix% {letters}Aún no hay NPCs. {warning}<click:suggest_command:''/npc create ''>[Crear uno]</click>'
+near-header: '%prefix% {letters}NPCs a menos de {info}%radius% {letters}bloques {letters_black}({info}%count%{letters_black})'
+near-line: ' <click:run_command:''/npc edit %name%''><hover:show_text:''{letters}Clic para editar''>{highlight}%name%</hover></click> {letters_black}» {info}%distance%m {letters_black}· %skin% {letters_black}· <click:run_command:''/npc tp %name%''>{warning}[TP]</click>'
+near-empty: '%prefix% {letters}No hay NPCs a menos de {info}%radius% {letters}bloques.'
+info:
+  - ''
+  - '[center]{primary}&l%name%'
+  - ''
+  - ' {letters_black}▎ {letters}Estado {letters_black}» %status%'
+  - ' {letters_black}▎ {letters}Dónde {letters_black}» {letters}%world% {info}%x% %y% %z%'
+  - ' {letters_black}▎ {letters}Skin {letters_black}» %skin%'
+  - ' {letters_black}▎ {letters}Postura {letters_black}» {info}%pose% {letters_black}· {letters}Escala {info}%scale% {letters_black}· {letters}Brillo %glow%'
+  - ' {letters_black}▎ {letters}Mira {letters_black}» {info}%look% {letters_black}· {info}%look_range% {letters}bloques'
+  - ' {letters_black}▎ {letters}Lo ven {letters_black}» %permission% {letters_black}· {info}%view_distance% {letters}bloques'
+  - ' {letters_black}▎ {letters}Lleva {letters_black}» %equipment%'
+  - ' {letters_black}▎ {letters}Etiqueta {letters_black}» %label% {letters_black}· {letters}Holograma %link%'
+  - ' {letters_black}▎ {letters}Al hacer clic {letters_black}» %actions% {letters_black}· %use_permission% {letters_black}· {info}%cooldown%s ⌚'
+  - ''
+states:
+  enabled: '{success}Visible'
+  disabled: '{error}Oculto'
+  waiting: '{warning}Esperando a su mundo'
+  'yes': '{success}Sí'
+  'no': '{error}No'
+  everyone: '{letters}Todos'
+  nothing: '{muted}Nada'
+  action-count: '{info}%count% {letters}acción(es)'
+  label-lines: '{info}%count% {letters}línea(s)'
+  equipment-count: '{info}%count% {letters}objeto(s)'
+  skin-player: '{letters}Jugador {highlight}%player%'
+  skin-texture: '{letters}Textura propia'
+  skin-mirror: '{letters}Espejo {letters_black}(cada jugador)'
+  skin-none: '{muted}Por defecto'
+  no-glow: '{muted}Ninguno'
+  empty-slot: '{muted}Vacío'
+  worn-slot: '{success}Puesto'
+  link-missing: '{error}%hologram% {letters_black}(no existe)'
+dialogs:
+  create-title: '{primary}&lNUEVO NPC'
+  name-label: Nombre
+  name-hint: Minúsculas, números, - y _. Se usa en los comandos /npc.
+  preset-label: Empezar desde
+  skin-label: Skin
+  skin-hint: Un nombre de cuenta, @mirror para la de cada jugador, o vacío para la de por defecto.
+  appearance-title: '{primary}&lAPARIENCIA'
+  skin-type-label: Skin de
+  skin-player-label: Nombre de cuenta (para PLAYER)
+  texture-label: Textura (para TEXTURE)
+  texture-hint: El valor y la firma que da mineskin.org para una skin subida.
+  signature-label: Firma
+  pose-label: Postura
+  scale-label: Escala (1 = un jugador)
+  glow-label: Brillo
+  glow-hint: 'Un color como #8a51c4, dibujado con el color de equipo más cercano. Vacío para ninguno.'
+  label-title: '{primary}&lETIQUETA'
+  label-lines-label: Líneas
+  label-lines-hint: Una por fila, de arriba abajo. Funcionan colores, %placeholders% y etiquetas de holograma como <size:1.4>. Vacío para no tener etiqueta.
+  height-label: Separación sobre su cabeza (bloques)
+  link-title: '{primary}&lHOLOGRAMA VINCULADO'
+  link-label: Holograma
+  link-none: Ninguno
+  interactions-title: '{primary}&lINTERACCIONES'
+  actions-label: Acciones
+  actions-hint: 'Una por fila, en orden. ''right:'' o ''left:'' delante limita la fila a ese clic. Una línea sin más es un comando del jugador, ''console: ...'' desde la consola; [SERVER] lobby, [MESSAGE] texto, [SOUND] nombre, [DELAY] 1s, [SAY] texto;5s, [ANIMATE] swing, [LOOK].'
+  use-permission-label: Permiso para usarlo
+  use-permission-hint: Vacío para todos.
+  cooldown-label: Espera
+  cooldown-hint: Entre dos usos del mismo jugador, como 500ms o 2s. 0 para ninguna.
+  deny-label: Mensaje sin permiso
+  cooldown-message-label: Mensaje mientras espera
+  message-hint: Vacío para el de messages/npcs.yml.
+  face-clicker-label: Mirar a quien hace clic
+  visibility-title: '{primary}&lVISIBILIDAD'
+  look-label: La cabeza mira a
+  look-range-label: Alcance de giro (bloques)
+  view-distance-label: Distancia de visión (bloques)
+  permission-label: Permiso para verlo
+  permission-hint: Vacío para todos.
+  location-title: '{primary}&lUBICACIÓN'
+  world-label: Mundo
+  yaw-label: Yaw (0 sur, 90 oeste, 180 norte)
+  pitch-label: Pitch
+  rename-title: '{primary}Escribe el nuevo nombre:'
+  clone-title: '{primary}Nombra la copia:'
+  confirm-delete: '{error}¿Eliminar el NPC {highlight}%name%{error}? No se puede deshacer.'

@@ -1,6 +1,7 @@
 package net.exylia.exyliaDisplays.config;
 
 import net.exylia.exyliaDisplays.hologram.HologramsConfig;
+import net.exylia.exyliaDisplays.npc.NpcsConfig;
 import net.exylia.lib.config.Comment;
 import net.exylia.lib.config.ConfigFile;
 
@@ -15,6 +16,7 @@ import java.util.Map;
  * @param watchFiles apply hand edits of the module files on their own
  * @param modules    which modules run
  * @param holograms  the hologram module's settings
+ * @param npcs       the NPC module's settings
  */
 @Comment("ExyliaDisplays settings. What it shows lives in holograms.yml, npcs.yml and friends.")
 public record DisplaysConfig(
@@ -28,15 +30,19 @@ public record DisplaysConfig(
         Map<String, Boolean> modules,
 
         @Comment("Holograms.")
-        HologramsConfig holograms) {
+        HologramsConfig holograms,
+
+        @Comment("NPCs.")
+        NpcsConfig npcs) {
 
     public DisplaysConfig() {
-        this(false, true, defaultModules(), new HologramsConfig());
+        this(false, true, defaultModules(), new HologramsConfig(), new NpcsConfig());
     }
 
     public DisplaysConfig {
         if (modules == null) modules = Map.of();
         if (holograms == null) holograms = new HologramsConfig();
+        if (npcs == null) npcs = new NpcsConfig();
     }
 
     /** Whether a module runs; one the file does not name does. */

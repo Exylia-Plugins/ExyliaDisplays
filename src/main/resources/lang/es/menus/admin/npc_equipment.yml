@@ -1,0 +1,138 @@
+# NO EDITAR — SE REGENERA EN CADA ARRANQUE.
+#
+# Lo que lleva un NPC: una tarjeta por hueco, rellenada con el objeto de tu mano.
+
+title: "{primary}&lEQUIPAMIENTO {letters_black}» {highlight}%npc_name%"
+size: 36
+type: SIMPLE
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+
+items:
+  header:
+    slot: 4
+    material: "%npc_icon%"
+    name: "{primary}&l%npc_name%"
+    lore:
+      - ""
+      - "{secondary}Información:"
+      - " {letters_black}▎ {letters}Sujeta un objeto y haz clic en un"
+      - " {letters_black}▎ {letters}hueco para ponérselo. Los objetos"
+      - " {letters_black}▎ {letters}encantados, teñidos o propios se ven igual."
+      - ""
+      - "{secondary}Estado:"
+      - " {letters_black}▎ {letters}Lleva {letters_black}» %equipment%"
+      - ""
+
+  head:
+    slot: 10
+    material: "%npc_eq_head%"
+    name: "{primary}&lCABEZA"
+    lore:
+      - ""
+      - "{secondary}Estado:"
+      - " {letters_black}▎ {letters}Hueco {letters_black}» %npc_eq_head_state%"
+      - ""
+      - "{warning}➥ Clic izquierdo {letters_black}» {letters}ponerle el objeto de tu mano"
+      - "{error}➥ Clic derecho {letters_black}» {letters}vaciarlo"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_equip head"
+      - "right: exyliadisplays:npc_unequip head"
+
+  chest:
+    slot: 11
+    material: "%npc_eq_chest%"
+    name: "{primary}&lPECHO"
+    lore:
+      - ""
+      - "{secondary}Estado:"
+      - " {letters_black}▎ {letters}Hueco {letters_black}» %npc_eq_chest_state%"
+      - ""
+      - "{warning}➥ Clic izquierdo {letters_black}» {letters}ponerle el objeto de tu mano"
+      - "{error}➥ Clic derecho {letters_black}» {letters}vaciarlo"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_equip chest"
+      - "right: exyliadisplays:npc_unequip chest"
+
+  legs:
+    slot: 12
+    material: "%npc_eq_legs%"
+    name: "{primary}&lPIERNAS"
+    lore:
+      - ""
+      - "{secondary}Estado:"
+      - " {letters_black}▎ {letters}Hueco {letters_black}» %npc_eq_legs_state%"
+      - ""
+      - "{warning}➥ Clic izquierdo {letters_black}» {letters}ponerle el objeto de tu mano"
+      - "{error}➥ Clic derecho {letters_black}» {letters}vaciarlo"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_equip legs"
+      - "right: exyliadisplays:npc_unequip legs"
+
+  feet:
+    slot: 13
+    material: "%npc_eq_feet%"
+    name: "{primary}&lPIES"
+    lore:
+      - ""
+      - "{secondary}Estado:"
+      - " {letters_black}▎ {letters}Hueco {letters_black}» %npc_eq_feet_state%"
+      - ""
+      - "{warning}➥ Clic izquierdo {letters_black}» {letters}ponerle el objeto de tu mano"
+      - "{error}➥ Clic derecho {letters_black}» {letters}vaciarlo"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_equip feet"
+      - "right: exyliadisplays:npc_unequip feet"
+
+  hand:
+    slot: 15
+    material: "%npc_eq_hand%"
+    name: "{primary}&lMANO PRINCIPAL"
+    lore:
+      - ""
+      - "{secondary}Estado:"
+      - " {letters_black}▎ {letters}Hueco {letters_black}» %npc_eq_hand_state%"
+      - ""
+      - "{warning}➥ Clic izquierdo {letters_black}» {letters}ponerle el objeto de tu mano"
+      - "{error}➥ Clic derecho {letters_black}» {letters}vaciarlo"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_equip hand"
+      - "right: exyliadisplays:npc_unequip hand"
+
+  off-hand:
+    slot: 16
+    material: "%npc_eq_off_hand%"
+    name: "{primary}&lMANO SECUNDARIA"
+    lore:
+      - ""
+      - "{secondary}Estado:"
+      - " {letters_black}▎ {letters}Hueco {letters_black}» %npc_eq_off_hand_state%"
+      - ""
+      - "{warning}➥ Clic izquierdo {letters_black}» {letters}ponerle el objeto de tu mano"
+      - "{error}➥ Clic derecho {letters_black}» {letters}vaciarlo"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_equip off_hand"
+      - "right: exyliadisplays:npc_unequip off_hand"
+
+  back:
+    slot: 31
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: '{error}&lVOLVER'
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Vuelve al NPC."
+      - ""
+      - "{warning}➥ Clic para volver"
+      - ""
+    actions:
+      - "exyliadisplays:npc_open_hub"

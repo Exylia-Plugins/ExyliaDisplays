@@ -1,0 +1,213 @@
+# DO NOT EDIT — REGENERATED ON EVERY STARTUP.
+#
+# One NPC: its state, and a card for each part of it.
+
+title: "{primary}&lNPC {letters_black}» {highlight}%npc_name%"
+size: 45
+type: SIMPLE
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+
+items:
+  header:
+    slot: 4
+    material: "%npc_icon%"
+    name: "{primary}&l%npc_name%"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}Label {letters_black}» %npc_preview%"
+      - " {letters_black}▎ {letters}Skin {letters_black}» %skin%"
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}State {letters_black}» %status%"
+      - " {letters_black}▎ {letters}Seen by now {letters_black}» {info}%npc_viewers% {letters}players"
+      - ""
+      - "{warning}➥ Left-click {letters_black}» {letters}show or hide"
+      - "{warning}➥ Right-click {letters_black}» {letters}rename"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_toggle"
+      - "right: exyliadisplays:npc_rename"
+
+  appearance:
+    slot: 19
+    material: ARMOR_STAND
+    name: "{primary}&lAPPEARANCE"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}Its skin, pose, size and outline."
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}Skin {letters_black}» %skin%"
+      - " {letters_black}▎ {letters}Pose {letters_black}» {info}%pose%"
+      - " {letters_black}▎ {letters}Scale {letters_black}» {info}%scale%"
+      - " {letters_black}▎ {letters}Glow {letters_black}» %glow%"
+      - ""
+      - "{warning}➥ Click to edit"
+      - ""
+    actions:
+      - "exyliadisplays:npc_appearance"
+
+  equipment:
+    slot: 20
+    material: DIAMOND_CHESTPLATE
+    name: "{primary}&lEQUIPMENT"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}What it wears and holds, taken"
+      - " {letters_black}▎ {letters}from the item in {highlight}your hand{letters}."
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}Wears {letters_black}» %equipment%"
+      - ""
+      - "{warning}➥ Click to open"
+      - ""
+    actions:
+      - "exyliadisplays:npc_open_equipment"
+
+  label:
+    slot: 21
+    material: NAME_TAG
+    name: "{primary}&lLABEL"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}The lines above its head, with"
+      - " {letters_black}▎ {letters}every {highlight}hologram tag{letters}, or a whole"
+      - " {letters_black}▎ {letters}hologram that follows it."
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}Label {letters_black}» %label%"
+      - " {letters_black}▎ {letters}Gap {letters_black}» {info}%npc_height% {letters}blocks"
+      - " {letters_black}▎ {letters}Hologram {letters_black}» %link%"
+      - ""
+      - "{warning}➥ Left-click {letters_black}» {letters}edit the label"
+      - "{warning}➥ Right-click {letters_black}» {letters}link a hologram"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_label"
+      - "right: exyliadisplays:npc_link"
+
+  interactions:
+    slot: 23
+    material: LEVER
+    name: "{primary}&lINTERACTIONS"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}What a click does: send to a server,"
+      - " {letters_black}▎ {letters}run commands, {highlight}speak {letters}in a bubble,"
+      - " {letters_black}▎ {letters}swing, with {highlight}left {letters}and {highlight}right {letters}apart."
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}On click {letters_black}» %actions%"
+      - " {letters_black}▎ {letters}Used by {letters_black}» %use_permission%"
+      - " {letters_black}▎ {letters}Cooldown {letters_black}» {info}%cooldown%s ⌚"
+      - " {letters_black}▎ {letters}Turns to clicker {letters_black}» %face_clicker%"
+      - ""
+      - "{warning}➥ Click to edit"
+      - ""
+    actions:
+      - "exyliadisplays:npc_interactions"
+
+  visibility:
+    slot: 24
+    material: ENDER_EYE
+    name: "{primary}&lVISIBILITY"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}Where its head turns, who sees"
+      - " {letters_black}▎ {letters}it, and from how far."
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}Looks {letters_black}» {info}%look%"
+      - " {letters_black}▎ {letters}Turn range {letters_black}» {info}%look_range% {letters}blocks"
+      - " {letters_black}▎ {letters}Seen by {letters_black}» %permission%"
+      - " {letters_black}▎ {letters}Distance {letters_black}» {info}%view_distance% {letters}blocks"
+      - ""
+      - "{warning}➥ Click to edit"
+      - ""
+    actions:
+      - "exyliadisplays:npc_visibility"
+
+  location:
+    slot: 25
+    material: COMPASS
+    name: "{primary}&lLOCATION"
+    lore:
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}World {letters_black}» {info}%world%"
+      - " {letters_black}▎ {letters}Position {letters_black}» {info}%xyz%"
+      - " {letters_black}▎ {letters}Facing {letters_black}» {info}%yaw%°"
+      - ""
+      - "{warning}➥ Left-click {letters_black}» {letters}exact position"
+      - "{warning}➥ Right-click {letters_black}» {letters}move here"
+      - "{warning}➥ Shift-left-click {letters_black}» {letters}face me"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_location"
+      - "right: exyliadisplays:npc_move_here"
+      - "shift_left: exyliadisplays:npc_face_me"
+
+  teleport:
+    slot: 36
+    material: ENDER_PEARL
+    name: "{primary}&lTELEPORT"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Go to it, facing it."
+      - ""
+      - "{warning}➥ Click to teleport"
+      - ""
+    actions:
+      - "exyliadisplays:npc_teleport"
+
+  clone:
+    slot: 37
+    material: PAPER
+    name: "{primary}&lDUPLICATE"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}A copy under a new name,"
+      - " {letters_black}▎ {letters}in the same place."
+      - ""
+      - "{warning}➥ Click to duplicate"
+      - ""
+    actions:
+      - "exyliadisplays:npc_clone"
+
+  back:
+    slot: 40
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: '{error}&lBACK'
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Returns to every NPC."
+      - ""
+      - "{warning}➥ Click to go back"
+      - ""
+    actions:
+      - "exyliadisplays:npc_open_list"
+
+  delete:
+    slot: 44
+    material: BARRIER
+    name: "{error}&lDELETE"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Removes it for good."
+      - " {letters_black}You will be asked to confirm."
+      - ""
+      - "{error}➥ Click to delete"
+      - ""
+    actions:
+      - "exyliadisplays:npc_delete"

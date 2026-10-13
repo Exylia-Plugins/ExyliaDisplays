@@ -1,6 +1,7 @@
 package net.exylia.exyliaDisplays.module;
 
 import net.exylia.exyliaDisplays.hologram.HologramModule;
+import net.exylia.exyliaDisplays.npc.NpcModule;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -19,6 +20,6 @@ public final class Modules {
 
     /** A fresh instance of every module; the core keeps the ones the config switches on. */
     public static List<Supplier<DisplayModule>> all() {
-        return List.of(HologramModule::new);
+        return List.of(HologramModule::new, NpcModule::new);
     }
 }
