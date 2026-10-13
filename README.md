@@ -1,22 +1,26 @@
-# ExyliaHolograms
+# ExyliaDisplays
 
-Free, open-source holograms for Paper and Folia that do what the others can't: lines of different sizes that make room for each other, floating items and spinning blocks inside the same hologram, shine and colour flow, a typewriter effect, lines only some players see, and click actions. Everything can be edited **in game through native dialog windows**, **with commands**, or **by hand in `holograms.yml`**, and all three stay in sync.
+Free, open-source **holograms and NPCs** for Paper and Folia, with one interaction system shared by both. Holograms can have lines of different sizes, spinning blocks, shine and typewriter effects, and lines only some players see. NPCs can greet each player in their own speech bubble, show every viewer their own skin, and send players to another server. Edit everything **in game through native dialog windows**, **with commands**, or **by hand in YAML**, and all three stay in sync.
 
-Built on [ExyliaLib](https://github.com/DiGround-s/ExyliaLib)'s packet holograms: no entities on the server and nothing saved in chunks. A line is only sent again when its text actually changes.
+Built on [ExyliaLib](https://github.com/DiGround-s/ExyliaLib): everything is packets. Nothing is a real entity, nothing is saved in chunks, and nothing ticks on the server.
 
-## Why another hologram plugin
+## What it does that others don't
 
-| | ExyliaHolograms |
+| | |
 | --- | --- |
-| **Per-line size** | `<size:2.2>` makes one line bigger, and the lines above move up to make room |
-| **Models in the stack** | `<item:DIAMOND>` and `<block:BEACON>` lines between text lines, with `<glow:#59a4ff>` outlines |
+| **One interaction system** | Holograms and NPCs run the same click lines: `right: [SERVER] survival`, `left: [SAY] Hey!`, `console: give %player_name% diamond 1`, `[MESSAGE]`, `[SOUND]`, `[TITLE]`, `[DELAY] 1s`, `[TELEPORT]`. Left and right clicks can do different things |
+| **NPCs that talk** | `[SAY]` puts a speech bubble above the NPC that only the clicking player sees, typed in letter by letter |
+| **Mirror skin** | An NPC with `@mirror` shows each player their own skin |
+| **Looks at each of you** | In `each-viewer` mode, every player sees the NPC turn its head toward them, not toward someone else |
+| **Labels that are holograms** | An NPC's name is a hologram with every line tag (size, shine, typewriter, per-player lines), and clicking it does what clicking the NPC does. Link any hologram to an NPC and it follows the NPC wherever you move it |
+| **Per-line size** | `<size:2.2>` makes one hologram line bigger, and the lines above move up to make room |
+| **Models in the stack** | `<item:DIAMOND>` and `<block:BEACON>` lines between text lines, with glow outlines |
 | **Motion** | `<spin>`, `<bob>`, `<pulse>`: the client interpolates between keyframes, so the server sends two packets a second, not twenty |
 | **Colour that moves** | `<shine>` sweeps a band of light across a title; `<flow>` makes a gradient's colours run along it |
-| **Typewriter** | `<typewriter>` types a line in when a player first sees it |
-| **Lines for some players** | `<range:8>` shows a line only up close, `<perm:vip>` only to VIPs, `<if:"%player_level% >= 10">` only while a condition holds. The stack re-lays itself out for each viewer |
-| **Clickable** | Commands on click, and the hologram grows slightly while you look at it, so players can tell it's a button |
-| **Three ways to edit** | Screens and dialogs, `/holo` commands, or `holograms.yml`, which is applied as soon as you save it |
-| **Imports** | `/holo import` reads DecentHolograms, HolographicDisplays and FancyHolograms and leaves their files untouched |
+| **Lines for some players** | `<range:8>`, `<perm:vip>`, `<if:"%player_level% >= 10">`: the stack re-lays itself out for each viewer |
+| **Three ways to edit** | Screens and dialogs, `/holo` and `/npc` commands, or `holograms.yml` and `npcs.yml`, which are applied as soon as you save them |
+| **Imports** | DecentHolograms, HolographicDisplays, FancyHolograms, Citizens and FancyNpcs. Their files are read and never changed |
+| **Modular** | Turn holograms or NPCs off in `config.yml`. New modules plug into the same core |
 
 ## Requirements
 
@@ -24,24 +28,61 @@ Built on [ExyliaLib](https://github.com/DiGround-s/ExyliaLib)'s packet holograms
 - [PacketEvents](https://modrinth.com/plugin/packetevents)
 - [ExyliaLib](https://github.com/DiGround-s/ExyliaLib/releases). If it is missing, the plugin downloads the latest release on first start and asks for a restart.
 
+Optional: PlaceholderAPI, whose placeholders work in any line and any action.
+
 ## Updates
 
 ExyliaLib keeps both itself and this plugin up to date from their GitHub releases: a new version is downloaded in the background and applied on the next restart. A new major version waits for you to install it by hand, and a release that needs a newer ExyliaLib waits until the library has updated. Turn it off or tune it under `plugin-updates` in `plugins/ExyliaLib/config.yml`; `/exylialib updates` shows what is pending.
 
-Optional: PlaceholderAPI, whose placeholders work in any line.
+**Coming from ExyliaHolograms?** This is the same plugin, renamed now that it does more. On first start, `plugins/ExyliaHolograms/holograms.yml` is copied over (the old folder is left untouched). Remove the old jar. `exyliaholograms.admin` keeps working.
 
 ## Getting started
 
-1. Stand where you want it and run `/holo create spawn`, or open `/holo` and click **CREATE HOLOGRAM** to start from a preset.
-2. In its editor, open **LINES**:
-   - left-click a line to change its text;
-   - right-click it for size, motion and visibility, all in one window;
-   - shift-click to move it up or down; press Q to remove it.
-3. **EDIT ALL AT ONCE** opens every line in a single box, one per row, which is the fastest way to write a whole hologram.
+**A hologram:** stand where you want it and run `/holo create spawn`, or open `/holo` and click **CREATE HOLOGRAM** to start from a preset. In its editor, **LINES**:
+- left-click a line to change its text;
+- right-click it for size, motion and visibility, all in one window;
+- shift-click to move it up or down; press Q to remove it.
+
+**An NPC:** `/npc create guide Notch`, or open `/npc` and start from a preset. The presets are a guide that greets you, a server portal, a shopkeeper and a mirror. Its editor has cards for:
+- appearance: skin, pose, scale, glow;
+- equipment: wear the item in your hand;
+- label: the hologram above its head;
+- interactions;
+- visibility;
+- location.
+
+## Interactions
+
+The same lines work in a hologram's `click.commands` and an NPC's `interactions.actions`. One action per line, run in order:
+
+```yaml
+actions:
+  - 'right: [SOUND] ENTITY_VILLAGER_AMBIENT;1;1.2'
+  - 'right: [SAY] {letters}Welcome, {highlight}%player_name%{letters}!;6s'
+  - 'left: [ANIMATE] hurt'
+  - 'shift_right: [SERVER] survival'
+  - 'console: give %player_name% bread 1'
+```
+
+| Line | Does |
+| --- | --- |
+| `left:` `right:` `shift_left:` `shift_right:` `shift:` `any:` | Optional prefix: only that click runs the line |
+| `command` · `player: command` · `console: command` | Runs a command as the player or from the console |
+| `player-proxy: server lobby` · `console-proxy: alert ...` | Runs it on the proxy (with ExyliaProxyUtils) |
+| `[SERVER] lobby` | Sends the player to another server of the network (BungeeCord or Velocity) |
+| `[TELEPORT] world;x;y;z[;yaw;pitch]` | Teleports the player |
+| `[DELAY] 1s` | Waits before the lines after it |
+| `[MESSAGE] text` · `[TITLE] title;subtitle` · `[ACTION_BAR] text` · `[SOUND] NAME;volume;pitch` · `[TOAST] ...` · `[PARTICLE] ...` | Shown only to the player who clicked |
+| `[SAY] text;5s` | NPCs: a speech bubble above the NPC, only for the player who clicked |
+| `[ANIMATE] swing` · `[ANIMATE] hurt` | NPCs: swings an arm, or flinches |
+| `[LOOK]` | NPCs: turns to the player who clicked |
+| `[ACTION] namespace:id` | Runs an action another Exylia plugin registered |
+
+NPC interactions can also require a permission and have a per-player cooldown, each with its own refusal message.
 
 ## Line tags
 
-Tags go at the very start of a line and style that line alone:
+Hologram lines and NPC labels both use these tags. They go at the very start of a line and style that line alone.
 
 An arena entrance: a block turning above a shining title, a line each player
 reads differently, and a hint that types itself in only when you get close.
@@ -67,8 +108,6 @@ lines:
   - '<perm:!observatory.key><opacity:180>{letters_black}Find the key in the library'
 ```
 
-More starting points ship as presets in `config.yml`: a portal sign, a members-only lounge, a parkour checkpoint and a welcome sign.
-
 | Tag | Effect |
 | --- | --- |
 | `<size:2>` | bigger (or smaller) than the rest; the stack makes room |
@@ -89,59 +128,46 @@ More starting points ship as presets in `config.yml`: a portal sign, a members-o
 
 Anything else at the start of a line, such as `<gradient:...>`, stays as text. Colours use ExyliaLib's palette tokens (`{primary}`, `{highlight}`...) as well as `&` codes, hex and MiniMessage.
 
+Anything else at the start of a line, such as `<gradient:...>`, stays as text. Colours use ExyliaLib's palette tokens (`{primary}`, `{highlight}`...) as well as `&` codes, hex and MiniMessage.
+
 ## Commands
 
-Everything needs `exyliaholograms.admin` (operators by default). Line numbers count from 1, top first.
+| Command | Permission | |
+| --- | --- | --- |
+| `/displays help\|modules\|reload` | `exyliadisplays.admin` | The plugin as a whole |
+| `/holo` (`/hologram`) | `exyliadisplays.holograms` | Every hologram, on a screen. `/holo help` lists the rest: `create`, `edit`, `addline`, `setline`, `insertline`, `removeline`, `moveline`, `movehere`, `move`, `center`, `tp`, `near`, `info`, `list`, `enable`, `disable`, `clone`, `rename`, `delete`, `import`, `reload` |
+| `/npc` (`/npcs`) | `exyliadisplays.npcs` | Every NPC, on a screen. `/npc help` lists the rest: `create`, `edit`, `equipment`, `skin`, `pose`, `look`, `glow`, `scale`, `equip`, `label`, `action`, `link`, `unlink`, `movehere`, `face`, `tp`, `near`, `info`, `list`, `enable`, `disable`, `clone`, `rename`, `delete`, `import`, `reload` |
 
-| Command | |
-| --- | --- |
-| `/holo` (`/hologram`) | Every hologram, on a screen |
-| `/holo create <name> [text]` | A new hologram where you stand |
-| `/holo edit <name>` · `/holo lines <name>` | Its editor, or its lines |
-| `/holo addline <name> <text>` | Add a line at the bottom |
-| `/holo setline <name> <line> <text>` | Replace a line |
-| `/holo insertline <name> <line> <text>` | Insert a line before another |
-| `/holo removeline <name> <line>` | Remove a line |
-| `/holo moveline <name> <from> <to>` | Move a line |
-| `/holo movehere <name>` · `/holo move <name> <x> <y> <z> [world]` · `/holo center <name>` | Move it |
-| `/holo tp <name>` | Go to it |
-| `/holo near [radius]` | The ones around you, with click-to-edit |
-| `/holo info <name>` · `/holo list` | Details, or every hologram in chat |
-| `/holo enable\|disable <name>` | Show or hide it |
-| `/holo clone <name> <new>` · `/holo rename <name> <new>` · `/holo delete <name>` | |
-| `/holo import <DECENTHOLOGRAMS\|HOLOGRAPHICDISPLAYS\|FANCYHOLOGRAMS>` | Bring holograms over from another plugin |
-| `/holo reload` | Read the files again |
+`exyliadisplays.admin` includes both module permissions; `exyliadisplays.*` grants everything. If Citizens is installed too, its `/npc` and this one compete for the name; use `/npcs`.
 
 ## Files
 
-- **`holograms.yml`**: every hologram. Edit it while the server runs and the change is applied within a second (turn this off with `watch-file` in `config.yml`). Every key:
+- **`config.yml`** contains:
+  - which modules run;
+  - file watching;
+  - each module's defaults;
+  - the **presets** offered when creating from the menu (add your own).
+- **`holograms.yml`** and **`npcs.yml`** hold everything you place. Edit them while the server runs and the change is applied within a second. A hand-written entry only needs the keys it changes. An NPC:
 
   ```yaml
-  holograms:
-    arena:
-      enabled: true
-      location: { world: world, x: 10.5, y: 66.0, z: -4.5 }
-      lines:
-        - '<size:2><shine>{accent}&lTHE ARENA'
-      permission: ''          # who sees it; empty for everyone
-      view-distance: 48.0
-      per-player: false       # each viewer gets their own %player_...% values
-      appearance:             # billboard, alignment, scale-x/y/z, shadow, see-through,
-        billboard: CENTER     # line-width, line-spacing, text-opacity, default-background,
-        line-spacing: 0.25    # background-color, brightness
-      refresh:
-        update-interval: 20   # ticks between placeholder refreshes
-        auto-update: true
-      click:
-        commands:             # 'console: ...' runs from the console, a bare line as the player
-          - 'arena join'
-        width: 1.5            # click box width, in blocks
-        cooldown: 500         # milliseconds between two clicks of the same player
-        hover-scale: 1.08     # how much it grows while looked at; 1 turns it off
+  npcs:
+    guide:
+      location: {world: lobby, x: 0.5, y: 64.0, z: -3.5, yaw: 180.0, pitch: 0.0}
+      skin: {type: player, player: Notch}      # player, texture, mirror, none
+      pose: standing                           # sneaking, lying, crawling, spinning
+      look: {mode: each-viewer, range: 8.0}    # fixed, nearest, each-viewer
+      glow: '#8a51c4'
+      equipment: {hand: DIAMOND_SWORD}
+      label: {lines: ['<size:1.2><shine>{primary}&lGUIDE'], height-offset: 0.25}
+      linked-hologram: ''                      # a hologram that follows it
+      interactions:
+        actions: ['right: [SAY] Hello, %player_name%!;5s']
+        permission: ''
+        cooldown: 2s
+        face-clicker: true
   ```
 
-- **`config.yml`**: file watching, where new holograms stand, the default view distance, and the **presets** offered when creating from the menu. Add your own presets there.
-- **`lang/<code>/messages.yml`** and **`lang/<code>/menus/`**: every message and screen, in English and Spanish. The language follows ExyliaLib's.
+- **`lang/<code>/messages.yml`**, **`messages/holograms.yml`**, **`messages/npcs.yml`** and **`menus/`** contain every message and screen, in English and Spanish. The language follows ExyliaLib's.
 
 ## Building
 
