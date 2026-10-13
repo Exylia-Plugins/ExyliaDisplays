@@ -172,6 +172,22 @@ public final class NpcCommand {
         NpcDialogs.faceMe(player, player, name);
     }
 
+    /** Fine adjustment with the mouse wheel; again saves it. See {@link NpcAdjust}. */
+    @Subcommand("<name> adjust")
+    public void adjust(Player player, @SuggestWith(Names.class) String name) {
+        NpcModule.get().adjust().toggle(player, name);
+    }
+
+    @Subcommand("<name> adjust save")
+    public void adjustSave(Player player, @SuggestWith(Names.class) String name) {
+        NpcModule.get().adjust().finish(player, name, true);
+    }
+
+    @Subcommand("<name> adjust cancel")
+    public void adjustCancel(Player player, @SuggestWith(Names.class) String name) {
+        NpcModule.get().adjust().finish(player, name, false);
+    }
+
     // ------------------------------------------------------------------
     // How it looks
     // ------------------------------------------------------------------

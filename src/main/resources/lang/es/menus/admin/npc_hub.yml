@@ -186,6 +186,28 @@ items:
     actions:
       - "exyliadisplays:npc_clone"
 
+  adjust:
+    slot: 38
+    material: SPYGLASS
+    name: "{primary}&lAJUSTE FINO"
+    lore:
+      - ""
+      - "{secondary}Información:"
+      - " {letters_black}▎ {letters}Muévelo, gíralo y escálalo con la"
+      - " {letters_black}▎ {highlight}rueda del ratón {letters}mientras lo miras."
+      - ""
+      - "{secondary}Controles:"
+      - " {letters_black}▎ {letters}Rueda {letters_black}» {info}cambiar el valor"
+      - " {letters_black}▎ {letters}Agachado + rueda {letters_black}» {info}tamaño del paso"
+      - " {letters_black}▎ {letters}F {letters_black}» {info}siguiente eje"
+      - " {letters_black}▎ {letters}Agachado + clic {letters_black}» {info}encajar"
+      - " {letters_black}▎ {letters}Clic {letters_black}» {info}guardar"
+      - ""
+      - "{warning}➥ Clic para empezar"
+      - ""
+    actions:
+      - "exyliadisplays:npc_adjust"
+
   back:
     slot: 40
     sound: "minecraft:item.bundle.remove_one|1.0|0.5"

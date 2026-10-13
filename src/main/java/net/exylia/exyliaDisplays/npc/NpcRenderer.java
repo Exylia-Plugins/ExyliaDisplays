@@ -2,6 +2,7 @@ package net.exylia.exyliaDisplays.npc;
 
 import net.exylia.exyliaDisplays.ExyliaDisplays;
 import net.exylia.exyliaDisplays.common.interaction.InteractionGate;
+import net.exylia.exyliaDisplays.common.store.Position;
 import net.exylia.exyliaDisplays.hologram.HologramModule;
 import net.exylia.lib.hologram.Hologram;
 import net.exylia.lib.hologram.HologramConfig;
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 /**
@@ -44,6 +46,8 @@ public final class NpcRenderer implements Listener {
     private final ExyliaDisplays core;
     private final Plugin plugin;
     private final PluginNpcs npcs;
+    /** Lays a live adjustment over what the file says; see {@link NpcAdjust#preview}. */
+    private final BiFunction<String, StoredNpc, StoredNpc> overlay;
     /** What each NPC in the world was last drawn from. */
     private final Map<String, StoredNpc> shown = new ConcurrentHashMap<>();
     /** NPCs whose world is not loaded, drawn when it is. */
@@ -53,8 +57,9 @@ public final class NpcRenderer implements Listener {
     /** Bumped on every turn to a clicker, so only the latest turn turns it back. */
     private final Map<String, AtomicInteger> turns = new ConcurrentHashMap<>();
 
-    public NpcRenderer(ExyliaDisplays core) {
+    public NpcRenderer(ExyliaDisplays core, BiFunction<String, StoredNpc, StoredNpc> overlay) {
         this.core = core;
+        this.overlay = overlay;
         this.plugin = core.getPlugin();
         this.npcs = Npcs.of(plugin);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -64,9 +69,10 @@ public final class NpcRenderer implements Listener {
      * Shows an NPC as it is now saved.
      *
      * @param name its name
-     * @param npc  what it is now, or {@code null} once it was removed
+     * @param saved what it is now, or {@code null} once it was removed
      */
-    public void apply(String name, StoredNpc npc) {
+    public void apply(String name, StoredNpc saved) {
+        StoredNpc npc = overlay.apply(name, saved);
         waiting.remove(name);
         if (npc == null || !npc.enabled()) {
             hide(name);
@@ -93,7 +99,7 @@ public final class NpcRenderer implements Listener {
             gates.put(name, gate(name, npc));
         }
         label(name, npc, before);
-        followedBy(npc);
+        followedBy(npc, npc != saved);
         shown.put(name, npc);
     }
 
@@ -233,12 +239,24 @@ public final class NpcRenderer implements Listener {
     /**
      * Keeps the linked hologram over its head, by moving it in holograms.yml: the hologram module
      * stays the only one that draws it, and an edit there is still where it is edited.
+     *
+     * <p>While the NPC is being adjusted ({@code preview}) the hologram is only drawn there, not
+     * saved, so holograms.yml is written once, when the adjustment is.
      */
-    private void followedBy(StoredNpc npc) {
+    private void followedBy(StoredNpc npc, boolean preview) {
         HologramModule holograms = HologramModule.get();
-        if (npc.linkedHologram().isBlank() || holograms == null) return;
-        holograms.store().edit(npc.linkedHologram(), hologram ->
-                hologram.withLocation(npc.location().above(npc.topHeight())));
+        String linked = npc.linkedHologram();
+        if (linked.isBlank() || holograms == null) return;
+        Position above = npc.location().above(npc.topHeight());
+        if (preview) {
+            holograms.store().get(linked).ifPresent(hologram ->
+                    holograms.renderer().apply(linked, hologram.withLocation(above)));
+            return;
+        }
+        // Drawn again from the file even when the edit changed nothing: an undone adjustment
+        // leaves the hologram where the preview put it.
+        holograms.store().edit(linked, hologram -> hologram.withLocation(above))
+                .ifPresent(hologram -> holograms.renderer().apply(linked, hologram));
     }
 
     private static Predicate<Player> seenBy(StoredNpc npc) {

@@ -132,7 +132,8 @@ class NpcConfigFilesTest {
                 .map(line -> line.substring(0, line.indexOf(':')))
                 .toList();
         for (String key : keys) {
-            assertTrue(spanish.lines().anyMatch(line -> line.startsWith(key + ":")),
+            assertTrue(spanish.lines().anyMatch(line -> line.startsWith(key + ":")
+                            || line.startsWith(key.replaceFirst("^( *)([a-z-]+)$", "$1'$2'") + ":")),
                     "lang/es/messages/npcs.yml has no " + key.trim());
         }
     }

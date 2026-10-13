@@ -33,6 +33,7 @@ public final class NpcModule implements DisplayModule {
     private EntryStore<NpcFile, StoredNpc> store;
     private NpcRenderer renderer;
     private FileWatcher watcher;
+    private final NpcAdjust adjust = new NpcAdjust();
 
     /** The running module; only called by code that runs because the module does. */
     public static NpcModule get() {
@@ -56,11 +57,14 @@ public final class NpcModule implements DisplayModule {
         NpcsMessages.install(Configs.define(core.getPlugin(), "messages/npcs", NpcsMessages.class)
                 .translated().load());
 
-        renderer = new NpcRenderer(core);
+        renderer = new NpcRenderer(core, adjust::preview);
         // Before the first NPC compiles its lines: a token unknown then is a line skipped.
         new NpcTokens(core, renderer).register();
         ConfigFile<NpcFile> file = Configs.define(core.getPlugin(), "npcs", NpcFile.class).load();
-        store = new EntryStore<>(file, NpcFile::npcs, NpcFile::new, renderer::apply);
+        store = new EntryStore<>(file, NpcFile::npcs, NpcFile::new, (name, npc) -> {
+            if (npc == null) adjust.removed(name);
+            renderer.apply(name, npc);
+        });
         renderer.applyAll(store.all());
 
         watcher = new FileWatcher(new File(core.getPlugin().getDataFolder(), "npcs.yml").toPath(),
@@ -82,6 +86,7 @@ public final class NpcModule implements DisplayModule {
 
     @Override
     public void disable() {
+        adjust.saveAll();
         if (watcher != null) watcher.stop();
         if (renderer != null) renderer.clear();
         instance = null;
@@ -95,6 +100,10 @@ public final class NpcModule implements DisplayModule {
         return renderer;
     }
 
+    public NpcAdjust adjust() {
+        return adjust;
+    }
+
     /**
      * Reads npcs.yml again and shows what it says now.
      *
@@ -106,6 +115,7 @@ public final class NpcModule implements DisplayModule {
                 .filter(issue -> issue.type() != ConfigIssue.Type.MISSING_KEY)
                 .toList();
         issues.forEach(issue -> core.getDebug().warn("npcs.yml: " + issue.describe()));
+        adjust.prune();
         renderer.applyAll(store.all());
         watcher.remember();
         return issues;

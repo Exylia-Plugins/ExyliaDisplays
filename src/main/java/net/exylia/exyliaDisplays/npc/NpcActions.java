@@ -81,6 +81,7 @@ public final class NpcActions {
             NpcDialogs.faceMe(player, player, name);
             NpcViews.openHub(player, name);
         });
+        hub("adjust", (player, name) -> NpcModule.get().adjust().toggle(player, name));
         hub("teleport", NpcActions::teleport);
         hub("clone", NpcDialogs::cloneNpc);
         hub("delete", (player, name) -> NpcDialogs.delete(player, name, () -> NpcViews.openHub(player, name)));

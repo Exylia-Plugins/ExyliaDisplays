@@ -10,6 +10,7 @@ import java.util.List;
  *
  * @param states  the words menus and messages show for a state
  * @param dialogs the titles, labels and hints of every window that asks something
+ * @param adjust  fine adjustment with the mouse wheel: its messages, boss bars and axis names
  */
 @Comment("Messages of the NPC module of ExyliaDisplays.")
 @Comment("")
@@ -109,13 +110,17 @@ public record NpcsMessages(
         @Comment("A value a setting does not take. Placeholders: %property%, %value%, %expected%.")
         String invalidValue,
         States states,
-        Dialogs dialogs) {
+        Dialogs dialogs,
+
+        @Comment("Fine adjustment with the mouse wheel: /npc <name> adjust.")
+        Adjust adjust) {
 
     public NpcsMessages {
         if (help == null) help = List.of();
         if (info == null) info = List.of();
         if (states == null) states = new States();
         if (dialogs == null) dialogs = new Dialogs();
+        if (adjust == null) adjust = new Adjust();
     }
 
     private static final String OK = "[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% ";
@@ -178,6 +183,7 @@ public record NpcsMessages(
                         " {secondary}Edit one {letters_black}» {warning}/npc <name> {letters_black}opens its editor",
                         " {warning}info {letters_black}· {warning}tp {letters_black}· {warning}movehere {letters_black}· {warning}move <x> <y> <z> [world] {letters_black}· {warning}center",
                         " {warning}rotate <yaw> [pitch] {letters_black}· {warning}face {letters_black}» {letters}turn it, or turn it to you",
+                        " {warning}adjust {letters_black}» {letters}move, turn and scale it with the mouse wheel {muted}(again saves, adjust cancel undoes)",
                         " {warning}rename <new> {letters_black}· {warning}clone <new> {letters_black}· {warning}enable {letters_black}· {warning}disable {letters_black}· {warning}delete",
                         " {warning}skin <player|@mirror|@none> {letters_black}· {warning}texture <value> [signature]",
                         " {warning}pose {letters_black}· {warning}scale {letters_black}· {warning}glow <#RRGGBB|none> {letters_black}· {warning}look <mode> [range]",
@@ -210,7 +216,9 @@ public record NpcsMessages(
                 OK + "{highlight}%name% {letters_black}» {letters}%property% {letters_black}» {info}%value%",
                 NO + "{highlight}%value% {error}does not fit {highlight}%property%{error}. {letters_black}Use: {info}%expected%",
                 new States(),
-                new Dialogs());
+                new Dialogs(),
+
+                new Adjust());
     }
 
     /**
@@ -354,6 +362,55 @@ public record NpcsMessages(
                     "{primary}Write the new name:",
                     "{primary}Name the copy:",
                     "{error}Delete the NPC {highlight}%name%{error}? This cannot be undone.");
+        }
+    }
+
+    /**
+     * Fine adjustment with the mouse wheel.
+     *
+     * <p>The boss bars take %subject% (the NPC), %axis%, %value%, %step%, %index% and %count%.
+     */
+    public record Adjust(
+            @Comment("Told when it starts. Placeholder: %name%.")
+            String started,
+            @Comment("Placeholder: %name%.")
+            String saved,
+            String cancelled,
+            @Comment("The NPC was deleted or renamed while being adjusted. Placeholder: %name%.")
+            String gone,
+            @Comment("Somebody else is adjusting it. Placeholders: %name%, %player%.")
+            String busy,
+            @Comment("Placeholder: %name%.")
+            String notAdjusting,
+            @Comment("The top boss bar.")
+            String hud,
+            @Comment("The second boss bar, with the keys. Empty to hide it.")
+            String hints,
+            String x,
+            String y,
+            String z,
+            @Comment("Moves it along where you look.")
+            String forward,
+            String yaw,
+            String pitch,
+            String scale,
+            @Comment("The gap between its head and the label.")
+            String labelHeight) {
+
+        public Adjust() {
+            this("[sound:BLOCK_NOTE_BLOCK_PLING|0.6|1.6]%prefix% {letters}Adjusting {highlight}%name%{letters}: scroll to move it, {highlight}F {letters}for the next axis. "
+                            + "<click:run_command:'/npc %name% adjust save'>{success}&l[✔ SAVE]</click> "
+                            + "<click:run_command:'/npc %name% adjust cancel'>{error}&l[✘ UNDO]</click>",
+                    OK + "{success}Adjustment of {highlight}%name% {success}saved.",
+                    "%prefix% {warning}Adjustment of {highlight}%name% {warning}undone.",
+                    NO + "{highlight}%name% {error}was deleted or renamed; adjustment stopped.",
+                    NO + "{highlight}%player% {error}is already adjusting {highlight}%name%{error}.",
+                    NO + "{error}You are not adjusting {highlight}%name%{error}.",
+                    "{primary}&l%subject% {letters_black}» {secondary}%axis% {info}%value% {letters_black}▎ {letters}Step {info}%step%",
+                    "{letters}Scroll {letters_black}» {info}adjust {letters_black}▎ {letters}Sneak+scroll {letters_black}» {info}step "
+                            + "{letters_black}▎ {letters}F {letters_black}» {info}axis {letters_black}▎ {letters}Sneak+click {letters_black}» {info}snap "
+                            + "{letters_black}▎ {letters}Click {letters_black}» {success}save",
+                    "X", "Y", "Z", "Forward", "Turn", "Tilt", "Scale", "Label height");
         }
     }
 
