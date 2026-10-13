@@ -55,7 +55,7 @@ public record Place(
 
     /** The point it stands on, shifted up, for whatever floats above it. */
     public Position above(double height) {
-        return new Position(world, x, y, z).plus(0, height, 0);
+        return new Position(world, x, y, z, (float) yaw, 0f).plus(0, height, 0);
     }
 
     /** The same place, moved to the centre of the block it is in. */

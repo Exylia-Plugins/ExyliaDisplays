@@ -68,7 +68,7 @@ public final class HologramActions {
         hub("click", HologramDialogs::click);
         hub("location", HologramDialogs::location);
         hub("move_here", (player, name) -> {
-            Position here = Position.of(player.getLocation());
+            Position here = Position.facing(player.getLocation());
             HologramModule.get().store().edit(name, current -> current.withLocation(here));
             plugin.getMessages().send(player, HologramsMessages.get().moved(), Values.of().putText("name", name));
             HologramViews.openHub(player, name);

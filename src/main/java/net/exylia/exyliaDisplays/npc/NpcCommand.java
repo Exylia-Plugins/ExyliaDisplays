@@ -18,6 +18,7 @@ import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.CommandPlaceholder;
 import revxrsal.commands.annotation.Optional;
 import revxrsal.commands.annotation.Subcommand;
+import revxrsal.commands.annotation.Suggest;
 import revxrsal.commands.annotation.SuggestWith;
 import revxrsal.commands.autocomplete.SuggestionProvider;
 import revxrsal.commands.bukkit.actor.BukkitCommandActor;
@@ -370,7 +371,7 @@ public final class NpcCommand {
 
     /** Brings NPCs over from another plugin; its files are read, never changed. */
     @Subcommand("import")
-    public void importFrom(CommandSender sender, NpcImport.Source source) {
+    public void importFrom(CommandSender sender, NpcImport.Source source, @Optional @Suggest("replace") String mode) {
         NpcImport.Result result = NpcImport.run(plugin().getPlugin(), source);
         Values values = Values.of().put("source", source.folder()).put("count", 0).put("skipped", result.skipped())
                 .put("folder", NpcImport.folder(plugin().getPlugin(), source).getPath());
@@ -378,7 +379,8 @@ public final class NpcCommand {
             send(sender, messages().importNothing(), values);
             return;
         }
-        int added = NpcModule.get().store().addAll(result.npcs());
+        // 'replace' corrects what an earlier import of the same plugin brought, instead of copying it.
+        int added = NpcModule.get().store().addAll(result.npcs(), "replace".equalsIgnoreCase(mode));
         send(sender, messages().importDone(), values.put("count", added));
     }
 

@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** The other plugins' files, as they write them, read into holograms. */
 class ForeignImportTest {
@@ -81,7 +82,7 @@ class ForeignImportTest {
                 holograms:
                   welcome:
                     type: TEXT
-                    location: {world: world, x: 0.5, y: 80.0, z: 0.5, yaw: 0, pitch: 0}
+                    location: {world: world, x: 0.5, y: 80.0, z: 0.5, yaw: -90.5, pitch: 0}
                     visibility_distance: 30
                     billboard: vertical
                     scale_x: 2
@@ -102,6 +103,9 @@ class ForeignImportTest {
         assertEquals(2.0, welcome.appearance().scaleY());
         assertEquals("#55000000", welcome.appearance().backgroundColor());
         assertEquals(30, welcome.viewDistance());
+        assertEquals(-90.5f, welcome.location().yaw(), "it keeps facing the way it faced there");
+        assertEquals(0.5, welcome.appearance().lineSpacing(), 1e-9, "scale 2 lines need twice the gap");
+        assertTrue(welcome.toConfig().perPlayer() == false, "no placeholder, no per-viewer render");
         assertEquals(List.of("<item:EMERALD>"), result.holograms().get("gem").lines());
     }
 }

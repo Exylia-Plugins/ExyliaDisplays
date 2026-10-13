@@ -34,6 +34,25 @@ class StoredHologramTest {
     }
 
     @Test
+    @DisplayName("a line with a placeholder is drawn for each viewer, so it can be about them")
+    void placeholdersArePersonal() {
+        assertTrue(lines("{primary}Welcome", "%player_name%").toConfig().perPlayer());
+        assertTrue(lines("Online: %server_online%").toConfig().perPlayer());
+        assertFalse(lines("50% off", "100%").toConfig().perPlayer());
+        assertTrue(lines("plain").withPerPlayer(true).toConfig().perPlayer());
+    }
+
+    @Test
+    @DisplayName("a hologram made where a player stands faces them")
+    void facesItsCreator() {
+        org.bukkit.Location looking = new org.bukkit.Location(null, 1, 64, 1, 180f, 30f);
+        Position at = Position.facing(looking);
+        assertEquals(0f, at.yaw(), "a player looking north reads a hologram facing south");
+        assertEquals(0f, at.pitch());
+        assertEquals(-90f, Position.facing(new org.bukkit.Location(null, 0, 0, 0, 90f, 0f)).yaw());
+    }
+
+    @Test
     @DisplayName("names are checked, and an imported one is made usable")
     void names() {
         assertTrue(Names.valid("spawn_shop-2"));

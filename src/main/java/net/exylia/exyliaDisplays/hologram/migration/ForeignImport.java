@@ -103,6 +103,8 @@ public final class ForeignImport {
             }
             // DecentHolograms hangs its lines down from the location; here they stand on it.
             double drop = lines.size() * 0.25;
+            // DecentHolograms writes which way a hologram faces as 'facing', a yaw.
+            at = at.withFacing((float) yaml.getDouble("facing", 0), 0f);
             StoredHologram hologram = StoredHologram.at(at.plus(0, -drop, 0), lines,
                     yaml.getDouble("display-range", 48))
                     .withEnabled(yaml.getBoolean("enabled", true))
@@ -210,7 +212,10 @@ public final class ForeignImport {
                     section.getString("text_alignment", "CENTER").toUpperCase(Locale.ROOT),
                     section.getDouble("scale_x", 1), section.getDouble("scale_y", 1), section.getDouble("scale_z", 1),
                     section.getBoolean("text_shadow", false), section.getBoolean("see_through", false),
-                    base.lineWidth(), base.lineSpacing(), base.textOpacity(),
+                    // One FancyHolograms display holds every line, so its lines grow with its scale;
+                    // here each line is its own display and the gap has to grow with them.
+                    base.lineWidth(), base.lineSpacing() * Math.max(0.1, section.getDouble("scale_y", 1)),
+                    base.textOpacity(),
                     "DEFAULT".equalsIgnoreCase(background), colour, base.brightness(), false);
             double distance = section.getDouble("visibility_distance", -1);
             found.put(name, StoredHologram.at(at, lines, distance > 0 ? distance : 48).withAppearance(look));
@@ -253,7 +258,7 @@ public final class ForeignImport {
             return null;
         }
         return new Position(section.getString("world"), section.getDouble("x"), section.getDouble("y"),
-                section.getDouble("z"));
+                section.getDouble("z"), (float) section.getDouble("yaw"), (float) section.getDouble("pitch"));
     }
 
     /** A material as written there: {@code diamond}, {@code minecraft:diamond}, {@code DIAMOND 1}. */

@@ -21,6 +21,7 @@ import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.CommandPlaceholder;
 import revxrsal.commands.annotation.Optional;
 import revxrsal.commands.annotation.Subcommand;
+import revxrsal.commands.annotation.Suggest;
 import revxrsal.commands.annotation.SuggestWith;
 import revxrsal.commands.autocomplete.SuggestionProvider;
 import revxrsal.commands.bukkit.actor.BukkitCommandActor;
@@ -178,7 +179,7 @@ public final class HologramCommand {
 
     @Subcommand("movehere")
     public void moveHere(Player player, @SuggestWith(Names.class) String name) {
-        Position here = Position.of(player.getLocation());
+        Position here = Position.facing(player.getLocation());
         edited(player, name, current -> current.withLocation(here), messages().moved(), Values.of());
     }
 
@@ -244,7 +245,7 @@ public final class HologramCommand {
 
     /** Brings holograms over from another plugin; its files are read, never changed. */
     @Subcommand("import")
-    public void importFrom(CommandSender sender, ForeignImport.Source source) {
+    public void importFrom(CommandSender sender, ForeignImport.Source source, @Optional @Suggest("replace") String mode) {
         ForeignImport.Result result = ForeignImport.run(plugin().getPlugin(), source);
         Values values = Values.of().put("source", source.folder()).put("count", 0).put("skipped", result.skipped())
                 .put("folder", ForeignImport.folder(plugin().getPlugin(), source).getPath());
@@ -252,7 +253,8 @@ public final class HologramCommand {
             send(sender, messages().importNothing(), values);
             return;
         }
-        int added = HologramModule.get().store().addAll(result.holograms());
+        // 'replace' corrects what an earlier import of the same plugin brought, instead of copying it.
+        int added = HologramModule.get().store().addAll(result.holograms(), "replace".equalsIgnoreCase(mode));
         send(sender, messages().importDone(), values.put("count", added));
     }
 

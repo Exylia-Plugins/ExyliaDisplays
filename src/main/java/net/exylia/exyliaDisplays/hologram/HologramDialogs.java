@@ -142,7 +142,7 @@ public final class HologramDialogs {
             return false;
         }
         HologramsConfig config = HologramsConfig.get();
-        Position at = Position.of(player.getLocation()).plus(0, config.spawnHeight(), 0);
+        Position at = Position.facing(player.getLocation()).plus(0, config.spawnHeight(), 0);
         HologramModule.get().store().create(name, StoredHologram.at(at, lines, config.defaultViewDistance()));
         plugin().getMessages().send(player, HologramsMessages.get().created(), values);
         HologramViews.openHub(player, name);

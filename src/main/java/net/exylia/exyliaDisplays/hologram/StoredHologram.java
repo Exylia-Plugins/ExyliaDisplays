@@ -90,9 +90,20 @@ public record StoredHologram(
         return new StoredHologram().withLocation(location).withLines(lines).withViewDistance(viewDistance);
     }
 
-    /** What ExyliaLib draws. */
+    /** A placeholder as PlaceHolderAPI and ExyliaLib write it: {@code %identifier_value%}. */
+    private static final java.util.regex.Pattern PLACEHOLDER =
+            java.util.regex.Pattern.compile("%[A-Za-z0-9]+_[^%\\s]+%");
+
+    /**
+     * What ExyliaLib draws.
+     *
+     * <p>A hologram whose lines name a placeholder is drawn for each viewer whatever
+     * {@code per-player} says: drawn once for everybody, {@code %player_name%} has nobody to be
+     * about and would show as written. {@code per-player} still turns it on for lines without one.
+     */
     public HologramConfig toConfig() {
-        return new HologramConfig(enabled, HologramConfig.Kind.TEXT, lines, "", "", perPlayer,
+        boolean personal = perPlayer || lines.stream().anyMatch(line -> PLACEHOLDER.matcher(line).find());
+        return new HologramConfig(enabled, HologramConfig.Kind.TEXT, lines, "", "", personal,
                 viewDistance, 0, 0, 0, appearance, refresh, click);
     }
 

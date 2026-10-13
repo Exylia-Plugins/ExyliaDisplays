@@ -40,7 +40,7 @@ help:
   - ' <click:suggest_command:''/holo tp ''>{warning}/holo tp <nombre></click> {letters_black}» {letters}ir hasta él'
   - ' <click:run_command:''/holo near''>{warning}/holo near [radio]</click> {letters_black}» {letters}los que tienes cerca'
   - ' <click:suggest_command:''/holo clone ''>{warning}/holo clone <nombre> <nuevo></click> {letters_black}· <click:suggest_command:''/holo rename ''>{warning}rename</click> {letters_black}· <click:suggest_command:''/holo delete ''>{warning}delete</click>'
-  - ' <click:suggest_command:''/holo import ''>{warning}/holo import <plugin></click> {letters_black}» {letters}DecentHolograms, HolographicDisplays, FancyHolograms'
+  - ' <click:suggest_command:''/holo import ''>{warning}/holo import <plugin> [replace]</click> {letters_black}» {letters}DecentHolograms, HolographicDisplays, FancyHolograms'
   - ' <click:run_command:''/holo reload''>{warning}/holo reload</click> {letters_black}» {letters}volver a leer holograms.yml'
   - ''
 list-header: '%prefix% {letters}Hologramas {letters_black}({info}%count%{letters_black})'

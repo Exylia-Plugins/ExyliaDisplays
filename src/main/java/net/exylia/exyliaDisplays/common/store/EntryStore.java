@@ -133,11 +133,21 @@ public final class EntryStore<F extends Record, T> {
 
     /** Adds many at once, for an import; a name already taken gets a free one. */
     public synchronized int addAll(Map<String, T> entries) {
+        return addAll(entries, false);
+    }
+
+    /**
+     * Adds many at once, for an import.
+     *
+     * @param replace whether an entry already under that name is replaced, so running the same
+     *                import again corrects it instead of adding a copy next to it
+     */
+    public synchronized int addAll(Map<String, T> entries, boolean replace) {
         Map<String, T> added = new LinkedHashMap<>();
         Map<String, T> merged = new LinkedHashMap<>(all());
         entries.forEach((name, entry) -> {
             String free = Names.sanitize(name);
-            for (int i = 2; merged.containsKey(free); i++) {
+            for (int i = 2; !replace && merged.containsKey(free); i++) {
                 free = Names.sanitize(name) + "_" + i;
             }
             merged.put(free, entry);

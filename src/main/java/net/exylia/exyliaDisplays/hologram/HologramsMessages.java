@@ -131,7 +131,7 @@ public record HologramsMessages(
                         " <click:suggest_command:'/holo tp '>{warning}/holo tp <name></click> {letters_black}» {letters}go to it",
                         " <click:run_command:'/holo near'>{warning}/holo near [radius]</click> {letters_black}» {letters}the ones around you",
                         " <click:suggest_command:'/holo clone '>{warning}/holo clone <name> <new></click> {letters_black}· <click:suggest_command:'/holo rename '>{warning}rename</click> {letters_black}· <click:suggest_command:'/holo delete '>{warning}delete</click>",
-                        " <click:suggest_command:'/holo import '>{warning}/holo import <plugin></click> {letters_black}» {letters}DecentHolograms, HolographicDisplays, FancyHolograms",
+                        " <click:suggest_command:'/holo import '>{warning}/holo import <plugin> [replace]</click> {letters_black}» {letters}DecentHolograms, HolographicDisplays, FancyHolograms",
                         " <click:run_command:'/holo reload'>{warning}/holo reload</click> {letters_black}» {letters}read holograms.yml again",
                         ""),
                 "%prefix% {letters}Holograms {letters_black}({info}%count%{letters_black})",
