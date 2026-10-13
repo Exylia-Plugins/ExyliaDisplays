@@ -38,10 +38,8 @@ import java.util.function.BiFunction;
  */
 public final class HologramRenderer implements Listener {
 
-    /** Ticks between checks that an attached hologram's anchor is still near its entity. */
+    /** Ticks between checks that an attached hologram's entity is still there. */
     private static final long FOLLOW_TICKS = 10;
-    /** How far an entity may get from its hologram's anchor before the anchor follows (squared blocks). */
-    private static final double FOLLOW_SLACK = 8 * 8;
     /** Ticks to wait after an entity enters a world, so viewers are tracking it before it is mounted. */
     private static final long MOUNT_DELAY = 5;
 
@@ -202,14 +200,9 @@ public final class HologramRenderer implements Listener {
     }
 
     /**
-     * Mounts the hologram on the entity's own thread, then keeps its anchor near the entity: the
-     * client moves a passenger with its mount, but the server still decides who is in range from
-     * the anchor.
-     *
-     * <p>Known limit, in ExyliaLib (1.296): a mounted hologram's displays all sit on the mount's
-     * passenger point, so the lines stack on each other and the offset is not applied until the
-     * library sends each display a translation; a viewer who starts tracking the entity after the
-     * hologram was spawned for them misses the mount and sees the anchor follow instead.
+     * Mounts the hologram on the entity's own thread, then watches that the entity is still there.
+     * ExyliaLib (1.298.1+) measures range from the ridden entity and mounts again for a viewer who
+     * starts seeing it later, so nothing has to follow it here.
      */
     private void ride(String name, Hologram live, Entity entity, long delay) {
         unmount(name);
@@ -220,16 +213,9 @@ public final class HologramRenderer implements Listener {
                 mounts.computeIfPresent(name, (key, mount) -> mount.pending() == pending ? null : mount);
                 return;
             }
-            Location at = entity.getLocation();
             if (pending.get()) {
-                live.moveTo(at);
                 live.attachTo(entity);
                 pending.set(false);
-                return;
-            }
-            Location anchor = live.location();
-            if (anchor.getWorld() != at.getWorld() || anchor.distanceSquared(at) > FOLLOW_SLACK) {
-                live.moveTo(at);
             }
         });
         mounts.put(name, new Mount(entity, follow, pending));
