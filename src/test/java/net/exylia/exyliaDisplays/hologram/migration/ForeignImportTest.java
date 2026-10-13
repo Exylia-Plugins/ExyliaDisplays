@@ -91,6 +91,11 @@ class ForeignImportTest {
                     text: ['<rainbow>Welcome</rainbow>', 'Have fun']
                     text_shadow: true
                     background: '#55000000'
+                    visibility: PERMISSION_REQUIRED
+                    update_text_interval: 1000
+                    translation_y: 0.5
+                    brightness: {block: 12, sky: 4}
+                    linkedNpc: guide
                   gem:
                     type: ITEM
                     location: {world: world, x: 3, y: 80, z: 3}
@@ -107,5 +112,11 @@ class ForeignImportTest {
         assertEquals(0.5, welcome.appearance().lineSpacing(), 1e-9, "scale 2 lines need twice the gap");
         assertTrue(welcome.toConfig().perPlayer() == false, "no placeholder, no per-viewer render");
         assertEquals(List.of("<item:EMERALD>"), result.holograms().get("gem").lines());
+        assertEquals("fancyholograms.viewhologram.welcome", welcome.permission());
+        assertEquals(20, welcome.refresh().updateInterval(), "1000 ms is 20 ticks");
+        assertEquals(80.5, welcome.location().y(), 1e-9, "its translation moves the location");
+        assertEquals(12, welcome.appearance().brightness());
+        assertEquals(-1, result.holograms().get("gem").appearance().brightness());
+        assertEquals(java.util.Map.of("welcome", "guide"), result.links());
     }
 }

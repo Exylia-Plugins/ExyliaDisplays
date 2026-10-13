@@ -19,7 +19,7 @@ Built on [ExyliaLib](https://github.com/DiGround-s/ExyliaLib): everything is pac
 | **Colour that moves** | `<shine>` sweeps a band of light across a title; `<flow>` makes a gradient's colours run along it |
 | **Lines for some players** | `<range:8>`, `<perm:vip>`, `<if:"%player_level% >= 10">`: the stack re-lays itself out for each viewer |
 | **Three ways to edit** | Screens and dialogs, `/holo` and `/npc` commands, or `holograms.yml` and `npcs.yml`, which are applied as soon as you save them |
-| **Imports** | DecentHolograms, HolographicDisplays, FancyHolograms, Citizens and FancyNpcs. Their files are read and never changed |
+| **Imports** | DecentHolograms, HolographicDisplays, FancyHolograms, Citizens and FancyNpcs. Their files are read and never changed. Import NPCs before holograms so a FancyHolograms hologram linked to an NPC stays linked |
 | **Modular** | Turn holograms or NPCs off in `config.yml`. New modules plug into the same core |
 
 ## Requirements
@@ -38,7 +38,7 @@ ExyliaLib keeps both itself and this plugin up to date from their GitHub release
 
 ## Getting started
 
-**A hologram:** stand where you want it and run `/holo create spawn`, or open `/holo` and click **CREATE HOLOGRAM** to start from a preset. In its editor, **LINES**:
+**A hologram:** stand where you want it and run `/holoadmin create spawn`, or open `/holoadmin` and click **CREATE HOLOGRAM** to start from a preset. In its editor, **LINES**:
 - left-click a line to change its text;
 - right-click it for size, motion and visibility, all in one window;
 - shift-click to move it up or down; press Q to remove it.
@@ -135,7 +135,8 @@ Anything else at the start of a line, such as `<gradient:...>`, stays as text. C
 | Command | Permission | |
 | --- | --- | --- |
 | `/displays help\|modules\|reload` | `exyliadisplays.admin` | The plugin as a whole |
-| `/holo` (`/hologram`) | `exyliadisplays.holograms` | Every hologram, on a screen. `/holo help` lists the rest: `create`, `edit`, `addline`, `setline`, `insertline`, `removeline`, `moveline`, `movehere`, `move`, `center`, `tp`, `near`, `info`, `list`, `enable`, `disable`, `clone`, `rename`, `delete`, `import`, `reload` |
+| `/holoadmin` (`/hologramadmin`) | `exyliadisplays.holograms` | Every hologram, on a screen, plus what is not about one hologram: `create`, `list`, `near`, `import`, `reload`, `help` |
+| `/holo <name> [setting] ...` (`/hologram`) | `exyliadisplays.holograms` | One hologram: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rename`, `clone`, `enable`, `disable`, `delete`; lines with `addline`, `setline`, `insertline`, `removeline`, `moveline`, `lines`, and one tag of one line with `line <n> <tag> [value]`; the look with `billboard`, `alignment`, `scale`, `shadow`, `seethrough`, `linewidth`, `spacing`, `opacity`, `background`, `brightness`; who sees it with `viewdistance`, `permission`, `perplayer`, `refresh`, `autoupdate`; clicks with `click add\|remove\|clear\|width\|cooldown\|hover` |
 | `/npc` (`/npcs`) | `exyliadisplays.npcs` | Every NPC, on a screen. `/npc help` lists the rest: `create`, `edit`, `equipment`, `skin`, `pose`, `look`, `glow`, `scale`, `equip`, `label`, `action`, `link`, `unlink`, `movehere`, `face`, `tp`, `near`, `info`, `list`, `enable`, `disable`, `clone`, `rename`, `delete`, `import`, `reload` |
 
 `exyliadisplays.admin` includes both module permissions; `exyliadisplays.*` grants everything. If Citizens is installed too, its `/npc` and this one compete for the name; use `/npcs`.

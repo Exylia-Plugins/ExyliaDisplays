@@ -143,6 +143,16 @@ public final class EntryStore<F extends Record, T> {
      *                import again corrects it instead of adding a copy next to it
      */
     public synchronized int addAll(Map<String, T> entries, boolean replace) {
+        return importAll(entries, replace).size();
+    }
+
+    /**
+     * {@link #addAll(Map, boolean)}, telling under which name each entry was saved.
+     *
+     * @return the name each entry was saved under, by the name it came with
+     */
+    public synchronized Map<String, String> importAll(Map<String, T> entries, boolean replace) {
+        Map<String, String> names = new LinkedHashMap<>();
         Map<String, T> added = new LinkedHashMap<>();
         Map<String, T> merged = new LinkedHashMap<>(all());
         entries.forEach((name, entry) -> {
@@ -152,14 +162,15 @@ public final class EntryStore<F extends Record, T> {
             }
             merged.put(free, entry);
             added.put(free, entry);
+            names.put(name, free);
         });
         if (added.isEmpty()) {
-            return 0;
+            return names;
         }
         lastWrite = System.currentTimeMillis();
         file.update(current -> write.apply(merged));
         added.forEach(changed);
-        return added.size();
+        return names;
     }
 
     /** Reads the file again, after somebody edited it. */

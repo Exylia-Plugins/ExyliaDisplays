@@ -5,7 +5,7 @@ help:
   - '[center]{primary}&lEXYLIA DISPLAYS'
   - '[center]{letters_black}Hologramas y NPCs, editados en el juego o en YAML'
   - ''
-  - ' <click:run_command:''/holo''>{warning}/holo</click> {letters_black}» {letters}hologramas, en un menú {letters_black}· <click:run_command:''/holo help''>{info}[ayuda]</click>'
+  - ' <click:run_command:''/holoadmin''>{warning}/holoadmin</click> {letters_black}» {letters}hologramas, en un menú {letters_black}· <click:run_command:''/holoadmin help''>{info}[ayuda]</click>'
   - ' <click:run_command:''/npc''>{warning}/npc</click> {letters_black}» {letters}NPCs, en un menú {letters_black}· <click:run_command:''/npc help''>{info}[ayuda]</click>'
   - ' <click:run_command:''/displays modules''>{warning}/displays modules</click> {letters_black}» {letters}qué está activo'
   - ' <click:run_command:''/displays reload''>{warning}/displays reload</click> {letters_black}» {letters}volver a leer todos los archivos'

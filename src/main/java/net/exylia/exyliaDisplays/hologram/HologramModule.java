@@ -15,7 +15,7 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Holograms: {@code holograms.yml}, {@code /holo}, and the screens and windows that edit them.
+ * Holograms: {@code holograms.yml}, {@code /holo}, {@code /holoadmin}, and the screens and windows that edit them.
  */
 public final class HologramModule implements DisplayModule {
 
@@ -64,6 +64,7 @@ public final class HologramModule implements DisplayModule {
 
         new HologramActions(core).registerAll();
         core.getLamp().register(new HologramCommand());
+        core.getLamp().register(new HologramAdminCommand());
         core.getDebug().log("Holograms: " + store.all().size());
     }
 

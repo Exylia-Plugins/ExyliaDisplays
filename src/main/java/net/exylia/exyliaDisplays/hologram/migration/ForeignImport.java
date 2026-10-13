@@ -48,8 +48,13 @@ public final class ForeignImport {
      *
      * @param holograms the holograms read, by their name there
      * @param skipped   how many could not be read
+     * @param links     the NPC each hologram stood over there, by hologram name
      */
-    public record Result(Map<String, StoredHologram> holograms, int skipped) {
+    public record Result(Map<String, StoredHologram> holograms, int skipped, Map<String, String> links) {
+
+        public Result(Map<String, StoredHologram> holograms, int skipped) {
+            this(holograms, skipped, Map.of());
+        }
     }
 
     /** {@code {#RRGGBB}}, which here would read as a palette name. {@code &#RRGGBB} already works. */
@@ -177,8 +182,16 @@ public final class ForeignImport {
     // FancyHolograms: holograms.yml, already display entities
     // ------------------------------------------------------------------
 
+    /** One fixed light level from FancyHolograms' block and sky light, or -1 when it set none. */
+    private static int brightness(ConfigurationSection section) {
+        ConfigurationSection light = section.getConfigurationSection("brightness");
+        if (light == null) return -1;
+        return Math.clamp(Math.max(light.getInt("block", -1), light.getInt("sky", -1)), -1, 15);
+    }
+
     static Result fancy(File file) {
         Map<String, StoredHologram> found = new LinkedHashMap<>();
+        Map<String, String> links = new LinkedHashMap<>();
         int skipped = 0;
         if (!file.isFile()) {
             return new Result(found, 0);
@@ -194,6 +207,10 @@ public final class ForeignImport {
                 skipped++;
                 continue;
             }
+            // FancyHolograms shifts the display from its location; here the location itself moves.
+            at = new Position(at.world(), at.x() + section.getDouble("translation_x"),
+                    at.y() + section.getDouble("translation_y"), at.z() + section.getDouble("translation_z"),
+                    at.yaw(), at.pitch());
             String type = section.getString("type", "TEXT").toUpperCase(Locale.ROOT);
             List<String> lines = switch (type) {
                 case "ITEM" -> List.of("<item:" + material(section.getString("item", "STONE")) + ">");
@@ -216,11 +233,22 @@ public final class ForeignImport {
                     // here each line is its own display and the gap has to grow with them.
                     base.lineWidth(), base.lineSpacing() * Math.max(0.1, section.getDouble("scale_y", 1)),
                     base.textOpacity(),
-                    "DEFAULT".equalsIgnoreCase(background), colour, base.brightness(), false);
+                    "DEFAULT".equalsIgnoreCase(background), colour, brightness(section), false);
             double distance = section.getDouble("visibility_distance", -1);
-            found.put(name, StoredHologram.at(at, lines, distance > 0 ? distance : 48).withAppearance(look));
+            StoredHologram hologram = StoredHologram.at(at, lines, distance > 0 ? distance : 48).withAppearance(look);
+            if ("PERMISSION_REQUIRED".equalsIgnoreCase(section.getString("visibility", ""))) {
+                hologram = hologram.withPermission("fancyholograms.viewhologram." + name);
+            }
+            long interval = section.getLong("update_text_interval", -1);
+            if (interval > 0) {
+                // Milliseconds there, ticks here.
+                hologram = hologram.withRefresh(new HologramConfig.Refresh(Math.max(1, interval / 50), true));
+            }
+            found.put(name, hologram);
+            String npc = section.getString("linkedNpc", "");
+            if (npc != null && !npc.isBlank()) links.put(name, npc);
         }
-        return new Result(found, skipped);
+        return new Result(found, skipped, links);
     }
 
     // ------------------------------------------------------------------

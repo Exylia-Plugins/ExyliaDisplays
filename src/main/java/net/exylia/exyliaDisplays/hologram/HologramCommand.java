@@ -2,24 +2,17 @@ package net.exylia.exyliaDisplays.hologram;
 
 import net.exylia.exyliaDisplays.ExyliaDisplays;
 import net.exylia.exyliaDisplays.Permissions;
-import net.exylia.exyliaDisplays.hologram.HologramActions;
-import net.exylia.exyliaDisplays.hologram.HologramsConfig;
-import net.exylia.exyliaDisplays.hologram.HologramsMessages;
-import net.exylia.exyliaDisplays.hologram.HologramDialogs;
-import net.exylia.exyliaDisplays.hologram.HologramViews;
-import net.exylia.exyliaDisplays.hologram.migration.ForeignImport;
 import net.exylia.exyliaDisplays.common.store.Position;
-import net.exylia.exyliaDisplays.hologram.StoredHologram;
-import net.exylia.lib.config.ConfigIssue;
+import net.exylia.lib.hologram.HologramConfig;
 import net.exylia.lib.hologram.HologramLine;
 import net.exylia.lib.text.Values;
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.CommandPlaceholder;
 import revxrsal.commands.annotation.Optional;
+import revxrsal.commands.annotation.Single;
 import revxrsal.commands.annotation.Subcommand;
 import revxrsal.commands.annotation.Suggest;
 import revxrsal.commands.annotation.SuggestWith;
@@ -28,121 +21,86 @@ import revxrsal.commands.bukkit.actor.BukkitCommandActor;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 import revxrsal.commands.node.ExecutionContext;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 import java.util.function.UnaryOperator;
+import java.util.regex.Pattern;
 
 /**
- * {@code /holo}: everything the screens do, as commands, for the console, for scripts and for
- * whoever types faster than they click.
+ * {@code /holo <name> <property> ...}: every setting of one hologram, as a command, for the
+ * console, for scripts and for whoever types faster than they click. What is not about one
+ * hologram (the list, create, import, reload) is {@link HologramAdminCommand}.
  *
  * <p>Every edit goes through the same store the screens use, so a command and a click can never
  * disagree. Line numbers are counted from 1, top first, as a player reads them.
  */
-@Command({"holo", "hologram", "holograms", "exyliaholograms"})
+@Command({"holo", "hologram"})
 @CommandPermission(Permissions.HOLOGRAMS)
 public final class HologramCommand {
 
-    private static ExyliaDisplays plugin() {
-        return ExyliaDisplays.getInstance();
-    }
+    /** The tags {@code /holo <name> line <n> <tag>} sets, as a line writes them. */
+    private static final List<String> TAGS = List.of("text", "size", "opacity", "background", "shadow", "glow",
+            "spin", "bob", "pulse", "typewriter", "shine", "flow", "range", "permission", "condition");
+    private static final Pattern COLOUR = Pattern.compile("#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})");
 
     private static HologramsMessages messages() {
         return HologramsMessages.get();
     }
 
     private static void send(CommandSender to, String line, Values values) {
-        plugin().getMessages().send(to, line, values);
+        ExyliaDisplays.getInstance().getMessages().send(to, line, values);
     }
 
     @CommandPlaceholder
     public void root(CommandSender sender) {
-        if (sender instanceof Player player) {
-            HologramViews.openList(player);
-        } else {
-            help(sender);
-        }
+        help(sender);
     }
 
     @Subcommand("help")
     public void help(CommandSender sender) {
-        plugin().getMessages().send(sender, messages().help(), Values.of());
+        ExyliaDisplays.getInstance().getMessages().send(sender, messages().help(), Values.of());
     }
 
-    @Subcommand("list")
-    public void list(CommandSender sender) {
+    /** Its editor for a player, its details for the console. */
+    @Subcommand("<name>")
+    public void open(CommandSender sender, @Single @SuggestWith(Names.class) String name) {
         if (sender instanceof Player player) {
-            HologramViews.openList(player);
-            return;
+            if (exists(player, name)) HologramViews.openHub(player, name);
+        } else {
+            info(sender, name);
         }
-        Map<String, StoredHologram> all = HologramModule.get().store().all();
-        if (all.isEmpty()) {
-            send(sender, messages().listEmpty(), Values.of());
-            return;
-        }
-        send(sender, messages().listHeader(), Values.of("count", all.size()));
-        all.forEach((name, hologram) -> send(sender, messages().listLine(), HologramViews.values(name, hologram)));
     }
 
-    /** The holograms around the player, nearest first, each with a click to edit or go there. */
-    @Subcommand("near")
-    public void near(Player player, @Optional Double radius) {
-        double within = radius == null || radius <= 0 ? HologramsConfig.get().nearRadius() : radius;
-        Location here = player.getLocation();
-        List<Map.Entry<String, Double>> near = HologramModule.get().store().all().entrySet().stream()
-                .map(entry -> {
-                    Location at = entry.getValue().location().toLocation();
-                    double distance = at == null || at.getWorld() != here.getWorld() ? Double.MAX_VALUE : at.distance(here);
-                    return Map.entry(entry.getKey(), distance);
-                })
-                .filter(entry -> entry.getValue() <= within)
-                .sorted(Comparator.comparingDouble(Map.Entry::getValue))
-                .toList();
-        Values header = Values.of().put("radius", HologramViews.number(within)).put("count", near.size());
-        if (near.isEmpty()) {
-            send(player, messages().nearEmpty(), header);
-            return;
-        }
-        send(player, messages().nearHeader(), header);
-        near.forEach(entry -> HologramModule.get().store().get(entry.getKey()).ifPresent(hologram -> send(player,
-                messages().nearLine(), HologramViews.values(entry.getKey(), hologram)
-                        .put("distance", HologramViews.number(Math.round(entry.getValue() * 10) / 10.0)))));
-    }
-
-    @Subcommand("create")
-    public void create(Player player, String name, @Optional String text) {
-        String id = name.toLowerCase(java.util.Locale.ROOT);
-        List<String> lines = text == null || text.isBlank() ? List.of("{primary}&l" + id) : List.of(text);
-        HologramDialogs.createHere(player, id, lines, () -> { });
-    }
-
-    @Subcommand("edit")
-    public void edit(Player player, @SuggestWith(Names.class) String name) {
-        if (exists(player, name)) HologramViews.openHub(player, name);
-    }
-
-    @Subcommand("lines")
+    @Subcommand("<name> lines")
     public void lines(Player player, @SuggestWith(Names.class) String name) {
         if (exists(player, name)) HologramViews.openLines(player, name);
     }
 
-    @Subcommand("info")
+    @Subcommand("<name> info")
     public void info(CommandSender sender, @SuggestWith(Names.class) String name) {
         StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
         if (hologram == null) {
             send(sender, messages().notFound(), Values.of().putText("name", name));
             return;
         }
-        plugin().getMessages().send(sender, messages().info(), HologramViews.values(name, hologram));
+        ExyliaDisplays.getInstance().getMessages().send(sender, messages().info(), HologramViews.values(name, hologram));
         for (int i = 0; i < hologram.lines().size(); i++) {
             HologramLine line = HologramLine.parse(hologram.lines().get(i));
             send(sender, messages().infoLine(), Values.of().put("line", i + 1).put("text", HologramViews.lineText(line)));
         }
+        List<String> click = hologram.click().commands();
+        for (int i = 0; i < click.size(); i++) {
+            send(sender, messages().infoClick(), Values.of().put("action", i + 1).putText("text", click.get(i)));
+        }
     }
 
-    @Subcommand("delete")
+    // ------------------------------------------------------------------
+    // The hologram itself
+    // ------------------------------------------------------------------
+
+    @Subcommand("<name> delete")
     public void delete(CommandSender sender, @SuggestWith(Names.class) String name) {
         if (sender instanceof Player player) {
             if (exists(player, name)) HologramDialogs.delete(player, name, () -> { });
@@ -152,50 +110,59 @@ public final class HologramCommand {
         send(sender, HologramModule.get().store().delete(name) ? messages().deleted() : messages().notFound(), values);
     }
 
-    @Subcommand("rename")
+    @Subcommand("<name> rename")
     public void rename(CommandSender sender, @SuggestWith(Names.class) String name, String renamed) {
-        HologramDialogs.rename(sender, name, renamed.toLowerCase(java.util.Locale.ROOT));
+        HologramDialogs.rename(sender, name, renamed.toLowerCase(Locale.ROOT));
     }
 
-    @Subcommand("clone")
+    @Subcommand("<name> clone")
     public void cloneHologram(CommandSender sender, @SuggestWith(Names.class) String name, String copy) {
-        HologramDialogs.copy(sender, name, copy.toLowerCase(java.util.Locale.ROOT));
+        HologramDialogs.copy(sender, name, copy.toLowerCase(Locale.ROOT));
     }
 
-    @Subcommand("enable")
+    @Subcommand("<name> enable")
     public void enable(CommandSender sender, @SuggestWith(Names.class) String name) {
         state(sender, name, true);
     }
 
-    @Subcommand("disable")
+    @Subcommand("<name> disable")
     public void disable(CommandSender sender, @SuggestWith(Names.class) String name) {
         state(sender, name, false);
     }
 
-    @Subcommand("tp")
+    // ------------------------------------------------------------------
+    // Where it stands
+    // ------------------------------------------------------------------
+
+    @Subcommand("<name> tp")
     public void tp(Player player, @SuggestWith(Names.class) String name) {
         HologramActions.teleport(player, name);
     }
 
-    @Subcommand("movehere")
+    @Subcommand("<name> movehere")
     public void moveHere(Player player, @SuggestWith(Names.class) String name) {
         Position here = Position.facing(player.getLocation());
         edited(player, name, current -> current.withLocation(here), messages().moved(), Values.of());
     }
 
-    @Subcommand("move")
+    @Subcommand("<name> move")
     public void move(CommandSender sender, @SuggestWith(Names.class) String name, double x, double y, double z,
                      @Optional String world) {
         edited(sender, name, current -> current.withLocation(new Position(
-                world == null ? current.location().world() : world, x, y, z)), messages().moved(), Values.of());
+                world == null ? current.location().world() : world, x, y, z,
+                current.location().yaw(), current.location().pitch())), messages().moved(), Values.of());
     }
 
-    @Subcommand("center")
+    @Subcommand("<name> center")
     public void centre(CommandSender sender, @SuggestWith(Names.class) String name) {
         edited(sender, name, current -> current.withLocation(current.location().centred()), messages().centred(), Values.of());
     }
 
-    @Subcommand("addline")
+    // ------------------------------------------------------------------
+    // Lines
+    // ------------------------------------------------------------------
+
+    @Subcommand("<name> addline")
     public void addLine(CommandSender sender, @SuggestWith(Names.class) String name, String text) {
         StoredHologram saved = edited(sender, name, current -> current.addLine(text), null, Values.of());
         if (saved != null) {
@@ -203,14 +170,14 @@ public final class HologramCommand {
         }
     }
 
-    @Subcommand("setline")
+    @Subcommand("<name> setline")
     public void setLine(CommandSender sender, @SuggestWith(Names.class) String name, int line, String text) {
         if (hasLine(sender, name, line)) {
             edited(sender, name, current -> current.setLine(line - 1, text), messages().lineSet(), Values.of("line", line));
         }
     }
 
-    @Subcommand("insertline")
+    @Subcommand("<name> insertline")
     public void insertLine(CommandSender sender, @SuggestWith(Names.class) String name, int line, String text) {
         StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
         if (hologram == null) {
@@ -221,14 +188,14 @@ public final class HologramCommand {
         edited(sender, name, current -> current.insertLine(at, text), messages().lineAdded(), Values.of("line", at + 1));
     }
 
-    @Subcommand("removeline")
+    @Subcommand("<name> removeline")
     public void removeLine(CommandSender sender, @SuggestWith(Names.class) String name, int line) {
         if (hasLine(sender, name, line)) {
             edited(sender, name, current -> current.removeLine(line - 1), messages().lineRemoved(), Values.of("line", line));
         }
     }
 
-    @Subcommand("moveline")
+    @Subcommand("<name> moveline")
     public void moveLine(CommandSender sender, @SuggestWith(Names.class) String name, int from, int to) {
         if (hasLine(sender, name, from) && hasLine(sender, name, to)) {
             edited(sender, name, current -> current.moveLine(from - 1, to - 1), messages().lineMoved(),
@@ -236,29 +203,335 @@ public final class HologramCommand {
         }
     }
 
-    @Subcommand("reload")
-    public void reload(CommandSender sender) {
-        plugin().getReloads().run(sender);
-        List<ConfigIssue> issues = HologramModule.get().reloadFile();
-        send(sender, messages().reloaded(), Values.of().put("count", HologramModule.get().store().all().size()).put("issues", issues.size()));
-    }
-
-    /** Brings holograms over from another plugin; its files are read, never changed. */
-    @Subcommand("import")
-    public void importFrom(CommandSender sender, ForeignImport.Source source, @Optional @Suggest("replace") String mode) {
-        ForeignImport.Result result = ForeignImport.run(plugin().getPlugin(), source);
-        Values values = Values.of().put("source", source.folder()).put("count", 0).put("skipped", result.skipped())
-                .put("folder", ForeignImport.folder(plugin().getPlugin(), source).getPath());
-        if (result.holograms().isEmpty()) {
-            send(sender, messages().importNothing(), values);
+    /**
+     * One tag of one line, keeping its text and its other tags. Without a value, or with
+     * {@code reset}, the tag is taken off and the line follows the hologram again.
+     */
+    @Subcommand("<name> line")
+    public void lineTag(CommandSender sender, @SuggestWith(Names.class) String name, int line,
+                        @Suggest({"text", "size", "opacity", "background", "shadow", "glow", "spin", "bob", "pulse",
+                                "typewriter", "shine", "flow", "range", "permission", "condition"}) String tag,
+                        @Optional String value) {
+        if (!hasLine(sender, name, line)) return;
+        String raw = HologramModule.get().store().get(name).orElseThrow().lines().get(line - 1);
+        String set = value == null || value.isBlank() || value.equalsIgnoreCase("reset") ? null : value.trim();
+        HologramLine.Builder edited = HologramLine.parse(raw).toBuilder();
+        try {
+            switch (tag.toLowerCase(Locale.ROOT)) {
+                case "text" -> edited.text(set == null ? "" : set);
+                case "size" -> edited.size(decimal(set, 1));
+                case "opacity" -> edited.opacity(set == null ? null : within(Integer.parseInt(set), 0, 255));
+                case "background" -> edited.background(colour(set));
+                case "shadow" -> edited.shadow(set == null ? null : bool(set));
+                case "glow" -> edited.glow(set == null ? null : set.equalsIgnoreCase("team") ? "" : set);
+                case "spin" -> edited.spin(decimal(set, HologramLine.DEFAULT_SPIN));
+                case "bob" -> edited.bob(decimal(set, HologramLine.DEFAULT_BOB));
+                case "pulse" -> edited.pulse(decimal(set, HologramLine.DEFAULT_PULSE));
+                case "typewriter" -> edited.typewriter(decimal(set, HologramLine.DEFAULT_TYPEWRITER));
+                case "shine" -> edited.shine(set == null ? null : set.equalsIgnoreCase("on") ? "" : set);
+                case "flow" -> edited.flow(decimal(set, HologramLine.DEFAULT_FLOW));
+                case "range" -> edited.range(decimal(set, 0));
+                case "permission" -> edited.permission(set);
+                case "condition" -> edited.condition(set);
+                default -> {
+                    invalid(sender, "tag", tag, String.join(", ", TAGS));
+                    return;
+                }
+            }
+        } catch (IllegalArgumentException wrong) {
+            invalid(sender, tag, value, "reset");
             return;
         }
-        // 'replace' corrects what an earlier import of the same plugin brought, instead of copying it.
-        int added = HologramModule.get().store().addAll(result.holograms(), "replace".equalsIgnoreCase(mode));
-        send(sender, messages().importDone(), values.put("count", added));
+        String styled = edited.build().raw();
+        edited(sender, name, current -> current.hasLine(line - 1) ? current.setLine(line - 1, styled) : current,
+                messages().lineSet(), Values.of("line", line));
     }
 
     // ------------------------------------------------------------------
+    // How it is drawn
+    // ------------------------------------------------------------------
+
+    @Subcommand("<name> billboard")
+    public void billboard(CommandSender sender, @SuggestWith(Names.class) String name,
+                          @Suggest({"center", "vertical", "horizontal", "fixed"}) String mode) {
+        String value = mode.toUpperCase(Locale.ROOT);
+        if (!List.of("CENTER", "VERTICAL", "HORIZONTAL", "FIXED").contains(value)) {
+            invalid(sender, "billboard", mode, "center, vertical, horizontal, fixed");
+            return;
+        }
+        look(sender, name, "billboard", value, look -> look.billboard = value);
+    }
+
+    @Subcommand("<name> alignment")
+    public void alignment(CommandSender sender, @SuggestWith(Names.class) String name,
+                          @Suggest({"center", "left", "right"}) String mode) {
+        String value = mode.toUpperCase(Locale.ROOT);
+        if (!List.of("CENTER", "LEFT", "RIGHT").contains(value)) {
+            invalid(sender, "alignment", mode, "center, left, right");
+            return;
+        }
+        look(sender, name, "alignment", value, look -> look.alignment = value);
+    }
+
+    /** One number scales it evenly; three set each axis. */
+    @Subcommand("<name> scale")
+    public void scale(CommandSender sender, @SuggestWith(Names.class) String name, double x,
+                      @Optional Double y, @Optional Double z) {
+        double sy = y == null ? x : y;
+        double sz = z == null ? x : z;
+        if (x <= 0 || sy <= 0 || sz <= 0) {
+            invalid(sender, "scale", HologramViews.number(Math.min(x, Math.min(sy, sz))), "> 0");
+            return;
+        }
+        look(sender, name, "scale", HologramViews.number(x) + " " + HologramViews.number(sy) + " " + HologramViews.number(sz),
+                look -> {
+                    look.scaleX = x;
+                    look.scaleY = sy;
+                    look.scaleZ = sz;
+                });
+    }
+
+    @Subcommand("<name> shadow")
+    public void shadow(CommandSender sender, @SuggestWith(Names.class) String name, boolean value) {
+        look(sender, name, "shadow", String.valueOf(value), look -> look.shadow = value);
+    }
+
+    @Subcommand("<name> seethrough")
+    public void seeThrough(CommandSender sender, @SuggestWith(Names.class) String name, boolean value) {
+        look(sender, name, "see-through", String.valueOf(value), look -> look.seeThrough = value);
+    }
+
+    @Subcommand("<name> linewidth")
+    public void lineWidth(CommandSender sender, @SuggestWith(Names.class) String name, int pixels) {
+        if (pixels < 1) {
+            invalid(sender, "line-width", String.valueOf(pixels), "1+");
+            return;
+        }
+        look(sender, name, "line-width", String.valueOf(pixels), look -> look.lineWidth = pixels);
+    }
+
+    @Subcommand("<name> spacing")
+    public void spacing(CommandSender sender, @SuggestWith(Names.class) String name, double blocks) {
+        if (blocks < 0) {
+            invalid(sender, "spacing", HologramViews.number(blocks), "0+");
+            return;
+        }
+        look(sender, name, "spacing", HologramViews.number(blocks), look -> look.lineSpacing = blocks);
+    }
+
+    @Subcommand("<name> opacity")
+    public void opacity(CommandSender sender, @SuggestWith(Names.class) String name, int value) {
+        if (value < 0 || value > 255) {
+            invalid(sender, "opacity", String.valueOf(value), "0 - 255");
+            return;
+        }
+        look(sender, name, "opacity", String.valueOf(value), look -> look.textOpacity = value);
+    }
+
+    /** {@code #AARRGGBB}, {@code none} for transparent, or {@code default} for the client's own. */
+    @Subcommand("<name> background")
+    public void background(CommandSender sender, @SuggestWith(Names.class) String name,
+                           @Suggest({"default", "none", "#66000000"}) String value) {
+        boolean client = value.equalsIgnoreCase("default");
+        String colour = value.equalsIgnoreCase("none") ? "#00000000" : value;
+        if (!client && !COLOUR.matcher(colour).matches()) {
+            invalid(sender, "background", value, "#AARRGGBB, none, default");
+            return;
+        }
+        look(sender, name, "background", value, look -> {
+            look.defaultBackground = client;
+            if (!client) look.backgroundColor = colour;
+        });
+    }
+
+    /** A fixed light level, or {@code -1} for the light where it stands. */
+    @Subcommand("<name> brightness")
+    public void brightness(CommandSender sender, @SuggestWith(Names.class) String name, int level) {
+        if (level < -1 || level > 15) {
+            invalid(sender, "brightness", String.valueOf(level), "-1 - 15");
+            return;
+        }
+        look(sender, name, "brightness", String.valueOf(level), look -> look.brightness = level);
+    }
+
+    // ------------------------------------------------------------------
+    // Who sees it
+    // ------------------------------------------------------------------
+
+    @Subcommand("<name> viewdistance")
+    public void viewDistance(CommandSender sender, @SuggestWith(Names.class) String name, double blocks) {
+        if (blocks <= 0) {
+            invalid(sender, "view-distance", HologramViews.number(blocks), "> 0");
+            return;
+        }
+        property(sender, name, "view-distance", HologramViews.number(blocks), current -> current.withViewDistance(blocks));
+    }
+
+    /** Without a permission, everyone sees it. */
+    @Subcommand("<name> permission")
+    public void permission(CommandSender sender, @SuggestWith(Names.class) String name, @Optional String permission) {
+        String value = permission == null ? "" : permission.trim();
+        property(sender, name, "permission", value.isEmpty() ? "-" : value, current -> current.withPermission(value));
+    }
+
+    @Subcommand("<name> perplayer")
+    public void perPlayer(CommandSender sender, @SuggestWith(Names.class) String name, boolean value) {
+        property(sender, name, "per-player", String.valueOf(value), current -> current.withPerPlayer(value));
+    }
+
+    /** Ticks between refreshes of its placeholders. */
+    @Subcommand("<name> refresh")
+    public void refresh(CommandSender sender, @SuggestWith(Names.class) String name, int ticks) {
+        if (ticks < 1) {
+            invalid(sender, "refresh", String.valueOf(ticks), "1+");
+            return;
+        }
+        property(sender, name, "refresh", String.valueOf(ticks), current -> current.withRefresh(
+                new HologramConfig.Refresh(ticks, current.refresh().autoUpdate())));
+    }
+
+    @Subcommand("<name> autoupdate")
+    public void autoUpdate(CommandSender sender, @SuggestWith(Names.class) String name, boolean value) {
+        property(sender, name, "auto-update", String.valueOf(value), current -> current.withRefresh(
+                new HologramConfig.Refresh(current.refresh().updateInterval(), value)));
+    }
+
+    // ------------------------------------------------------------------
+    // What clicking it does
+    // ------------------------------------------------------------------
+
+    @Subcommand("<name> click add")
+    public void clickAdd(CommandSender sender, @SuggestWith(Names.class) String name, String action) {
+        click(sender, name, "click", action, commands -> commands.add(action));
+    }
+
+    @Subcommand("<name> click remove")
+    public void clickRemove(CommandSender sender, @SuggestWith(Names.class) String name, int action) {
+        StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
+        if (hologram != null && (action < 1 || action > hologram.click().commands().size())) {
+            invalid(sender, "click", String.valueOf(action), "1 - " + hologram.click().commands().size());
+            return;
+        }
+        click(sender, name, "click", "-" + action, commands -> commands.remove(action - 1));
+    }
+
+    @Subcommand("<name> click clear")
+    public void clickClear(CommandSender sender, @SuggestWith(Names.class) String name) {
+        click(sender, name, "click", "-", commands -> commands.clear());
+    }
+
+    @Subcommand("<name> click width")
+    public void clickWidth(CommandSender sender, @SuggestWith(Names.class) String name, double blocks) {
+        if (blocks <= 0) {
+            invalid(sender, "click width", HologramViews.number(blocks), "> 0");
+            return;
+        }
+        property(sender, name, "click width", HologramViews.number(blocks), current -> current.withClick(
+                new HologramConfig.Click(current.click().commands(), blocks, current.click().cooldown(), current.click().hoverScale())));
+    }
+
+    /** Milliseconds before the same player's next click counts. */
+    @Subcommand("<name> click cooldown")
+    public void clickCooldown(CommandSender sender, @SuggestWith(Names.class) String name, long millis) {
+        property(sender, name, "click cooldown", Math.max(0, millis) + "ms", current -> current.withClick(
+                new HologramConfig.Click(current.click().commands(), current.click().width(), millis, current.click().hoverScale())));
+    }
+
+    /** How much it grows while looked at; 1 turns it off. */
+    @Subcommand("<name> click hover")
+    public void clickHover(CommandSender sender, @SuggestWith(Names.class) String name, double scale) {
+        if (scale <= 0) {
+            invalid(sender, "click hover", HologramViews.number(scale), "> 0");
+            return;
+        }
+        property(sender, name, "click hover", HologramViews.number(scale), current -> current.withClick(
+                new HologramConfig.Click(current.click().commands(), current.click().width(), current.click().cooldown(), scale)));
+    }
+
+    // ------------------------------------------------------------------
+
+    /** The appearance as fields, so one command changes one of them and keeps the rest. */
+    private static final class Look {
+        String billboard, alignment, backgroundColor;
+        double scaleX, scaleY, scaleZ, lineSpacing;
+        boolean shadow, seeThrough, defaultBackground, glowing;
+        int lineWidth, textOpacity, brightness;
+
+        Look(HologramConfig.Properties p) {
+            billboard = p.billboard();
+            alignment = p.alignment();
+            scaleX = p.scaleX();
+            scaleY = p.scaleY();
+            scaleZ = p.scaleZ();
+            shadow = p.shadow();
+            seeThrough = p.seeThrough();
+            lineWidth = p.lineWidth();
+            lineSpacing = p.lineSpacing();
+            textOpacity = p.textOpacity();
+            defaultBackground = p.defaultBackground();
+            backgroundColor = p.backgroundColor();
+            brightness = p.brightness();
+            glowing = p.glowing();
+        }
+
+        HologramConfig.Properties build() {
+            return new HologramConfig.Properties(billboard, alignment, scaleX, scaleY, scaleZ, shadow, seeThrough,
+                    lineWidth, lineSpacing, textOpacity, defaultBackground, backgroundColor, brightness, glowing);
+        }
+    }
+
+    private static void look(CommandSender sender, String name, String property, String value,
+                             java.util.function.Consumer<Look> change) {
+        property(sender, name, property, value, current -> {
+            Look look = new Look(current.appearance());
+            change.accept(look);
+            return current.withAppearance(look.build());
+        });
+    }
+
+    private static void click(CommandSender sender, String name, String property, String value,
+                              java.util.function.Consumer<List<String>> change) {
+        property(sender, name, property, value, current -> {
+            HologramConfig.Click click = current.click();
+            List<String> commands = new ArrayList<>(click.commands());
+            change.accept(commands);
+            return current.withClick(new HologramConfig.Click(commands, click.width(), click.cooldown(), click.hoverScale()));
+        });
+    }
+
+    private static void property(CommandSender sender, String name, String property, String value,
+                                 UnaryOperator<StoredHologram> change) {
+        edited(sender, name, change, messages().propertySet(), Values.of().putText("property", property).putText("value", value));
+    }
+
+    private static void invalid(CommandSender sender, String property, String value, String expected) {
+        send(sender, messages().invalidValue(), Values.of().putText("property", property)
+                .putText("value", value == null ? "" : value).putText("expected", expected));
+    }
+
+    /** {@code null} takes the tag off; {@code on} is the tag's own default. */
+    private static Double decimal(String value, double bare) {
+        if (value == null) return null;
+        return value.equalsIgnoreCase("on") ? bare : Double.parseDouble(value);
+    }
+
+    private static int within(int value, int min, int max) {
+        if (value < min || value > max) throw new IllegalArgumentException(value + " out of range");
+        return value;
+    }
+
+    private static String colour(String value) {
+        if (value != null && !COLOUR.matcher(value).matches()) throw new IllegalArgumentException(value);
+        return value;
+    }
+
+    private static boolean bool(String value) {
+        return switch (value.toLowerCase(Locale.ROOT)) {
+            case "true", "on", "yes" -> true;
+            case "false", "off", "no" -> false;
+            default -> throw new IllegalArgumentException(value);
+        };
+    }
 
     private static void state(CommandSender sender, String name, boolean enabled) {
         StoredHologram saved = edited(sender, name, current -> current.withEnabled(enabled), null, Values.of());

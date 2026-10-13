@@ -63,9 +63,9 @@ public record HologramsMessages(
         String importDone,
         @Comment("Nothing found to import. Placeholders: %source%, %folder%.")
         String importNothing,
-        @Comment("/holo help. Lines with <click> run or suggest the command.")
+        @Comment("/holo help and /holoadmin help. Lines with <click> run or suggest the command.")
         List<String> help,
-        @Comment("/holo list for the console, and /holo near. Placeholders: %count%, %radius%.")
+        @Comment("/holoadmin list for the console, and /holoadmin near. Placeholders: %count%, %radius%.")
         String listHeader,
         @Comment("One line per hologram. Placeholders: %name%, %world%, %x%, %y%, %z%, %lines%, %distance%, %status%.")
         String listLine,
@@ -78,6 +78,12 @@ public record HologramsMessages(
         List<String> info,
         @Comment("/holo info, one line per hologram line. Placeholders: %line%, %text%.")
         String infoLine,
+        @Comment("/holo info, one line per click action. Placeholders: %action%, %text%.")
+        String infoClick,
+        @Comment("A setting changed with /holo <name> <setting>. Placeholders: %name%, %property%, %value%.")
+        String propertySet,
+        @Comment("A value a setting does not take. Placeholders: %property%, %value%, %expected%.")
+        String invalidValue,
         States states,
         Dialogs dialogs) {
 
@@ -119,26 +125,29 @@ public record HologramsMessages(
                         "[center]{primary}&lEXYLIA HOLOGRAMS",
                         "[center]{letters_black}Click a command to use it",
                         "",
-                        " <click:run_command:'/holo'>{warning}/holo</click> {letters_black}» {letters}every hologram, on a screen",
-                        " <click:suggest_command:'/holo create '>{warning}/holo create <name> [text]</click> {letters_black}» {letters}a new one here",
-                        " <click:suggest_command:'/holo edit '>{warning}/holo edit <name></click> {letters_black}» {letters}its editor",
-                        " <click:suggest_command:'/holo addline '>{warning}/holo addline <name> <text></click> {letters_black}» {letters}add a line",
-                        " <click:suggest_command:'/holo setline '>{warning}/holo setline <name> <line> <text></click>",
-                        " <click:suggest_command:'/holo insertline '>{warning}/holo insertline <name> <line> <text></click>",
-                        " <click:suggest_command:'/holo removeline '>{warning}/holo removeline <name> <line></click>",
-                        " <click:suggest_command:'/holo moveline '>{warning}/holo moveline <name> <from> <to></click>",
-                        " <click:suggest_command:'/holo movehere '>{warning}/holo movehere <name></click> {letters_black}» {letters}to where you stand",
-                        " <click:suggest_command:'/holo tp '>{warning}/holo tp <name></click> {letters_black}» {letters}go to it",
-                        " <click:run_command:'/holo near'>{warning}/holo near [radius]</click> {letters_black}» {letters}the ones around you",
-                        " <click:suggest_command:'/holo clone '>{warning}/holo clone <name> <new></click> {letters_black}· <click:suggest_command:'/holo rename '>{warning}rename</click> {letters_black}· <click:suggest_command:'/holo delete '>{warning}delete</click>",
-                        " <click:suggest_command:'/holo import '>{warning}/holo import <plugin> [replace]</click> {letters_black}» {letters}DecentHolograms, HolographicDisplays, FancyHolograms",
-                        " <click:run_command:'/holo reload'>{warning}/holo reload</click> {letters_black}» {letters}read holograms.yml again",
+                        " {secondary}Manage",
+                        " <click:run_command:'/holoadmin'>{warning}/holoadmin</click> {letters_black}» {letters}every hologram, on a screen",
+                        " <click:suggest_command:'/holoadmin create '>{warning}/holoadmin create <name> [text]</click> {letters_black}» {letters}a new one here",
+                        " <click:run_command:'/holoadmin near'>{warning}/holoadmin near [radius]</click> {letters_black}» {letters}the ones around you",
+                        " <click:suggest_command:'/holoadmin import '>{warning}/holoadmin import <plugin> [replace]</click> {letters_black}» {letters}DecentHolograms, HolographicDisplays, FancyHolograms",
+                        " <click:run_command:'/holoadmin reload'>{warning}/holoadmin reload</click> {letters_black}» {letters}read holograms.yml again",
+                        "",
+                        " {secondary}Edit one {letters_black}» {warning}/holo <name> {letters_black}opens its editor",
+                        " {warning}info {letters_black}· {warning}tp {letters_black}· {warning}movehere {letters_black}· {warning}move <x> <y> <z> [world] {letters_black}· {warning}center",
+                        " {warning}rename <new> {letters_black}· {warning}clone <new> {letters_black}· {warning}enable {letters_black}· {warning}disable {letters_black}· {warning}delete",
+                        " {warning}addline <text> {letters_black}· {warning}setline <n> <text> {letters_black}· {warning}insertline <n> <text>",
+                        " {warning}removeline <n> {letters_black}· {warning}moveline <from> <to> {letters_black}· {warning}lines",
+                        " {warning}line <n> <tag> [value] {letters_black}» {letters}size, shadow, spin, shine... {muted}(no value resets)",
+                        " {warning}billboard {letters_black}· {warning}alignment {letters_black}· {warning}scale <x> [y z] {letters_black}· {warning}shadow {letters_black}· {warning}seethrough",
+                        " {warning}linewidth {letters_black}· {warning}spacing {letters_black}· {warning}opacity {letters_black}· {warning}background {letters_black}· {warning}brightness",
+                        " {warning}viewdistance {letters_black}· {warning}permission [perm] {letters_black}· {warning}perplayer {letters_black}· {warning}refresh <ticks> {letters_black}· {warning}autoupdate",
+                        " {warning}click add <action> {letters_black}· {warning}click remove <n> {letters_black}· {warning}click clear {letters_black}· {warning}click width|cooldown|hover",
                         ""),
                 "%prefix% {letters}Holograms {letters_black}({info}%count%{letters_black})",
-                " <click:run_command:'/holo edit %name%'><hover:show_text:'{letters}Click to edit'>{highlight}%name%</hover></click> {letters_black}» {letters}%world% {info}%x% %y% %z% {letters_black}· {info}%lines% {letters}lines {letters_black}· %status%",
-                "%prefix% {letters}There are no holograms yet. {warning}<click:suggest_command:'/holo create '>[Create one]</click>",
+                " <click:run_command:'/holo %name%'><hover:show_text:'{letters}Click to edit'>{highlight}%name%</hover></click> {letters_black}» {letters}%world% {info}%x% %y% %z% {letters_black}· {info}%lines% {letters}lines {letters_black}· %status%",
+                "%prefix% {letters}There are no holograms yet. {warning}<click:suggest_command:'/holoadmin create '>[Create one]</click>",
                 "%prefix% {letters}Holograms within {info}%radius% {letters}blocks {letters_black}({info}%count%{letters_black})",
-                " <click:run_command:'/holo edit %name%'><hover:show_text:'{letters}Click to edit'>{highlight}%name%</hover></click> {letters_black}» {info}%distance%m {letters_black}· {info}%lines% {letters}lines {letters_black}· <click:run_command:'/holo tp %name%'>{warning}[TP]</click>",
+                " <click:run_command:'/holo %name%'><hover:show_text:'{letters}Click to edit'>{highlight}%name%</hover></click> {letters_black}» {info}%distance%m {letters_black}· {info}%lines% {letters}lines {letters_black}· <click:run_command:'/holo %name% tp'>{warning}[TP]</click>",
                 "%prefix% {letters}No holograms within {info}%radius% {letters}blocks.",
                 List.of(
                         "",
@@ -151,6 +160,9 @@ public record HologramsMessages(
                         " {letters_black}▎ {letters}Click {letters_black}» %click%",
                         " {letters_black}▎ {letters}Lines {letters_black}» {info}%lines%"),
                 "   {letters_black}%line%. <reset>%text%",
+                "   {letters_black}%action%. {letters}%text%",
+                "[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {highlight}%name% {letters_black}» {letters}%property% {letters_black}» {info}%value%",
+                "[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%value% {error}does not fit {highlight}%property%{error}. {letters_black}Use: {info}%expected%",
                 new States(),
                 new Dialogs());
     }

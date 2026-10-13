@@ -11,7 +11,7 @@ import java.util.Map;
  *
  * @param spawnHeight         how far above the feet a new hologram stands
  * @param defaultViewDistance the view distance of a new hologram
- * @param nearRadius          the radius /holo near uses when none is given
+ * @param nearRadius          the radius /holoadmin near uses when none is given
  * @param presets             what a new hologram can start from
  */
 public record HologramsConfig(
@@ -21,7 +21,7 @@ public record HologramsConfig(
         @Comment("How far away new holograms are seen, in blocks.")
         double defaultViewDistance,
 
-        @Comment("The radius /holo near uses when none is given, in blocks.")
+        @Comment("The radius /holoadmin near uses when none is given, in blocks.")
         double nearRadius,
 
         @Comment("What a hologram created from the menu can start from. Add your own:")
@@ -61,7 +61,7 @@ public record HologramsConfig(
         Map<String, Preset> presets = new LinkedHashMap<>();
         presets.put("simple", new Preset("Simple title", List.of(
                 "<size:1.4>{primary}&l%hologram%",
-                "{letters}Edit me with {highlight}/holo edit %hologram%")));
+                "{letters}Edit me with {highlight}/holo %hologram%")));
         // A floating item that spins and bobs over a title whose colours flow.
         presets.put("portal", new Preset("Portal sign", List.of(
                 "<item:ENDER_EYE><spin:120><bob><glow:#59a4ff>",

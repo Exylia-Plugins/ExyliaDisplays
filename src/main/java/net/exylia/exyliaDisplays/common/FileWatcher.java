@@ -65,7 +65,7 @@ public final class FileWatcher {
             thread.start();
         } catch (IOException | UnsupportedOperationException failure) {
             logger.warning("Could not watch " + file.getFileName() + " for changes (" + failure.getMessage()
-                    + "); use /holo reload after editing it.");
+                    + "); use /holoadmin reload after editing it.");
         }
     }
 
