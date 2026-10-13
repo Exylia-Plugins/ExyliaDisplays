@@ -1,0 +1,142 @@
+# NO EDITAR — SE REGENERA EN CADA ARRANQUE.
+#
+# Las líneas de un holograma, de arriba abajo.
+
+title: "{primary}&lLÍNEAS {letters_black}» {highlight}%holo_name% {muted}%current_page%/%total_pages%"
+size: 54
+type: PAGINATION
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+  pagination:
+    material: LIGHT_GRAY_STAINED_GLASS_PANE
+    name: "{muted}No hay más líneas"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Añade texto, un ítem o un bloque abajo."
+      - ""
+    hide_tooltip: false
+
+pagination:
+  slots: '0-35'
+
+  item_template:
+    material: "%line_icon%"
+    name: "{secondary}&lLÍNEA %line_number%"
+    lore:
+      - ""
+      - "{secondary}Dice:"
+      - " {letters_black}▎ {letters}%line_text%"
+      - ""
+      - "{secondary}Etiquetas:"
+      - " {letters_black}▎ {info}%line_tags%%line_style%"
+      - ""
+      - "{warning}➥ Clic izquierdo {letters_black}» {letters}editar texto"
+      - "{warning}➥ Clic derecho {letters_black}» {letters}estilo, movimiento, visibilidad"
+      - "{warning}➥ Shift + clic izquierdo {letters_black}» {letters}subir"
+      - "{warning}➥ Shift + clic derecho {letters_black}» {letters}bajar"
+      - "{error}➥ Q {letters_black}» {letters}quitar"
+      - ""
+    actions:
+      - "left: exyliaholograms:line_text"
+      - "right: exyliaholograms:line_style"
+      - "shift_left: exyliaholograms:line_up"
+      - "shift_right: exyliaholograms:line_down"
+      - "drop: exyliaholograms:line_delete"
+
+  navigation:
+    previous:
+      slot: 48
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
+      name: '{error}&l← PÁGINA ANTERIOR'
+      lore:
+        - ""
+        - " {letters_black}▎ {letters}Página {info}%current_page%{letters_black}/{info}%total_pages%"
+        - ""
+      actions:
+        - 'previous_page'
+    next:
+      slot: 50
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
+      name: '{success}&lPÁGINA SIGUIENTE →'
+      lore:
+        - ""
+        - " {letters_black}▎ {letters}Página {info}%current_page%{letters_black}/{info}%total_pages%"
+        - ""
+      actions:
+        - 'next_page'
+
+items:
+  add-text:
+    slot: 45
+    material: OAK_SIGN
+    name: "{primary}&lAÑADIR TEXTO"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Una línea nueva al final."
+      - ""
+      - "{warning}➥ Clic para escribirla"
+      - ""
+    actions:
+      - "exyliaholograms:add_line"
+
+  add-item:
+    slot: 46
+    material: ITEM_FRAME
+    name: "{primary}&lAÑADIR ÍTEM"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Un ítem flotante, mirando al jugador."
+      - ""
+      - "{warning}➥ Clic para elegirlo"
+      - ""
+    actions:
+      - "exyliaholograms:add_item"
+
+  add-block:
+    slot: 47
+    material: GRASS_BLOCK
+    name: "{primary}&lAÑADIR BLOQUE"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Un bloque flotante; dale {highlight}giro"
+      - " {letters_black}▎ {letters}desde su estilo para que gire."
+      - ""
+      - "{warning}➥ Clic para elegirlo"
+      - ""
+    actions:
+      - "exyliaholograms:add_block"
+
+  back:
+    slot: 49
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: '{error}&lVOLVER'
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Vuelve al holograma."
+      - ""
+      - "{warning}➥ Clic para volver"
+      - ""
+    actions:
+      - "exyliaholograms:open_hub"
+
+  all-lines:
+    slot: 53
+    material: WRITABLE_BOOK
+    name: "{primary}&lEDITAR TODO A LA VEZ"
+    lore:
+      - ""
+      - "{secondary}Información:"
+      - " {letters_black}▎ {letters}Todas las líneas en una caja, una"
+      - " {letters_black}▎ {letters}por fila: lo más rápido para escribir"
+      - " {letters_black}▎ {letters}un holograma entero, etiquetas incluidas."
+      - ""
+      - "{warning}➥ Clic para abrir"
+      - ""
+    actions:
+      - "exyliaholograms:all_lines"

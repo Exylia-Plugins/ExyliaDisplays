@@ -1,0 +1,186 @@
+# DO NOT EDIT — REGENERATED ON EVERY STARTUP.
+#
+# One hologram: its state, and a card for each part of it.
+
+title: "{primary}&lHOLOGRAM {letters_black}» {highlight}%holo_name%"
+size: 45
+type: SIMPLE
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+
+items:
+  header:
+    slot: 4
+    material: "%holo_toggle_icon%"
+    name: "{primary}&l%holo_name%"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}Reads {letters_black}» %holo_preview%"
+      - " {letters_black}▎ {letters}Lines {letters_black}» {info}%lines%"
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}State {letters_black}» %status%"
+      - ""
+      - "{warning}➥ Left-click {letters_black}» {letters}show or hide"
+      - "{warning}➥ Right-click {letters_black}» {letters}rename"
+      - ""
+    actions:
+      - "left: exyliaholograms:toggle"
+      - "right: exyliaholograms:rename"
+
+  lines:
+    slot: 20
+    material: WRITABLE_BOOK
+    name: "{primary}&lLINES"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}Text, items and blocks, each with"
+      - " {letters_black}▎ {highlight}size{letters}, {highlight}motion {letters}and {highlight}who sees it{letters}."
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}Lines {letters_black}» {info}%lines%"
+      - ""
+      - "{warning}➥ Click to edit"
+      - ""
+    actions:
+      - "exyliaholograms:open_lines"
+
+  appearance:
+    slot: 21
+    material: GLOW_INK_SAC
+    name: "{primary}&lAPPEARANCE"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}How the whole hologram is drawn."
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}Facing {letters_black}» {info}%holo_billboard%"
+      - " {letters_black}▎ {letters}Scale {letters_black}» {info}%holo_scale%"
+      - " {letters_black}▎ {letters}Spacing {letters_black}» {info}%holo_spacing%"
+      - " {letters_black}▎ {letters}Shadow {letters_black}» %holo_shadow%"
+      - ""
+      - "{warning}➥ Click to edit"
+      - ""
+    actions:
+      - "exyliaholograms:appearance"
+
+  visibility:
+    slot: 22
+    material: ENDER_EYE
+    name: "{primary}&lVISIBILITY"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}Who sees it, from how far, and"
+      - " {letters_black}▎ {letters}how often it refreshes."
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}Seen by {letters_black}» %permission%"
+      - " {letters_black}▎ {letters}Distance {letters_black}» {info}%view_distance%"
+      - " {letters_black}▎ {letters}Per player {letters_black}» %per_player%"
+      - " {letters_black}▎ {letters}Refresh {letters_black}» {info}%holo_interval% {letters}ticks"
+      - ""
+      - "{warning}➥ Click to edit"
+      - ""
+    actions:
+      - "exyliaholograms:visibility"
+
+  click:
+    slot: 23
+    material: LEVER
+    name: "{primary}&lCLICK ACTIONS"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}Commands that run when a player"
+      - " {letters_black}▎ {letters}clicks it. It grows a little while"
+      - " {letters_black}▎ {letters}looked at, so it reads as a button."
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}On click {letters_black}» %click%"
+      - " {letters_black}▎ {letters}Grows to {letters_black}» {info}%holo_hover%x"
+      - ""
+      - "{warning}➥ Click to edit"
+      - ""
+    actions:
+      - "exyliaholograms:click"
+
+  location:
+    slot: 24
+    material: COMPASS
+    name: "{primary}&lLOCATION"
+    lore:
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}World {letters_black}» {info}%world%"
+      - " {letters_black}▎ {letters}Position {letters_black}» {info}%xyz%"
+      - ""
+      - "{warning}➥ Left-click {letters_black}» {letters}exact position"
+      - "{warning}➥ Right-click {letters_black}» {letters}move here"
+      - "{warning}➥ Shift-left-click {letters_black}» {letters}centre on its block"
+      - ""
+    actions:
+      - "left: exyliaholograms:location"
+      - "right: exyliaholograms:move_here"
+      - "shift_left: exyliaholograms:centre"
+
+  teleport:
+    slot: 36
+    material: ENDER_PEARL
+    name: "{primary}&lTELEPORT"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Go to it, facing it."
+      - ""
+      - "{warning}➥ Click to teleport"
+      - ""
+    actions:
+      - "exyliaholograms:teleport"
+
+  clone:
+    slot: 37
+    material: PAPER
+    name: "{primary}&lDUPLICATE"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}A copy under a new name,"
+      - " {letters_black}▎ {letters}in the same place."
+      - ""
+      - "{warning}➥ Click to duplicate"
+      - ""
+    actions:
+      - "exyliaholograms:clone"
+
+  back:
+    slot: 40
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: '{error}&lBACK'
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Returns to every hologram."
+      - ""
+      - "{warning}➥ Click to go back"
+      - ""
+    actions:
+      - "exyliaholograms:open_list"
+
+  delete:
+    slot: 44
+    material: BARRIER
+    name: "{error}&lDELETE"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Removes it for good."
+      - " {letters_black}You will be asked to confirm."
+      - ""
+      - "{error}➥ Click to delete"
+      - ""
+    actions:
+      - "exyliaholograms:delete"

@@ -1,0 +1,101 @@
+# NO EDITAR — SE REGENERA EN CADA ARRANQUE.
+#
+# Todos los hologramas del servidor, y el botón para crear uno nuevo.
+
+title: "{primary}&lHOLOGRAMAS {muted}%current_page%/%total_pages%"
+size: 54
+type: PAGINATION
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+  pagination:
+    material: LIGHT_GRAY_STAINED_GLASS_PANE
+    name: "{muted}No hay más hologramas"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Crea uno para verlo aquí."
+      - ""
+    hide_tooltip: false
+
+pagination:
+  slots: '0-35'
+
+  item_template:
+    material: "%holo_icon%"
+    name: "{primary}&l%holo_name%"
+    lore:
+      - ""
+      - "{secondary}Información:"
+      - " {letters_black}▎ {letters}Dice {letters_black}» %holo_preview%"
+      - " {letters_black}▎ {letters}Mundo {letters_black}» {info}%holo_world%"
+      - " {letters_black}▎ {letters}Posición {letters_black}» {info}%holo_xyz%"
+      - " {letters_black}▎ {letters}Líneas {letters_black}» {info}%holo_lines%"
+      - ""
+      - "{secondary}Estado:"
+      - " {letters_black}▎ {letters}Estado {letters_black}» %holo_status%"
+      - ""
+      - "{warning}➥ Clic izquierdo {letters_black}» {letters}editar"
+      - "{warning}➥ Shift + clic izquierdo {letters_black}» {letters}teletransportarse"
+      - "{error}➥ Clic derecho {letters_black}» {letters}eliminar"
+      - ""
+    actions:
+      - "left: exyliaholograms:edit"
+      - "shift_left: exyliaholograms:row_teleport"
+      - "right: exyliaholograms:row_delete"
+
+  navigation:
+    previous:
+      slot: 48
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
+      name: '{error}&l← PÁGINA ANTERIOR'
+      lore:
+        - ""
+        - " {letters_black}▎ {letters}Página {info}%current_page%{letters_black}/{info}%total_pages%"
+        - ""
+      actions:
+        - 'previous_page'
+    next:
+      slot: 50
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
+      name: '{success}&lPÁGINA SIGUIENTE →'
+      lore:
+        - ""
+        - " {letters_black}▎ {letters}Página {info}%current_page%{letters_black}/{info}%total_pages%"
+        - ""
+      actions:
+        - 'next_page'
+
+items:
+  create:
+    slot: 45
+    material: NETHER_STAR
+    name: "{primary}&lCREAR HOLOGRAMA"
+    lore:
+      - ""
+      - "{secondary}Información:"
+      - " {letters_black}▎ {letters}Un holograma nuevo donde estás,"
+      - " {letters_black}▎ {letters}desde una {highlight}plantilla lista{letters}."
+      - ""
+      - "{warning}➥ Clic para crear"
+      - ""
+    actions:
+      - "exyliaholograms:create"
+
+  info:
+    slot: 49
+    material: BOOK
+    name: "{primary}&lHOLOGRAMAS"
+    lore:
+      - ""
+      - "{secondary}Información:"
+      - " {letters_black}▎ {letters}Hologramas {letters_black}» {info}%holo_count%"
+      - ""
+      - "{secondary}Consejo:"
+      - " {letters_black}▎ {letters}Todo lo de aquí también está en"
+      - " {letters_black}▎ {highlight}holograms.yml{letters}, y guardar ese"
+      - " {letters_black}▎ {letters}archivo lo aplica al instante."
+      - ""

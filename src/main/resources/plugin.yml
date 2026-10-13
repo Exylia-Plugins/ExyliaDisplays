@@ -1,0 +1,54 @@
+name: ExyliaHolograms
+version: '${version}'
+main: net.exylia.exyliaHolograms.ExyliaHologramsPlugin
+api-version: '1.21'
+authors: [ DiGround ]
+website: https://github.com/Exylia-Plugins/ExyliaHolograms
+description: Packet holograms with per-line size, animations, click actions and conditions, edited in game or in YAML.
+
+# Kept up to date by ExyliaLib from this repository's GitHub releases.
+exylia-updates: Exylia-Plugins/ExyliaHolograms
+# The oldest ExyliaLib this build runs on; ExyliaLib holds back an update that needs a newer one.
+exylia-lib: '${exyliaLibVersion}'
+
+folia-supported: true
+
+depend:
+  - packetevents
+
+softdepend:
+  # Required, but soft so this plugin still starts without it: it then downloads ExyliaLib
+  # and asks for a restart.
+  - ExyliaLib
+  - PlaceholderAPI
+  # Read by /holo import; never changed.
+  - DecentHolograms
+  - HolographicDisplays
+  - FancyHolograms
+
+permissions:
+  exyliaholograms.admin:
+    description: Create, edit, move, import and reload holograms with /holo.
+    default: op
+  exyliaholograms.*:
+    description: Every ExyliaHolograms permission.
+    default: op
+    children:
+      exyliaholograms.admin: true
+
+libraries:
+  # The same list ExyliaLib declares, in the same order and the same versions.
+  # The server's library loader fetches each one once and shares it, so a plugin
+  # naming a driver it never opens itself costs nothing, while a plugin missing
+  # one that ExyliaLib later needs is a server that starts and then cannot write.
+  - 'io.github.revxrsal:lamp.common:4.0.0-rc.17'
+  - 'io.github.revxrsal:lamp.bukkit:4.0.0-rc.17'
+  - 'com.github.ben-manes.caffeine:caffeine:3.2.4'
+  - 'com.zaxxer:HikariCP:5.1.0'
+  - 'com.h2database:h2:2.2.224'
+  - 'com.mysql:mysql-connector-j:8.4.0'
+  - 'org.mariadb.jdbc:mariadb-java-client:3.4.1'
+  - 'org.postgresql:postgresql:42.7.4'
+  - 'org.mongodb:mongodb-driver-sync:4.11.1'
+  - 'redis.clients:jedis:5.1.0'
+  - 'org.apache.commons:commons-pool2:2.12.0'
