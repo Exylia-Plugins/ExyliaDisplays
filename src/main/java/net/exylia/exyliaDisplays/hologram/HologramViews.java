@@ -108,7 +108,58 @@ public final class HologramViews {
                         : "{info}" + Values.inert(hologram.permission()))
                 .put("view_distance", number(hologram.viewDistance()))
                 .put("per_player", hologram.perPlayer() ? states.yes() : states.no())
-                .put("click", click);
+                .put("click", click)
+                .put("visibility", visibility(hologram))
+                .put("visibility_count", hologram.visibility().players().size())
+                .put("attached", attached(name, hologram))
+                .put("attach_offset", number(hologram.attach().offset()));
+    }
+
+    // ------------------------------------------------------------------
+    // Who sees it, and what it rides
+    // ------------------------------------------------------------------
+
+    /** The mode, and how many players its list names. */
+    static String visibility(StoredHologram hologram) {
+        HologramsMessages.Audience words = HologramsMessages.get().audience();
+        StoredHologram.Visibility visibility = hologram.visibility();
+        return (visibility.manual() ? words.manual() : words.all())
+                + " {letters_black}(" + (visibility.manual() ? words.shownToLabel() : words.hiddenFromLabel())
+                + " {info}" + visibility.players().size() + "{letters_black})";
+    }
+
+    /** The players a list of UUIDs names, by their last known name. */
+    static String players(List<String> ids) {
+        if (ids.isEmpty()) return HologramsMessages.get().audience().nobody();
+        List<String> names = new ArrayList<>();
+        for (String id : ids) {
+            String known = null;
+            try {
+                known = org.bukkit.Bukkit.getOfflinePlayer(java.util.UUID.fromString(id)).getName();
+            } catch (IllegalArgumentException typo) {
+                // A hand edit that is not a UUID is shown as written.
+            }
+            names.add(Values.inert(known == null ? id : known));
+        }
+        return String.join(", ", names);
+    }
+
+    /** What it rides: nothing, the entity it rides now, or the one it waits for. */
+    static String attached(String name, StoredHologram hologram) {
+        HologramsMessages.Attach words = HologramsMessages.get().attach();
+        HologramRenderer renderer = HologramModule.get().renderer();
+        java.util.UUID target = renderer.target(name, hologram);
+        if (target == null) return words.none();
+        // The entity being loaded is enough: mounting it takes a tick, and the screen opens before.
+        org.bukkit.entity.Entity riding = org.bukkit.Bukkit.getEntity(target);
+        String label = riding != null ? riding.getName() : targetName(target);
+        return Values.of().putText("target", label).apply(riding != null ? words.riding() : words.away());
+    }
+
+    /** A player's last known name, else the UUID, for an entity that is not loaded. */
+    static String targetName(java.util.UUID target) {
+        String known = org.bukkit.Bukkit.getOfflinePlayer(target).getName();
+        return known != null ? known : target.toString();
     }
 
     // ------------------------------------------------------------------

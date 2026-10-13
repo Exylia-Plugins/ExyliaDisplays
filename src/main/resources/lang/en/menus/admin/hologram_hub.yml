@@ -33,7 +33,7 @@ items:
       - "right: exyliadisplays:holo_rename"
 
   lines:
-    slot: 20
+    slot: 19
     material: WRITABLE_BOOK
     name: "{primary}&lLINES"
     lore:
@@ -51,7 +51,7 @@ items:
       - "exyliadisplays:holo_open_lines"
 
   appearance:
-    slot: 21
+    slot: 20
     material: GLOW_INK_SAC
     name: "{primary}&lAPPEARANCE"
     lore:
@@ -71,7 +71,7 @@ items:
       - "exyliadisplays:holo_appearance"
 
   visibility:
-    slot: 22
+    slot: 21
     material: ENDER_EYE
     name: "{primary}&lVISIBILITY"
     lore:
@@ -85,11 +85,14 @@ items:
       - " {letters_black}▎ {letters}Distance {letters_black}» {info}%view_distance%"
       - " {letters_black}▎ {letters}Per player {letters_black}» %per_player%"
       - " {letters_black}▎ {letters}Refresh {letters_black}» {info}%holo_interval% {letters}ticks"
+      - " {letters_black}▎ {letters}Players {letters_black}» %visibility%"
       - ""
-      - "{warning}➥ Click to edit"
+      - "{warning}➥ Left-click {letters_black}» {letters}edit"
+      - "{warning}➥ Right-click {letters_black}» {letters}everyone or only chosen players"
       - ""
     actions:
-      - "exyliadisplays:holo_visibility"
+      - "left: exyliadisplays:holo_visibility"
+      - "right: exyliadisplays:holo_visibility_mode"
 
   click:
     slot: 23
@@ -133,6 +136,27 @@ items:
       - "right: exyliadisplays:holo_move_here"
       - "shift_left: exyliadisplays:holo_centre"
       - "shift_right: exyliadisplays:holo_face"
+
+  attach:
+    slot: 25
+    material: LEAD
+    name: "{primary}&lATTACHED TO"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}Rides a {highlight}player {letters}or a {highlight}mob{letters},"
+      - " {letters_black}▎ {letters}moving with it wherever it goes."
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}Rides {letters_black}» %attached%"
+      - " {letters_black}▎ {letters}Height {letters_black}» {info}%attach_offset%"
+      - ""
+      - "{warning}➥ Left-click {letters_black}» {letters}choose what it rides"
+      - "{warning}➥ Right-click {letters_black}» {letters}back to its location"
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_attach"
+      - "right: exyliadisplays:holo_detach"
 
   teleport:
     slot: 36

@@ -6,6 +6,8 @@ import net.exylia.exyliaDisplays.common.store.Position;
 import net.exylia.lib.hologram.HologramConfig;
 import net.exylia.lib.hologram.HologramLine;
 import net.exylia.lib.text.Values;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
@@ -474,6 +477,106 @@ public final class HologramCommand {
     }
 
     // ------------------------------------------------------------------
+    // Which players see it
+    // ------------------------------------------------------------------
+
+    /** {@code all}: everyone but the players it is hidden from. {@code manual}: only the players it is shown to. */
+    @Subcommand("<name> visibility")
+    public void visibilityMode(CommandSender sender, @SuggestWith(Names.class) String name,
+                               @Suggest({"all", "manual"}) String mode) {
+        String value = mode.toLowerCase(Locale.ROOT);
+        if (!value.equals(StoredHologram.Visibility.ALL) && !value.equals(StoredHologram.Visibility.MANUAL)) {
+            invalid(sender, "visibility", mode, "all, manual");
+            return;
+        }
+        StoredHologram saved = edited(sender, name, current -> current.withVisibility(current.visibility().withMode(value)),
+                null, Values.of());
+        if (saved != null) {
+            send(sender, messages().audience().modeSet(), Values.of().putText("name", name)
+                    .put("mode", HologramViews.visibility(saved)));
+        }
+    }
+
+    @Subcommand("<name> show")
+    public void show(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(Players.class) String player) {
+        audience(sender, name, player, true);
+    }
+
+    @Subcommand("<name> hide")
+    public void hide(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(Players.class) String player) {
+        audience(sender, name, player, false);
+    }
+
+    /** The players the mode's list names: who sees it in {@code manual}, who does not in {@code all}. */
+    @Subcommand("<name> viewers")
+    public void viewers(CommandSender sender, @SuggestWith(Names.class) String name) {
+        StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
+        if (hologram == null) {
+            send(sender, messages().notFound(), Values.of().putText("name", name));
+            return;
+        }
+        StoredHologram.Visibility visibility = hologram.visibility();
+        HologramsMessages.Audience words = messages().audience();
+        send(sender, words.list(), Values.of().putText("name", name)
+                .put("mode", visibility.manual() ? words.manual() : words.all())
+                .put("list", visibility.manual() ? words.shownToLabel() : words.hiddenFromLabel())
+                .put("count", visibility.players().size())
+                .put("players", HologramViews.players(visibility.players())));
+    }
+
+    @Subcommand("<name> viewers clear")
+    public void viewersClear(CommandSender sender, @SuggestWith(Names.class) String name) {
+        edited(sender, name, current -> current.withVisibility(current.visibility().cleared()),
+                messages().audience().cleared(), Values.of());
+    }
+
+    private static void audience(CommandSender sender, String name, String player, boolean show) {
+        if (!exists(sender, name)) return;
+        List<UUID> players = new ArrayList<>();
+        if (player.equalsIgnoreCase("@a")) {
+            Bukkit.getOnlinePlayers().forEach(online -> players.add(online.getUniqueId()));
+        } else {
+            OfflinePlayer found = HologramActions.player(player);
+            if (found == null) {
+                send(sender, messages().audience().playerNotFound(), Values.of().putText("player", player));
+                return;
+            }
+            players.add(found.getUniqueId());
+        }
+        edited(sender, name, current -> current.withVisibility(show
+                        ? current.visibility().show(players) : current.visibility().hide(players)),
+                show ? messages().audience().shown() : messages().audience().hidden(),
+                Values.of().put("players", HologramViews.players(players.stream().map(UUID::toString).toList())));
+    }
+
+    // ------------------------------------------------------------------
+    // What it rides
+    // ------------------------------------------------------------------
+
+    /** Rides a player (by name or UUID), an entity (by UUID), or the entity nearest to the player. */
+    @Subcommand("<name> attach")
+    public void attach(CommandSender sender, @SuggestWith(Names.class) String name,
+                       @SuggestWith(Players.class) String target) {
+        HologramActions.attach(sender, name, target);
+    }
+
+    @Subcommand("<name> detach")
+    public void detach(CommandSender sender, @SuggestWith(Names.class) String name) {
+        HologramActions.detach(sender, name);
+    }
+
+    /** How high above the entity it rides. */
+    @Subcommand("<name> attachoffset")
+    public void attachOffset(CommandSender sender, @SuggestWith(Names.class) String name, double blocks) {
+        if (blocks < -16 || blocks > 16) {
+            invalid(sender, "attach-offset", HologramViews.number(blocks), "-16 - 16");
+            return;
+        }
+        property(sender, name, "attach-offset", HologramViews.number(blocks),
+                current -> current.withAttach(current.attach().withOffset(blocks)));
+    }
+
+    // ------------------------------------------------------------------
 
     /** The appearance as fields, so one command changes one of them and keeps the rest. */
     private static final class Look {
@@ -605,6 +708,17 @@ public final class HologramCommand {
         public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
             ExyliaDisplays plugin = ExyliaDisplays.getInstance();
             return plugin == null ? List.of() : HologramModule.get().store().names();
+        }
+    }
+
+    /** Online players, {@code @a} and {@code nearest}, for show, hide and attach. */
+    public static final class Players implements SuggestionProvider<BukkitCommandActor> {
+
+        @Override
+        public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
+            List<String> names = new ArrayList<>(List.of("@a", "nearest"));
+            Bukkit.getOnlinePlayers().forEach(player -> names.add(player.getName()));
+            return names;
         }
     }
 }

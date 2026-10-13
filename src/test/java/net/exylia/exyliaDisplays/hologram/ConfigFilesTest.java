@@ -71,6 +71,30 @@ class ConfigFilesTest {
     }
 
     @Test
+    @DisplayName("who sees a hologram and what it rides are written as UUIDs and read back the same")
+    void visibilityAndAttachRoundTrip() throws IOException {
+        Plugin plugin = plugin();
+        ConfigFile<HologramFile> file = Configs.define(plugin, "holograms", HologramFile.class).load();
+        java.util.UUID ana = java.util.UUID.fromString("00000000-0000-0000-0000-00000000000a");
+        StoredHologram tag = new StoredHologram()
+                .withVisibility(new StoredHologram.Visibility().withMode("manual").show(List.of(ana)))
+                .withAttach(new StoredHologram.Attachment().withEntity(ana).withOffset(0.75));
+        file.update(current -> new HologramFile(Map.of("tag", tag)));
+
+        String written = Files.readString(folder.resolve("holograms.yml"));
+        assertTrue(written.contains("mode: manual"), written);
+        assertTrue(written.contains("shown-to:"), written);
+        assertTrue(written.contains("hidden-from:"), written);
+        assertTrue(written.contains(ana.toString()), written);
+
+        Configs.releaseAll();
+        StoredHologram read = Configs.define(plugin(), "holograms", HologramFile.class).load().get().holograms().get("tag");
+        assertEquals(tag, read);
+        assertTrue(read.visibility().sees(ana));
+        assertEquals(ana, read.attach().target());
+    }
+
+    @Test
     @DisplayName("a hand-written hologram with only some keys gets the defaults for the rest")
     void sparseHologram() throws IOException {
         Files.writeString(folder.resolve("holograms.yml"), """
@@ -95,6 +119,8 @@ class ConfigFilesTest {
         assertEquals(48.0, welcome.viewDistance());
         assertEquals(List.of("spawn"), welcome.click().commands());
         assertEquals("CENTER", welcome.appearance().billboard());
+        assertEquals("all", welcome.visibility().mode(), "a file from before visibility existed shows it to everyone");
+        assertEquals(null, welcome.attach().target());
     }
 
     @Test

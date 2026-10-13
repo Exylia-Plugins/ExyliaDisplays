@@ -82,4 +82,41 @@ class StoredHologramTest {
                 "VERTICAL", "CENTER", 1, 1, 1, true, false, 200, 0.25, 255, false, "#00000000", -1, false)).withFacing(45f, 0f);
         org.junit.jupiter.api.Assertions.assertEquals("VERTICAL", vertical.appearance().billboard(), "only CENTER is changed");
     }
+
+    @Test
+    @DisplayName("show and hide edit the list the visibility mode reads, and clearing empties only that one")
+    void visibility() {
+        java.util.UUID ana = java.util.UUID.randomUUID();
+        java.util.UUID bob = java.util.UUID.randomUUID();
+        StoredHologram.Visibility all = new StoredHologram.Visibility();
+        assertTrue(all.sees(ana));
+        StoredHologram.Visibility hidden = all.hide(List.of(ana)).hide(List.of(ana));
+        assertFalse(hidden.sees(ana));
+        assertTrue(hidden.sees(bob));
+        assertEquals(List.of(ana.toString()), hidden.hiddenFrom(), "hiding twice keeps one entry");
+        assertTrue(hidden.show(List.of(ana)).sees(ana));
+
+        StoredHologram.Visibility manual = hidden.withMode("MANUAL");
+        assertFalse(manual.sees(bob), "manual shows it to nobody it was not shown to");
+        StoredHologram.Visibility shown = manual.show(List.of(bob));
+        assertTrue(shown.sees(bob));
+        assertEquals(List.of(bob.toString()), shown.players());
+        assertFalse(shown.hide(List.of(bob)).sees(bob));
+        assertEquals(List.of(), shown.cleared().shownTo());
+        assertEquals(List.of(ana.toString()), shown.cleared().hiddenFrom(), "the other mode's list is kept");
+        assertEquals("all", new StoredHologram.Visibility("typo", null, null).mode());
+    }
+
+    @Test
+    @DisplayName("an attachment reads its UUID, ignores a typo, and its offset raises the drawn hologram")
+    void attachment() {
+        java.util.UUID mob = java.util.UUID.randomUUID();
+        StoredHologram.Attachment attach = new StoredHologram.Attachment().withEntity(mob).withOffset(1.25);
+        assertEquals(mob, attach.target());
+        assertEquals(null, new StoredHologram.Attachment("not-a-uuid", 0).target());
+        assertEquals(null, attach.withEntity(null).target());
+        StoredHologram hologram = lines("a").withAttach(attach);
+        assertEquals(1.25, hologram.toConfig(hologram.attach().offset()).offsetY());
+        assertEquals(0, hologram.toConfig().offsetY());
+    }
 }

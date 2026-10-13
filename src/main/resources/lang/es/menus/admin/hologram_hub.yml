@@ -33,7 +33,7 @@ items:
       - "right: exyliadisplays:holo_rename"
 
   lines:
-    slot: 20
+    slot: 19
     material: WRITABLE_BOOK
     name: "{primary}&lLÍNEAS"
     lore:
@@ -51,7 +51,7 @@ items:
       - "exyliadisplays:holo_open_lines"
 
   appearance:
-    slot: 21
+    slot: 20
     material: GLOW_INK_SAC
     name: "{primary}&lAPARIENCIA"
     lore:
@@ -71,7 +71,7 @@ items:
       - "exyliadisplays:holo_appearance"
 
   visibility:
-    slot: 22
+    slot: 21
     material: ENDER_EYE
     name: "{primary}&lVISIBILIDAD"
     lore:
@@ -85,11 +85,14 @@ items:
       - " {letters_black}▎ {letters}Distancia {letters_black}» {info}%view_distance%"
       - " {letters_black}▎ {letters}Por jugador {letters_black}» %per_player%"
       - " {letters_black}▎ {letters}Actualiza {letters_black}» {info}%holo_interval% {letters}ticks"
+      - " {letters_black}▎ {letters}Jugadores {letters_black}» %visibility%"
       - ""
-      - "{warning}➥ Clic para editar"
+      - "{warning}➥ Clic izquierdo {letters_black}» {letters}editar"
+      - "{warning}➥ Clic derecho {letters_black}» {letters}todos o solo jugadores elegidos"
       - ""
     actions:
-      - "exyliadisplays:holo_visibility"
+      - "left: exyliadisplays:holo_visibility"
+      - "right: exyliadisplays:holo_visibility_mode"
 
   click:
     slot: 23
@@ -133,6 +136,27 @@ items:
       - "right: exyliadisplays:holo_move_here"
       - "shift_left: exyliadisplays:holo_centre"
       - "shift_right: exyliadisplays:holo_face"
+
+  attach:
+    slot: 25
+    material: LEAD
+    name: "{primary}&lMONTADO EN"
+    lore:
+      - ""
+      - "{secondary}Información:"
+      - " {letters_black}▎ {letters}Va encima de un {highlight}jugador {letters}o un {highlight}mob{letters},"
+      - " {letters_black}▎ {letters}moviéndose con él vaya donde vaya."
+      - ""
+      - "{secondary}Estado:"
+      - " {letters_black}▎ {letters}Montado en {letters_black}» %attached%"
+      - " {letters_black}▎ {letters}Altura {letters_black}» {info}%attach_offset%"
+      - ""
+      - "{warning}➥ Clic izquierdo {letters_black}» {letters}elegir dónde va montado"
+      - "{warning}➥ Clic derecho {letters_black}» {letters}volver a su ubicación"
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_attach"
+      - "right: exyliadisplays:holo_detach"
 
   teleport:
     slot: 36

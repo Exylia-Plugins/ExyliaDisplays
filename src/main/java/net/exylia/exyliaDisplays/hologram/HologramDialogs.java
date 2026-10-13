@@ -78,6 +78,10 @@ public final class HologramDialogs {
     private static final FormKey<String> COMMANDS = FormKey.text("commands");
     private static final FormKey<BigDecimal> WIDTH = FormKey.decimal("width");
     private static final FormKey<Long> COOLDOWN = FormKey.integer("cooldown");
+    private static final FormKey<String> VISIBILITY_MODE = FormKey.text("visibility_mode");
+    private static final FormKey<Boolean> CLEAR_PLAYERS = FormKey.flag("clear_players");
+    private static final FormKey<String> ATTACH_TARGET = FormKey.text("attach_target");
+    private static final FormKey<BigDecimal> ATTACH_OFFSET = FormKey.decimal("attach_offset");
     private static final FormKey<BigDecimal> HOVER = FormKey.decimal("hover");
     private static final FormKey<String> WORLD = FormKey.text("world");
     private static final FormKey<BigDecimal> X = FormKey.decimal("x");
@@ -365,12 +369,60 @@ public final class HologramDialogs {
                 .flag(PER_PLAYER, words.perPlayerLabel(), hologram.perPlayer())
                 .integer(INTERVAL, words.intervalLabel(), hologram.refresh().updateInterval())
                 .flag(AUTO_UPDATE, words.autoUpdateLabel(), hologram.refresh().autoUpdate());
-        answer(player, form.ask(values -> values), back, values -> save(player, name, current -> current
+        audienceFields(form, hologram.visibility());
+        answer(player, form.ask(values -> values), back, values -> save(player, name, current -> audience(current, values)
                 .withViewDistance(positive(values.getDecimal(VIEW_DISTANCE), current.viewDistance()))
                 .withPermission(values.getOr(PERMISSION, "").trim())
                 .withPerPlayer(values.getBoolean(PER_PLAYER))
                 .withRefresh(new HologramConfig.Refresh(Math.max(1, values.getLong(INTERVAL)),
                         values.getBoolean(AUTO_UPDATE))), back));
+    }
+
+    /** The mode, and a switch that empties the list it reads, which the hint names. */
+    private static void audienceFields(EditorForm form, StoredHologram.Visibility visibility) {
+        HologramsMessages.Audience words = HologramsMessages.get().audience();
+        List<FormField.Option> modes = new ArrayList<>(List.of(
+                new FormField.Option(StoredHologram.Visibility.ALL, words.modeAllOption()),
+                new FormField.Option(StoredHologram.Visibility.MANUAL, words.modeManualOption())));
+        if (visibility.manual()) java.util.Collections.reverse(modes);
+        form.choice(VISIBILITY_MODE, words.modeLabel(), visibility.mode(), modes)
+                .flag(CLEAR_PLAYERS, words.clearLabel(), false)
+                .hint(Values.of()
+                        .put("list", visibility.manual() ? words.shownToLabel() : words.hiddenFromLabel())
+                        .put("count", visibility.players().size())
+                        .put("players", HologramViews.players(visibility.players()))
+                        .apply(words.clearHint()));
+    }
+
+    private static StoredHologram audience(StoredHologram current, FormValues values) {
+        StoredHologram.Visibility visibility = current.visibility();
+        if (values.getBoolean(CLEAR_PLAYERS)) visibility = visibility.cleared();
+        return current.withVisibility(visibility.withMode(values.getOr(VISIBILITY_MODE, visibility.mode())));
+    }
+
+    /** What it rides, and how high above it: a player, an entity UUID or the nearest entity. */
+    public static void attach(Player player, String name) {
+        StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
+        if (hologram == null) return;
+        HologramsMessages.Attach words = HologramsMessages.get().attach();
+        Runnable back = () -> HologramViews.openHub(player, name);
+        java.util.UUID target = HologramModule.get().renderer().target(name, hologram);
+        EditorForm form = form(player, words.dialogTitle())
+                .text(ATTACH_TARGET, words.targetLabel(), target == null ? "" : HologramViews.targetName(target))
+                .hint(words.targetHint())
+                .decimal(ATTACH_OFFSET, words.offsetLabel(), BigDecimal.valueOf(hologram.attach().offset()));
+        answer(player, form.ask(values -> values), back, values -> {
+            double offset = Math.clamp(values.getDecimal(ATTACH_OFFSET).doubleValue(), -16, 16);
+            HologramModule.get().store().edit(name, current -> current.withAttach(current.attach().withOffset(offset)));
+            String typed = values.getOr(ATTACH_TARGET, "").trim();
+            String before = target == null ? "" : HologramViews.targetName(target);
+            if (typed.isEmpty()) {
+                if (target != null) HologramActions.detach(player, name);
+            } else if (!typed.equals(before)) {
+                HologramActions.attach(player, name, typed);
+            }
+            back.run();
+        });
     }
 
     /** What clicking it does. */

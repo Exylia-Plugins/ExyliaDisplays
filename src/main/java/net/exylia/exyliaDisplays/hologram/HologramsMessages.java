@@ -9,7 +9,9 @@ import java.util.List;
  * Everything a player or an admin reads, in {@code lang/<code>/messages.yml}.
  *
  * @param states  the words menus and messages show for a state
- * @param dialogs the titles, labels and hints of every window that asks something
+ * @param dialogs  the titles, labels and hints of every window that asks something
+ * @param audience /holo show, hide and the visibility mode
+ * @param attach   /holo attach, detach and attachoffset
  */
 @Comment("Messages of the hologram module of ExyliaDisplays.")
 @Comment("")
@@ -74,7 +76,7 @@ public record HologramsMessages(
         String nearLine,
         String nearEmpty,
         @Comment("/holo info. Placeholders: %name%, %world%, %x%, %y%, %z%, %lines%, %status%, %permission%,")
-        @Comment("%view_distance%, %click%, %per_player%.")
+        @Comment("%view_distance%, %click%, %per_player%, %visibility%, %attached%.")
         List<String> info,
         @Comment("/holo info, one line per hologram line. Placeholders: %line%, %text%.")
         String infoLine,
@@ -85,13 +87,17 @@ public record HologramsMessages(
         @Comment("A value a setting does not take. Placeholders: %property%, %value%, %expected%.")
         String invalidValue,
         States states,
-        Dialogs dialogs) {
+        Dialogs dialogs,
+        Audience audience,
+        Attach attach) {
 
     public HologramsMessages {
         if (help == null) help = List.of();
         if (info == null) info = List.of();
         if (states == null) states = new States();
         if (dialogs == null) dialogs = new Dialogs();
+        if (audience == null) audience = new Audience();
+        if (attach == null) attach = new Attach();
     }
 
     public HologramsMessages() {
@@ -142,6 +148,8 @@ public record HologramsMessages(
                         " {warning}billboard {letters_black}· {warning}alignment {letters_black}· {warning}scale <x> [y z] {letters_black}· {warning}shadow {letters_black}· {warning}seethrough",
                         " {warning}linewidth {letters_black}· {warning}spacing {letters_black}· {warning}opacity {letters_black}· {warning}background {letters_black}· {warning}brightness",
                         " {warning}viewdistance {letters_black}· {warning}permission [perm] {letters_black}· {warning}perplayer {letters_black}· {warning}refresh <ticks> {letters_black}· {warning}autoupdate",
+                        " {warning}show|hide <player|@a> {letters_black}· {warning}visibility <all|manual> {letters_black}· {warning}viewers [clear]",
+                        " {warning}attach <player|uuid|nearest> {letters_black}· {warning}detach {letters_black}· {warning}attachoffset <blocks>",
                         " {warning}click add <action> {letters_black}· {warning}click remove <n> {letters_black}· {warning}click clear {letters_black}· {warning}click width|cooldown|hover",
                         ""),
                 "%prefix% {letters}Holograms {letters_black}({info}%count%{letters_black})",
@@ -158,6 +166,8 @@ public record HologramsMessages(
                         " {letters_black}▎ {letters}Where {letters_black}» {letters}%world% {info}%x% %y% %z%",
                         " {letters_black}▎ {letters}Seen by {letters_black}» %permission% {letters_black}· {info}%view_distance% {letters}blocks",
                         " {letters_black}▎ {letters}Per player {letters_black}» %per_player%",
+                        " {letters_black}▎ {letters}Visible to {letters_black}» %visibility%",
+                        " {letters_black}▎ {letters}Rides {letters_black}» %attached%",
                         " {letters_black}▎ {letters}Click {letters_black}» %click%",
                         " {letters_black}▎ {letters}Lines {letters_black}» {info}%lines%"),
                 "   {letters_black}%line%. <reset>%text%",
@@ -165,7 +175,9 @@ public record HologramsMessages(
                 "[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {highlight}%name% {letters_black}» {letters}%property% {letters_black}» {info}%value%",
                 "[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%value% {error}does not fit {highlight}%property%{error}. {letters_black}Use: {info}%expected%",
                 new States(),
-                new Dialogs());
+                new Dialogs(),
+                new Audience(),
+                new Attach());
     }
 
     /**
@@ -369,6 +381,91 @@ public record HologramsMessages(
                     "{error}Remove line {highlight}%line%{error}?",
                     "{primary}&lITEM LINE",
                     "{primary}&lBLOCK LINE");
+        }
+    }
+
+    /**
+     * Which players see a hologram: {@code /holo <name> show|hide|visibility|viewers}, and the
+     * words its screens show for it.
+     */
+    public record Audience(
+            @Comment("Placeholders: %name%, %players% (who it was shown to or hidden from).")
+            String shown,
+            String hidden,
+            @Comment("Placeholders: %name%, %mode%.")
+            String modeSet,
+            @Comment("Placeholders: %name%, %mode%, %list% (the list's label), %count%, %players%.")
+            String list,
+            @Comment("Placeholder: %name%.")
+            String cleared,
+            @Comment("A player who never joined. Placeholder: %player%.")
+            String playerNotFound,
+            @Comment("The two modes, in menus and messages.")
+            String all,
+            String manual,
+            @Comment("The label of the list each mode reads.")
+            String shownToLabel,
+            String hiddenFromLabel,
+            @Comment("An empty list.")
+            String nobody,
+            String modeLabel,
+            String modeAllOption,
+            String modeManualOption,
+            String clearLabel,
+            @Comment("Under the clear switch. Placeholders: %list%, %count%, %players%.")
+            String clearHint) {
+
+        public Audience() {
+            this("[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {highlight}%name% {success}is now shown to {highlight}%players%{success}.",
+                    "%prefix% {highlight}%name% {warning}is now hidden from {highlight}%players%{warning}.",
+                    "[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {highlight}%name% {letters_black}» {letters}seen by {letters_black}» %mode%",
+                    "%prefix% {highlight}%name% {letters_black}» %mode% {letters_black}· {letters}%list% {letters_black}({info}%count%{letters_black}) » {letters}%players%",
+                    "%prefix% {highlight}%name% {warning}player list cleared.",
+                    "[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}No player called {highlight}%player% {error}has joined this server.",
+                    "{success}Everyone",
+                    "{warning}Only chosen players",
+                    "Shown to",
+                    "Hidden from",
+                    "{muted}Nobody",
+                    "Who sees it",
+                    "Everyone, but the players it is hidden from",
+                    "Only the players it is shown to",
+                    "Clear the player list",
+                    "%list% (%count%): %players%. Add or remove players with /holo <name> show|hide <player|@a>.");
+        }
+    }
+
+    /** What a hologram rides: {@code /holo <name> attach|detach|attachoffset}, and its window. */
+    public record Attach(
+            @Comment("Placeholders: %name%, %target%.")
+            String attached,
+            @Comment("Attached to an entity that is not saved with its chunk. Placeholders: %name%, %target%.")
+            String attachedUnsaved,
+            @Comment("Placeholder: %name%.")
+            String detached,
+            @Comment("Nothing found to attach to. Placeholder: %target%.")
+            String targetNotFound,
+            @Comment("The state words. %target% is the entity's or player's name.")
+            String none,
+            String riding,
+            String away,
+            String dialogTitle,
+            String targetLabel,
+            String targetHint,
+            String offsetLabel) {
+
+        public Attach() {
+            this("[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {highlight}%name% {success}now rides {highlight}%target%{success}.",
+                    "[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {highlight}%name% {success}now rides {highlight}%target%{success}. {letters_black}(until it is gone or the server restarts)",
+                    "%prefix% {highlight}%name% {warning}is back at its location.",
+                    "[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}Nothing called {highlight}%target% {error}to attach to.",
+                    "{muted}Nothing",
+                    "{info}%target%",
+                    "{warning}%target% {muted}(away)",
+                    "{primary}&lATTACH",
+                    "Player, entity UUID or 'nearest'",
+                    "Empty to stand at its location again. A player is ridden again whenever they join; 'nearest' is the closest entity to you.",
+                    "Height above it (blocks)");
         }
     }
 

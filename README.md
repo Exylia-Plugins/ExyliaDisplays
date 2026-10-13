@@ -136,7 +136,7 @@ Anything else at the start of a line, such as `<gradient:...>`, stays as text. C
 | --- | --- | --- |
 | `/displays help\|modules\|reload` | `exyliadisplays.admin` | The plugin as a whole |
 | `/holoadmin` (`/hologramadmin`) | `exyliadisplays.holograms` | Every hologram, on a screen, plus what is not about one hologram: `create`, `list`, `near`, `import`, `reload`, `help` |
-| `/holo <name> [setting] ...` (`/hologram`) | `exyliadisplays.holograms` | One hologram: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `rename`, `clone`, `enable`, `disable`, `delete`; lines with `addline`, `setline`, `insertline`, `removeline`, `moveline`, `lines`, and one tag of one line with `line <n> <tag> [value]`; the look with `billboard`, `alignment`, `scale`, `shadow`, `seethrough`, `linewidth`, `spacing`, `opacity`, `background`, `brightness`; who sees it with `viewdistance`, `permission`, `perplayer`, `refresh`, `autoupdate`; clicks with `click add\|remove\|clear\|width\|cooldown\|hover` |
+| `/holo <name> [setting] ...` (`/hologram`) | `exyliadisplays.holograms` | One hologram: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `rename`, `clone`, `enable`, `disable`, `delete`; lines with `addline`, `setline`, `insertline`, `removeline`, `moveline`, `lines`, and one tag of one line with `line <n> <tag> [value]`; the look with `billboard`, `alignment`, `scale`, `shadow`, `seethrough`, `linewidth`, `spacing`, `opacity`, `background`, `brightness`; who sees it with `viewdistance`, `permission`, `perplayer`, `refresh`, `autoupdate`; which players see it with `visibility all\|manual`, `show\|hide <player\|@a>`, `viewers [clear]`; what it rides with `attach <player\|uuid\|nearest>`, `detach`, `attachoffset <blocks>`; clicks with `click add\|remove\|clear\|width\|cooldown\|hover` |
 | `/npcadmin` (`/npcsadmin`) | `exyliadisplays.npcs` | Every NPC, on a screen, plus what is not about one NPC: `create <name> [skin]`, `list`, `near`, `import`, `reload`, `help` |
 | `/npc <name> [setting] ...` (`/npcs`) | `exyliadisplays.npcs` | One NPC: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `rename`, `clone`, `enable`, `disable`, `delete`; the look with `skin`, `texture <value> [signature]`, `pose`, `scale`, `glow`, `equip <slot\|clear> [item]`, `equipment`; `look <mode> [range]`, `viewdistance`, `permission`; the label with `label set\|add\|remove\|clear\|height`, or a whole hologram with `link`, `unlink`; clicks with `action add\|remove\|clear\|list` and `action permission\|cooldown\|denymessage\|cooldownmessage\|faceclicker` |
 
@@ -168,6 +168,22 @@ Anything else at the start of a line, such as `<gradient:...>`, stays as text. C
         cooldown: 2s
         face-clicker: true
   ```
+
+- **Which players see a hologram, and what it rides**, are kept in `holograms.yml` with the rest of it, so they survive a restart and a hand edit changes them:
+
+  ```yaml
+  holograms:
+    nametag:
+      visibility:
+        mode: manual          # all: everyone but hidden-from; manual: only shown-to
+        shown-to: ['069a79f4-44e9-4726-a5be-fca90e38aaf5']
+        hidden-from: []
+      attach:
+        entity: '069a79f4-44e9-4726-a5be-fca90e38aaf5'   # a player or a saved mob; empty for none
+        offset: 0.5
+  ```
+
+  `/holo <name> show` and `hide` work in both modes: in `all` they take a player off or put them on `hidden-from`, in `manual` they put them on or take them off `shown-to`; `@a` means every player online. Only the exceptions are written, as UUIDs, so a renamed player keeps their place. An attached hologram rides its player whenever they are online (joining, respawning and changing worlds included) and a saved mob whenever its chunk is loaded, and is hidden while they are away. A mob that is not saved with its chunk is ridden until it is gone or the server restarts, without being written down.
 
 - **`lang/<code>/messages.yml`**, **`messages/holograms.yml`**, **`messages/npcs.yml`** and **`menus/`** contain every message and screen, in English and Spanish. The language follows ExyliaLib's.
 
