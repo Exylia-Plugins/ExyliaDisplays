@@ -2,6 +2,7 @@ package net.exylia.exyliaDisplays.hologram.migration;
 
 import net.exylia.exyliaDisplays.common.store.Position;
 import net.exylia.exyliaDisplays.hologram.StoredHologram;
+import net.exylia.lib.hologram.HologramLine;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -42,9 +43,161 @@ class ForeignImportTest {
         ForeignImport.Result result = ForeignImport.decent(holograms.toFile());
         StoredHologram spawn = result.holograms().get("Spawn");
         assertEquals(List.of("<#ff0000>Welcome", "<item:DIAMOND>"), spawn.lines());
-        assertEquals(new Position("world", 10.5, 69.5, -4.5), spawn.location());
+        assertEquals(new Position("world", 10.5, 69.25, -4.5), spawn.location(), "the top line stays where it was");
         assertEquals(32, spawn.viewDistance());
         assertEquals(40, spawn.refresh().updateInterval());
+    }
+
+    @Test
+    @DisplayName("DecentHolograms: a file as Hologram.save() writes it, every key read")
+    void decentEverything() throws IOException {
+        Path holograms = Files.createDirectories(folder.resolve("holograms"));
+        // Hologram.save(): location in the server's locale, then the keys in this order; lines
+        // from HologramLine.serializeToMap() and actions by ClickType from HologramPage.
+        Files.writeString(holograms.resolve("shop.yml"), """
+                location: world:10,500:70,000:-4,500
+                enabled: false
+                permission: vip.holo
+                flags:
+                - DISABLE_UPDATING
+                display-range: 32
+                update-range: 48
+                update-interval: 40
+                facing: 90.0
+                down-origin: false
+                pages:
+                - lines:
+                  - content: '{#ff0000}Welcome <#00ff00>to</#0000ff> &u[x]'
+                    height: 0.3
+                  - content: <#ANIM:typewriter>Typed</#ANIM>
+                    height: 0.3
+                  - content: ''
+                    height: 0.6
+                  - content: '#ICON: WOOL:14 !ENCHANTED'
+                    height: 0.6
+                    permission: see.icon
+                    offsetX: 0.5
+                  - content: '#HEAD: PLAYER_HEAD (Notch)'
+                    height: 0.75
+                  actions:
+                    LEFT:
+                    - MESSAGE:&aHi {player}
+                    - CONNECT:lobby
+                    RIGHT:
+                    - PERMISSION:vip.use
+                    - CONSOLE:give {player} diamond 1
+                    SHIFT_RIGHT:
+                    - TELEPORT:10:64:10
+                    - SOUND:ENTITY_PLAYER_LEVELUP:1:2
+                    - NEXT_PAGE
+                - lines:
+                  - content: Page {page} of {pages}
+                    height: 0.3
+                  actions:
+                    LEFT:
+                    - PREV_PAGE
+                    RIGHT:
+                    - PAGE:shop:1
+                """);
+        // Before pages: a numbered 'lines' section, and down-origin hangs the lines up from the place.
+        Files.writeString(holograms.resolve("old.yml"), """
+                location: world:0:100:0
+                down-origin: true
+                lines:
+                  '1':
+                    content: Old
+                    height: 0.3
+                """);
+        ForeignImport.Result result = ForeignImport.decent(holograms.toFile());
+        StoredHologram shop = result.holograms().get("shop");
+        List<HologramLine> lines = shop.lines().stream().map(HologramLine::parse).toList();
+        assertEquals("<#ff0000>Welcome <gradient:#00ff00:#0000ff>to</gradient> <rainbow>█", lines.get(0).text());
+        assertEquals(HologramLine.DEFAULT_FLOW, lines.get(0).flow(), "&u cycles colours there");
+        assertEquals("Typed", lines.get(1).text());
+        assertEquals(HologramLine.DEFAULT_TYPEWRITER, lines.get(1).typewriter());
+        assertEquals(2.0, lines.get(2).size(), 1e-9, "a 0.6 gap is two text lines high");
+        assertEquals("WOOL", lines.get(3).item(), "14 is a data value, not a namespace");
+        assertEquals("see.icon", lines.get(3).permission());
+        assertEquals("Notch", lines.get(4).head());
+        assertEquals(5, lines.size());
+        assertEquals(List.of("Page 2 of 2"), shop.pages().get(0).lines());
+        assertEquals(List.of("left: [PAGE] previous", "right: [PAGE] 1"), shop.pages().get(0).click());
+        // 2.55 blocks of lines hang down from 70 there; 2 blocks stand up to 70 here.
+        assertEquals(new Position("world", 10.5, 68, -4.5, 90, 0), shop.location());
+        assertFalse(shop.enabled());
+        assertEquals("vip.holo", shop.permission());
+        assertFalse(shop.refresh().autoUpdate(), "DISABLE_UPDATING");
+        assertEquals(List.of("left: [MESSAGE] &aHi %player_name%", "left: [SERVER] lobby",
+                "shift_right: [TELEPORT] %player_world%;10;64;10", "shift_right: [SOUND] ENTITY_PLAYER_LEVELUP;1;2",
+                "shift_right: [PAGE] next"),
+                shop.click().commands(), "what a PERMISSION check guards is left out");
+
+        assertEquals(new Position("world", 0, 100.05, 0), result.holograms().get("old").location());
+    }
+
+    @Test
+    @DisplayName("DecentHolograms 2.10 displays: displays/*.yml as Configurate writes them")
+    void decentDisplays() throws IOException {
+        Path displays = Files.createDirectories(folder.resolve("displays"));
+        Files.writeString(displays.resolve("board.yml"), """
+                type: TEXT
+                location:
+                  world: world
+                  x: 5.0
+                  y: 70.0
+                  z: 5.0
+                  yaw: 45.0
+                  pitch: 0.0
+                settings:
+                  enabled: false
+                  display-range: 64.0
+                  update-interval: 10
+                attributes:
+                  billboard:
+                    value-type: billboard_constraints
+                    value: VERTICAL
+                  background-color:
+                    value-type: rgba
+                    value: {red: 255, green: 0, blue: 0, alpha: 128}
+                  translation:
+                    value-type: vector3f
+                    value: {x: 0.0, y: 0.5, z: 0.0}
+                  text-shadow:
+                    value-type: boolean
+                    value: true
+                  line-width:
+                    value-type: integer
+                    value: 150
+                pages:
+                - lines:
+                  - '{#00ff00}Board'
+                  - Line 2
+                """);
+        Files.writeString(displays.resolve("gem.yml"), """
+                type: ITEM
+                location: {world: world, x: 0.0, y: 64.0, z: 0.0, yaw: 0.0, pitch: 0.0}
+                attributes:
+                  glow-color:
+                    value-type: rgba
+                    value: {red: 255, green: 170, blue: 0, alpha: 255}
+                item: DIAMOND
+                """);
+        Files.createDirectories(folder.resolve("holograms"));
+        ForeignImport.Result result = ForeignImport.decent(folder.resolve("holograms").toFile());
+        StoredHologram board = result.holograms().get("board");
+        assertEquals(List.of("<#00ff00>Board", "Line 2"), board.lines());
+        assertEquals("VERTICAL", board.appearance().billboard());
+        assertEquals("#80FF0000", board.appearance().backgroundColor());
+        assertEquals(new Position("world", 5, 70.5, 5, 45, 0), board.location());
+        assertTrue(board.appearance().shadow());
+        assertEquals(150, board.appearance().lineWidth());
+        assertFalse(board.enabled());
+        assertEquals(64, board.viewDistance());
+        assertEquals(10, board.refresh().updateInterval());
+
+        StoredHologram gem = result.holograms().get("gem");
+        assertEquals(List.of("<item:DIAMOND><glow:#FFAA00>"), gem.lines());
+        assertEquals("FIXED", gem.appearance().billboard(), "an item display's own default");
     }
 
     @Test
@@ -74,8 +227,9 @@ class ForeignImportTest {
         assertEquals(List.of("<item:PLAYER_HEAD><size:0.5>", "No griefing"), rules.pageView(1).lines());
         assertEquals(List.of("left: [PAGE] previous", "right: [PAGE] 1", "right: [MESSAGE] &aBack to the start"),
                 rules.pages().get(0).click());
-        assertEquals("<head:abc><size:0.5>", ForeignImport.decentLine("#SMALLHEAD: abc"));
-        assertEquals("[PAGE] next", ForeignImport.decentPageAction("NEXT_PAGE:Rules"));
+        assertEquals("<head:abc><size:0.5>", ForeignImport.decentLine("#SMALLHEAD: PLAYER_HEAD (abc)"));
+        assertEquals("<item:GOLD_BLOCK>", ForeignImport.decentLine("#HEAD: GOLD_BLOCK"), "any other item is worn as it is");
+        assertEquals("[PAGE] next", ForeignImport.decentAction("NEXT_PAGE:Rules"));
     }
 
     @Test
@@ -121,6 +275,57 @@ class ForeignImportTest {
         assertEquals(List.of("&aShop", "<item:EMERALD>"), result.holograms().get("shop").lines());
         assertEquals(new Position("world_nether", 5, 39.75, 6), result.holograms().get("old").location());
         assertEquals(1, result.skipped());
+    }
+
+    @Test
+    @DisplayName("HolographicDisplays 3: placeholders, custom placeholders, animations and pinged servers")
+    void holographicPlaceholders() throws IOException {
+        Files.writeString(folder.resolve("database.yml"), """
+                shop:
+                  lines:
+                  - '{animation: title.yml}'
+                  - '&aShop {separator}'
+                  - 'Online: {online} / {max_players}'
+                  - 'Lobby: {online: lobby} {status: lobby}'
+                  - 'Hi {player}, {papi: player_level}'
+                  - '{empty}'
+                  - '{rainbow}Rainbow'
+                  - 'ICON: WOOL:14'
+                  - '\\{literal\\}'
+                  position:
+                    world: world
+                    x: 1.0
+                    y: 65.0
+                    z: 2.0
+                """);
+        Files.writeString(folder.resolve("config.yml"), """
+                holograms-view-range: 64
+                time:
+                  format: HH:mm
+                bungee:
+                  pinger:
+                    enable: true
+                    servers:
+                    - 'lobby: 127.0.0.1:25566'
+                """);
+        Files.writeString(folder.resolve("custom-placeholders.yml"), """
+                placeholders:
+                  '{separator}': '&8|'
+                """);
+        Files.createDirectories(folder.resolve("animations"));
+        Files.writeString(folder.resolve("animations/title.yml"), """
+                interval-seconds: 0.5
+                animation-frames:
+                - '&bFrame 1'
+                - '&3Frame 2'
+                """);
+        StoredHologram shop = ForeignImport.holographic(folder.resolve("database.yml").toFile()).holograms().get("shop");
+        assertEquals(List.of("&bFrame 1", "&aShop &8|", "Online: %server_online% / %server_max_players%",
+                "Lobby: %bungee_lobby% %pinger_isonline_127.0.0.1:25566%", "Hi %player_name%, %player_level%", " ",
+                HologramLine.builder().flow(HologramLine.DEFAULT_FLOW).text("<rainbow>Rainbow").build().raw(),
+                "<item:WOOL>", "{literal}"), shop.lines());
+        assertEquals(64, shop.viewDistance());
+        assertEquals(new Position("world", 1, 62.5, 2), shop.location(), "eight text lines and an item hang from 65");
     }
 
     @Test
