@@ -7,7 +7,6 @@ import net.exylia.lib.text.Values;
 import net.exylia.lib.ui.UiEntry;
 import org.bukkit.entity.Player;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -195,6 +194,6 @@ public final class NpcViews {
 
     /** A number as people write it: {@code 2}, {@code 0.25}, never {@code 2.0} or {@code 1E+1}. */
     public static String number(double value) {
-        return BigDecimal.valueOf(value).stripTrailingZeros().toPlainString();
+        return net.exylia.lib.format.Numbers.trimmed(value, 2);
     }
 }

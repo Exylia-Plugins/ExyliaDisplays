@@ -43,6 +43,12 @@ public record Position(
         if (world == null || world.isBlank()) {
             world = "world";
         }
+        // Imports and hand edits carry float noise (90.12000274658203); the file keeps what of() keeps.
+        x = round(x);
+        y = round(y);
+        z = round(z);
+        yaw = roundAngle(yaw);
+        pitch = roundAngle(pitch);
     }
 
     /** A location, kept to a thousandth of a block so the file stays readable. */

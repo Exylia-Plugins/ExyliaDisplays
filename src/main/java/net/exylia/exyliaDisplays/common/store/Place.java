@@ -37,7 +37,12 @@ public record Place(
         if (world == null || world.isBlank()) {
             world = "world";
         }
-        pitch = Math.clamp(pitch, -90, 90);
+        // Imports and hand edits carry float noise (90.12000274658203); the file keeps what of() keeps.
+        x = Position.round(x);
+        y = Position.round(y);
+        z = Position.round(z);
+        yaw = angle(yaw);
+        pitch = angle(Math.clamp(pitch, -90, 90));
     }
 
     /** A location, kept to a thousandth of a block and a tenth of a degree so the file stays readable. */
