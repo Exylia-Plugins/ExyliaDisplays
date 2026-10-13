@@ -289,7 +289,7 @@ public record HologramsMessages(
                     "Colours like {primary}, &l, MiniMessage and %placeholders% all work.",
                     "{primary}&lALL LINES",
                     "Lines",
-                    "One per row, top first. Tags like <size:2> stay at the start of their line.",
+                    "One per row, top first. Tags go at the start of a row: <size:2> <opacity:160> <background:#66000000> <shadow:false> · <item:DIAMOND> <block:BEACON> <glow> <glow:#8a51c4> · <spin> <bob> <pulse> <shine> <flow> <typewriter> · <range:8> <perm:node> <perm:!node> <if:\"%player_level% >= 10\">. Colours, MiniMessage and %placeholders% work in the text.",
                     "{primary}&lLINE %line% {letters_black}» {highlight}STYLE",
                     "Size (1 = normal)",
                     "Opacity (0-255)",

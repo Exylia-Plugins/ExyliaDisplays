@@ -84,7 +84,7 @@ dialogs:
   text-hint: 'Funcionan colores como {primary}, &l, MiniMessage y %placeholders%.'
   all-lines-title: '{primary}&lTODAS LAS LÍNEAS'
   all-lines-label: 'Líneas'
-  all-lines-hint: 'Una por fila, de arriba abajo. Las etiquetas como <size:2> van al inicio de su línea.'
+  all-lines-hint: 'Una por fila, de arriba abajo. Las etiquetas van al inicio de la fila: <size:2> <opacity:160> <background:#66000000> <shadow:false> · <item:DIAMOND> <block:BEACON> <glow> <glow:#8a51c4> · <spin> <bob> <pulse> <shine> <flow> <typewriter> · <range:8> <perm:nodo> <perm:!nodo> <if:"%player_level% >= 10">. En el texto funcionan colores, MiniMessage y %placeholders%.'
   style-title: '{primary}&lLÍNEA %line% {letters_black}» {highlight}ESTILO'
   size-label: 'Tamaño (1 = normal)'
   opacity-label: 'Opacidad (0-255)'

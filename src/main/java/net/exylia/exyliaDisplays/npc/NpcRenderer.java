@@ -146,7 +146,12 @@ public final class NpcRenderer implements Listener {
         InteractionGate gate = gates.get(name);
         if (npc == null || gate == null) return;
         StoredNpc.Interactions rules = npc.interactions();
-        switch (gate.click(player, click, Map.of("npc", name, "click", click.name().toLowerCase()))) {
+        InteractionGate.Verdict verdict = gate.click(player, click, Map.of("npc", name, "click", click.name().toLowerCase()));
+        // With debug on in config.yml, every click says what became of it: the first thing to
+        // look at when an NPC "does nothing".
+        core.getDebug().debug("NPC " + name + ": " + click + " by " + player.getName() + " -> " + verdict
+                + (verdict == InteractionGate.Verdict.RUN ? " " + gate.interaction().lines() : ""));
+        switch (verdict) {
             case RUN -> {
                 if (rules.faceClicker()) turnTo(name, player);
             }
