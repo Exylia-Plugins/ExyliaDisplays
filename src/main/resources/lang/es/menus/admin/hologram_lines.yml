@@ -37,6 +37,7 @@ pagination:
       - "{warning}➥ Clic derecho {letters_black}» {letters}estilo, movimiento, visibilidad"
       - "{warning}➥ Shift + clic izquierdo {letters_black}» {letters}subir"
       - "{warning}➥ Shift + clic derecho {letters_black}» {letters}bajar"
+      - "{warning}➥ F {letters_black}» {letters}duplicar"
       - "{error}➥ Q {letters_black}» {letters}quitar"
       - ""
     actions:
@@ -44,6 +45,7 @@ pagination:
       - "right: exyliadisplays:holo_line_style"
       - "shift_left: exyliadisplays:holo_line_up"
       - "shift_right: exyliadisplays:holo_line_down"
+      - "swap: exyliadisplays:holo_line_duplicate"
       - "drop: exyliadisplays:holo_line_delete"
 
   navigation:

@@ -100,6 +100,12 @@ public final class HologramActions {
         line("line_delete", HologramDialogs::deleteLine);
         line("line_up", (player, name, index) -> moveLine(player, name, index, index - 1));
         line("line_down", (player, name, index) -> moveLine(player, name, index, index + 1));
+        line("line_duplicate", (player, name, index) -> {
+            HologramModule.get().store().edit(name, current -> current.hasLine(index) ? current.duplicateLine(index) : current)
+                    .ifPresent(saved -> plugin.getMessages().send(player, HologramsMessages.get().lineAdded(),
+                            Values.of().putText("name", name).put("line", index + 2)));
+            HologramViews.openLines(player, name);
+        });
     }
 
     /** Moves a line one step and redraws the list in place, keeping the page. */

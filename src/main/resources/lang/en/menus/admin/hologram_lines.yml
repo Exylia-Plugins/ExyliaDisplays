@@ -37,6 +37,7 @@ pagination:
       - "{warning}➥ Right-click {letters_black}» {letters}style, motion, visibility"
       - "{warning}➥ Shift-left-click {letters_black}» {letters}move up"
       - "{warning}➥ Shift-right-click {letters_black}» {letters}move down"
+      - "{warning}➥ F {letters_black}» {letters}duplicate"
       - "{error}➥ Q {letters_black}» {letters}remove"
       - ""
     actions:
@@ -44,6 +45,7 @@ pagination:
       - "right: exyliadisplays:holo_line_style"
       - "shift_left: exyliadisplays:holo_line_up"
       - "shift_right: exyliadisplays:holo_line_down"
+      - "swap: exyliadisplays:holo_line_duplicate"
       - "drop: exyliadisplays:holo_line_delete"
 
   navigation:

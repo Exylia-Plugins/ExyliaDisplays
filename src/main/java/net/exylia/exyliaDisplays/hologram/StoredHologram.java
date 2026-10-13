@@ -183,6 +183,11 @@ public record StoredHologram(
         return withLines(edited);
     }
 
+    /** Puts a copy of a line right below it. */
+    public StoredHologram duplicateLine(int index) {
+        return insertLine(index + 1, lines.get(index));
+    }
+
     public StoredHologram removeLine(int index) {
         List<String> edited = new ArrayList<>(lines);
         edited.remove(index);

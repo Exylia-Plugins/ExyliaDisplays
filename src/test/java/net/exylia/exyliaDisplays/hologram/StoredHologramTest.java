@@ -27,6 +27,7 @@ class StoredHologramTest {
         assertEquals(List.of("a", "b", "c", "x"), hologram.insertLine(99, "x").lines());
         assertEquals(List.of("a", "x", "c"), hologram.setLine(1, "x").lines());
         assertEquals(List.of("a", "c"), hologram.removeLine(1).lines());
+        assertEquals(List.of("a", "b", "b", "c"), hologram.duplicateLine(1).lines());
         assertEquals(List.of("b", "c", "a"), hologram.moveLine(0, 2).lines());
         assertEquals(List.of("c", "a", "b"), hologram.moveLine(2, 0).lines());
         assertTrue(hologram.hasLine(2));
