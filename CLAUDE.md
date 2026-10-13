@@ -4,8 +4,8 @@ Formerly ExyliaHolograms: holograms, NPCs and future "things in the world" modul
 
 ## Releasing
 
-- Ordinary changes never touch `version`; it changes only during a release, which bumps `build.gradle`, tags the commit `v<version>` and pushes both.
-- The release workflow only runs on `v*` tags and expects the tag to match the `build.gradle` version; a push to `main` without a tag only builds.
+- Every finished change is released, without asking and without `/exylia-release`: bump `version` in `build.gradle` (patch for fixes, minor for features, major for breaking commands or config), commit `chore: release <version>`, tag that commit `v<version>`, and push the branch and the tag.
+- The release workflow runs only on `v*` tags and expects the tag to match the `build.gradle` version; it publishes the GitHub release and the fixed-name `ExyliaDisplays.jar` that servers auto-update from. A push to `main` without a tag only builds.
 
 ## ExyliaLib
 
