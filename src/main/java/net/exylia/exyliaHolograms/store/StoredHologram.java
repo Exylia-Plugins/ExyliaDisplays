@@ -31,7 +31,7 @@ public record StoredHologram(
         Position location,
 
         @Comment("The lines, top first. Colours like {primary}, MiniMessage and %placeholders% work.")
-        @Comment("Start a line with tags to style it alone, e.g. '<size:2><shine>{primary}&lSHOP':")
+        @Comment("Start a line with tags to style it alone, e.g. '<size:2><shine>{accent}&lTHE ARENA':")
         @Comment("  look: <size:2> <opacity:160> <background:#66000000> <shadow:false>")
         @Comment("  models: <item:DIAMOND> <block:BEACON> <glow> <glow:#8a51c4>")
         @Comment("  motion: <spin> <bob> <pulse> <typewriter> <shine> <flow>")

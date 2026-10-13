@@ -73,21 +73,29 @@ public record HologramsConfig(
         presets.put("simple", new Preset("Simple title", List.of(
                 "<size:1.4>{primary}&l%hologram%",
                 "{letters}Edit me with {highlight}/holo edit %hologram%")));
-        presets.put("shop", new Preset("NPC label", List.of(
-                "<size:0.8>{highlight}⚓ — EXYLIA — ⚓",
-                "<size:2.2><pulse><shine>{primary}&lSHOP",
-                "<typewriter>{letters_black}+12 trades available",
+        // A floating item that spins and bobs over a title whose colours flow.
+        presets.put("portal", new Preset("Portal sign", List.of(
+                "<item:ENDER_EYE><spin:120><bob><glow:#59a4ff>",
+                "<size:1.8><flow:6>{info}&lTHE END",
+                "{letters}A dragon waits beyond",
+                "<range:6><typewriter:30>{letters_black}Step through when ready")));
+        // Two lines for two audiences: who has the permission, and who does not.
+        presets.put("lounge", new Preset("Members only", List.of(
+                "<size:1.6><shine:highlight>{highlight}&l✦ LOUNGE ✦",
+                "<opacity:200>{letters_black}Rooftop bar · open all night",
                 "<size:0.5> ",
-                "<range:8><background:#55000000>{warning}▸ Click to trade ◂")));
-        presets.put("showcase", new Preset("Spinning showcase", List.of(
-                "<block:DIAMOND_BLOCK><spin><bob><glow:#59a4ff>",
-                "<size:1.6><flow>{primary}&lSHOWCASE",
-                "{letters}Something worth looking at")));
+                "<perm:!lounge.access>{error}Members only",
+                "<perm:lounge.access>{success}The door is open for you")));
+        // A spinning block that breathes, above a short, dimmed reminder.
+        presets.put("checkpoint", new Preset("Checkpoint", List.of(
+                "<block:GOLD_BLOCK><spin:60><pulse:0.05>",
+                "<size:1.5>{warning}&lCHECKPOINT",
+                "<opacity:170>{letters}Fall, and you start again here")));
         presets.put("welcome", new Preset("Welcome sign", List.of(
                 "<size:2.4><shine>{primary}&lWELCOME",
                 "{letters}to the server",
                 "<size:0.5> ",
-                "<range:12><typewriter>{letters_black}Have fun, and be kind.")));
+                "<range:12><typewriter>{letters_black}Read the rules at the board behind you")));
         return presets;
     }
 

@@ -74,7 +74,7 @@ public final class HologramStore {
         return new ArrayList<>(all().keySet());
     }
 
-    /** A free name based on another: {@code shop}, then {@code shop_2}, {@code shop_3}... */
+    /** A free name based on another: {@code spawn}, then {@code spawn_2}, {@code spawn_3}... */
     public String freeName(String base) {
         String name = sanitize(base);
         if (!exists(name)) {

@@ -32,7 +32,7 @@ Optional: PlaceholderAPI, whose placeholders work in any line.
 
 ## Getting started
 
-1. Stand where you want it and run `/holo create shop`, or open `/holo` and click **CREATE HOLOGRAM** to start from a preset.
+1. Stand where you want it and run `/holo create spawn`, or open `/holo` and click **CREATE HOLOGRAM** to start from a preset.
 2. In its editor, open **LINES**:
    - left-click a line to change its text;
    - right-click it for size, motion and visibility, all in one window;
@@ -43,15 +43,31 @@ Optional: PlaceholderAPI, whose placeholders work in any line.
 
 Tags go at the very start of a line and style that line alone:
 
+An arena entrance: a block turning above a shining title, a line each player
+reads differently, and a hint that types itself in only when you get close.
+
 ```yaml
 lines:
-  - '<size:0.8>{highlight}⚓ — EXYLIA — ⚓'
-  - '<size:2.2><pulse><shine>{primary}&lSHOP'
-  - '<typewriter>{letters_black}+12 trades available'
-  - '<block:DIAMOND_BLOCK><spin><bob><glow:#59a4ff>'
-  - '<perm:shop.vip>{highlight}✦ VIP discount active'
-  - '<range:8><background:#55000000>{warning}▸ Click to trade ◂'
+  - '<block:NETHERITE_BLOCK><spin:45><glow:#ff6b9d>'
+  - '<size:2.4><shine>{accent}&lTHE ARENA'
+  - '<flow>{secondary}Season II · open now'
+  - '<size:0.5> '
+  - '<if:"%player_level% >= 10">{success}✔ You qualify'
+  - '<if:"%player_level% < 10">{error}Reach level 10 to enter'
+  - '<range:5><typewriter><background:#55000000>{letters}Right-click to join the queue'
 ```
+
+A members' door: one line for those with the permission, another for everyone else.
+
+```yaml
+lines:
+  - '<item:AMETHYST_SHARD><bob><glow:#b48fd9>'
+  - '<size:1.6><pulse:0.04>{secondary}&lTHE OBSERVATORY'
+  - '<perm:observatory.key>{success}Welcome in'
+  - '<perm:!observatory.key><opacity:180>{letters_black}Find the key in the library'
+```
+
+More starting points ship as presets in `config.yml`: a portal sign, a members-only lounge, a parkour checkpoint and a welcome sign.
 
 | Tag | Effect |
 | --- | --- |
@@ -102,11 +118,11 @@ Everything needs `exyliaholograms.admin` (operators by default). Line numbers co
 
   ```yaml
   holograms:
-    shop:
+    arena:
       enabled: true
       location: { world: world, x: 10.5, y: 66.0, z: -4.5 }
       lines:
-        - '<size:2><shine>{primary}&lSHOP'
+        - '<size:2><shine>{accent}&lTHE ARENA'
       permission: ''          # who sees it; empty for everyone
       view-distance: 48.0
       per-player: false       # each viewer gets their own %player_...% values
@@ -118,7 +134,7 @@ Everything needs `exyliaholograms.admin` (operators by default). Line numbers co
         auto-update: true
       click:
         commands:             # 'console: ...' runs from the console, a bare line as the player
-          - 'warp shop'
+          - 'arena join'
         width: 1.5            # click box width, in blocks
         cooldown: 500         # milliseconds between two clicks of the same player
         hover-scale: 1.08     # how much it grows while looked at; 1 turns it off
