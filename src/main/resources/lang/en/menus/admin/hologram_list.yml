@@ -41,9 +41,9 @@ pagination:
       - "{error}➥ Right-click {letters_black}» {letters}delete"
       - ""
     actions:
-      - "left: exyliaholograms:edit"
-      - "shift_left: exyliaholograms:row_teleport"
-      - "right: exyliaholograms:row_delete"
+      - "left: exyliadisplays:holo_edit"
+      - "shift_left: exyliadisplays:holo_row_teleport"
+      - "right: exyliadisplays:holo_row_delete"
 
   navigation:
     previous:
@@ -83,7 +83,7 @@ items:
       - "{warning}➥ Click to create"
       - ""
     actions:
-      - "exyliaholograms:create"
+      - "exyliadisplays:holo_create"
 
   info:
     slot: 49

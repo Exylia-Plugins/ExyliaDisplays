@@ -1,13 +1,13 @@
-name: ExyliaHolograms
+name: ExyliaDisplays
 version: '${version}'
-main: net.exylia.exyliaHolograms.ExyliaHologramsPlugin
+main: net.exylia.exyliaDisplays.ExyliaDisplaysPlugin
 api-version: '1.21'
 authors: [ DiGround ]
-website: https://github.com/Exylia-Plugins/ExyliaHolograms
-description: Packet holograms with per-line size, animations, click actions and conditions, edited in game or in YAML.
+website: https://github.com/Exylia-Plugins/ExyliaDisplays
+description: Holograms and NPCs with shared click interactions, animations and conditions, edited in game or in YAML.
 
 # Kept up to date by ExyliaLib from this repository's GitHub releases.
-exylia-updates: Exylia-Plugins/ExyliaHolograms
+exylia-updates: Exylia-Plugins/ExyliaDisplays
 # The oldest ExyliaLib this build runs on; ExyliaLib holds back an update that needs a newer one.
 exylia-lib: '${exyliaLibVersion}'
 
@@ -21,20 +21,40 @@ softdepend:
   # and asks for a restart.
   - ExyliaLib
   - PlaceholderAPI
-  # Read by /holo import; never changed.
+  # Read by /holo import and /npc import; never changed. Listed so they load first when both are
+  # installed during a move.
   - DecentHolograms
   - HolographicDisplays
   - FancyHolograms
+  - Citizens
+  - FancyNpcs
+  # The name this plugin had before it grew NPCs; its holograms.yml is copied over on first start.
+  - ExyliaHolograms
 
 permissions:
-  exyliaholograms.admin:
-    description: Create, edit, move, import and reload holograms with /holo.
+  exyliadisplays.holograms:
+    description: Create, edit, move and import holograms with /holo.
     default: op
-  exyliaholograms.*:
-    description: Every ExyliaHolograms permission.
+  exyliadisplays.npcs:
+    description: Create, edit, move and import NPCs with /npc.
+    default: op
+  exyliadisplays.admin:
+    description: Every module, plus /displays reload and modules.
     default: op
     children:
-      exyliaholograms.admin: true
+      exyliadisplays.holograms: true
+      exyliadisplays.npcs: true
+  exyliadisplays.*:
+    description: Every ExyliaDisplays permission.
+    default: op
+    children:
+      exyliadisplays.admin: true
+  # The permission this plugin had as ExyliaHolograms keeps working.
+  exyliaholograms.admin:
+    description: The ExyliaHolograms name of exyliadisplays.holograms.
+    default: op
+    children:
+      exyliadisplays.holograms: true
 
 libraries:
   # The same list ExyliaLib declares, in the same order and the same versions.

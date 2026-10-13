@@ -29,8 +29,8 @@ items:
       - "{warning}➥ Clic derecho {letters_black}» {letters}renombrar"
       - ""
     actions:
-      - "left: exyliaholograms:toggle"
-      - "right: exyliaholograms:rename"
+      - "left: exyliadisplays:holo_toggle"
+      - "right: exyliadisplays:holo_rename"
 
   lines:
     slot: 20
@@ -48,7 +48,7 @@ items:
       - "{warning}➥ Clic para editar"
       - ""
     actions:
-      - "exyliaholograms:open_lines"
+      - "exyliadisplays:holo_open_lines"
 
   appearance:
     slot: 21
@@ -68,7 +68,7 @@ items:
       - "{warning}➥ Clic para editar"
       - ""
     actions:
-      - "exyliaholograms:appearance"
+      - "exyliadisplays:holo_appearance"
 
   visibility:
     slot: 22
@@ -89,7 +89,7 @@ items:
       - "{warning}➥ Clic para editar"
       - ""
     actions:
-      - "exyliaholograms:visibility"
+      - "exyliadisplays:holo_visibility"
 
   click:
     slot: 23
@@ -109,7 +109,7 @@ items:
       - "{warning}➥ Clic para editar"
       - ""
     actions:
-      - "exyliaholograms:click"
+      - "exyliadisplays:holo_click"
 
   location:
     slot: 24
@@ -126,9 +126,9 @@ items:
       - "{warning}➥ Shift + clic izquierdo {letters_black}» {letters}centrar en su bloque"
       - ""
     actions:
-      - "left: exyliaholograms:location"
-      - "right: exyliaholograms:move_here"
-      - "shift_left: exyliaholograms:centre"
+      - "left: exyliadisplays:holo_location"
+      - "right: exyliadisplays:holo_move_here"
+      - "shift_left: exyliadisplays:holo_centre"
 
   teleport:
     slot: 36
@@ -141,7 +141,7 @@ items:
       - "{warning}➥ Clic para ir"
       - ""
     actions:
-      - "exyliaholograms:teleport"
+      - "exyliadisplays:holo_teleport"
 
   clone:
     slot: 37
@@ -155,7 +155,7 @@ items:
       - "{warning}➥ Clic para duplicar"
       - ""
     actions:
-      - "exyliaholograms:clone"
+      - "exyliadisplays:holo_clone"
 
   back:
     slot: 40
@@ -169,7 +169,7 @@ items:
       - "{warning}➥ Clic para volver"
       - ""
     actions:
-      - "exyliaholograms:open_list"
+      - "exyliadisplays:holo_open_list"
 
   delete:
     slot: 44
@@ -183,4 +183,4 @@ items:
       - "{error}➥ Clic para eliminar"
       - ""
     actions:
-      - "exyliaholograms:delete"
+      - "exyliadisplays:holo_delete"

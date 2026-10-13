@@ -105,7 +105,7 @@ processResources {
 }
 
 shadowJar {
-    archiveBaseName.set('ExyliaHolograms')
+    archiveBaseName.set('ExyliaDisplays')
     archiveClassifier.set('')
     // Set exyliaOutputDir in ~/.gradle/gradle.properties to drop the jar straight into a server.
     if (project.hasProperty('exyliaOutputDir')) {
@@ -118,7 +118,7 @@ tasks.named('build') {
     dependsOn shadowJar
 }
 
-// The plain jar keeps its own name, so build/libs holds one ExyliaHolograms-<version>.jar: the one to install.
+// The plain jar keeps its own name, so build/libs holds one ExyliaDisplays-<version>.jar: the one to install.
 jar {
     archiveClassifier.set('plain')
 }

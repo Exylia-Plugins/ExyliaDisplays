@@ -40,11 +40,11 @@ pagination:
       - "{error}➥ Q {letters_black}» {letters}quitar"
       - ""
     actions:
-      - "left: exyliaholograms:line_text"
-      - "right: exyliaholograms:line_style"
-      - "shift_left: exyliaholograms:line_up"
-      - "shift_right: exyliaholograms:line_down"
-      - "drop: exyliaholograms:line_delete"
+      - "left: exyliadisplays:holo_line_text"
+      - "right: exyliadisplays:holo_line_style"
+      - "shift_left: exyliadisplays:holo_line_up"
+      - "shift_right: exyliadisplays:holo_line_down"
+      - "drop: exyliadisplays:holo_line_delete"
 
   navigation:
     previous:
@@ -82,7 +82,7 @@ items:
       - "{warning}➥ Clic para escribirla"
       - ""
     actions:
-      - "exyliaholograms:add_line"
+      - "exyliadisplays:holo_add_line"
 
   add-item:
     slot: 46
@@ -95,7 +95,7 @@ items:
       - "{warning}➥ Clic para elegirlo"
       - ""
     actions:
-      - "exyliaholograms:add_item"
+      - "exyliadisplays:holo_add_item"
 
   add-block:
     slot: 47
@@ -109,7 +109,7 @@ items:
       - "{warning}➥ Clic para elegirlo"
       - ""
     actions:
-      - "exyliaholograms:add_block"
+      - "exyliadisplays:holo_add_block"
 
   back:
     slot: 49
@@ -123,7 +123,7 @@ items:
       - "{warning}➥ Clic para volver"
       - ""
     actions:
-      - "exyliaholograms:open_hub"
+      - "exyliadisplays:holo_open_hub"
 
   all-lines:
     slot: 53
@@ -139,4 +139,4 @@ items:
       - "{warning}➥ Clic para abrir"
       - ""
     actions:
-      - "exyliaholograms:all_lines"
+      - "exyliadisplays:holo_all_lines"

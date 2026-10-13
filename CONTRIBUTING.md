@@ -1,4 +1,4 @@
-# Contributing to ExyliaHolograms
+# Contributing to ExyliaDisplays
 
 Thanks for helping. Issues and pull requests are welcome.
 

@@ -23,7 +23,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           version="${GITHUB_REF_NAME#v}"
-          # The fixed name is what ExyliaLib's updater downloads: releases/latest/download/ExyliaHolograms.jar.
-          cp "build/libs/ExyliaHolograms-${version}.jar" build/libs/ExyliaHolograms.jar
-          gh release create "$GITHUB_REF_NAME" "build/libs/ExyliaHolograms-${version}.jar" build/libs/ExyliaHolograms.jar \
-            --title "ExyliaHolograms ${version}" --generate-notes
+          # The fixed name is what ExyliaLib's updater downloads: releases/latest/download/ExyliaDisplays.jar.
+          cp "build/libs/ExyliaDisplays-${version}.jar" build/libs/ExyliaDisplays.jar
+          gh release create "$GITHUB_REF_NAME" "build/libs/ExyliaDisplays-${version}.jar" build/libs/ExyliaDisplays.jar \
+            --title "ExyliaDisplays ${version}" --generate-notes
