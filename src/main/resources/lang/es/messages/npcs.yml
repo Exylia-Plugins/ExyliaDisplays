@@ -13,6 +13,7 @@ state-changed: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {letters}NP
 saved: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}{highlight}%name% {success}guardado.'
 invalid-skin: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%skin% {error}no es un nombre de cuenta. Usa un nombre, {highlight}@mirror {error}o {highlight}@none{error}.'
 invalid-colour: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%value% {error}no es un color. Usa {highlight}#RRGGBB{error}, o {highlight}none{error}.'
+invalid-look: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%value% {error}no es un modo de mirada. Usa {highlight}fixed{error}, {highlight}nearest {error}o {highlight}each-viewer{error}.'
 invalid-slot: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%slot% {error}no es un hueco. Usa {highlight}%slots%{error}.'
 equipped: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}{highlight}%name% {success}ahora lo lleva en {highlight}%slot%{success}.'
 unequipped: '%prefix% {warning}Vaciado {highlight}%slot% {warning}de {highlight}%name%{warning}.'

@@ -164,9 +164,28 @@ public final class NpcCommand {
     }
 
     @Subcommand("look")
-    public void look(CommandSender sender, @SuggestWith(Names.class) String name, NpcLook mode, @Optional Double range) {
-        edited(sender, name, current -> current.withLook(new StoredNpc.Look(mode,
+    public void look(CommandSender sender, @SuggestWith(Names.class) String name,
+                     @SuggestWith(LookModes.class) String mode, @Optional Double range) {
+        // Written the way npcs.yml writes it (each-viewer), or as the constant (EACH_VIEWER).
+        NpcLook look;
+        try {
+            look = NpcLook.valueOf(mode.trim().toUpperCase(java.util.Locale.ROOT).replace('-', '_'));
+        } catch (IllegalArgumentException unknown) {
+            send(sender, messages().invalidLook(), Values.of().putText("value", mode));
+            return;
+        }
+        edited(sender, name, current -> current.withLook(new StoredNpc.Look(look,
                 range == null ? current.look().range() : range)), messages().saved());
+    }
+
+    /** The look modes as npcs.yml writes them. */
+    public static final class LookModes implements revxrsal.commands.autocomplete.SuggestionProvider<revxrsal.commands.bukkit.actor.BukkitCommandActor> {
+        @Override
+        public @org.jetbrains.annotations.NotNull java.util.Collection<String> getSuggestions(
+                @org.jetbrains.annotations.NotNull revxrsal.commands.node.ExecutionContext<revxrsal.commands.bukkit.actor.BukkitCommandActor> context) {
+            return java.util.Arrays.stream(NpcLook.values())
+                    .map(look -> look.name().toLowerCase(java.util.Locale.ROOT).replace('_', '-')).toList();
+        }
     }
 
     /** An outline colour as {@code #RRGGBB}, or {@code none}. */

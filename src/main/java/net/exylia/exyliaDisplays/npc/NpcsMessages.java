@@ -45,6 +45,8 @@ public record NpcsMessages(
         String invalidSkin,
         @Comment("Not a #RRGGBB colour. Placeholder: %value%.")
         String invalidColour,
+        @Comment("A look mode that does not exist. Placeholder: %value%.")
+        String invalidLook,
         @Comment("Placeholders: %slot%, %slots%.")
         String invalidSlot,
         @Comment("Placeholders: %name%, %slot%.")
@@ -131,6 +133,7 @@ public record NpcsMessages(
                 OK + "{success}Saved {highlight}%name%{success}.",
                 NO + "{highlight}%skin% {error}is not an account name. Use a name, {highlight}@mirror {error}or {highlight}@none{error}.",
                 NO + "{highlight}%value% {error}is not a colour. Use {highlight}#RRGGBB{error}, or {highlight}none{error}.",
+                NO + "{highlight}%value% {error}is not a look mode. Use {highlight}fixed{error}, {highlight}nearest {error}or {highlight}each-viewer{error}.",
                 NO + "{highlight}%slot% {error}is not a slot. Use {highlight}%slots%{error}.",
                 OK + "{success}{highlight}%name% {success}now wears that in {highlight}%slot%{success}.",
                 "%prefix% {warning}Emptied {highlight}%slot% {warning}on {highlight}%name%{warning}.",
