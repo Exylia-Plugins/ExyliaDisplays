@@ -90,6 +90,8 @@ public final class NpcViews {
         // Changes while the screen is open, so it is read every time the screen redraws.
         context.put("npc_viewers", (Supplier<Object>) () -> NpcModule.get() == null ? 0
                 : NpcModule.get().renderer().viewers(name));
+        // Live while the screen is open: an edit from a window or a command changes it.
+        context.put("npc_undo", (Supplier<Object>) () -> NpcModule.get() == null ? 0 : NpcModule.get().store().undoable(name));
         return context;
     }
 

@@ -56,6 +56,7 @@ help:
   - ' {warning}rotate <yaw> [pitch] {letters_black}· {warning}face {letters_black}» {letters}girarlo, o girarlo hacia ti'
   - ' {warning}adjust {letters_black}» {letters}moverlo, girarlo y escalarlo con la rueda del ratón {muted}(otra vez guarda, adjust cancel deshace)'
   - ' {warning}rename <nuevo> {letters_black}· {warning}clone <nuevo> {letters_black}· {warning}enable {letters_black}· {warning}disable {letters_black}· {warning}delete'
+  - ' {warning}undo {letters_black}» {letters}deshace el último cambio'
   - ' {warning}skin <jugador|@mirror|@none> {letters_black}· {warning}texture <valor> [firma]'
   - ' {warning}pose {letters_black}· {warning}scale {letters_black}· {warning}glow <#RRGGBB|none> {letters_black}· {warning}look <modo> [alcance]'
   - ' {warning}equip <hueco|clear> [objeto] {letters_black}» {letters}ese objeto, o el de tu mano {letters_black}· {warning}equipment'
@@ -86,6 +87,8 @@ info:
   - ''
 property-set: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {highlight}%name% {letters_black}» {letters}%property% {letters_black}» {info}%value%'
 invalid-value: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%value% {error}no sirve para {highlight}%property%{error}. {letters_black}Usa: {info}%expected%'
+undone: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Deshecho el último cambio de {highlight}%name%{success}. {letters_black}(%left% más)'
+nothing-to-undo: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}No hay nada que deshacer en {highlight}%name%{error}.'
 states:
   enabled: '{success}Visible'
   disabled: '{error}Oculto'
@@ -112,7 +115,7 @@ dialogs:
   preset-label: Empezar desde
   skin-label: Skin
   skin-hint: Un nombre de cuenta, @mirror para la de cada jugador, o vacío para la de por defecto.
-  appearance-title: '{primary}&lAPARIENCIA'
+  appearance-title: '{primary}&lAPARIENCIA {letters_black}» {highlight}SKIN'
   skin-type-label: Skin de
   skin-player-label: Nombre de cuenta (para PLAYER)
   texture-label: Textura (para TEXTURE)
@@ -153,6 +156,8 @@ dialogs:
   rename-title: '{primary}Escribe el nuevo nombre:'
   clone-title: '{primary}Nombra la copia:'
   confirm-delete: '{error}¿Eliminar el NPC {highlight}%name%{error}? No se puede deshacer.'
+  body-title: '{primary}&lAPARIENCIA {letters_black}» {highlight}CUERPO'
+  rules-title: '{primary}&lINTERACCIONES {letters_black}» {highlight}REGLAS'
 adjust:
   started: '[sound:BLOCK_NOTE_BLOCK_PLING|0.6|1.6]%prefix% {letters}Ajustando {highlight}%name%{letters}: usa la rueda para moverlo y {highlight}F {letters}para el siguiente eje. <click:run_command:''/npc %name% adjust save''>{success}&l[✔ GUARDAR]</click> <click:run_command:''/npc %name% adjust cancel''>{error}&l[✘ DESHACER]</click>'
   saved: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Ajuste de {highlight}%name% {success}guardado.'

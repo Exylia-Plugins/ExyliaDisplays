@@ -127,6 +127,26 @@ public final class HologramCommand {
         HologramDialogs.copy(sender, name, copy.toLowerCase(Locale.ROOT));
     }
 
+    /** Puts it back as it was before its last change, from a command, a screen or the file. */
+    @Subcommand("<name> undo")
+    public void undo(CommandSender sender, @SuggestWith(Names.class) String name) {
+        HologramDialogs.undo(sender, name);
+    }
+
+    /** Keeps its look under a name, replacing a template of that name. */
+    @Subcommand("<name> savetemplate")
+    public void saveTemplate(CommandSender sender, @SuggestWith(Names.class) String name,
+                             @SuggestWith(Templates.class) String template) {
+        HologramDialogs.saveTemplate(sender, name, template.toLowerCase(Locale.ROOT));
+    }
+
+    /** Dresses it as a template: lines, pages, appearance, refresh and click. */
+    @Subcommand("<name> applytemplate")
+    public void applyTemplate(CommandSender sender, @SuggestWith(Names.class) String name,
+                              @SuggestWith(Templates.class) String template) {
+        HologramDialogs.applyTemplate(sender, name, template.toLowerCase(Locale.ROOT));
+    }
+
     @Subcommand("<name> enable")
     public void enable(CommandSender sender, @SuggestWith(Names.class) String name) {
         state(sender, name, true);
@@ -264,12 +284,12 @@ public final class HologramCommand {
         if (saved != null) pagesSet(sender, name, saved);
     }
 
-    /** Opens that page's lines, and turns the hologram to it for the player who asked. */
+    /** Turns the hologram to that page for the player who asked; {@code lines} opens the editor. */
     @Subcommand("<name> page")
     public void page(Player player, @SuggestWith(Names.class) String name, int page) {
         if (!hasPage(player, name, page)) return;
         Holograms.get(ExyliaDisplays.getInstance().getPlugin(), name).ifPresent(live -> live.page(player, page - 1));
-        HologramViews.openLines(player, name, page - 1);
+        send(player, messages().propertySet(), Values.of().putText("name", name).putText("property", "page").put("value", page));
     }
 
     @Subcommand("<name> pageinterval")
@@ -817,6 +837,15 @@ public final class HologramCommand {
         public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
             ExyliaDisplays plugin = ExyliaDisplays.getInstance();
             return plugin == null ? List.of() : HologramModule.get().store().names();
+        }
+    }
+
+    /** Every template's name. */
+    public static final class Templates implements SuggestionProvider<BukkitCommandActor> {
+
+        @Override
+        public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
+            return HologramModule.get() == null ? List.of() : HologramModule.get().templates().names();
         }
     }
 

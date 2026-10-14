@@ -48,10 +48,12 @@ items:
       - " {letters_black}▎ {letters}Escala {letters_black}» {info}%scale%"
       - " {letters_black}▎ {letters}Brillo {letters_black}» %glow%"
       - ""
-      - "{warning}➥ Clic para editar"
+      - "{warning}➥ Clic izquierdo {letters_black}» {letters}skin"
+      - "{warning}➥ Clic derecho {letters_black}» {letters}postura, tamaño y contorno"
       - ""
     actions:
-      - "exyliadisplays:npc_appearance"
+      - "left: exyliadisplays:npc_appearance"
+      - "right: exyliadisplays:npc_appearance_body"
 
   equipment:
     slot: 20
@@ -111,10 +113,12 @@ items:
       - " {letters_black}▎ {letters}Espera {letters_black}» {info}%cooldown%s ⌚"
       - " {letters_black}▎ {letters}Mira a quien clica {letters_black}» %face_clicker%"
       - ""
-      - "{warning}➥ Clic para editar"
+      - "{warning}➥ Clic izquierdo {letters_black}» {letters}qué hace un clic"
+      - "{warning}➥ Clic derecho {letters_black}» {letters}quién puede usarlo y cada cuánto"
       - ""
     actions:
-      - "exyliadisplays:npc_interactions"
+      - "left: exyliadisplays:npc_interactions"
+      - "right: exyliadisplays:npc_interactions_rules"
 
   visibility:
     slot: 24
@@ -221,6 +225,24 @@ items:
       - ""
     actions:
       - "exyliadisplays:npc_open_list"
+
+  undo:
+    slot: 42
+    material: CLOCK
+    name: "{primary}&lDESHACER"
+    lore:
+      - ""
+      - "{secondary}Información:"
+      - " {letters_black}▎ {letters}Revierte el último cambio, hecho"
+      - " {letters_black}▎ {letters}aquí, por comando o en el archivo."
+      - ""
+      - "{secondary}Estado:"
+      - " {letters_black}▎ {letters}Cambios por deshacer {letters_black}» {info}%npc_undo%"
+      - ""
+      - "{warning}➥ Clic para deshacer"
+      - ""
+    actions:
+      - "exyliadisplays:npc_undo"
 
   delete:
     slot: 44

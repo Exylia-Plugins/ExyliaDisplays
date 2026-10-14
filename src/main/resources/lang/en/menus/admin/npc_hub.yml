@@ -48,10 +48,12 @@ items:
       - " {letters_black}▎ {letters}Scale {letters_black}» {info}%scale%"
       - " {letters_black}▎ {letters}Glow {letters_black}» %glow%"
       - ""
-      - "{warning}➥ Click to edit"
+      - "{warning}➥ Left-click {letters_black}» {letters}skin"
+      - "{warning}➥ Right-click {letters_black}» {letters}pose, size and outline"
       - ""
     actions:
-      - "exyliadisplays:npc_appearance"
+      - "left: exyliadisplays:npc_appearance"
+      - "right: exyliadisplays:npc_appearance_body"
 
   equipment:
     slot: 20
@@ -111,10 +113,12 @@ items:
       - " {letters_black}▎ {letters}Cooldown {letters_black}» {info}%cooldown%s ⌚"
       - " {letters_black}▎ {letters}Turns to clicker {letters_black}» %face_clicker%"
       - ""
-      - "{warning}➥ Click to edit"
+      - "{warning}➥ Left-click {letters_black}» {letters}what a click does"
+      - "{warning}➥ Right-click {letters_black}» {letters}who may use it, and how often"
       - ""
     actions:
-      - "exyliadisplays:npc_interactions"
+      - "left: exyliadisplays:npc_interactions"
+      - "right: exyliadisplays:npc_interactions_rules"
 
   visibility:
     slot: 24
@@ -221,6 +225,24 @@ items:
       - ""
     actions:
       - "exyliadisplays:npc_open_list"
+
+  undo:
+    slot: 42
+    material: CLOCK
+    name: "{primary}&lUNDO"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}Takes back the last change, made"
+      - " {letters_black}▎ {letters}here, by command or in the file."
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}Changes to undo {letters_black}» {info}%npc_undo%"
+      - ""
+      - "{warning}➥ Click to undo"
+      - ""
+    actions:
+      - "exyliadisplays:npc_undo"
 
   delete:
     slot: 44

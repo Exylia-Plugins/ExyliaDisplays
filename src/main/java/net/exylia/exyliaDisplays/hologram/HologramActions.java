@@ -72,7 +72,14 @@ public final class HologramActions {
         hub("rename", HologramDialogs::rename);
         hub("open_hub", HologramViews::openHub);
         hub("open_lines", HologramViews::openLines);
-        hub("appearance", HologramDialogs::appearance);
+        hub("appearance", (player, name) -> HologramDialogs.appearance(player, name, false));
+        hub("appearance_light", (player, name) -> HologramDialogs.appearance(player, name, true));
+        hub("undo", (player, name) -> {
+            HologramDialogs.undo(player, name);
+            HologramViews.openHub(player, name);
+        });
+        hub("template_save", HologramDialogs::saveTemplate);
+        hub("template_apply", HologramDialogs::applyTemplate);
         hub("visibility", HologramDialogs::visibility);
         hub("click", HologramDialogs::click);
         hub("location", HologramDialogs::location);

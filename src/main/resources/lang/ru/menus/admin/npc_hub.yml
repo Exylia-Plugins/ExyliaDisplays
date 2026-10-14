@@ -48,10 +48,12 @@ items:
       - " {letters_black}▎ {letters}Масштаб {letters_black}» {info}%scale%"
       - " {letters_black}▎ {letters}Свечение {letters_black}» %glow%"
       - ""
-      - "{warning}➥ Нажми, чтобы изменить"
+      - "{warning}➥ ЛКМ {letters_black}» {letters}скин"
+      - "{warning}➥ ПКМ {letters_black}» {letters}поза, размер и контур"
       - ""
     actions:
-      - "exyliadisplays:npc_appearance"
+      - "left: exyliadisplays:npc_appearance"
+      - "right: exyliadisplays:npc_appearance_body"
 
   equipment:
     slot: 20
@@ -111,10 +113,12 @@ items:
       - " {letters_black}▎ {letters}Перезарядка {letters_black}» {info}%cooldown%s ⌚"
       - " {letters_black}▎ {letters}Смотрит на кликнувшего {letters_black}» %face_clicker%"
       - ""
-      - "{warning}➥ Нажми, чтобы изменить"
+      - "{warning}➥ ЛКМ {letters_black}» {letters}что делает клик"
+      - "{warning}➥ ПКМ {letters_black}» {letters}кто может использовать и как часто"
       - ""
     actions:
-      - "exyliadisplays:npc_interactions"
+      - "left: exyliadisplays:npc_interactions"
+      - "right: exyliadisplays:npc_interactions_rules"
 
   visibility:
     slot: 24
@@ -221,6 +225,24 @@ items:
       - ""
     actions:
       - "exyliadisplays:npc_open_list"
+
+  undo:
+    slot: 42
+    material: CLOCK
+    name: "{primary}&lОТМЕНИТЬ"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Отменяет последнее изменение,"
+      - " {letters_black}▎ {letters}сделанное здесь, командой или в файле."
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}Можно отменить {letters_black}» {info}%npc_undo%"
+      - ""
+      - "{warning}➥ Нажми, чтобы отменить"
+      - ""
+    actions:
+      - "exyliadisplays:npc_undo"
 
   delete:
     slot: 44

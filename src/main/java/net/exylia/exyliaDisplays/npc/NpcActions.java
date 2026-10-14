@@ -58,11 +58,17 @@ public final class NpcActions {
         });
         hub("rename", NpcDialogs::rename);
         hub("open_hub", NpcViews::openHub);
-        hub("appearance", NpcDialogs::appearance);
+        hub("appearance", (player, name) -> NpcDialogs.appearance(player, name, false));
+        hub("appearance_body", (player, name) -> NpcDialogs.appearance(player, name, true));
+        hub("undo", (player, name) -> {
+            NpcDialogs.undo(player, name);
+            NpcViews.openHub(player, name);
+        });
         hub("open_equipment", NpcViews::openEquipment);
         hub("label", NpcDialogs::label);
         hub("link", NpcDialogs::link);
-        hub("interactions", NpcDialogs::interactions);
+        hub("interactions", (player, name) -> NpcDialogs.interactions(player, name, false));
+        hub("interactions_rules", (player, name) -> NpcDialogs.interactions(player, name, true));
         hub("visibility", NpcDialogs::visibility);
         hub("location", NpcDialogs::location);
         hub("move_here", (player, name) -> {

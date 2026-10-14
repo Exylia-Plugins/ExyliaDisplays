@@ -106,28 +106,32 @@ public final class NpcDialogs {
         form.field(SKIN, FormField.text(SKIN, words().skinLabel()).defaultValue(player.getName()).optional()
                         .validate(skin -> StoredNpc.Skin.parse(skin) != null, words().skinHint()))
                 .hint(words().skinHint());
-        answer(player, form.ask(values -> values), back, values -> createHere(player,
-                values.getOr(NAME, "").trim(), StoredNpc.Skin.parse(values.getOr(SKIN, "")),
-                config.presets().get(values.getOr(PRESET, "")), back));
+        answer(player, form.ask(values -> values), back, values -> {
+            String name = values.getOr(NAME, "").trim();
+            if (createHere(player, name, StoredNpc.Skin.parse(values.getOr(SKIN, "")),
+                    config.presets().get(values.getOr(PRESET, "")))) {
+                NpcViews.openHub(player, name);
+            } else {
+                back.run();
+            }
+        });
     }
 
     /**
-     * Creates an NPC where the player stands and opens its editor, or says why it cannot.
+     * Creates an NPC where the player stands, telling them how it went. Opens nothing: a command
+     * calls it as it is, a window opens the editor after it.
      *
      * @param skin   what it wears; a preset's own skin wins over none
      * @param preset what it starts from, or {@code null} for a bare NPC with its name above it
      */
-    public static boolean createHere(Player player, String name, StoredNpc.Skin skin, NpcsConfig.Preset preset,
-                                     Runnable back) {
+    public static boolean createHere(Player player, String name, StoredNpc.Skin skin, NpcsConfig.Preset preset) {
         Values values = Values.of().putText("name", name);
         if (!Names.valid(name)) {
             plugin().getMessages().send(player, messages().invalidName(), values);
-            back.run();
             return false;
         }
         if (NpcModule.get().store().exists(name)) {
             plugin().getMessages().send(player, messages().alreadyExists(), values);
-            back.run();
             return false;
         }
         NpcsConfig config = NpcsConfig.get();
@@ -147,7 +151,6 @@ public final class NpcDialogs {
         }
         NpcModule.get().store().create(name, npc.withSkin(chosen));
         plugin().getMessages().send(player, messages().created(), values);
-        NpcViews.openHub(player, name);
         return true;
     }
 
@@ -155,31 +158,39 @@ public final class NpcDialogs {
     // The NPC
     // ------------------------------------------------------------------
 
-    /** Skin, pose, size and outline. */
-    public static void appearance(Player player, String name) {
+    /**
+     * What it looks like, in two windows so each fits on screen: its skin or, with {@code body},
+     * its pose, size and outline.
+     */
+    public static void appearance(Player player, String name, boolean body) {
         StoredNpc npc = NpcModule.get().store().get(name).orElse(null);
         if (npc == null) return;
         NpcsMessages.Dialogs words = words();
         StoredNpc.Skin skin = npc.skin();
         Runnable back = () -> NpcViews.openHub(player, name);
+        if (body) {
+            EditorForm form = form(player, words.bodyTitle())
+                    .choice(POSE, words.poseLabel(), npc.pose().name(), options(NpcPose.values()))
+                    .decimal(SCALE, words.scaleLabel(), BigDecimal.valueOf(npc.scale()))
+                    .field(GLOW, FormField.text(GLOW, words.glowLabel()).defaultValue(npc.glow()).optional()
+                            .validate(glow -> glow.isBlank() || StoredNpc.isColour(glow), "#RRGGBB"))
+                    .hint(words.glowHint());
+            answer(player, form.ask(values -> values), back, values -> save(player, name, current -> current
+                    .withPose(NpcPose.of(values.getOr(POSE, "STANDING")))
+                    .withScale(positive(values.getDecimal(SCALE), current.scale()))
+                    .withGlow(values.getOr(GLOW, "").trim()), back));
+            return;
+        }
         EditorForm form = form(player, words.appearanceTitle())
                 .choice(SKIN_TYPE, words.skinTypeLabel(), skin.type().name(), options(StoredNpc.Skin.Type.values()))
                 .text(SKIN, words.skinPlayerLabel(), skin.player())
-                .text(TEXTURE, words.textureLabel(), skin.texture(), 3)
+                .text(TEXTURE, words.textureLabel(), skin.texture(), 2)
                 .hint(words.textureHint())
-                .text(SIGNATURE, words.signatureLabel(), skin.signature(), 3)
-                .choice(POSE, words.poseLabel(), npc.pose().name(), options(NpcPose.values()))
-                .decimal(SCALE, words.scaleLabel(), BigDecimal.valueOf(npc.scale()))
-                .field(GLOW, FormField.text(GLOW, words.glowLabel()).defaultValue(npc.glow()).optional()
-                        .validate(glow -> glow.isBlank() || StoredNpc.isColour(glow), "#RRGGBB"))
-                .hint(words.glowHint());
+                .text(SIGNATURE, words.signatureLabel(), skin.signature(), 2);
         answer(player, form.ask(values -> values), back, values -> save(player, name, current -> current
                 .withSkin(new StoredNpc.Skin(StoredNpc.Skin.Type.valueOf(values.getOr(SKIN_TYPE, "NONE")),
                         values.getOr(SKIN, "").trim(), values.getOr(TEXTURE, "").trim(),
-                        values.getOr(SIGNATURE, "").trim()))
-                .withPose(NpcPose.of(values.getOr(POSE, "STANDING")))
-                .withScale(positive(values.getDecimal(SCALE), current.scale()))
-                .withGlow(values.getOr(GLOW, "").trim()), back));
+                        values.getOr(SIGNATURE, "").trim())), back));
     }
 
     /** Every label line in one box, and how high it floats. */
@@ -221,16 +232,27 @@ public final class NpcDialogs {
                 hologram -> save(player, name, saved -> saved.withLinkedHologram(hologram), back));
     }
 
-    /** What clicking it does, and who may. */
-    public static void interactions(Player player, String name) {
+    /**
+     * What clicking it does or, with {@code rules}, who may and how often: two windows, so the
+     * tall actions box has one to itself.
+     */
+    public static void interactions(Player player, String name, boolean rules) {
         StoredNpc npc = NpcModule.get().store().get(name).orElse(null);
         if (npc == null) return;
         StoredNpc.Interactions click = npc.interactions();
         NpcsMessages.Dialogs words = words();
         Runnable back = () -> NpcViews.openHub(player, name);
-        EditorForm form = form(player, words.interactionsTitle())
-                .text(ACTIONS, words.actionsLabel(), String.join("\n", click.actions()), 8)
-                .hint(words.actionsHint())
+        if (!rules) {
+            EditorForm form = form(player, words.interactionsTitle())
+                    .text(ACTIONS, words.actionsLabel(), String.join("\n", click.actions()), 8)
+                    .hint(words.actionsHint());
+            answer(player, form.ask(values -> lines(values.getOr(ACTIONS, "")).stream().map(String::trim)
+                            .filter(line -> !line.isEmpty()).toList()), back,
+                    actions -> save(player, name, current -> current.withInteractions(
+                            current.interactions().withActions(actions)), back));
+            return;
+        }
+        EditorForm form = form(player, words.rulesTitle())
                 .text(USE_PERMISSION, words.usePermissionLabel(), click.permission())
                 .hint(words.usePermissionHint())
                 .field(COOLDOWN, FormField.text(COOLDOWN, words.cooldownLabel())
@@ -241,14 +263,26 @@ public final class NpcDialogs {
                 .text(WAIT, words.cooldownMessageLabel(), click.cooldownMessage())
                 .hint(words.messageHint())
                 .flag(FACE, words.faceClickerLabel(), click.faceClicker());
-        answer(player, form.ask(values -> new StoredNpc.Interactions(
-                        lines(values.getOr(ACTIONS, "")).stream().map(String::trim).filter(line -> !line.isEmpty()).toList(),
+        answer(player, form.ask(values -> values), back, values -> save(player, name, current -> current.withInteractions(
+                new StoredNpc.Interactions(current.interactions().actions(),
                         values.getOr(USE_PERMISSION, "").trim(),
                         Math.max(0, cooldown(values.getOr(COOLDOWN, "0"))),
                         values.getOr(DENY, "").trim(),
                         values.getOr(WAIT, "").trim(),
-                        values.getBoolean(FACE))), back,
-                edited -> save(player, name, current -> current.withInteractions(edited), back));
+                        values.getBoolean(FACE))), back));
+    }
+
+    /** Puts the NPC back as it was before its last change, telling the sender how it went. */
+    public static boolean undo(CommandSender sender, String name) {
+        var store = NpcModule.get().store();
+        if (!store.exists(name)) {
+            plugin().getMessages().send(sender, messages().notFound(), Values.of().putText("name", name));
+            return false;
+        }
+        boolean undone = store.undo(name).isPresent();
+        plugin().getMessages().send(sender, undone ? messages().undone() : messages().nothingToUndo(),
+                Values.of().putText("name", name).put("left", store.undoable(name)));
+        return undone;
     }
 
     /** Where its head turns, and who sees it from how far. */

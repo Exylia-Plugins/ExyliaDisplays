@@ -15,12 +15,15 @@ import revxrsal.commands.annotation.CommandPlaceholder;
 import revxrsal.commands.annotation.Optional;
 import revxrsal.commands.annotation.Subcommand;
 import revxrsal.commands.annotation.Suggest;
+import revxrsal.commands.annotation.SuggestWith;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * {@code /holoadmin}: what is not about one hologram. Opens the list, creates, lists, reloads and
@@ -29,6 +32,9 @@ import java.util.Map;
 @Command({"holoadmin", "hologramadmin"})
 @CommandPermission(Permissions.HOLOGRAMS)
 public final class HologramAdminCommand {
+
+    /** {@code --template <name>} in the text of {@code /holoadmin create}. */
+    private static final Pattern TEMPLATE_FLAG = Pattern.compile("(?:^|\\s)--template\\s+(\\S+)");
 
     private static HologramsMessages messages() {
         return HologramsMessages.get();
@@ -88,11 +94,43 @@ public final class HologramAdminCommand {
                         .put("distance", HologramViews.number(Math.round(entry.getValue() * 10) / 10.0)))));
     }
 
+    /** A new hologram where the player stands; {@code --template <t>} anywhere in the text starts from one. */
     @Subcommand("create")
     public void create(Player player, String name, @Optional String text) {
         String id = name.toLowerCase(Locale.ROOT);
+        HologramTemplate template = null;
+        Matcher flag = TEMPLATE_FLAG.matcher(text == null ? "" : text);
+        if (flag.find()) {
+            String wanted = flag.group(1).toLowerCase(Locale.ROOT);
+            template = HologramModule.get().templates().get(wanted).orElse(null);
+            if (template == null) {
+                send(player, messages().templateNotFound(), Values.of().putText("template", wanted));
+                return;
+            }
+            text = flag.replaceFirst("").trim();
+        }
         List<String> lines = text == null || text.isBlank() ? List.of("{primary}&l" + id) : List.of(text);
-        HologramDialogs.createHere(player, id, lines, () -> { });
+        HologramDialogs.createHere(player, id, lines, template);
+    }
+
+    /** Every template, with what it holds. */
+    @Subcommand("templates")
+    public void templates(CommandSender sender) {
+        Map<String, HologramTemplate> all = HologramModule.get().templates().all();
+        if (all.isEmpty()) {
+            send(sender, messages().templatesEmpty(), Values.of());
+            return;
+        }
+        send(sender, messages().templatesHeader(), Values.of("count", all.size()));
+        all.forEach((name, template) -> send(sender, messages().templatesLine(), Values.of().putText("template", name)
+                .put("lines", template.lines().size()).put("pages", template.pages().size() + 1)));
+    }
+
+    @Subcommand("templates delete")
+    public void deleteTemplate(CommandSender sender, @SuggestWith(HologramCommand.Templates.class) String template) {
+        String name = template.toLowerCase(Locale.ROOT);
+        send(sender, HologramModule.get().templates().delete(name) ? messages().templateDeleted()
+                : messages().templateNotFound(), Values.of().putText("template", name));
     }
 
     @Subcommand("reload")

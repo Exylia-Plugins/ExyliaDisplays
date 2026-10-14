@@ -56,6 +56,7 @@ help:
   - ' {warning}rotate <yaw> [pitch] {letters_black}· {warning}face {letters_black}» {letters}повернуть его, или к тебе'
   - ' {warning}adjust {letters_black}» {letters}двигать, вращать и масштабировать колёсиком {muted}(повтор сохраняет, adjust cancel отменяет)'
   - ' {warning}rename <новое> {letters_black}· {warning}clone <новое> {letters_black}· {warning}enable {letters_black}· {warning}disable {letters_black}· {warning}delete'
+  - ' {warning}undo {letters_black}» {letters}отменить последнее изменение'
   - ' {warning}skin <игрок|@mirror|@none> {letters_black}· {warning}texture <значение> [подпись]'
   - ' {warning}pose {letters_black}· {warning}scale {letters_black}· {warning}glow <#RRGGBB|none> {letters_black}· {warning}look <режим> [радиус]'
   - ' {warning}equip <слот|clear> [предмет] {letters_black}» {letters}этот предмет или тот, что в руке {letters_black}· {warning}equipment'
@@ -86,6 +87,8 @@ info:
   - ''
 property-set: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {highlight}%name% {letters_black}» {letters}%property% {letters_black}» {info}%value%'
 invalid-value: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%value% {error}не подходит для {highlight}%property%{error}. {letters_black}Укажи: {info}%expected%'
+undone: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Последнее изменение {highlight}%name% {success}отменено. {letters_black}(ещё %left%)'
+nothing-to-undo: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}У {highlight}%name% {error}нечего отменять.'
 states:
   enabled: '{success}Виден'
   disabled: '{error}Скрыт'
@@ -112,7 +115,7 @@ dialogs:
   preset-label: Начать с
   skin-label: Скин
   skin-hint: Ник аккаунта, @mirror — скин каждого игрока, или пусто — скин по умолчанию.
-  appearance-title: '{primary}&lВНЕШНОСТЬ'
+  appearance-title: '{primary}&lВНЕШНОСТЬ {letters_black}» {highlight}СКИН'
   skin-type-label: Скин из
   skin-player-label: Ник аккаунта (для PLAYER)
   texture-label: Текстура (для TEXTURE)
@@ -153,6 +156,8 @@ dialogs:
   rename-title: '{primary}Введи новое имя:'
   clone-title: '{primary}Назови копию:'
   confirm-delete: '{error}Удалить NPC {highlight}%name%{error}? Это нельзя отменить.'
+  body-title: '{primary}&lВНЕШНОСТЬ {letters_black}» {highlight}ТЕЛО'
+  rules-title: '{primary}&lВЗАИМОДЕЙСТВИЯ {letters_black}» {highlight}ПРАВИЛА'
 adjust:
   started: '[sound:BLOCK_NOTE_BLOCK_PLING|0.6|1.6]%prefix% {letters}Настройка {highlight}%name%{letters}: колёсико двигает, {highlight}F {letters}— следующая ось. <click:run_command:''/npc %name% adjust save''>{success}&l[✔ СОХРАНИТЬ]</click> <click:run_command:''/npc %name% adjust cancel''>{error}&l[✘ ОТМЕНИТЬ]</click>'
   saved: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Настройка {highlight}%name% {success}сохранена.'

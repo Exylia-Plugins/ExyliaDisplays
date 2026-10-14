@@ -65,10 +65,12 @@ items:
       - " {letters_black}▎ {letters}Spacing {letters_black}» {info}%holo_spacing%"
       - " {letters_black}▎ {letters}Shadow {letters_black}» %holo_shadow%"
       - ""
-      - "{warning}➥ Click to edit"
+      - "{warning}➥ Left-click {letters_black}» {letters}shape and size"
+      - "{warning}➥ Right-click {letters_black}» {letters}colour and light"
       - ""
     actions:
-      - "exyliadisplays:holo_appearance"
+      - "left: exyliadisplays:holo_appearance"
+      - "right: exyliadisplays:holo_appearance_light"
 
   visibility:
     slot: 21
@@ -220,6 +222,44 @@ items:
       - ""
     actions:
       - "exyliadisplays:holo_open_list"
+
+  templates:
+    slot: 41
+    material: PAINTING
+    name: "{primary}&lTEMPLATES"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}Keep this look to reuse it, or"
+      - " {letters_black}▎ {letters}dress it as a saved one."
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}Saved templates {letters_black}» {info}%holo_templates%"
+      - ""
+      - "{warning}➥ Left-click {letters_black}» {letters}save this look"
+      - "{warning}➥ Right-click {letters_black}» {letters}apply a template"
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_template_save"
+      - "right: exyliadisplays:holo_template_apply"
+
+  undo:
+    slot: 42
+    material: CLOCK
+    name: "{primary}&lUNDO"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}Takes back the last change, made"
+      - " {letters_black}▎ {letters}here, by command or in the file."
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}Changes to undo {letters_black}» {info}%holo_undo%"
+      - ""
+      - "{warning}➥ Click to undo"
+      - ""
+    actions:
+      - "exyliadisplays:holo_undo"
 
   delete:
     slot: 44

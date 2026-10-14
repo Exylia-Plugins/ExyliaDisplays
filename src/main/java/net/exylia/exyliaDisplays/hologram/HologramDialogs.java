@@ -45,20 +45,8 @@ public final class HologramDialogs {
     private static final FormKey<String> NAME = FormKey.text("name");
     private static final FormKey<String> PRESET = FormKey.text("preset");
     private static final FormKey<String> TEXT = FormKey.text("text");
-    private static final FormKey<BigDecimal> SIZE = FormKey.decimal("size");
-    private static final FormKey<String> OPACITY = FormKey.text("opacity");
-    private static final FormKey<String> SHADOW = FormKey.text("shadow");
     private static final FormKey<String> BACKGROUND = FormKey.text("background");
-    private static final FormKey<String> GLOW = FormKey.text("glow");
-    private static final FormKey<BigDecimal> SPIN = FormKey.decimal("spin");
-    private static final FormKey<BigDecimal> BOB = FormKey.decimal("bob");
-    private static final FormKey<BigDecimal> PULSE = FormKey.decimal("pulse");
-    private static final FormKey<String> SHINE = FormKey.text("shine");
-    private static final FormKey<BigDecimal> FLOW = FormKey.decimal("flow");
-    private static final FormKey<BigDecimal> TYPEWRITER = FormKey.decimal("typewriter");
-    private static final FormKey<BigDecimal> RANGE = FormKey.decimal("range");
     private static final FormKey<String> PERMISSION = FormKey.text("permission");
-    private static final FormKey<String> CONDITION = FormKey.text("condition");
     private static final FormKey<String> HEAD = FormKey.text("head");
     private static final FormKey<Long> PAGE_INTERVAL = FormKey.integer("page_interval");
     private static final FormKey<String> BILLBOARD = FormKey.text("billboard");
@@ -104,7 +92,7 @@ public final class HologramDialogs {
         return HologramsMessages.get().dialogs();
     }
 
-    private static EditorForm form(Player player, String title) {
+    static EditorForm form(Player player, String title) {
         return EditorForm.of(plugin().getPlugin(), player, title);
     }
 
@@ -132,28 +120,35 @@ public final class HologramDialogs {
             HologramsConfig.Preset preset = config.presets().get(presetId);
             List<String> lines = preset == null ? List.of("{primary}&l" + name)
                     : preset.lines().stream().map(line -> line.replace("%hologram%", name)).toList();
-            createHere(player, name, lines, back);
+            if (createHere(player, name, lines, null)) {
+                HologramViews.openHub(player, name);
+            } else {
+                back.run();
+            }
         });
     }
 
-    /** Creates a hologram where the player stands and opens its editor, or says why it cannot. */
-    public static boolean createHere(Player player, String name, List<String> lines, Runnable back) {
+    /**
+     * Creates a hologram where the player stands, telling them how it went. Opens nothing: a
+     * command calls it as it is, a window opens the editor after it.
+     *
+     * @param template the look it starts with, or {@code null} for just these lines
+     */
+    public static boolean createHere(Player player, String name, List<String> lines, HologramTemplate template) {
         Values values = Values.of().putText("name", name);
         if (!Names.valid(name)) {
             plugin().getMessages().send(player, HologramsMessages.get().invalidName(), values);
-            back.run();
             return false;
         }
         if (HologramModule.get().store().exists(name)) {
             plugin().getMessages().send(player, HologramsMessages.get().alreadyExists(), values);
-            back.run();
             return false;
         }
         HologramsConfig config = HologramsConfig.get();
         Position at = Position.facing(player.getLocation()).plus(0, config.spawnHeight(), 0);
-        HologramModule.get().store().create(name, StoredHologram.at(at, lines, config.defaultViewDistance()));
+        StoredHologram hologram = StoredHologram.at(at, lines, config.defaultViewDistance());
+        HologramModule.get().store().create(name, template == null ? hologram : template.applyTo(hologram));
         plugin().getMessages().send(player, HologramsMessages.get().created(), values);
-        HologramViews.openHub(player, name);
         return true;
     }
 
@@ -244,138 +239,58 @@ public final class HologramDialogs {
         });
     }
 
-    /**
-     * Everything about one line but its text: look, motion and who sees it, in one window.
-     *
-     * <p>Empty boxes and zeroes write no tag, so the line keeps following the hologram's own
-     * settings for whatever the window left alone.
-     */
+    /** Everything about one line but its text, a themed window at a time: see {@link LineStyle}. */
     public static void lineStyle(Player player, String name, int page, int index) {
-        Optional<StoredHologram> hologram = HologramModule.get().store().get(name).map(h -> h.pageView(page))
-                .filter(h -> h.hasLine(index));
-        if (hologram.isEmpty()) {
-            HologramViews.openLines(player, name, page);
-            return;
-        }
-        HologramLine line = HologramLine.parse(hologram.get().lines().get(index));
-        HologramsMessages.Dialogs words = words();
-        Runnable back = () -> HologramViews.openLines(player, name, page);
-        List<FormField.Option> shadows = List.of(
-                new FormField.Option("inherit", words.inherit()),
-                new FormField.Option("on", words.on()),
-                new FormField.Option("off", words.off()));
-        EditorForm form = form(player, Values.of("line", index + 1).apply(words.styleTitle()));
-        if (line.head() != null) {
-            form.text(HEAD, words.headLabel(), line.head()).hint(words.headHint());
-        }
-        form.decimal(SIZE, words.sizeLabel(), decimal(line.size(), 1))
-                .field(OPACITY, FormField.text(OPACITY, words.opacityLabel())
-                        .defaultValue(line.opacity() == null ? "" : String.valueOf(line.opacity()))
-                        .optional()
-                        .validate(value -> value.isBlank() || isInt(value, 0, 255), "0 - 255"))
-                .hint(words.opacityHint())
-                .choice(SHADOW, words.shadowLabel(),
-                        line.shadow() == null ? "inherit" : line.shadow() ? "on" : "off", shadows)
-                .text(BACKGROUND, words.backgroundLabel(), line.background())
-                .hint(words.backgroundHint());
-        if (line.isModel()) {
-            form.text(GLOW, words.glowLabel(), line.glow() == null ? "" : line.glow().isEmpty() ? "team" : line.glow())
-                    .hint(words.glowHint());
-        }
-        form.decimal(SPIN, words.spinLabel(), decimal(line.spin(), 0))
-                .hint(words.motionHint())
-                .decimal(BOB, words.bobLabel(), decimal(line.bob(), 0))
-                .decimal(PULSE, words.pulseLabel(), decimal(line.pulse(), 0));
-        if (!line.isModel()) {
-            form.text(SHINE, words.shineLabel(), line.shine() == null ? "" : line.shine().isEmpty() ? "on" : line.shine())
-                    .hint(words.shineHint())
-                    .decimal(FLOW, words.flowLabel(), decimal(line.flow(), 0))
-                    .decimal(TYPEWRITER, words.typewriterLabel(), decimal(line.typewriter(), 0));
-        }
-        form.decimal(RANGE, words.rangeLabel(), decimal(line.range(), 0))
-                .text(PERMISSION, words.linePermissionLabel(), line.permission())
-                .hint(words.linePermissionHint())
-                .text(CONDITION, words.conditionLabel(), line.condition(), 2)
-                .hint(words.conditionHint());
-        answer(player, form.ask(values -> styled(line, values)), back,
-                styled -> save(player, name, current -> current.onPage(page, view -> view.hasLine(index)
-                        ? view.setLine(index, styled.raw()) : view), back));
-    }
-
-    /** The line with what the style window answered. */
-    static HologramLine styled(HologramLine line, FormValues values) {
-        HologramLine.Builder edited = line.toBuilder()
-                .size(unlessDefault(values.getOr(SIZE, BigDecimal.ONE), 1))
-                .opacity(values.getOr(OPACITY, "").isBlank() ? null : Integer.parseInt(values.getOr(OPACITY, "").trim()))
-                .shadow(switch (values.getOr(SHADOW, "inherit")) {
-                    case "on" -> Boolean.TRUE;
-                    case "off" -> Boolean.FALSE;
-                    default -> null;
-                })
-                .background(values.getOr(BACKGROUND, ""))
-                .spin(unlessDefault(values.getOr(SPIN, BigDecimal.ZERO), 0))
-                .bob(unlessDefault(values.getOr(BOB, BigDecimal.ZERO), 0))
-                .pulse(unlessDefault(values.getOr(PULSE, BigDecimal.ZERO), 0))
-                .range(unlessDefault(values.getOr(RANGE, BigDecimal.ZERO), 0))
-                .permission(values.getOr(PERMISSION, ""))
-                .condition(values.getOr(CONDITION, ""));
-        if (values.has(GLOW)) {
-            String glow = values.getOr(GLOW, "").trim();
-            edited.glow(glow.isEmpty() ? null : glow.equalsIgnoreCase("team") ? "" : glow);
-        }
-        if (values.has(SHINE)) {
-            String shine = values.getOr(SHINE, "").trim();
-            edited.shine(shine.isEmpty() ? null : shine.equalsIgnoreCase("on") ? "" : shine);
-        }
-        if (values.has(HEAD) && !values.getOr(HEAD, "").isBlank()) edited.head(values.getOr(HEAD, "").trim());
-        if (values.has(FLOW)) edited.flow(unlessDefault(values.getOr(FLOW, BigDecimal.ZERO), 0));
-        if (values.has(TYPEWRITER)) edited.typewriter(unlessDefault(values.getOr(TYPEWRITER, BigDecimal.ZERO), 0));
-        return edited.build();
+        LineStyle.open(player, name, page, index);
     }
 
     // ------------------------------------------------------------------
     // The hologram
     // ------------------------------------------------------------------
 
-    /** How the whole hologram is drawn. */
-    public static void appearance(Player player, String name) {
+    /**
+     * How the whole hologram is drawn, in two windows so each fits on screen: its shape (facing,
+     * alignment, scale, spacing, wrap) or, with {@code light}, its colour and light.
+     */
+    public static void appearance(Player player, String name, boolean light) {
         StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
         if (hologram == null) return;
         HologramConfig.Properties look = hologram.appearance();
         HologramsMessages.Dialogs words = words();
         Runnable back = () -> HologramViews.openHub(player, name);
-        EditorForm form = form(player, words.appearanceTitle())
-                .choice(BILLBOARD, words.billboardLabel(), look.billboard().toUpperCase(), options("CENTER", "VERTICAL", "HORIZONTAL", "FIXED"))
-                .choice(ALIGNMENT, words.alignmentLabel(), look.alignment().toUpperCase(), options("CENTER", "LEFT", "RIGHT"))
-                .decimal(SCALE_X, words.scaleXLabel(), BigDecimal.valueOf(look.scaleX()))
-                .decimal(SCALE_Y, words.scaleYLabel(), BigDecimal.valueOf(look.scaleY()))
-                .decimal(SCALE_Z, words.scaleZLabel(), BigDecimal.valueOf(look.scaleZ()))
-                .decimal(SPACING, words.spacingLabel(), BigDecimal.valueOf(look.lineSpacing()))
-                .integer(LINE_WIDTH, words.lineWidthLabel(), look.lineWidth())
-                .integer(TEXT_OPACITY, words.textOpacityLabel(), look.textOpacity())
-                .flag(TEXT_SHADOW, words.shadowLabel(), look.shadow())
-                .flag(SEE_THROUGH, words.seeThroughLabel(), look.seeThrough())
-                .flag(DEFAULT_BACKGROUND, words.defaultBackgroundLabel(), look.defaultBackground())
-                .text(BACKGROUND, words.backgroundLabel(), look.backgroundColor())
-                .hint(words.backgroundHint())
-                .integer(BRIGHTNESS, words.brightnessLabel(), look.brightness())
-                .hint(words.brightnessHint());
-        answer(player, form.ask(values -> new HologramConfig.Properties(
-                values.getOr(BILLBOARD, look.billboard()),
-                values.getOr(ALIGNMENT, look.alignment()),
-                positive(values.getDecimal(SCALE_X), look.scaleX()),
-                positive(values.getDecimal(SCALE_Y), look.scaleY()),
-                positive(values.getDecimal(SCALE_Z), look.scaleZ()),
-                values.getBoolean(TEXT_SHADOW),
-                values.getBoolean(SEE_THROUGH),
-                (int) Math.max(1, values.getLong(LINE_WIDTH)),
-                Math.max(0, values.getDecimal(SPACING).doubleValue()),
-                (int) Math.clamp(values.getLong(TEXT_OPACITY), 0, 255),
-                values.getBoolean(DEFAULT_BACKGROUND),
-                values.getOr(BACKGROUND, "").isBlank() ? "#00000000" : values.getOr(BACKGROUND, "").trim(),
-                (int) Math.clamp(values.getLong(BRIGHTNESS), -1, 15),
-                look.glowing())), back,
-                edited -> save(player, name, current -> current.withAppearance(edited), back));
+        EditorForm form = form(player, light ? words.lightTitle() : words.appearanceTitle());
+        if (light) {
+            form.integer(TEXT_OPACITY, words.textOpacityLabel(), look.textOpacity())
+                    .flag(TEXT_SHADOW, words.shadowLabel(), look.shadow())
+                    .flag(SEE_THROUGH, words.seeThroughLabel(), look.seeThrough())
+                    .flag(DEFAULT_BACKGROUND, words.defaultBackgroundLabel(), look.defaultBackground())
+                    .text(BACKGROUND, words.backgroundLabel(), look.backgroundColor())
+                    .hint(words.backgroundHint())
+                    .integer(BRIGHTNESS, words.brightnessLabel(), look.brightness())
+                    .hint(words.brightnessHint());
+        } else {
+            form.choice(BILLBOARD, words.billboardLabel(), look.billboard().toUpperCase(), options("CENTER", "VERTICAL", "HORIZONTAL", "FIXED"))
+                    .choice(ALIGNMENT, words.alignmentLabel(), look.alignment().toUpperCase(), options("CENTER", "LEFT", "RIGHT"))
+                    .decimal(SCALE_X, words.scaleXLabel(), BigDecimal.valueOf(look.scaleX()))
+                    .decimal(SCALE_Y, words.scaleYLabel(), BigDecimal.valueOf(look.scaleY()))
+                    .decimal(SCALE_Z, words.scaleZLabel(), BigDecimal.valueOf(look.scaleZ()))
+                    .decimal(SPACING, words.spacingLabel(), BigDecimal.valueOf(look.lineSpacing()))
+                    .integer(LINE_WIDTH, words.lineWidthLabel(), look.lineWidth());
+        }
+        answer(player, form.ask(values -> values), back, values -> save(player, name, current -> {
+            HologramConfig.Properties now = current.appearance();
+            return current.withAppearance(light
+                    ? new HologramConfig.Properties(now.billboard(), now.alignment(), now.scaleX(), now.scaleY(), now.scaleZ(),
+                    values.getBoolean(TEXT_SHADOW), values.getBoolean(SEE_THROUGH), now.lineWidth(), now.lineSpacing(),
+                    (int) Math.clamp(values.getLong(TEXT_OPACITY), 0, 255), values.getBoolean(DEFAULT_BACKGROUND),
+                    values.getOr(BACKGROUND, "").isBlank() ? "#00000000" : values.getOr(BACKGROUND, "").trim(),
+                    (int) Math.clamp(values.getLong(BRIGHTNESS), -1, 15), now.glowing())
+                    : new HologramConfig.Properties(values.getOr(BILLBOARD, now.billboard()), values.getOr(ALIGNMENT, now.alignment()),
+                    positive(values.getDecimal(SCALE_X), now.scaleX()), positive(values.getDecimal(SCALE_Y), now.scaleY()),
+                    positive(values.getDecimal(SCALE_Z), now.scaleZ()), now.shadow(), now.seeThrough(),
+                    (int) Math.max(1, values.getLong(LINE_WIDTH)), Math.max(0, values.getDecimal(SPACING).doubleValue()),
+                    now.textOpacity(), now.defaultBackground(), now.backgroundColor(), now.brightness(), now.glowing()));
+        }, back));
     }
 
     /** Who sees it, from how far, and how often it refreshes. */
@@ -617,6 +532,94 @@ public final class HologramDialogs {
     }
 
     // ------------------------------------------------------------------
+    // Templates
+    // ------------------------------------------------------------------
+
+    /** Keeps the hologram's look as a template, under a name the player types. */
+    public static void saveTemplate(Player player, String name) {
+        Runnable back = () -> HologramViews.openHub(player, name);
+        plugin().getInputs().answered(player,
+                plugin().getInputs().text(player, words().saveTemplateTitle())
+                        .defaultValue(HologramModule.get().templates().exists(name) ? "" : name).maxLength(32).open(),
+                typed -> {
+                    saveTemplate(player, name, typed.trim().toLowerCase(java.util.Locale.ROOT));
+                    back.run();
+                },
+                back);
+    }
+
+    /** Saves a template, replacing one of that name, telling the sender how it went. */
+    public static boolean saveTemplate(org.bukkit.command.CommandSender sender, String name, String template) {
+        HologramsMessages messages = HologramsMessages.get();
+        Values values = Values.of().putText("name", name).putText("template", template);
+        StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
+        if (hologram == null) {
+            plugin().getMessages().send(sender, messages.notFound(), values);
+            return false;
+        }
+        if (!Names.valid(template)) {
+            plugin().getMessages().send(sender, messages.invalidName(), values.putText("name", template));
+            return false;
+        }
+        var templates = HologramModule.get().templates();
+        HologramTemplate saved = HologramTemplate.of(hologram);
+        if (!templates.create(template, saved)) templates.edit(template, current -> saved);
+        plugin().getMessages().send(sender, messages.templateSaved(), values);
+        return true;
+    }
+
+    /** Dresses the hologram as a template the player picks. */
+    public static void applyTemplate(Player player, String name) {
+        Runnable back = () -> HologramViews.openHub(player, name);
+        List<String> templates = HologramModule.get().templates().names();
+        if (templates.isEmpty()) {
+            plugin().getMessages().send(player, HologramsMessages.get().templatesEmpty(), Values.of());
+            back.run();
+            return;
+        }
+        player.closeInventory();
+        plugin().getInputs().answered(player,
+                plugin().getInputs().choice(player, words().applyTemplateTitle(), templates)
+                        .label(template -> "{highlight}" + template).icon(template -> Material.PAINTING).open(),
+                template -> {
+                    applyTemplate(player, name, template);
+                    back.run();
+                },
+                back);
+    }
+
+    /** Applies a template, telling the sender how it went. */
+    public static boolean applyTemplate(org.bukkit.command.CommandSender sender, String name, String template) {
+        HologramsMessages messages = HologramsMessages.get();
+        Values values = Values.of().putText("name", name).putText("template", template);
+        HologramTemplate look = HologramModule.get().templates().get(template).orElse(null);
+        if (look == null) {
+            plugin().getMessages().send(sender, messages.templateNotFound(), values);
+            return false;
+        }
+        if (HologramModule.get().store().edit(name, look::applyTo).isEmpty()) {
+            plugin().getMessages().send(sender, messages.notFound(), values);
+            return false;
+        }
+        plugin().getMessages().send(sender, messages.templateApplied(), values);
+        return true;
+    }
+
+    /** Puts the hologram back as it was before its last change, telling the sender how it went. */
+    public static boolean undo(org.bukkit.command.CommandSender sender, String name) {
+        HologramsMessages messages = HologramsMessages.get();
+        var store = HologramModule.get().store();
+        if (!store.exists(name)) {
+            plugin().getMessages().send(sender, messages.notFound(), Values.of().putText("name", name));
+            return false;
+        }
+        boolean undone = store.undo(name).isPresent();
+        plugin().getMessages().send(sender, undone ? messages.undone() : messages.nothingToUndo(),
+                Values.of().putText("name", name).put("left", store.undoable(name)));
+        return undone;
+    }
+
+    // ------------------------------------------------------------------
     // Pages
     // ------------------------------------------------------------------
 
@@ -671,7 +674,7 @@ public final class HologramDialogs {
     // ------------------------------------------------------------------
 
     /** Saves a change and brings the screen back with it. */
-    private static void save(Player player, String name, UnaryOperator<StoredHologram> change, Runnable back) {
+    static void save(Player player, String name, UnaryOperator<StoredHologram> change, Runnable back) {
         HologramModule.get().store().edit(name, change).ifPresentOrElse(
                 saved -> plugin().getMessages().send(player, HologramsMessages.get().saved(), Values.of().putText("name", name)),
                 () -> plugin().getMessages().send(player, HologramsMessages.get().notFound(), Values.of().putText("name", name)));
@@ -682,7 +685,7 @@ public final class HologramDialogs {
      * Waits for a window's answer on the player's own thread: the answer, or the screen they came
      * from when they closed it.
      */
-    private static <T> void answer(Player player, CompletionStage<Optional<T>> asked, Runnable back,
+    static <T> void answer(Player player, CompletionStage<Optional<T>> asked, Runnable back,
                                    Consumer<T> then) {
         player.closeInventory();
         asked.whenComplete((answer, failure) -> plugin().getTasks().runAtEntity(player, () -> {
@@ -701,28 +704,9 @@ public final class HologramDialogs {
         return Arrays.stream(keys).map(key -> new FormField.Option(key, key)).toList();
     }
 
-    private static BigDecimal decimal(Double value, double fallback) {
-        return BigDecimal.valueOf(value == null ? fallback : value).stripTrailingZeros();
-    }
-
-    /** {@code null} when the value is the one that writes no tag. */
-    private static Double unlessDefault(BigDecimal value, double none) {
-        double number = value.doubleValue();
-        return number == none ? null : number;
-    }
-
     private static double positive(BigDecimal value, double fallback) {
         double number = value.doubleValue();
         return number > 0 ? number : fallback;
-    }
-
-    private static boolean isInt(String value, int min, int max) {
-        try {
-            int number = Integer.parseInt(value.trim());
-            return number >= min && number <= max;
-        } catch (NumberFormatException notANumber) {
-            return false;
-        }
     }
 
     /** A message as plain text, for a validation error under a box. */

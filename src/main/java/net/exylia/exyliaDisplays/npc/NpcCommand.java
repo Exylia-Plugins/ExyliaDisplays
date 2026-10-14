@@ -106,6 +106,12 @@ public final class NpcCommand {
         NpcDialogs.copy(sender, name, copy.toLowerCase(Locale.ROOT));
     }
 
+    /** Puts it back as it was before its last change, from a command, a screen or the file. */
+    @Subcommand("<name> undo")
+    public void undo(CommandSender sender, @SuggestWith(Names.class) String name) {
+        NpcDialogs.undo(sender, name);
+    }
+
     @Subcommand("<name> enable")
     public void enable(CommandSender sender, @SuggestWith(Names.class) String name) {
         state(sender, name, true);

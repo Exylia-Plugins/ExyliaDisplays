@@ -65,10 +65,12 @@ items:
       - " {letters_black}▎ {letters}Интервал {letters_black}» {info}%holo_spacing%"
       - " {letters_black}▎ {letters}Тень {letters_black}» %holo_shadow%"
       - ""
-      - "{warning}➥ Нажми, чтобы изменить"
+      - "{warning}➥ ЛКМ {letters_black}» {letters}форма и размер"
+      - "{warning}➥ ПКМ {letters_black}» {letters}цвет и свет"
       - ""
     actions:
-      - "exyliadisplays:holo_appearance"
+      - "left: exyliadisplays:holo_appearance"
+      - "right: exyliadisplays:holo_appearance_light"
 
   visibility:
     slot: 21
@@ -220,6 +222,44 @@ items:
       - ""
     actions:
       - "exyliadisplays:holo_open_list"
+
+  templates:
+    slot: 41
+    material: PAINTING
+    name: "{primary}&lШАБЛОНЫ"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Сохрани этот вид, чтобы использовать"
+      - " {letters_black}▎ {letters}снова, или примени сохранённый."
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}Сохранённых шаблонов {letters_black}» {info}%holo_templates%"
+      - ""
+      - "{warning}➥ ЛКМ {letters_black}» {letters}сохранить этот вид"
+      - "{warning}➥ ПКМ {letters_black}» {letters}применить шаблон"
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_template_save"
+      - "right: exyliadisplays:holo_template_apply"
+
+  undo:
+    slot: 42
+    material: CLOCK
+    name: "{primary}&lОТМЕНИТЬ"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Отменяет последнее изменение,"
+      - " {letters_black}▎ {letters}сделанное здесь, командой или в файле."
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}Можно отменить {letters_black}» {info}%holo_undo%"
+      - ""
+      - "{warning}➥ Нажми, чтобы отменить"
+      - ""
+    actions:
+      - "exyliadisplays:holo_undo"
 
   delete:
     slot: 44

@@ -28,6 +28,7 @@ public final class HologramModule implements DisplayModule {
 
     private ExyliaDisplays core;
     private EntryStore<HologramFile, StoredHologram> store;
+    private EntryStore<HologramTemplate.Templates, HologramTemplate> templates;
     private HologramRenderer renderer;
     private FileWatcher watcher;
     private final HologramAdjust adjust = new HologramAdjust();
@@ -61,6 +62,8 @@ public final class HologramModule implements DisplayModule {
             renderer.apply(name, hologram);
         });
         renderer.applyAll(store.all());
+        templates = new EntryStore<>(Configs.define(core.getPlugin(), "templates", HologramTemplate.Templates.class).load(),
+                HologramTemplate.Templates::templates, HologramTemplate.Templates::new, (name, template) -> { });
 
         watcher = new FileWatcher(new File(core.getPlugin().getDataFolder(), "holograms.yml").toPath(),
                 core.getTasks(), this::applyFileEdit, core.getPlugin().getLogger());
@@ -92,6 +95,11 @@ public final class HologramModule implements DisplayModule {
         return store;
     }
 
+    /** {@code templates.yml}: hologram looks kept by name. */
+    public EntryStore<HologramTemplate.Templates, HologramTemplate> templates() {
+        return templates;
+    }
+
     public HologramRenderer renderer() {
         return renderer;
     }
@@ -108,6 +116,7 @@ public final class HologramModule implements DisplayModule {
     public List<ConfigIssue> reloadFile() {
         // A key left out is not a mistake: a hand-written hologram only needs what it changes,
         // and the defaults are written in for it.
+        templates.reload();
         List<ConfigIssue> issues = store.reload().stream()
                 .filter(issue -> issue.type() != ConfigIssue.Type.MISSING_KEY)
                 .toList();

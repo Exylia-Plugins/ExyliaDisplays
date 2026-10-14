@@ -3,7 +3,10 @@ package net.exylia.exyliaDisplays.common.store;
 import net.exylia.lib.config.ConfigFile;
 import net.exylia.lib.config.ConfigIssue;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +37,12 @@ public final class EntryStore<F extends Record, T> {
     private final Function<Map<String, T>, F> write;
     private final BiConsumer<String, T> changed;
     private volatile Runnable written = () -> {};
+
+    /** How many changes of one entry {@link #undo} can take back. */
+    public static final int HISTORY = 10;
+
+    /** What each entry was before its last changes, newest first; guarded by {@code this}. */
+    private final Map<String, Deque<T>> history = new HashMap<>();
 
     /**
      * @param file    the file
@@ -103,8 +112,31 @@ public final class EntryStore<F extends Record, T> {
             return Optional.of(current);
         }
         save(entries -> entries.put(name, edited));
+        remember(name, current);
         changed.accept(name, edited);
         return Optional.of(edited);
+    }
+
+    /**
+     * Puts an entry back as it was before its last change.
+     *
+     * @return the entry as it is now, or empty when it has nothing to undo
+     */
+    public synchronized Optional<T> undo(String name) {
+        Deque<T> steps = history.get(name);
+        if (steps == null || steps.isEmpty() || !exists(name)) {
+            return Optional.empty();
+        }
+        T before = steps.pop();
+        save(entries -> entries.put(name, before));
+        changed.accept(name, before);
+        return Optional.of(before);
+    }
+
+    /** How many changes of an entry {@link #undo} can still take back. */
+    public synchronized int undoable(String name) {
+        Deque<T> steps = history.get(name);
+        return steps == null ? 0 : steps.size();
     }
 
     public synchronized boolean delete(String name) {
@@ -112,6 +144,7 @@ public final class EntryStore<F extends Record, T> {
             return false;
         }
         save(entries -> entries.remove(name));
+        history.remove(name);
         changed.accept(name, null);
         return true;
     }
@@ -125,6 +158,8 @@ public final class EntryStore<F extends Record, T> {
         Map<String, T> renamed = new LinkedHashMap<>();
         all().forEach((name, value) -> renamed.put(name.equals(from) ? to : name, value));
         write(renamed);
+        Deque<T> steps = history.remove(from);
+        if (steps != null) history.put(to, steps);
         changed.accept(from, null);
         changed.accept(to, entry);
         return true;
@@ -159,7 +194,8 @@ public final class EntryStore<F extends Record, T> {
             for (int i = 2; !replace && merged.containsKey(free); i++) {
                 free = Names.sanitize(name) + "_" + i;
             }
-            merged.put(free, entry);
+            T replaced = merged.put(free, entry);
+            if (replaced != null && !replaced.equals(entry)) remember(free, replaced);
             added.put(free, entry);
             names.put(name, free);
         });
@@ -171,9 +207,20 @@ public final class EntryStore<F extends Record, T> {
         return names;
     }
 
-    /** Reads the file again, after somebody edited it. */
+    /** Reads the file again, after somebody edited it; what the edit changed can be undone too. */
     public synchronized List<ConfigIssue> reload() {
-        return file.reload();
+        Map<String, T> before = all();
+        List<ConfigIssue> issues = file.reload();
+        Map<String, T> after = all();
+        before.forEach((name, old) -> {
+            T now = after.get(name);
+            if (now == null) {
+                history.remove(name);
+            } else if (!now.equals(old)) {
+                remember(name, old);
+            }
+        });
+        return issues;
     }
 
     /**
@@ -182,6 +229,14 @@ public final class EntryStore<F extends Record, T> {
      */
     public void onWritten(Runnable listener) {
         written = listener;
+    }
+
+    private void remember(String name, T before) {
+        Deque<T> steps = history.computeIfAbsent(name, key -> new ArrayDeque<>());
+        steps.push(before);
+        if (steps.size() > HISTORY) {
+            steps.removeLast();
+        }
     }
 
     private void save(Consumer<Map<String, T>> change) {

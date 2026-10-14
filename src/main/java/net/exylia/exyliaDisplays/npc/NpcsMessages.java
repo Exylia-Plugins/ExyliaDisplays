@@ -109,6 +109,9 @@ public record NpcsMessages(
         String propertySet,
         @Comment("A value a setting does not take. Placeholders: %property%, %value%, %expected%.")
         String invalidValue,
+        @Comment("/npc <name> undo and the undo button. Placeholders: %name%, %left% (changes still undoable).")
+        String undone,
+        String nothingToUndo,
         States states,
         Dialogs dialogs,
 
@@ -185,6 +188,7 @@ public record NpcsMessages(
                         " {warning}rotate <yaw> [pitch] {letters_black}· {warning}face {letters_black}» {letters}turn it, or turn it to you",
                         " {warning}adjust {letters_black}» {letters}move, turn and scale it with the mouse wheel {muted}(again saves, adjust cancel undoes)",
                         " {warning}rename <new> {letters_black}· {warning}clone <new> {letters_black}· {warning}enable {letters_black}· {warning}disable {letters_black}· {warning}delete",
+                        " {warning}undo {letters_black}» {letters}take back the last change",
                         " {warning}skin <player|@mirror|@none> {letters_black}· {warning}texture <value> [signature]",
                         " {warning}pose {letters_black}· {warning}scale {letters_black}· {warning}glow <#RRGGBB|none> {letters_black}· {warning}look <mode> [range]",
                         " {warning}equip <slot|clear> [item] {letters_black}» {letters}that item, or the one in your hand {letters_black}· {warning}equipment",
@@ -215,6 +219,8 @@ public record NpcsMessages(
                         ""),
                 OK + "{highlight}%name% {letters_black}» {letters}%property% {letters_black}» {info}%value%",
                 NO + "{highlight}%value% {error}does not fit {highlight}%property%{error}. {letters_black}Use: {info}%expected%",
+                OK + "{success}Undid the last change to {highlight}%name%{success}. {letters_black}(%left% more)",
+                NO + "{error}Nothing to undo on {highlight}%name%{error}.",
                 new States(),
                 new Dialogs(),
 
@@ -312,7 +318,11 @@ public record NpcsMessages(
             String renameTitle,
             String cloneTitle,
             @Comment("Placeholder: %name%.")
-            String confirmDelete) {
+            String confirmDelete,
+            @Comment("The second appearance window: pose, size and outline.")
+            String bodyTitle,
+            @Comment("The second interactions window: who may use it, how often, and what they are told.")
+            String rulesTitle) {
 
         public Dialogs() {
             this("{primary}&lNEW NPC",
@@ -321,7 +331,7 @@ public record NpcsMessages(
                     "Start from",
                     "Skin",
                     "An account name, @mirror for each viewer's own, or empty for the default.",
-                    "{primary}&lAPPEARANCE",
+                    "{primary}&lAPPEARANCE {letters_black}» {highlight}SKIN",
                     "Skin from",
                     "Account name (for PLAYER)",
                     "Texture (for TEXTURE)",
@@ -361,7 +371,9 @@ public record NpcsMessages(
                     "Pitch",
                     "{primary}Write the new name:",
                     "{primary}Name the copy:",
-                    "{error}Delete the NPC {highlight}%name%{error}? This cannot be undone.");
+                    "{error}Delete the NPC {highlight}%name%{error}? This cannot be undone.",
+                    "{primary}&lAPPEARANCE {letters_black}» {highlight}BODY",
+                    "{primary}&lINTERACTIONS {letters_black}» {highlight}RULES");
         }
     }
 

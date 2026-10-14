@@ -95,7 +95,7 @@ public final class NpcAdminCommand {
             send(player, messages().invalidSkin(), Values.of().putText("skin", skin));
             return;
         }
-        NpcDialogs.createHere(player, name.toLowerCase(Locale.ROOT), parsed, null, () -> { });
+        NpcDialogs.createHere(player, name.toLowerCase(Locale.ROOT), parsed, null);
     }
 
     @Subcommand("reload")

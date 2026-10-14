@@ -88,6 +88,9 @@ public final class HologramViews {
         context.put("holo_hover", number(click.hoverScale()));
         context.put("holo_pages", hologram.pageCount());
         context.put("holo_page_interval", hologram.pageInterval());
+        // Live while the screen is open: an edit from a window or a command changes them.
+        context.put("holo_undo", (java.util.function.Supplier<Object>) () -> HologramModule.get() == null ? 0 : HologramModule.get().store().undoable(name));
+        context.put("holo_templates", (java.util.function.Supplier<Object>) () -> HologramModule.get() == null ? 0 : HologramModule.get().templates().names().size());
         return context;
     }
 

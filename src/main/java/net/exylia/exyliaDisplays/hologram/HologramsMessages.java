@@ -87,6 +87,18 @@ public record HologramsMessages(
         String propertySet,
         @Comment("A value a setting does not take. Placeholders: %property%, %value%, %expected%.")
         String invalidValue,
+        @Comment("/holo <name> undo and the undo button. Placeholders: %name%, %left% (changes still undoable).")
+        String undone,
+        String nothingToUndo,
+        @Comment("Templates. Placeholders: %name% (the hologram), %template%.")
+        String templateSaved,
+        String templateApplied,
+        String templateDeleted,
+        String templateNotFound,
+        @Comment("/holoadmin templates. Placeholders: %count%; per line %template%, %lines%, %pages%.")
+        String templatesHeader,
+        String templatesLine,
+        String templatesEmpty,
         States states,
         Dialogs dialogs,
         Audience audience,
@@ -138,7 +150,8 @@ public record HologramsMessages(
                         "",
                         " {secondary}Manage",
                         " <click:run_command:'/holoadmin'>{warning}/holoadmin</click> {letters_black}» {letters}every hologram, on a screen",
-                        " <click:suggest_command:'/holoadmin create '>{warning}/holoadmin create <name> [text]</click> {letters_black}» {letters}a new one here",
+                        " <click:suggest_command:'/holoadmin create '>{warning}/holoadmin create <name> [text] [--template <t>]</click> {letters_black}» {letters}a new one here",
+                        " <click:run_command:'/holoadmin templates'>{warning}/holoadmin templates [delete <t>]</click> {letters_black}» {letters}the saved looks",
                         " <click:run_command:'/holoadmin near'>{warning}/holoadmin near [radius]</click> {letters_black}» {letters}the ones around you",
                         " <click:suggest_command:'/holoadmin import '>{warning}/holoadmin import <plugin> [replace]</click> {letters_black}» {letters}DecentHolograms, HolographicDisplays, FancyHolograms",
                         " <click:run_command:'/holoadmin reload'>{warning}/holoadmin reload</click> {letters_black}» {letters}read holograms.yml again",
@@ -148,6 +161,7 @@ public record HologramsMessages(
                         " {warning}rotate <yaw> [pitch] {letters_black}· {warning}face {letters_black}» {letters}turn it, or turn it to you",
                         " {warning}adjust {letters_black}» {letters}move, turn and scale it with the mouse wheel {muted}(again saves, adjust cancel undoes)",
                         " {warning}rename <new> {letters_black}· {warning}clone <new> {letters_black}· {warning}enable {letters_black}· {warning}disable {letters_black}· {warning}delete",
+                        " {warning}undo {letters_black}» {letters}take back the last change {letters_black}· {warning}savetemplate <t> {letters_black}· {warning}applytemplate <t>",
                         " {warning}addline <text> {letters_black}· {warning}setline <n> <text> {letters_black}· {warning}insertline <n> <text>",
                         " {warning}removeline <n> {letters_black}· {warning}moveline <from> <to> {letters_black}· {warning}lines",
                         " {warning}line <n> <tag> [value] {letters_black}» {letters}size, head, shadow, spin, shine... {muted}(no value resets)",
@@ -182,6 +196,15 @@ public record HologramsMessages(
                 "   {letters_black}%action%. {letters}%text%",
                 "[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {highlight}%name% {letters_black}» {letters}%property% {letters_black}» {info}%value%",
                 "[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%value% {error}does not fit {highlight}%property%{error}. {letters_black}Use: {info}%expected%",
+                "[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Undid the last change to {highlight}%name%{success}. {letters_black}(%left% more)",
+                "[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}Nothing to undo on {highlight}%name%{error}.",
+                "[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Saved the look of {highlight}%name% {success}as the template {highlight}%template%{success}.",
+                "[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Template {highlight}%template% {success}applied to {highlight}%name%{success}.",
+                "%prefix% {warning}Template {highlight}%template% {warning}deleted.",
+                "[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}There is no template called {highlight}%template%{error}.",
+                "%prefix% {letters}Templates {letters_black}({info}%count%{letters_black})",
+                " {highlight}%template% {letters_black}» {info}%lines% {letters}lines {letters_black}· {info}%pages% {letters}page(s)",
+                "%prefix% {letters}There are no templates yet. {muted}Save one with /holo <name> savetemplate <template>.",
                 new States(),
                 new Dialogs(),
                 new Audience(),
@@ -328,7 +351,22 @@ public record HologramsMessages(
             String confirmDeletePage,
             @Comment("Placeholder: %page%.")
             String pageClickTitle,
-            String pageClickHint) {
+            String pageClickHint,
+            @Comment("The style of a line, a window per theme. Placeholder: %line%.")
+            String lookTitle,
+            String motionTitle,
+            String reachTitle,
+            @Comment("The buttons that open them, and what each says it holds.")
+            String lookButton,
+            String lookButtonHint,
+            String motionButton,
+            String motionButtonHint,
+            String reachButton,
+            String reachButtonHint,
+            @Comment("The second appearance window: colour and light.")
+            String lightTitle,
+            String saveTemplateTitle,
+            String applyTemplateTitle) {
 
         public Dialogs() {
             this("{primary}&lNEW HOLOGRAM",
@@ -345,7 +383,7 @@ public record HologramsMessages(
                     "{primary}&lLINE %line% {letters_black}» {highlight}STYLE",
                     "Size (1 = normal)",
                     "Opacity (0-255)",
-                    "Leave empty to use the hologram's.",
+                    "Hologram's keeps the hologram's own opacity.",
                     "Shadow",
                     "Hologram's",
                     "On",
@@ -358,7 +396,7 @@ public record HologramsMessages(
                     "Bob (blocks up and down)",
                     "Pulse (fraction of its size)",
                     "Shine",
-                    "A band of light that sweeps over it. Empty for none, 'on' for the default, or a colour like highlight or #ffd700.",
+                    "A band of light that sweeps over the text, in the colour picked.",
                     "Flow (colours moving, characters a second)",
                     "Typewriter (characters a second)",
                     "Only within (blocks)",
@@ -367,7 +405,7 @@ public record HologramsMessages(
                     "Only when",
                     "A comparison such as %player_level% >= 10. Empty for always.",
                     "0 turns a motion off.",
-                    "{primary}&lAPPEARANCE",
+                    "{primary}&lAPPEARANCE {letters_black}» {highlight}SHAPE",
                     "Facing",
                     "Alignment",
                     "Scale X",
@@ -412,7 +450,19 @@ public record HologramsMessages(
                     "Each player moves to the next page on their own after this long.",
                     "{error}Remove page {highlight}%page% {error}and its lines?",
                     "{primary}&lPAGE %page% {letters_black}» {highlight}CLICK",
-                    "One per row, run while a player is on this page. [PAGE] next, [PAGE] previous or [PAGE] 2 turns it; 'right:' or 'left:' first limits a row to that click. Commands, [SERVER] lobby, [MESSAGE] text and [SOUND] name work as on the hologram.");
+                    "One per row, run while a player is on this page. [PAGE] next, [PAGE] previous or [PAGE] 2 turns it; 'right:' or 'left:' first limits a row to that click. Commands, [SERVER] lobby, [MESSAGE] text and [SOUND] name work as on the hologram.",
+                    "{primary}&lLINE %line% {letters_black}» {highlight}LOOK",
+                    "{primary}&lLINE %line% {letters_black}» {highlight}MOTION",
+                    "{primary}&lLINE %line% {letters_black}» {highlight}WHO SEES IT",
+                    "{primary}&lLOOK",
+                    "Size, opacity, shadow, background and glow.",
+                    "{primary}&lMOTION",
+                    "Spin, bob, pulse, shine, flow and typewriter.",
+                    "{primary}&lWHO SEES IT",
+                    "How close, with which permission, and when.",
+                    "{primary}&lAPPEARANCE {letters_black}» {highlight}COLOUR & LIGHT",
+                    "{primary}Name the template:",
+                    "{primary}&lAPPLY A TEMPLATE");
         }
     }
 
