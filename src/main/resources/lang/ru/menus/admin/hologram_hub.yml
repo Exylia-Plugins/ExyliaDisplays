@@ -1,0 +1,236 @@
+# НЕ РЕДАКТИРОВАТЬ — ПЕРЕСОЗДАЁТСЯ ПРИ КАЖДОМ ЗАПУСКЕ.
+#
+# Одна голограмма: её статус и карточка на каждую часть.
+
+title: "{primary}&lГОЛОГРАММА {letters_black}» {highlight}%holo_name%"
+size: 45
+type: SIMPLE
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+
+items:
+  header:
+    slot: 4
+    material: "%holo_toggle_icon%"
+    name: "{primary}&l%holo_name%"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Текст {letters_black}» %holo_preview%"
+      - " {letters_black}▎ {letters}Строки {letters_black}» {info}%lines%"
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}Статус {letters_black}» %status%"
+      - ""
+      - "{warning}➥ ЛКМ {letters_black}» {letters}показать или скрыть"
+      - "{warning}➥ ПКМ {letters_black}» {letters}переименовать"
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_toggle"
+      - "right: exyliadisplays:holo_rename"
+
+  lines:
+    slot: 19
+    material: WRITABLE_BOOK
+    name: "{primary}&lСТРОКИ"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Текст, предметы и блоки, у каждого"
+      - " {letters_black}▎ {highlight}размер{letters}, {highlight}движение {letters}и {highlight}кто видит{letters}."
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}Строки {letters_black}» {info}%lines%"
+      - ""
+      - "{warning}➥ Нажми, чтобы изменить"
+      - ""
+    actions:
+      - "exyliadisplays:holo_open_lines"
+
+  appearance:
+    slot: 20
+    material: GLOW_INK_SAC
+    name: "{primary}&lВНЕШНОСТЬ"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Как отрисовывается вся голограмма."
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}Направление {letters_black}» {info}%holo_billboard%"
+      - " {letters_black}▎ {letters}Масштаб {letters_black}» {info}%holo_scale%"
+      - " {letters_black}▎ {letters}Интервал {letters_black}» {info}%holo_spacing%"
+      - " {letters_black}▎ {letters}Тень {letters_black}» %holo_shadow%"
+      - ""
+      - "{warning}➥ Нажми, чтобы изменить"
+      - ""
+    actions:
+      - "exyliadisplays:holo_appearance"
+
+  visibility:
+    slot: 21
+    material: ENDER_EYE
+    name: "{primary}&lВИДИМОСТЬ"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Кто её видит, с какого расстояния"
+      - " {letters_black}▎ {letters}и как часто она обновляется."
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}Видят {letters_black}» %permission%"
+      - " {letters_black}▎ {letters}Дальность {letters_black}» {info}%view_distance%"
+      - " {letters_black}▎ {letters}Для каждого {letters_black}» %per_player%"
+      - " {letters_black}▎ {letters}Обновление {letters_black}» {info}%holo_interval% {letters}тиков"
+      - " {letters_black}▎ {letters}Игроки {letters_black}» %visibility%"
+      - ""
+      - "{warning}➥ ЛКМ {letters_black}» {letters}изменить"
+      - "{warning}➥ ПКМ {letters_black}» {letters}все или только выбранные"
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_visibility"
+      - "right: exyliadisplays:holo_visibility_mode"
+
+  click:
+    slot: 23
+    material: LEVER
+    name: "{primary}&lДЕЙСТВИЯ ПО КЛИКУ"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Что делает клик: отправить на сервер,"
+      - " {letters_black}▎ {letters}выполнить команды, показать текст,"
+      - " {letters_black}▎ {letters}звук; {highlight}ЛКМ {letters}и {highlight}ПКМ {letters}отдельно."
+      - " {letters_black}▎ {letters}Слегка растёт при наведении."
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}По клику {letters_black}» %click%"
+      - " {letters_black}▎ {letters}Растёт до {letters_black}» {info}%holo_hover%x"
+      - ""
+      - "{warning}➥ Нажми, чтобы изменить"
+      - ""
+    actions:
+      - "exyliadisplays:holo_click"
+
+  location:
+    slot: 24
+    material: COMPASS
+    name: "{primary}&lМЕСТОПОЛОЖЕНИЕ"
+    lore:
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}Мир {letters_black}» {info}%world%"
+      - " {letters_black}▎ {letters}Позиция {letters_black}» {info}%xyz%"
+      - " {letters_black}▎ {letters}Направление {letters_black}» {info}%facing%"
+      - ""
+      - "{warning}➥ ЛКМ {letters_black}» {letters}точная позиция и поворот"
+      - "{warning}➥ ПКМ {letters_black}» {letters}переместить сюда"
+      - "{warning}➥ Shift+ЛКМ {letters_black}» {letters}по центру блока"
+      - "{warning}➥ Shift+ПКМ {letters_black}» {letters}повернуть ко мне"
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_location"
+      - "right: exyliadisplays:holo_move_here"
+      - "shift_left: exyliadisplays:holo_centre"
+      - "shift_right: exyliadisplays:holo_face"
+
+  attach:
+    slot: 25
+    material: LEAD
+    name: "{primary}&lЗАКРЕПЛЕНА НА"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Парит над {highlight}игроком {letters}или {highlight}мобом{letters},"
+      - " {letters_black}▎ {letters}следуя за ним, куда бы он ни шёл."
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}Закреплена на {letters_black}» %attached%"
+      - " {letters_black}▎ {letters}Высота {letters_black}» {info}%attach_offset%"
+      - ""
+      - "{warning}➥ ЛКМ {letters_black}» {letters}выбрать, к чему закрепить"
+      - "{warning}➥ ПКМ {letters_black}» {letters}вернуть на своё место"
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_attach"
+      - "right: exyliadisplays:holo_detach"
+
+  teleport:
+    slot: 36
+    material: ENDER_PEARL
+    name: "{primary}&lТЕЛЕПОРТ"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Переместиться к ней, лицом к ней."
+      - ""
+      - "{warning}➥ Нажми для телепорта"
+      - ""
+    actions:
+      - "exyliadisplays:holo_teleport"
+
+  clone:
+    slot: 37
+    material: PAPER
+    name: "{primary}&lДУБЛИРОВАТЬ"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Копия под новым именем"
+      - " {letters_black}▎ {letters}на том же месте."
+      - ""
+      - "{warning}➥ Нажми, чтобы дублировать"
+      - ""
+    actions:
+      - "exyliadisplays:holo_clone"
+
+  adjust:
+    slot: 38
+    material: SPYGLASS
+    name: "{primary}&lТОЧНАЯ НАСТРОЙКА"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Двигай, вращай и масштабируй"
+      - " {letters_black}▎ {highlight}колёсиком мыши{letters}, глядя на объект."
+      - ""
+      - "{secondary}Управление:"
+      - " {letters_black}▎ {letters}Колёсико {letters_black}» {info}изменить значение"
+      - " {letters_black}▎ {letters}Присед + колёсико {letters_black}» {info}размер шага"
+      - " {letters_black}▎ {letters}F {letters_black}» {info}следующая ось"
+      - " {letters_black}▎ {letters}Присед + клик {letters_black}» {info}привязка"
+      - " {letters_black}▎ {letters}Клик {letters_black}» {info}сохранить"
+      - ""
+      - "{warning}➥ Нажми, чтобы начать"
+      - ""
+    actions:
+      - "exyliadisplays:holo_adjust"
+
+  back:
+    slot: 40
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: '{error}&lНАЗАД'
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Возврат ко всем голограммам."
+      - ""
+      - "{warning}➥ Нажми, чтобы вернуться"
+      - ""
+    actions:
+      - "exyliadisplays:holo_open_list"
+
+  delete:
+    slot: 44
+    material: BARRIER
+    name: "{error}&lУДАЛИТЬ"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Удаляет её навсегда."
+      - " {letters_black}Потребуется подтверждение."
+      - ""
+      - "{error}➥ Нажми, чтобы удалить"
+      - ""
+    actions:
+      - "exyliadisplays:holo_delete"

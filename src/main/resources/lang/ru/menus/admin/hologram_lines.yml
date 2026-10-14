@@ -1,0 +1,187 @@
+# НЕ РЕДАКТИРОВАТЬ — ПЕРЕСОЗДАЁТСЯ ПРИ КАЖДОМ ЗАПУСКЕ.
+#
+# Строки одной голограммы, сверху вниз.
+
+title: "{primary}&lСТРОКИ {letters_black}» {highlight}%holo_name% {muted}%current_page%/%total_pages%"
+size: 54
+type: PAGINATION
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+  pagination:
+    material: LIGHT_GRAY_STAINED_GLASS_PANE
+    name: "{muted}Больше нет строк"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Добавь текст, предмет, блок или голову ниже."
+      - ""
+    hide_tooltip: false
+
+pagination:
+  slots: '0-35'
+
+  item_template:
+    material: "%line_icon%"
+    name: "{secondary}&lСТРОКА %line_number%"
+    lore:
+      - ""
+      - "{secondary}Текст:"
+      - " {letters_black}▎ {letters}%line_text%"
+      - ""
+      - "{secondary}Теги:"
+      - " {letters_black}▎ {info}%line_tags%%line_style%"
+      - ""
+      - "{warning}➥ ЛКМ {letters_black}» {letters}изменить текст"
+      - "{warning}➥ ПКМ {letters_black}» {letters}стиль, движение, видимость"
+      - "{warning}➥ Shift+ЛКМ {letters_black}» {letters}выше"
+      - "{warning}➥ Shift+ПКМ {letters_black}» {letters}ниже"
+      - "{warning}➥ F {letters_black}» {letters}дублировать"
+      - "{error}➥ Q {letters_black}» {letters}убрать"
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_line_text"
+      - "right: exyliadisplays:holo_line_style"
+      - "shift_left: exyliadisplays:holo_line_up"
+      - "shift_right: exyliadisplays:holo_line_down"
+      - "swap: exyliadisplays:holo_line_duplicate"
+      - "drop: exyliadisplays:holo_line_delete"
+
+  navigation:
+    previous:
+      slot: 48
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
+      name: '{error}&l← ПРЕД. СТРАНИЦА'
+      lore:
+        - ""
+        - " {letters_black}▎ {letters}Страница {info}%current_page%{letters_black}/{info}%total_pages%"
+        - ""
+      actions:
+        - 'previous_page'
+    next:
+      slot: 50
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
+      name: '{success}&lСЛЕД. СТРАНИЦА →'
+      lore:
+        - ""
+        - " {letters_black}▎ {letters}Страница {info}%current_page%{letters_black}/{info}%total_pages%"
+        - ""
+      actions:
+        - 'next_page'
+
+items:
+  add-text:
+    slot: 45
+    material: OAK_SIGN
+    name: "{primary}&lДОБАВИТЬ ТЕКСТ"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Новая строка в самом низу."
+      - ""
+      - "{warning}➥ Нажми, чтобы написать"
+      - ""
+    actions:
+      - "exyliadisplays:holo_add_line"
+
+  add-item:
+    slot: 46
+    material: ITEM_FRAME
+    name: "{primary}&lДОБАВИТЬ ПРЕДМЕТ"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Парящий предмет, лицом к игроку."
+      - ""
+      - "{warning}➥ Нажми, чтобы выбрать"
+      - ""
+    actions:
+      - "exyliadisplays:holo_add_item"
+
+  add-block:
+    slot: 47
+    material: GRASS_BLOCK
+    name: "{primary}&lДОБАВИТЬ БЛОК"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Парящий блок; включи {highlight}вращение"
+      - " {letters_black}▎ {letters}в его стиле, чтобы он крутился."
+      - ""
+      - "{warning}➥ Нажми, чтобы выбрать"
+      - ""
+    actions:
+      - "exyliadisplays:holo_add_block"
+
+  add-head:
+    slot: 51
+    material: PLAYER_HEAD
+    name: "{primary}&lДОБАВИТЬ ГОЛОВУ"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Голова игрока — по нику, UUID,"
+      - " {letters_black}▎ {letters}текстуре или URL скина. Меняй"
+      - " {letters_black}▎ {letters}её величину через {highlight}размер{letters}."
+      - ""
+      - "{warning}➥ Нажми, чтобы выбрать"
+      - ""
+    actions:
+      - "exyliadisplays:holo_add_head"
+
+  pages:
+    slot: 52
+    material: BOOK
+    name: "{primary}&lСТРАНИЦА {letters_black}[{info}%holo_page%{letters_black}/{info}%holo_pages%{letters_black}]"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Каждый игрок видит одну страницу"
+      - " {letters_black}▎ {letters}за раз; клик {highlight}[PAGE] next {letters}листает."
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}Редактируется {letters_black}» {info}стр. %holo_page%"
+      - " {letters_black}▎ {letters}Листает каждые {letters_black}» {info}%holo_page_interval% тиков ⌚"
+      - ""
+      - "{warning}➥ ЛКМ {letters_black}» {letters}следующая страница"
+      - "{warning}➥ ПКМ {letters_black}» {letters}предыдущая страница"
+      - "{warning}➥ Shift+ЛКМ {letters_black}» {letters}добавить страницу"
+      - "{warning}➥ Shift+ПКМ {letters_black}» {letters}действия клика этой страницы"
+      - "{error}➥ Q {letters_black}» {letters}убрать эту страницу"
+      - "{letters_black}Потребуется подтверждение."
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_page_next"
+      - "right: exyliadisplays:holo_page_previous"
+      - "shift_left: exyliadisplays:holo_page_add"
+      - "shift_right: exyliadisplays:holo_page_click"
+      - "drop: exyliadisplays:holo_page_delete"
+
+  back:
+    slot: 49
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: '{error}&lНАЗАД'
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Возврат к голограмме."
+      - ""
+      - "{warning}➥ Нажми, чтобы вернуться"
+      - ""
+    actions:
+      - "exyliadisplays:holo_open_hub"
+
+  all-lines:
+    slot: 53
+    material: WRITABLE_BOOK
+    name: "{primary}&lИЗМЕНИТЬ ВСЁ СРАЗУ"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Все строки в одном окне, по одной"
+      - " {letters_black}▎ {letters}в ряд: самый быстрый способ написать"
+      - " {letters_black}▎ {letters}всю голограмму, вместе с тегами."
+      - ""
+      - "{warning}➥ Нажми, чтобы открыть"
+      - ""
+    actions:
+      - "exyliadisplays:holo_all_lines"

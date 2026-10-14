@@ -1,0 +1,237 @@
+# НЕ РЕДАКТИРОВАТЬ — ПЕРЕСОЗДАЁТСЯ ПРИ КАЖДОМ ЗАПУСКЕ.
+#
+# Один NPC: его статус и карточка на каждую часть.
+
+title: "{primary}&lNPC {letters_black}» {highlight}%npc_name%"
+size: 45
+type: SIMPLE
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+
+items:
+  header:
+    slot: 4
+    material: "%npc_icon%"
+    name: "{primary}&l%npc_name%"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Подпись {letters_black}» %npc_preview%"
+      - " {letters_black}▎ {letters}Скин {letters_black}» %skin%"
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}Статус {letters_black}» %status%"
+      - " {letters_black}▎ {letters}Видят сейчас {letters_black}» {info}%npc_viewers% {letters}игроков"
+      - ""
+      - "{warning}➥ ЛКМ {letters_black}» {letters}показать или скрыть"
+      - "{warning}➥ ПКМ {letters_black}» {letters}переименовать"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_toggle"
+      - "right: exyliadisplays:npc_rename"
+
+  appearance:
+    slot: 19
+    material: ARMOR_STAND
+    name: "{primary}&lВНЕШНОСТЬ"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Скин, поза, размер и контур."
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}Скин {letters_black}» %skin%"
+      - " {letters_black}▎ {letters}Поза {letters_black}» {info}%pose%"
+      - " {letters_black}▎ {letters}Масштаб {letters_black}» {info}%scale%"
+      - " {letters_black}▎ {letters}Свечение {letters_black}» %glow%"
+      - ""
+      - "{warning}➥ Нажми, чтобы изменить"
+      - ""
+    actions:
+      - "exyliadisplays:npc_appearance"
+
+  equipment:
+    slot: 20
+    material: DIAMOND_CHESTPLATE
+    name: "{primary}&lЭКИПИРОВКА"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Что он носит и держит — берётся"
+      - " {letters_black}▎ {letters}из {highlight}твоей руки{letters}."
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}Носит {letters_black}» %equipment%"
+      - ""
+      - "{warning}➥ Нажми, чтобы открыть"
+      - ""
+    actions:
+      - "exyliadisplays:npc_open_equipment"
+
+  label:
+    slot: 21
+    material: NAME_TAG
+    name: "{primary}&lПОДПИСЬ"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Строки над головой, со всеми"
+      - " {letters_black}▎ {letters}их {highlight}тегами голограмм{letters}, или целая"
+      - " {letters_black}▎ {letters}голограмма, следующая за ним."
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}Подпись {letters_black}» %label%"
+      - " {letters_black}▎ {letters}Отступ {letters_black}» {info}%npc_height% {letters}блоков"
+      - " {letters_black}▎ {letters}Голограмма {letters_black}» %link%"
+      - ""
+      - "{warning}➥ ЛКМ {letters_black}» {letters}изменить подпись"
+      - "{warning}➥ ПКМ {letters_black}» {letters}связать голограмму"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_label"
+      - "right: exyliadisplays:npc_link"
+
+  interactions:
+    slot: 23
+    material: LEVER
+    name: "{primary}&lВЗАИМОДЕЙСТВИЯ"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Что делает клик: отправить на сервер,"
+      - " {letters_black}▎ {letters}выполнить команды, {highlight}сказать {letters}в облачке,"
+      - " {letters_black}▎ {letters}взмахнуть рукой; {highlight}ЛКМ {letters}и {highlight}ПКМ {letters}отдельно."
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}По клику {letters_black}» %actions%"
+      - " {letters_black}▎ {letters}Используют {letters_black}» %use_permission%"
+      - " {letters_black}▎ {letters}Перезарядка {letters_black}» {info}%cooldown%s ⌚"
+      - " {letters_black}▎ {letters}Смотрит на кликнувшего {letters_black}» %face_clicker%"
+      - ""
+      - "{warning}➥ Нажми, чтобы изменить"
+      - ""
+    actions:
+      - "exyliadisplays:npc_interactions"
+
+  visibility:
+    slot: 24
+    material: ENDER_EYE
+    name: "{primary}&lВИДИМОСТЬ"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Куда поворачивается голова, кто"
+      - " {letters_black}▎ {letters}его видит и с какого расстояния."
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}Взгляд {letters_black}» {info}%look%"
+      - " {letters_black}▎ {letters}Радиус поворота {letters_black}» {info}%look_range% {letters}блоков"
+      - " {letters_black}▎ {letters}Видят {letters_black}» %permission%"
+      - " {letters_black}▎ {letters}Дальность {letters_black}» {info}%view_distance% {letters}блоков"
+      - ""
+      - "{warning}➥ Нажми, чтобы изменить"
+      - ""
+    actions:
+      - "exyliadisplays:npc_visibility"
+
+  location:
+    slot: 25
+    material: COMPASS
+    name: "{primary}&lМЕСТОПОЛОЖЕНИЕ"
+    lore:
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}Мир {letters_black}» {info}%world%"
+      - " {letters_black}▎ {letters}Позиция {letters_black}» {info}%xyz%"
+      - " {letters_black}▎ {letters}Направление {letters_black}» {info}%yaw%° {letters_black}· {info}%pitch%°"
+      - ""
+      - "{warning}➥ ЛКМ {letters_black}» {letters}точная позиция и поворот"
+      - "{warning}➥ ПКМ {letters_black}» {letters}переместить сюда"
+      - "{warning}➥ Shift+ЛКМ {letters_black}» {letters}по центру блока"
+      - "{warning}➥ Shift+ПКМ {letters_black}» {letters}повернуть ко мне"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_location"
+      - "right: exyliadisplays:npc_move_here"
+      - "shift_left: exyliadisplays:npc_centre"
+      - "shift_right: exyliadisplays:npc_face_me"
+
+  teleport:
+    slot: 36
+    material: ENDER_PEARL
+    name: "{primary}&lТЕЛЕПОРТ"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Переместиться к нему, лицом к нему."
+      - ""
+      - "{warning}➥ Нажми для телепорта"
+      - ""
+    actions:
+      - "exyliadisplays:npc_teleport"
+
+  clone:
+    slot: 37
+    material: PAPER
+    name: "{primary}&lДУБЛИРОВАТЬ"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Копия под новым именем"
+      - " {letters_black}▎ {letters}на том же месте."
+      - ""
+      - "{warning}➥ Нажми, чтобы дублировать"
+      - ""
+    actions:
+      - "exyliadisplays:npc_clone"
+
+  adjust:
+    slot: 38
+    material: SPYGLASS
+    name: "{primary}&lТОЧНАЯ НАСТРОЙКА"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Двигай, вращай и масштабируй"
+      - " {letters_black}▎ {highlight}колёсиком мыши{letters}, глядя на объект."
+      - ""
+      - "{secondary}Управление:"
+      - " {letters_black}▎ {letters}Колёсико {letters_black}» {info}изменить значение"
+      - " {letters_black}▎ {letters}Присед + колёсико {letters_black}» {info}размер шага"
+      - " {letters_black}▎ {letters}F {letters_black}» {info}следующая ось"
+      - " {letters_black}▎ {letters}Присед + клик {letters_black}» {info}привязка"
+      - " {letters_black}▎ {letters}Клик {letters_black}» {info}сохранить"
+      - ""
+      - "{warning}➥ Нажми, чтобы начать"
+      - ""
+    actions:
+      - "exyliadisplays:npc_adjust"
+
+  back:
+    slot: 40
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: '{error}&lНАЗАД'
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Возврат ко всем NPC."
+      - ""
+      - "{warning}➥ Нажми, чтобы вернуться"
+      - ""
+    actions:
+      - "exyliadisplays:npc_open_list"
+
+  delete:
+    slot: 44
+    material: BARRIER
+    name: "{error}&lУДАЛИТЬ"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Удаляет его навсегда."
+      - " {letters_black}Потребуется подтверждение."
+      - ""
+      - "{error}➥ Нажми, чтобы удалить"
+      - ""
+    actions:
+      - "exyliadisplays:npc_delete"

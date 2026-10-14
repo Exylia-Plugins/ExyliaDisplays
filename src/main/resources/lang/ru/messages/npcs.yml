@@ -1,0 +1,172 @@
+created: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}NPC {highlight}%name% {success}создан.'
+deleted: '%prefix% {warning}NPC {highlight}%name% {warning}удалён.'
+not-found: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}NPC с именем {highlight}%name% {error}не найден.'
+already-exists: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}NPC с именем {highlight}%name% {error}уже есть.'
+invalid-name: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}Только строчные буквы, цифры, {highlight}- {error}и {highlight}_{error}, до 32 символов.'
+renamed: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}NPC {highlight}%name% {success}теперь {highlight}%new%{success}.'
+cloned: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}{highlight}%name% {success}скопирован как {highlight}%new%{success}.'
+moved: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}{highlight}%name% {success}перемещён сюда.'
+faced: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {highlight}%name% {success}теперь смотрит на тебя.'
+teleported: '%prefix% {letters}Телепорт к {highlight}%name%{letters}.'
+world-missing: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}Мир {highlight}%world% {error}не загружен.'
+state-changed: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {letters}NPC {highlight}%name% {letters_black}» %status%'
+saved: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}{highlight}%name% {success}сохранён.'
+invalid-skin: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%skin% {error}— не ник аккаунта. Укажи ник, {highlight}@mirror {error}или {highlight}@none{error}.'
+invalid-colour: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%value% {error}— не цвет. Укажи {highlight}#RRGGBB{error} или {highlight}none{error}.'
+invalid-look: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%value% {error}— не режим взгляда. Укажи {highlight}fixed{error}, {highlight}nearest {error}или {highlight}each-viewer{error}.'
+invalid-slot: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%slot% {error}— не слот. Укажи {highlight}%slots%{error}.'
+equipped: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}{highlight}%name% {success}теперь носит это в слоте {highlight}%slot%{success}.'
+unequipped: '%prefix% {warning}Слот {highlight}%slot% {warning}у {highlight}%name% {warning}очищен.'
+equipment-cleared: '%prefix% {warning}{highlight}%name% {warning}больше ничего не носит.'
+label-saved: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Сохранено строк подписи: {highlight}%count% {success}у {highlight}%name%{success}.'
+label-cleared: '%prefix% {warning}У {highlight}%name% {warning}больше нет подписи.'
+action-added: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Действие {highlight}%index% {success}добавлено к {highlight}%name%{success}.'
+action-removed: '%prefix% {warning}Действие {highlight}%index% {warning}убрано у {highlight}%name%{warning}.'
+actions-cleared: '%prefix% {warning}{highlight}%name% {warning}больше ничего не делает по клику.'
+action-not-found: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}Действия {highlight}%index% {error}нет; всего их {highlight}%count%{error}.'
+actions-header: '%prefix% {letters}Действия {highlight}%name% {letters_black}({info}%count%{letters_black})'
+action-line: '   {letters_black}%index%. {letters}%action%'
+actions-empty: '%prefix% {letters}Пока ничего не делает по клику. {warning}<click:suggest_command:''/npc %name% action add ''>[Добавить действие]</click>'
+linked: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {highlight}%hologram% {success}теперь парит над {highlight}%name%{success}.'
+unlinked: '%prefix% {warning}У {highlight}%name% {warning}больше нет голограммы.'
+hologram-not-found: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}Голограммы с именем {highlight}%hologram% {error}нет.'
+holograms-off: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}Модуль голограмм выключен в config.yml.'
+interaction-denied: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}Тебе нельзя это использовать.'
+interaction-cooldown: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}Подожди {highlight}%remaining%s ⌚ {error}перед повторным использованием.'
+say-bubble: '<typewriter:30><background:#66000000>{letters}%text%'
+reloaded: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Перезагружено NPC: {highlight}%count%{success}. {letters_black}(предупреждений: %issues%)'
+file-applied: '%prefix% {letters}npcs.yml изменён: применено NPC: {highlight}%count%{letters}.'
+file-issues: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}В npcs.yml ошибок: {highlight}%issues%{error}; смотри консоль.'
+import-done: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Импортировано NPC: {highlight}%count% {success}из {highlight}%source%{success}. {letters_black}(пропущено: %skipped%)'
+import-nothing: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}Нечего импортировать из {highlight}%source%{error}. Искали в {letters_black}%folder%'
+help:
+  - ''
+  - '[center]{primary}&lEXYLIA NPCS'
+  - '[center]{letters_black}Нажми на команду, чтобы использовать её'
+  - ''
+  - ' {secondary}Управление'
+  - ' <click:run_command:''/npcadmin''>{warning}/npcadmin</click> {letters_black}» {letters}все NPC в меню'
+  - ' <click:suggest_command:''/npcadmin create ''>{warning}/npcadmin create <имя> [skin]</click> {letters_black}» {letters}новый прямо здесь'
+  - ' <click:run_command:''/npcadmin near''>{warning}/npcadmin near [радиус]</click> {letters_black}» {letters}те, что рядом с тобой'
+  - ' <click:suggest_command:''/npcadmin import ''>{warning}/npcadmin import <plugin> [replace]</click> {letters_black}» {letters}Citizens, FancyNpcs'
+  - ' <click:run_command:''/npcadmin reload''>{warning}/npcadmin reload</click> {letters_black}» {letters}перечитать npcs.yml'
+  - ''
+  - ' {secondary}Редактировать {letters_black}» {warning}/npc <имя> {letters_black}открывает редактор'
+  - ' {warning}info {letters_black}· {warning}tp {letters_black}· {warning}movehere {letters_black}· {warning}move <x> <y> <z> [мир] {letters_black}· {warning}center'
+  - ' {warning}rotate <yaw> [pitch] {letters_black}· {warning}face {letters_black}» {letters}повернуть его, или к тебе'
+  - ' {warning}adjust {letters_black}» {letters}двигать, вращать и масштабировать колёсиком {muted}(повтор сохраняет, adjust cancel отменяет)'
+  - ' {warning}rename <новое> {letters_black}· {warning}clone <новое> {letters_black}· {warning}enable {letters_black}· {warning}disable {letters_black}· {warning}delete'
+  - ' {warning}skin <игрок|@mirror|@none> {letters_black}· {warning}texture <значение> [подпись]'
+  - ' {warning}pose {letters_black}· {warning}scale {letters_black}· {warning}glow <#RRGGBB|none> {letters_black}· {warning}look <режим> [радиус]'
+  - ' {warning}equip <слот|clear> [предмет] {letters_black}» {letters}этот предмет или тот, что в руке {letters_black}· {warning}equipment'
+  - ' {warning}label set|add <текст> {letters_black}· {warning}label remove <n> {letters_black}· {warning}label clear {letters_black}· {warning}label height'
+  - ' {warning}link <голограмма> {letters_black}· {warning}unlink {letters_black}· {warning}viewdistance {letters_black}· {warning}permission [perm]'
+  - ' {warning}action add <строка> {letters_black}· {warning}action remove <n> {letters_black}· {warning}action clear {letters_black}· {warning}action list'
+  - ' {warning}action permission|cooldown|denymessage|cooldownmessage|faceclicker'
+  - ''
+list-header: '%prefix% {letters}NPC {letters_black}({info}%count%{letters_black})'
+list-line: ' <click:run_command:''/npc %name%''><hover:show_text:''{letters}Нажми, чтобы изменить''>{highlight}%name%</hover></click> {letters_black}» {letters}%world% {info}%x% %y% %z% {letters_black}· %skin% {letters_black}· %status%'
+list-empty: '%prefix% {letters}NPC пока нет. {warning}<click:suggest_command:''/npcadmin create ''>[Создать]</click>'
+near-header: '%prefix% {letters}NPC в радиусе {info}%radius% {letters}блоков {letters_black}({info}%count%{letters_black})'
+near-line: ' <click:run_command:''/npc %name%''><hover:show_text:''{letters}Нажми, чтобы изменить''>{highlight}%name%</hover></click> {letters_black}» {info}%distance%m {letters_black}· %skin% {letters_black}· <click:run_command:''/npc %name% tp''>{warning}[TP]</click>'
+near-empty: '%prefix% {letters}Нет NPC в радиусе {info}%radius% {letters}блоков.'
+info:
+  - ''
+  - '[center]{primary}&l%name%'
+  - ''
+  - ' {letters_black}▎ {letters}Статус {letters_black}» %status%'
+  - ' {letters_black}▎ {letters}Где {letters_black}» {letters}%world% {info}%x% %y% %z%'
+  - ' {letters_black}▎ {letters}Скин {letters_black}» %skin%'
+  - ' {letters_black}▎ {letters}Поза {letters_black}» {info}%pose% {letters_black}· {letters}Масштаб {info}%scale% {letters_black}· {letters}Свечение %glow%'
+  - ' {letters_black}▎ {letters}Взгляд {letters_black}» {info}%look% {letters_black}· {info}%look_range% {letters}блоков'
+  - ' {letters_black}▎ {letters}Видят {letters_black}» %permission% {letters_black}· {info}%view_distance% {letters}блоков'
+  - ' {letters_black}▎ {letters}Носит {letters_black}» %equipment%'
+  - ' {letters_black}▎ {letters}Подпись {letters_black}» %label% {letters_black}· {letters}Голограмма %link%'
+  - ' {letters_black}▎ {letters}По клику {letters_black}» %actions% {letters_black}· %use_permission% {letters_black}· {info}%cooldown%s ⌚'
+  - ''
+property-set: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {highlight}%name% {letters_black}» {letters}%property% {letters_black}» {info}%value%'
+invalid-value: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%value% {error}не подходит для {highlight}%property%{error}. {letters_black}Укажи: {info}%expected%'
+states:
+  enabled: '{success}Виден'
+  disabled: '{error}Скрыт'
+  waiting: '{warning}Ждёт свой мир'
+  'yes': '{success}Да'
+  'no': '{error}Нет'
+  everyone: '{letters}Все'
+  nothing: '{muted}Ничего'
+  action-count: '{info}%count% {letters}действ.'
+  label-lines: '{info}%count% {letters}строк(и)'
+  equipment-count: '{info}%count% {letters}предмет(ов)'
+  skin-player: '{letters}Игрок {highlight}%player%'
+  skin-texture: '{letters}Своя текстура'
+  skin-mirror: '{letters}Зеркало {letters_black}(у каждого свой)'
+  skin-none: '{muted}По умолчанию'
+  no-glow: '{muted}Нет'
+  empty-slot: '{muted}Пусто'
+  worn-slot: '{success}Надето'
+  link-missing: '{error}%hologram% {letters_black}(не существует)'
+dialogs:
+  create-title: '{primary}&lНОВЫЙ NPC'
+  name-label: Имя
+  name-hint: Строчные буквы, цифры, - и _. Используется в командах /npc <имя>.
+  preset-label: Начать с
+  skin-label: Скин
+  skin-hint: Ник аккаунта, @mirror — скин каждого игрока, или пусто — скин по умолчанию.
+  appearance-title: '{primary}&lВНЕШНОСТЬ'
+  skin-type-label: Скин из
+  skin-player-label: Ник аккаунта (для PLAYER)
+  texture-label: Текстура (для TEXTURE)
+  texture-hint: Значение и подпись, которые mineskin.org даёт для загруженного скина.
+  signature-label: Подпись
+  pose-label: Поза
+  scale-label: Масштаб (1 = игрок)
+  glow-label: Свечение
+  glow-hint: 'Цвет вроде #8a51c4, рисуется ближайшим цветом команды. Пусто — без свечения.'
+  label-title: '{primary}&lПОДПИСЬ'
+  label-lines-label: Строки
+  label-lines-hint: По одной в ряд, сверху вниз. Работают цвета, %placeholders% и теги голограмм вроде <size:1.4>. Пусто — без подписи.
+  height-label: Отступ над головой (блоки)
+  link-title: '{primary}&lСВЯЗАННАЯ ГОЛОГРАММА'
+  link-label: Голограмма
+  link-none: Нет
+  interactions-title: '{primary}&lВЗАИМОДЕЙСТВИЯ'
+  actions-label: Действия
+  actions-hint: 'По одному в ряд, по порядку. ''right:'' или ''left:'' в начале ограничивает ряд этим кликом. Просто строка — команда от игрока, ''console: ...'' — от консоли; [SERVER] lobby, [MESSAGE] текст, [SOUND] звук, [DELAY] 1s, [SAY] текст;5s, [ANIMATE] swing, [LOOK].'
+  use-permission-label: Право на использование
+  use-permission-hint: Пусто — для всех.
+  cooldown-label: Перезарядка
+  cooldown-hint: Между двумя использованиями одним игроком, например 500ms или 2s. 0 — без неё.
+  deny-label: Сообщение без права
+  cooldown-message-label: Сообщение во время ожидания
+  message-hint: Пусто — сообщение из messages/npcs.yml.
+  face-clicker-label: Смотреть на кликнувшего
+  visibility-title: '{primary}&lВИДИМОСТЬ'
+  look-label: Голова смотрит на
+  look-range-label: Радиус поворота (блоки)
+  view-distance-label: Дальность видимости (блоки)
+  permission-label: Право видеть его
+  permission-hint: Пусто — для всех.
+  location-title: '{primary}&lМЕСТОПОЛОЖЕНИЕ'
+  world-label: Мир
+  yaw-label: Yaw (0 юг, 90 запад, 180 север)
+  pitch-label: Pitch
+  rename-title: '{primary}Введи новое имя:'
+  clone-title: '{primary}Назови копию:'
+  confirm-delete: '{error}Удалить NPC {highlight}%name%{error}? Это нельзя отменить.'
+adjust:
+  started: '[sound:BLOCK_NOTE_BLOCK_PLING|0.6|1.6]%prefix% {letters}Настройка {highlight}%name%{letters}: колёсико двигает, {highlight}F {letters}— следующая ось. <click:run_command:''/npc %name% adjust save''>{success}&l[✔ СОХРАНИТЬ]</click> <click:run_command:''/npc %name% adjust cancel''>{error}&l[✘ ОТМЕНИТЬ]</click>'
+  saved: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Настройка {highlight}%name% {success}сохранена.'
+  cancelled: '%prefix% {warning}Настройка {highlight}%name% {warning}отменена.'
+  gone: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%name% {error}удалён или переименован; настройка остановлена.'
+  busy: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%player% {error}уже настраивает {highlight}%name%{error}.'
+  not-adjusting: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}Ты не настраиваешь {highlight}%name%{error}.'
+  hud: '{primary}&l%subject% {letters_black}» {secondary}%axis% {info}%value% {letters_black}▎ {letters}Шаг {info}%step%'
+  hints: '{letters}Колёсико {letters_black}» {info}сдвиг {letters_black}▎ {letters}Присед+колёсико {letters_black}» {info}шаг {letters_black}▎ {letters}F {letters_black}» {info}ось {letters_black}▎ {letters}Присед+клик {letters_black}» {info}привязка {letters_black}▎ {letters}Клик {letters_black}» {success}сохранить'
+  x: 'X'
+  'y': 'Y'
+  z: 'Z'
+  forward: 'Вперёд'
+  yaw: 'Поворот'
+  pitch: 'Наклон'
+  scale: 'Масштаб'
+  label-height: 'Высота подписи'
