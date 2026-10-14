@@ -167,7 +167,7 @@ public record HologramsMessages(
                         " {warning}addline <text> {letters_black}· {warning}setline <n> <text> {letters_black}· {warning}insertline <n> <text>",
                         " {warning}removeline <n> {letters_black}· {warning}moveline <from> <to> {letters_black}· {warning}lines",
                         " {warning}line <n> <tag> [value] {letters_black}» {letters}size, gap, align, spin, sway, shine, rainbow, marquee, fade... {muted}(no value resets)",
-                        " {warning}line <n> preset <preset> {letters_black}» {letters}title, subtitle, highlight, subtle, ticker, button",
+                        " {warning}line <n> preset <preset> {letters_black}» {letters}title, badge, ticker, live, glitch, far, button...",
                         " {warning}page add {letters_black}· {warning}page remove <n> {letters_black}· {warning}page <n> {letters_black}· {warning}pageinterval <ticks>",
                         " {warning}page <n> addline|setline|insertline|removeline|moveline|line ... {letters_black}» {letters}edit another page",
                         " {warning}billboard {letters_black}· {warning}alignment {letters_black}· {warning}scale <x> [y z] {letters_black}· {warning}shadow {letters_black}· {warning}seethrough",
@@ -289,6 +289,8 @@ public record HologramsMessages(
             String nameLabel,
             String nameHint,
             String presetLabel,
+            @Comment("A template in the start-from list, after the presets. Placeholder: %template%.")
+            String templateOption,
             @Comment("Placeholder: %line%.")
             String lineTitle,
             String newLineTitle,
@@ -465,6 +467,7 @@ public record HologramsMessages(
                     "Name",
                     "Lowercase letters, numbers, - and _. Used in /holo commands.",
                     "Start from",
+                    "Template: %template%",
                     "{primary}&lLINE %line%",
                     "{primary}&lNEW LINE",
                     "Text",

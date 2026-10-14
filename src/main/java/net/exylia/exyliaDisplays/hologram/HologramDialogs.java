@@ -46,6 +46,8 @@ public final class HologramDialogs {
 
     private static final FormKey<String> NAME = FormKey.text("name");
     private static final FormKey<String> PRESET = FormKey.text("preset");
+    /** Marks a template among the presets in the start-from list. */
+    private static final String TEMPLATE = "template:";
     private static final FormKey<String> TEXT = FormKey.text("text");
     private static final FormKey<String> BACKGROUND = FormKey.text("background");
     private static final FormKey<String> PERMISSION = FormKey.text("permission");
@@ -118,6 +120,9 @@ public final class HologramDialogs {
         HologramsConfig config = HologramsConfig.get();
         List<FormField.Option> presets = new ArrayList<>();
         config.presets().forEach((id, preset) -> presets.add(new FormField.Option(id, preset.name())));
+        Map<String, HologramTemplate> templates = HologramModule.get().templates().all();
+        templates.keySet().forEach(id -> presets.add(new FormField.Option(TEMPLATE + id,
+                Values.of().putText("template", id).apply(words().templateOption()))));
         EditorForm form = form(player, words().createTitle())
                 .field(NAME, FormField.text(NAME, words().nameLabel())
                         .defaultValue(HologramModule.get().store().freeName("hologram"))
@@ -130,10 +135,13 @@ public final class HologramDialogs {
         answer(player, form.ask(values -> values), back, values -> {
             String name = values.getOr(NAME, "").trim();
             String presetId = values.getOr(PRESET, "");
+            HologramTemplate template = presetId.startsWith(TEMPLATE)
+                    ? templates.get(presetId.substring(TEMPLATE.length())) : null;
             HologramsConfig.Preset preset = config.presets().get(presetId);
-            List<String> lines = preset == null ? List.of("{primary}&l" + name)
+            List<String> lines = template != null ? template.lines()
+                    : preset == null ? List.of("{primary}&l" + name)
                     : preset.lines().stream().map(line -> line.replace("%hologram%", name)).toList();
-            if (createHere(player, name, lines, null)) {
+            if (createHere(player, name, lines, template)) {
                 HologramViews.openHub(player, name);
             } else {
                 back.run();

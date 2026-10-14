@@ -21,7 +21,7 @@ Built on [ExyliaLib](https://github.com/DiGround-s/ExyliaLib): everything is pac
 | **Text that moves** | `<frames>` turns a line between several texts, `<marquee>` scrolls a long one, `<fade>`, `<blink>`, `<typewriter>` and `<scramble>` bring it in |
 | **Buttons** | A clickable hologram gets a lit panel that grows and presses when clicked, and a line tagged `<button:join>` is a button of its own with its own actions |
 | **Readable from afar** | `distance-scale` grows a hologram with each viewer's distance; `<autoscale>` does it for one line |
-| **Presets** | One click puts several tags on a line (title, subtitle, ticker, button...); add your own in `config.yml` |
+| **Presets and templates** | One click puts several tags on a line (title, badge, ticker, live, glitch, far, button...); eight ready-made templates (welcome, kiosk, status, showcase, landmark, vault, event, signpost) use every tag and setting between them |
 | **NPCs that move** | Animations on left and right click, an idle one every few seconds, and a greeting for whoever walks up; NPCs can sit |
 | **Lines for some players** | `<range:8>`, `<perm:vip>`, `<if:"%player_level% >= 10">`: the stack re-lays itself out for each viewer |
 | **Three ways to edit** | Screens and dialogs, `/holo` and `/npc` commands, or `holograms.yml` and `npcs.yml`, which are applied as soon as you save them |
@@ -44,12 +44,12 @@ ExyliaLib keeps both itself and this plugin up to date from their GitHub release
 
 ## Getting started
 
-**A hologram:** stand where you want it and run `/holoadmin create spawn`, or open `/holoadmin` and click **CREATE HOLOGRAM** to start from a preset. In its editor, **LINES**:
+**A hologram:** stand where you want it and run `/holoadmin create spawn`, or open `/holoadmin` and click **CREATE HOLOGRAM** to start from a preset or a template. In its editor, **LINES**:
 - left-click a line to change its text;
 - right-click it for size, motion and visibility, all in one window;
 - shift-click to move it up or down; press F to duplicate it, Q to remove it.
 
-**An NPC:** `/npcadmin create guide Notch`, or open `/npcadmin` and click **CREATE NPC** to start from a preset. The presets are a guide that greets you, a server portal, a shopkeeper and a mirror. Its editor has cards for:
+**An NPC:** `/npcadmin create guide Notch`, or open `/npcadmin` and click **CREATE NPC** to start from a preset. The presets are a greeter that waves at whoever walks up, a sitting bartender, an armoured guard that watches the nearest player, a merchant, a server portal and a mirror. Its editor has cards for:
 - appearance: skin, pose, scale, glow;
 - equipment: wear the item in your hand;
 - label: the hologram above its head;
@@ -161,7 +161,19 @@ line-presets:
   subtle: '<opacity:200><fade:4>'
   ticker: '<marquee:28,speed=5>'
   button: '<gap:0.12><size:1.15><button:main>'
+  badge: '<size:0.9><background:#998a51c4><shadow:false>'
+  whisper: '<range:6><opacity:170>'
+  glitch: '<scramble:18>'
+  live: '<blink:1.2>'
+  wide: '<width:320>'
+  left: '<align:left><width:150>'
+  showcase: '<spin:60><bob:0.08,period=4><glow>'
+  far: '<autoscale:6,30,2.5>'
 ```
+
+### Templates
+
+A template is a whole look under a name: lines, pages, appearance, refresh and click. `templates.yml` ships with eight that, between them, use every line tag and setting, so browsing them is a tour of the plugin: `welcome` (pages that turn on their own), `kiosk` (button lines), `status` (live placeholders), `showcase` (a turning item on a beacon), `landmark` (size by distance), `vault` (lines by permission, level and distance), `event` (frames, rainbow, blink, fade) and `signpost` (a fixed, left-aligned wall sign). Pick one under **CREATE HOLOGRAM**, or run `/holoadmin create <name> --template <t>`. A server whose `templates.yml` still held none gets them once.
 
 ### Buttons and size by distance
 
@@ -269,7 +281,7 @@ Two boss bars show the axis, value and step, and the keys. Leaving, dying, chang
   - which modules run;
   - file watching;
   - each module's defaults;
-  - the **presets** offered when creating from the menu (add your own);
+  - the **presets** offered when creating from the menu (add your own; an NPC preset's `body` sets sitting, glow, equipment, look and animations);
   - the **line presets** a line can take at once (add your own).
 - **`holograms.yml`** and **`npcs.yml`** hold everything you place. Edit them while the server runs and the change is applied within a second. A hand-written entry only needs the keys it changes. An NPC:
 

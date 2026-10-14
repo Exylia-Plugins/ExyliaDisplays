@@ -2,9 +2,12 @@ package net.exylia.exyliaDisplays.npc;
 
 import net.exylia.exyliaDisplays.config.DisplaysConfig;
 import net.exylia.lib.config.Comment;
+import net.exylia.lib.config.Sparse;
+import net.exylia.lib.npc.NpcAnimations;
 import net.exylia.lib.npc.NpcLook;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,11 +67,19 @@ public record NpcsConfig(
      * @param skin    an account name or {@code @mirror}; empty keeps the one typed in the window
      * @param label   the label it starts with
      * @param actions the interaction lines it starts with
+     * @param body    how it sits, looks, glows, dresses and moves; left out, the defaults
      */
-    public record Preset(String name, String skin, List<String> label, List<String> actions) {
+    public record Preset(String name, String skin, List<String> label, List<String> actions,
+                         @Comment("How it sits, looks, glows, dresses and moves. Leave out for the defaults.")
+                         Body body) {
 
         public Preset() {
-            this("Simple", "", List.of("{primary}&l%npc%"), List.of());
+            this("Simple", "", List.of("{primary}&l%npc%"), List.of(), new Body());
+        }
+
+        /** A preset as written before {@code body} existed. */
+        public Preset(String name, String skin, List<String> label, List<String> actions) {
+            this(name, skin, label, actions, new Body());
         }
 
         public Preset {
@@ -76,20 +87,101 @@ public record NpcsConfig(
             if (skin == null) skin = "";
             label = label == null ? List.of() : List.copyOf(label);
             actions = actions == null ? List.of() : List.copyOf(actions);
+            if (body == null) body = new Body();
+        }
+    }
+
+    /**
+     * What a preset sets on a new NPC beyond its name, skin and clicks. Only written to the file
+     * when it sets something.
+     *
+     * @param sitting    whether it sits on an invisible seat
+     * @param glow       an outline colour such as {@code #8a51c4}; empty for none
+     * @param equipment  what it wears and holds, by slot
+     * @param look       where it turns its head; the default leaves {@code default-look} in charge
+     * @param animations the gestures it plays
+     */
+    public record Body(
+            @Comment("Sit on an invisible seat: place it on a stair or a block's top.")
+            boolean sitting,
+            @Comment("An outline colour such as '#8a51c4'. Empty for none.")
+            String glow,
+            @Comment("What it wears and holds, by slot: head, chest, legs, feet, hand, off_hand.")
+            Map<String, String> equipment,
+            @Comment("Where it turns its head, and how close a player has to be.")
+            StoredNpc.Look look,
+            @Comment("Gestures on a click, every while, or to greet a player who walks up.")
+            NpcAnimations animations) implements Sparse {
+
+        public Body() {
+            this(false, "", Map.of(), new StoredNpc.Look(), new NpcAnimations());
+        }
+
+        public Body {
+            if (glow == null) glow = "";
+            equipment = equipment == null ? Map.of() : Collections.unmodifiableMap(new LinkedHashMap<>(equipment));
+            if (look == null) look = new StoredNpc.Look();
+            if (animations == null) animations = new NpcAnimations();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return !sitting && glow.isBlank() && equipment.isEmpty() && look.equals(new StoredNpc.Look())
+                    && animations.isEmpty();
+        }
+
+        /** The new NPC wearing this body; what it leaves at its default stays the NPC's. */
+        public StoredNpc applyTo(StoredNpc npc) {
+            if (isEmpty()) return npc;
+            StoredNpc dressed = npc.withSitting(sitting).withGlow(glow).withEquipment(equipment)
+                    .withAnimations(animations);
+            return look.equals(new StoredNpc.Look()) ? dressed : dressed.withLook(look);
         }
     }
 
     private static Map<String, Preset> defaultPresets() {
         Map<String, Preset> presets = new LinkedHashMap<>();
         presets.put("simple", new Preset("Simple name", "", List.of("<size:1.2>{primary}&l%npc%"), List.of()));
-        // Greets whoever right-clicks it in a bubble only they see, and flinches when hit.
-        presets.put("guide", new Preset("Guide", "", List.of(
-                "<size:1.2>{primary}&lGUIDE",
-                "<opacity:200>{letters_black}Right-click me"), List.of(
-                "right: [SOUND] ENTITY_VILLAGER_AMBIENT;1;1.2",
+        // Waves at whoever walks up, nods now and then, and talks back when clicked.
+        presets.put("greeter", new Preset("Greeter", "", List.of(
+                "<size:1.3><shine:highlight,pause=4>{primary}&l%npc%",
+                "<opacity:200>{letters_black}Your first friend here"), List.of(
                 "right: [SAY] {letters}Welcome, {highlight}%player_name%{letters}! The portals are behind me.;6s",
-                "left: [ANIMATE] hurt",
-                "left: [SAY] {error}Hey, that hurt!;2s")));
+                "left: [SAY] {error}Hey, that hurt!;2s"),
+                new Body(false, "", Map.of(), new StoredNpc.Look(NpcLook.EACH_VIEWER, 10),
+                        new NpcAnimations("flinch", "wave", "nod", Duration.ofSeconds(25), "wave", 5,
+                                Duration.ofMinutes(2)))));
+        // Sits behind the bar, raises a glass now and then and pours one when asked.
+        presets.put("bartender", new Preset("Sitting bartender", "", List.of(
+                "<size:1.2>{highlight}&lBARTENDER",
+                "<range:6><typewriter>{letters_black}What can I get you?"), List.of(
+                "right: [SOUND] ENTITY_GENERIC_DRINK;0.8;1.1",
+                "right: [SAY] {letters}One {highlight}starlight tonic{letters}, on the house.;4s"),
+                new Body(true, "", Map.of("hand", "POTION"), new StoredNpc.Look(NpcLook.EACH_VIEWER, 6),
+                        new NpcAnimations("", "cheer", "swing, 600ms, swing", Duration.ofSeconds(18), "nod", 4,
+                                Duration.ofMinutes(1)))));
+        // Armoured and outlined, follows the nearest player with its eyes and bows to visitors.
+        presets.put("guard", new Preset("Watchful guard", "", List.of(
+                "<size:1.2>{error}&lGUARD",
+                "<opacity:190>{letters_black}Keep the peace"), List.of(
+                "[SAY] {letters}Move along, citizen.;3s"),
+                new Body(false, "#a33b53", Map.of(
+                        "head", "IRON_HELMET", "chest", "IRON_CHESTPLATE", "legs", "IRON_LEGGINGS",
+                        "feet", "IRON_BOOTS", "hand", "IRON_SWORD", "off_hand", "SHIELD"),
+                        new StoredNpc.Look(NpcLook.NEAREST, 12),
+                        new NpcAnimations("punch", "bow", "", Duration.ofSeconds(20), "bow", 6,
+                                Duration.ofMinutes(5)))));
+        // Swings an arm and runs the player's shop command.
+        presets.put("merchant", new Preset("Merchant", "", List.of(
+                "<size:1.3><shine:highlight>{highlight}&lMERCHANT",
+                "<frames:3>{letters}Rare goods||{letters}Fair prices||{letters}New stock daily",
+                "{warning}➥ {letters}Right-click to trade"), List.of(
+                "right: [SOUND] ENTITY_VILLAGER_TRADE;1;1.1",
+                "right: shop"),
+                new Body(false, "#ffd700", Map.of("hand", "EMERALD", "head", "LEATHER_HELMET"),
+                        new StoredNpc.Look(NpcLook.EACH_VIEWER, 8),
+                        new NpcAnimations("", "swing", "wave-offhand", Duration.ofSeconds(30), "", 4,
+                                Duration.ofSeconds(30)))));
         // Sends the player to another server of the network.
         presets.put("portal", new Preset("Server portal", "", List.of(
                 "<size:1.4><flow:6>{info}&lSURVIVAL",
@@ -97,12 +189,6 @@ public record NpcsConfig(
                 "[ANIMATE] swing",
                 "[SOUND] BLOCK_PORTAL_TRIGGER;0.4;1.6",
                 "[SERVER] survival")));
-        // Swings an arm and runs the player's shop command.
-        presets.put("shopkeeper", new Preset("Shopkeeper", "", List.of(
-                "<shine:highlight>{highlight}&lSHOP",
-                "<opacity:200>{letters_black}Right-click to trade"), List.of(
-                "right: [ANIMATE] swing",
-                "right: shop")));
         // Every player sees themselves standing there.
         presets.put("mirror", new Preset("Mirror", "@mirror", List.of(
                 "<typewriter>{letters_black}This is you"), List.of(

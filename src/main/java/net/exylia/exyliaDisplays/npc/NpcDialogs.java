@@ -156,6 +156,7 @@ public final class NpcDialogs {
             if (presetSkin != null && presetSkin.type() != StoredNpc.Skin.Type.NONE) chosen = presetSkin;
             npc = npc.withLabelLines(preset.label().stream().map(line -> line.replace("%npc%", name)).toList())
                     .withInteractions(npc.interactions().withActions(preset.actions()));
+            npc = preset.body().applyTo(npc);
         } else {
             npc = npc.withLabelLines(List.of("{primary}&l" + name));
         }

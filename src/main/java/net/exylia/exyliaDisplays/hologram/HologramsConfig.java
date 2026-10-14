@@ -92,6 +92,16 @@ public record HologramsConfig(
                 "{letters}to the server",
                 "<size:0.5> ",
                 "<range:12><typewriter>{letters_black}Read the rules at the board behind you")));
+        // A news board: a live dot, a headline that takes turns and a ticker that scrolls.
+        presets.put("news", new Preset("News board", List.of(
+                "<size:0.9><blink:1.2>{error}● {letters}LIVE",
+                "<size:1.6>{primary}&l%hologram%",
+                "<frames:3>{letters}Season II is here||{letters}Double drops this weekend||{letters}Vote for rewards",
+                "<gap:0.1><marquee:30,speed=5>{letters_black}Read the full notes on our Discord · Report bugs with /report ·")));
+        // Stays readable from across the map: it grows with the viewer's distance.
+        presets.put("landmark", new Preset("Landmark", List.of(
+                "<size:2.4><autoscale:8,40,3><brightness:15>{primary}&l%hologram%",
+                "<autoscale:8,40,3><seethrough><opacity:150>{letters_black}Seen from afar")));
         return presets;
     }
 
@@ -104,6 +114,21 @@ public record HologramsConfig(
         presets.put("ticker", "<marquee:28,speed=5>");
         // A line of its own to click: it runs click.buttons.main.
         presets.put("button", "<gap:0.12><size:1.15><button:main>");
+        // A tinted pill behind a short label.
+        presets.put("badge", "<size:0.9><background:#998a51c4><shadow:false>");
+        // Only readable up close, and quietly.
+        presets.put("whisper", "<range:6><opacity:170>");
+        // Random glyphs settle into the text when a player first sees it.
+        presets.put("glitch", "<scramble:18>");
+        // Shows and hides, like a recording light.
+        presets.put("live", "<blink:1.2>");
+        // A paragraph that wraps late, or one that wraps early and reads from the left.
+        presets.put("wide", "<width:320>");
+        presets.put("left", "<align:left><width:150>");
+        // An item or block line that turns and floats.
+        presets.put("showcase", "<spin:60><bob:0.08,period=4><glow>");
+        // Grows with the viewer's distance, so it is still readable far away.
+        presets.put("far", "<autoscale:6,30,2.5>");
         return presets;
     }
 
