@@ -2,6 +2,7 @@ package net.exylia.exyliaDisplays.npc;
 
 import net.exylia.exyliaDisplays.ExyliaDisplays;
 import net.exylia.exyliaDisplays.Permissions;
+import net.exylia.exyliaDisplays.common.Completion;
 import net.exylia.exyliaDisplays.npc.migration.NpcImport;
 import net.exylia.lib.config.ConfigIssue;
 import net.exylia.lib.text.Values;
@@ -16,6 +17,7 @@ import revxrsal.commands.annotation.Suggest;
 import revxrsal.commands.annotation.SuggestWith;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -64,7 +66,7 @@ public final class NpcAdminCommand {
 
     /** The NPCs around the player, nearest first, each with a click to edit or go there. */
     @Subcommand("near")
-    public void near(Player player, @Optional Double radius) {
+    public void near(Player player, @Optional @SuggestWith(NearRadius.class) Double radius) {
         double within = radius == null || radius <= 0 ? NpcsConfig.get().nearRadius() : radius;
         Location here = player.getLocation();
         List<Map.Entry<String, Double>> near = NpcModule.get().store().all().entrySet().stream()
@@ -120,5 +122,14 @@ public final class NpcAdminCommand {
         // 'replace' corrects what an earlier import of the same plugin brought, instead of copying it.
         int added = NpcModule.get().store().addAll(result.npcs(), "replace".equalsIgnoreCase(mode));
         send(sender, messages().importDone(), values.put("count", added));
+    }
+
+    /** The radius near uses when none is given. */
+    public static final class NearRadius implements Completion {
+
+        @Override
+        public Collection<String> suggest(List<String> words, Player player) {
+            return List.of(NpcViews.number(NpcsConfig.get().nearRadius()));
+        }
     }
 }

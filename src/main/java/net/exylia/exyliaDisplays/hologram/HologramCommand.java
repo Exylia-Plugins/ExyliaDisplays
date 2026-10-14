@@ -2,6 +2,7 @@ package net.exylia.exyliaDisplays.hologram;
 
 import net.exylia.exyliaDisplays.ExyliaDisplays;
 import net.exylia.exyliaDisplays.Permissions;
+import net.exylia.exyliaDisplays.common.Completion;
 import net.exylia.exyliaDisplays.common.store.Position;
 import net.exylia.lib.hologram.HologramConfig;
 import net.exylia.lib.hologram.HologramLine;
@@ -11,18 +12,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.CommandPlaceholder;
 import revxrsal.commands.annotation.Optional;
 import revxrsal.commands.annotation.Single;
 import revxrsal.commands.annotation.Subcommand;
-import revxrsal.commands.annotation.Suggest;
 import revxrsal.commands.annotation.SuggestWith;
-import revxrsal.commands.autocomplete.SuggestionProvider;
-import revxrsal.commands.bukkit.actor.BukkitCommandActor;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
-import revxrsal.commands.node.ExecutionContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -128,12 +124,12 @@ public final class HologramCommand {
     }
 
     @Subcommand("<name> rename")
-    public void rename(CommandSender sender, @SuggestWith(Names.class) String name, String renamed) {
+    public void rename(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) String renamed) {
         HologramDialogs.rename(sender, name, renamed.toLowerCase(Locale.ROOT));
     }
 
     @Subcommand("<name> clone")
-    public void cloneHologram(CommandSender sender, @SuggestWith(Names.class) String name, String copy) {
+    public void cloneHologram(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) String copy) {
         HologramDialogs.copy(sender, name, copy.toLowerCase(Locale.ROOT));
     }
 
@@ -183,8 +179,9 @@ public final class HologramCommand {
     }
 
     @Subcommand("<name> move")
-    public void move(CommandSender sender, @SuggestWith(Names.class) String name, double x, double y, double z,
-                     @Optional String world) {
+    public void move(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) double x,
+                     @SuggestWith(HologramSuggestions.class) double y, @SuggestWith(HologramSuggestions.class) double z,
+                     @Optional @SuggestWith(HologramSuggestions.class) String world) {
         edited(sender, name, current -> current.withLocation(new Position(
                 world == null ? current.location().world() : world, x, y, z,
                 current.location().yaw(), current.location().pitch())), messages().moved(), Values.of());
@@ -197,7 +194,8 @@ public final class HologramCommand {
 
     /** Turns it: yaw 0 south, 90 west, 180 north, -90 east; pitch tilts it, -90 to 90. */
     @Subcommand("<name> rotate")
-    public void rotate(CommandSender sender, @SuggestWith(Names.class) String name, float yaw, @Optional Float pitch) {
+    public void rotate(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) float yaw,
+                       @Optional @SuggestWith(HologramSuggestions.class) Float pitch) {
         float tilt = pitch == null ? 0f : pitch;
         if (tilt < -90 || tilt > 90) {
             invalid(sender, "pitch", HologramViews.number(tilt), "-90 - 90");
@@ -246,22 +244,25 @@ public final class HologramCommand {
     }
 
     @Subcommand("<name> setline")
-    public void setLine(CommandSender sender, @SuggestWith(Names.class) String name, int line, String text) {
+    public void setLine(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) int line,
+                        @SuggestWith(HologramSuggestions.class) String text) {
         setLine(sender, name, 1, line, text);
     }
 
     @Subcommand("<name> insertline")
-    public void insertLine(CommandSender sender, @SuggestWith(Names.class) String name, int line, String text) {
+    public void insertLine(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) int line,
+                        @SuggestWith(HologramSuggestions.class) String text) {
         insertLine(sender, name, 1, line, text);
     }
 
     @Subcommand("<name> removeline")
-    public void removeLine(CommandSender sender, @SuggestWith(Names.class) String name, int line) {
+    public void removeLine(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) int line) {
         removeLine(sender, name, 1, line);
     }
 
     @Subcommand("<name> moveline")
-    public void moveLine(CommandSender sender, @SuggestWith(Names.class) String name, int from, int to) {
+    public void moveLine(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) int from,
+                         @SuggestWith(HologramSuggestions.class) int to) {
         moveLine(sender, name, 1, from, to);
     }
 
@@ -270,9 +271,9 @@ public final class HologramCommand {
      * {@code reset}, the tag is taken off and the line follows the hologram again.
      */
     @Subcommand("<name> line")
-    public void lineTag(CommandSender sender, @SuggestWith(Names.class) String name, int line,
+    public void lineTag(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) int line,
                         @SuggestWith(Tags.class) String tag,
-                        @Optional String value) {
+                        @Optional @SuggestWith(HologramSuggestions.class) String value) {
         lineTag(sender, name, 1, line, tag, value);
     }
 
@@ -287,7 +288,7 @@ public final class HologramCommand {
     }
 
     @Subcommand("<name> page remove")
-    public void pageRemove(CommandSender sender, @SuggestWith(Names.class) String name, int page) {
+    public void pageRemove(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) int page) {
         if (!hasPage(sender, name, page)) return;
         StoredHologram saved = edited(sender, name, current -> current.removePage(page - 1), null, Values.of());
         if (saved != null) pagesSet(sender, name, saved);
@@ -295,14 +296,14 @@ public final class HologramCommand {
 
     /** Turns the hologram to that page for the player who asked; {@code lines} opens the editor. */
     @Subcommand("<name> page")
-    public void page(Player player, @SuggestWith(Names.class) String name, int page) {
+    public void page(Player player, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) int page) {
         if (!hasPage(player, name, page)) return;
         Holograms.get(ExyliaDisplays.getInstance().getPlugin(), name).ifPresent(live -> live.page(player, page - 1));
         send(player, messages().propertySet(), Values.of().putText("name", name).putText("property", "page").put("value", page));
     }
 
     @Subcommand("<name> pageinterval")
-    public void pageInterval(CommandSender sender, @SuggestWith(Names.class) String name, long ticks) {
+    public void pageInterval(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) long ticks) {
         if (ticks < 0) {
             invalid(sender, "page-interval", String.valueOf(ticks), "0+");
             return;
@@ -311,7 +312,7 @@ public final class HologramCommand {
     }
 
     @Subcommand("<name> page <page> addline")
-    public void addLine(CommandSender sender, @SuggestWith(Names.class) String name, int page, String text) {
+    public void addLine(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) int page, String text) {
         if (!hasPage(sender, name, page)) return;
         StoredHologram saved = edited(sender, name, current -> current.onPage(page - 1, view -> view.addLine(text)), null, Values.of());
         if (saved != null) {
@@ -321,7 +322,8 @@ public final class HologramCommand {
     }
 
     @Subcommand("<name> page <page> setline")
-    public void setLine(CommandSender sender, @SuggestWith(Names.class) String name, int page, int line, String text) {
+    public void setLine(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) int page,
+                        @SuggestWith(HologramSuggestions.class) int line, @SuggestWith(HologramSuggestions.class) String text) {
         if (hasLine(sender, name, page, line)) {
             edited(sender, name, current -> current.onPage(page - 1, view -> view.setLine(line - 1, text)),
                     messages().lineSet(), Values.of("line", line));
@@ -329,7 +331,8 @@ public final class HologramCommand {
     }
 
     @Subcommand("<name> page <page> insertline")
-    public void insertLine(CommandSender sender, @SuggestWith(Names.class) String name, int page, int line, String text) {
+    public void insertLine(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) int page,
+                        @SuggestWith(HologramSuggestions.class) int line, @SuggestWith(HologramSuggestions.class) String text) {
         if (!hasPage(sender, name, page)) return;
         int count = HologramModule.get().store().get(name).orElseThrow().pageView(page - 1).lines().size();
         int at = Math.clamp(line - 1, 0, count);
@@ -338,7 +341,8 @@ public final class HologramCommand {
     }
 
     @Subcommand("<name> page <page> removeline")
-    public void removeLine(CommandSender sender, @SuggestWith(Names.class) String name, int page, int line) {
+    public void removeLine(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) int page,
+                           @SuggestWith(HologramSuggestions.class) int line) {
         if (hasLine(sender, name, page, line)) {
             edited(sender, name, current -> current.onPage(page - 1, view -> view.removeLine(line - 1)),
                     messages().lineRemoved(), Values.of("line", line));
@@ -346,7 +350,8 @@ public final class HologramCommand {
     }
 
     @Subcommand("<name> page <page> moveline")
-    public void moveLine(CommandSender sender, @SuggestWith(Names.class) String name, int page, int from, int to) {
+    public void moveLine(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) int page,
+                         @SuggestWith(HologramSuggestions.class) int from, @SuggestWith(HologramSuggestions.class) int to) {
         if (hasLine(sender, name, page, from) && hasLine(sender, name, page, to)) {
             edited(sender, name, current -> current.onPage(page - 1, view -> view.moveLine(from - 1, to - 1)),
                     messages().lineMoved(), Values.of().put("line", from).put("to", to));
@@ -354,9 +359,9 @@ public final class HologramCommand {
     }
 
     @Subcommand("<name> page <page> line")
-    public void lineTag(CommandSender sender, @SuggestWith(Names.class) String name, int page, int line,
-                        @SuggestWith(Tags.class) String tag,
-                        @Optional String value) {
+    public void lineTag(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) int page,
+                        @SuggestWith(HologramSuggestions.class) int line, @SuggestWith(Tags.class) String tag,
+                        @Optional @SuggestWith(HologramSuggestions.class) String value) {
         if (!hasLine(sender, name, page, line)) return;
         String raw = HologramModule.get().store().get(name).orElseThrow().pageView(page - 1).lines().get(line - 1);
         String set = value == null || value.isBlank() || value.equalsIgnoreCase("reset") ? null : value.trim();
@@ -468,7 +473,7 @@ public final class HologramCommand {
 
     @Subcommand("<name> billboard")
     public void billboard(CommandSender sender, @SuggestWith(Names.class) String name,
-                          @Suggest({"center", "vertical", "horizontal", "fixed"}) String mode) {
+                          @SuggestWith(HologramSuggestions.class) String mode) {
         String value = mode.toUpperCase(Locale.ROOT);
         if (!List.of("CENTER", "VERTICAL", "HORIZONTAL", "FIXED").contains(value)) {
             invalid(sender, "billboard", mode, "center, vertical, horizontal, fixed");
@@ -479,7 +484,7 @@ public final class HologramCommand {
 
     @Subcommand("<name> alignment")
     public void alignment(CommandSender sender, @SuggestWith(Names.class) String name,
-                          @Suggest({"center", "left", "right"}) String mode) {
+                          @SuggestWith(HologramSuggestions.class) String mode) {
         String value = mode.toUpperCase(Locale.ROOT);
         if (!List.of("CENTER", "LEFT", "RIGHT").contains(value)) {
             invalid(sender, "alignment", mode, "center, left, right");
@@ -490,8 +495,8 @@ public final class HologramCommand {
 
     /** One number scales it evenly; three set each axis. */
     @Subcommand("<name> scale")
-    public void scale(CommandSender sender, @SuggestWith(Names.class) String name, double x,
-                      @Optional Double y, @Optional Double z) {
+    public void scale(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) double x,
+                      @Optional @SuggestWith(HologramSuggestions.class) Double y, @Optional @SuggestWith(HologramSuggestions.class) Double z) {
         double sy = y == null ? x : y;
         double sz = z == null ? x : z;
         if (x <= 0 || sy <= 0 || sz <= 0) {
@@ -517,7 +522,7 @@ public final class HologramCommand {
     }
 
     @Subcommand("<name> linewidth")
-    public void lineWidth(CommandSender sender, @SuggestWith(Names.class) String name, int pixels) {
+    public void lineWidth(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) int pixels) {
         if (pixels < 1) {
             invalid(sender, "line-width", String.valueOf(pixels), "1+");
             return;
@@ -526,7 +531,7 @@ public final class HologramCommand {
     }
 
     @Subcommand("<name> spacing")
-    public void spacing(CommandSender sender, @SuggestWith(Names.class) String name, double blocks) {
+    public void spacing(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) double blocks) {
         if (blocks < 0) {
             invalid(sender, "spacing", HologramViews.number(blocks), "0+");
             return;
@@ -535,7 +540,7 @@ public final class HologramCommand {
     }
 
     @Subcommand("<name> opacity")
-    public void opacity(CommandSender sender, @SuggestWith(Names.class) String name, int value) {
+    public void opacity(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) int value) {
         if (value < 0 || value > 255) {
             invalid(sender, "opacity", String.valueOf(value), "0 - 255");
             return;
@@ -546,7 +551,7 @@ public final class HologramCommand {
     /** {@code #AARRGGBB}, {@code none} for transparent, or {@code default} for the client's own. */
     @Subcommand("<name> background")
     public void background(CommandSender sender, @SuggestWith(Names.class) String name,
-                           @Suggest({"default", "none", "#66000000"}) String value) {
+                           @SuggestWith(HologramSuggestions.class) String value) {
         boolean client = value.equalsIgnoreCase("default");
         String colour = value.equalsIgnoreCase("none") ? "#00000000" : value;
         if (!client && !COLOUR.matcher(colour).matches()) {
@@ -561,7 +566,7 @@ public final class HologramCommand {
 
     /** A fixed light level, or {@code -1} for the light where it stands. */
     @Subcommand("<name> brightness")
-    public void brightness(CommandSender sender, @SuggestWith(Names.class) String name, int level) {
+    public void brightness(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) int level) {
         if (level < -1 || level > 15) {
             invalid(sender, "brightness", String.valueOf(level), "-1 - 15");
             return;
@@ -572,7 +577,7 @@ public final class HologramCommand {
     /** Grows it with the viewer's distance: {@code on}, {@code off}, or {@code <start> <end> <min> <max>}, which turns it on. */
     @Subcommand("<name> distancescale")
     public void distanceScale(CommandSender sender, @SuggestWith(Names.class) String name,
-                              @Suggest({"on", "off", "8 32 1 2.5"}) String value) {
+                              @SuggestWith(HologramSuggestions.class) String value) {
         StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
         if (hologram == null) {
             send(sender, messages().notFound(), Values.of().putText("name", name));
@@ -622,7 +627,7 @@ public final class HologramCommand {
     // ------------------------------------------------------------------
 
     @Subcommand("<name> viewdistance")
-    public void viewDistance(CommandSender sender, @SuggestWith(Names.class) String name, double blocks) {
+    public void viewDistance(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) double blocks) {
         if (blocks <= 0) {
             invalid(sender, "view-distance", HologramViews.number(blocks), "> 0");
             return;
@@ -632,7 +637,7 @@ public final class HologramCommand {
 
     /** Without a permission, everyone sees it. */
     @Subcommand("<name> permission")
-    public void permission(CommandSender sender, @SuggestWith(Names.class) String name, @Optional String permission) {
+    public void permission(CommandSender sender, @SuggestWith(Names.class) String name, @Optional @SuggestWith(HologramSuggestions.class) String permission) {
         String value = permission == null ? "" : permission.trim();
         property(sender, name, "permission", value.isEmpty() ? "-" : value, current -> current.withPermission(value));
     }
@@ -644,7 +649,7 @@ public final class HologramCommand {
 
     /** Ticks between refreshes of its placeholders. */
     @Subcommand("<name> refresh")
-    public void refresh(CommandSender sender, @SuggestWith(Names.class) String name, int ticks) {
+    public void refresh(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) int ticks) {
         if (ticks < 1) {
             invalid(sender, "refresh", String.valueOf(ticks), "1+");
             return;
@@ -669,7 +674,7 @@ public final class HologramCommand {
     }
 
     @Subcommand("<name> click remove")
-    public void clickRemove(CommandSender sender, @SuggestWith(Names.class) String name, int action) {
+    public void clickRemove(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) int action) {
         StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
         if (hologram != null && (action < 1 || action > hologram.click().commands().size())) {
             invalid(sender, "click", String.valueOf(action), "1 - " + hologram.click().commands().size());
@@ -684,7 +689,7 @@ public final class HologramCommand {
     }
 
     @Subcommand("<name> click width")
-    public void clickWidth(CommandSender sender, @SuggestWith(Names.class) String name, double blocks) {
+    public void clickWidth(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) double blocks) {
         if (blocks <= 0) {
             invalid(sender, "click width", HologramViews.number(blocks), "> 0");
             return;
@@ -695,14 +700,14 @@ public final class HologramCommand {
 
     /** Milliseconds before the same player's next click counts. */
     @Subcommand("<name> click cooldown")
-    public void clickCooldown(CommandSender sender, @SuggestWith(Names.class) String name, long millis) {
+    public void clickCooldown(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) long millis) {
         property(sender, name, "click cooldown", Math.max(0, millis) + "ms", current -> current.withClick(
                 StoredHologram.clickWith(current.click(), current.click().commands(), current.click().width(), millis, current.click().hoverScale())));
     }
 
     /** How much it grows while looked at; 1 turns it off. */
     @Subcommand("<name> click hover")
-    public void clickHover(CommandSender sender, @SuggestWith(Names.class) String name, double scale) {
+    public void clickHover(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) double scale) {
         if (scale <= 0) {
             invalid(sender, "click hover", HologramViews.number(scale), "> 0");
             return;
@@ -714,7 +719,7 @@ public final class HologramCommand {
     /** {@code button} draws a panel behind what can be clicked; {@code none} only grows it. */
     @Subcommand("<name> click style")
     public void clickStyle(CommandSender sender, @SuggestWith(Names.class) String name,
-                           @Suggest({"button", "none"}) String style) {
+                           @SuggestWith(HologramSuggestions.class) String style) {
         String value = style.toUpperCase(Locale.ROOT);
         if (!value.equals(HologramConfig.Click.STYLE_BUTTON) && !value.equals(HologramConfig.Click.STYLE_NONE)) {
             invalid(sender, "click style", style, "button, none");
@@ -726,7 +731,7 @@ public final class HologramCommand {
     /** The panel's colour: a palette name such as {primary}, or #RRGGBB / #AARRGGBB. */
     @Subcommand("<name> click color")
     public void clickColor(CommandSender sender, @SuggestWith(Names.class) String name,
-                           @Suggest({"{primary}", "{secondary}", "{accent}", "{info}", "{success}", "{highlight}"}) String colour) {
+                           @SuggestWith(HologramSuggestions.class) String colour) {
         if (!panelColour(colour)) {
             invalid(sender, "click color", colour, "{primary}, #RRGGBB, #AARRGGBB");
             return;
@@ -737,7 +742,7 @@ public final class HologramCommand {
     /** The panel's colour while a player looks at it. */
     @Subcommand("<name> click hovercolor")
     public void clickHoverColor(CommandSender sender, @SuggestWith(Names.class) String name,
-                                @Suggest({"{secondary}", "{secondary_light}", "{primary}", "{highlight}"}) String colour) {
+                                @SuggestWith(HologramSuggestions.class) String colour) {
         if (!panelColour(colour)) {
             invalid(sender, "click hover-color", colour, "{secondary}, #RRGGBB, #AARRGGBB");
             return;
@@ -748,7 +753,7 @@ public final class HologramCommand {
     /** A sound on every click, as [SOUND] takes it; none clears it. */
     @Subcommand("<name> click sound")
     public void clickSound(CommandSender sender, @SuggestWith(Names.class) String name,
-                           @Optional @Suggest({"UI_BUTTON_CLICK;0.6;1.4", "none"}) String sound) {
+                           @Optional @SuggestWith(HologramSuggestions.class) String sound) {
         String value = sound == null || sound.isBlank() || sound.equalsIgnoreCase("none") ? "" : sound.trim();
         clickLook(sender, name, "click sound", value.isEmpty() ? "-" : value,
                 click -> restyled(click, click.style(), click.color(), click.hoverColor(), value));
@@ -760,7 +765,8 @@ public final class HologramCommand {
      */
     @Subcommand("<name> button")
     public void button(CommandSender sender, @SuggestWith(Names.class) String name,
-                       @Suggest({"main"}) String button, String action) {
+                       @SuggestWith(HologramSuggestions.class) String button,
+                       @SuggestWith(HologramSuggestions.class) String action) {
         String id = button.toLowerCase(Locale.ROOT);
         if (!net.exylia.exyliaDisplays.common.store.Names.valid(id)) {
             invalid(sender, "button", button, "a-z, 0-9, - and _");
@@ -802,7 +808,7 @@ public final class HologramCommand {
     /** {@code all}: everyone but the players it is hidden from. {@code manual}: only the players it is shown to. */
     @Subcommand("<name> visibility")
     public void visibilityMode(CommandSender sender, @SuggestWith(Names.class) String name,
-                               @Suggest({"all", "manual"}) String mode) {
+                               @SuggestWith(HologramSuggestions.class) String mode) {
         String value = mode.toLowerCase(Locale.ROOT);
         if (!value.equals(StoredHologram.Visibility.ALL) && !value.equals(StoredHologram.Visibility.MANUAL)) {
             invalid(sender, "visibility", mode, "all, manual");
@@ -886,7 +892,7 @@ public final class HologramCommand {
 
     /** How high above the entity it rides. */
     @Subcommand("<name> attachoffset")
-    public void attachOffset(CommandSender sender, @SuggestWith(Names.class) String name, double blocks) {
+    public void attachOffset(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(HologramSuggestions.class) double blocks) {
         if (blocks < -16 || blocks > 16) {
             invalid(sender, "attach-offset", HologramViews.number(blocks), "-16 - 16");
             return;
@@ -1009,7 +1015,7 @@ public final class HologramCommand {
         return false;
     }
 
-    private static boolean hasPage(CommandSender sender, String name, int page) {
+    private static boolean hasPage(CommandSender sender, String name, @SuggestWith(HologramSuggestions.class) int page) {
         StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
         if (hologram == null) {
             send(sender, messages().notFound(), Values.of().putText("name", name));
@@ -1022,7 +1028,8 @@ public final class HologramCommand {
         return true;
     }
 
-    private static boolean hasLine(CommandSender sender, String name, int page, int line) {
+    private static boolean hasLine(CommandSender sender, String name, @SuggestWith(HologramSuggestions.class) int page,
+                           @SuggestWith(HologramSuggestions.class) int line) {
         if (!hasPage(sender, name, page)) return false;
         StoredHologram view = HologramModule.get().store().get(name).orElseThrow().pageView(page - 1);
         if (!view.hasLine(line - 1)) {
@@ -1033,52 +1040,54 @@ public final class HologramCommand {
     }
 
     /** Every hologram's name, for tab completion. */
-    public static final class Names implements SuggestionProvider<BukkitCommandActor> {
+    public static final class Names implements Completion {
 
         @Override
-        public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
-            ExyliaDisplays plugin = ExyliaDisplays.getInstance();
-            return plugin == null ? List.of() : HologramModule.get().store().names();
+        public Collection<String> suggest(List<String> words, Player player) {
+            return HologramModule.get() == null ? List.of() : HologramModule.get().store().names();
         }
     }
 
     /** The tags {@code line <n> <tag>} sets. */
-    public static final class Tags implements SuggestionProvider<BukkitCommandActor> {
+    public static final class Tags implements Completion {
 
         @Override
-        public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
+        public Collection<String> suggest(List<String> words, Player player) {
             return TAGS;
         }
     }
 
-    /** Every template's name. */
-    public static final class Templates implements SuggestionProvider<BukkitCommandActor> {
+    /** Every template's name; saving also offers the hologram's own name. */
+    public static final class Templates implements Completion {
 
         @Override
-        public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
-            return HologramModule.get() == null ? List.of() : HologramModule.get().templates().names();
+        public Collection<String> suggest(List<String> words, Player player) {
+            if (HologramModule.get() == null) return List.of();
+            List<String> names = new ArrayList<>(HologramModule.get().templates().names());
+            if (Completion.word(words, 2).equalsIgnoreCase("savetemplate")) names.add(Completion.word(words, 1));
+            return names;
         }
     }
 
     /** What attach takes: online players, {@code nearest} and {@code npc:<name>}. */
-    public static final class Targets implements SuggestionProvider<BukkitCommandActor> {
+    public static final class Targets implements Completion {
 
         @Override
-        public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
+        public Collection<String> suggest(List<String> words, Player player) {
             List<String> names = new ArrayList<>(List.of("nearest"));
-            Bukkit.getOnlinePlayers().forEach(player -> names.add(player.getName()));
+            Bukkit.getOnlinePlayers().forEach(online -> names.add(online.getName()));
             names.addAll(HologramActions.npcTargets());
             return names;
         }
     }
 
     /** Online players, {@code @a} and {@code nearest}, for show and hide. */
-    public static final class Players implements SuggestionProvider<BukkitCommandActor> {
+    public static final class Players implements Completion {
 
         @Override
-        public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
+        public Collection<String> suggest(List<String> words, Player player) {
             List<String> names = new ArrayList<>(List.of("@a", "nearest"));
-            Bukkit.getOnlinePlayers().forEach(player -> names.add(player.getName()));
+            Bukkit.getOnlinePlayers().forEach(online -> names.add(online.getName()));
             return names;
         }
     }

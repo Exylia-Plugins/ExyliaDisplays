@@ -2,6 +2,7 @@ package net.exylia.exyliaDisplays.hologram;
 
 import net.exylia.exyliaDisplays.ExyliaDisplays;
 import net.exylia.exyliaDisplays.Permissions;
+import net.exylia.exyliaDisplays.common.Completion;
 import net.exylia.exyliaDisplays.common.store.Names;
 import net.exylia.exyliaDisplays.hologram.migration.ForeignImport;
 import net.exylia.exyliaDisplays.npc.NpcModule;
@@ -18,6 +19,7 @@ import revxrsal.commands.annotation.Suggest;
 import revxrsal.commands.annotation.SuggestWith;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -71,7 +73,7 @@ public final class HologramAdminCommand {
 
     /** The holograms around the player, nearest first, each with a click to edit or go there. */
     @Subcommand("near")
-    public void near(Player player, @Optional Double radius) {
+    public void near(Player player, @Optional @SuggestWith(NearRadius.class) Double radius) {
         double within = radius == null || radius <= 0 ? HologramsConfig.get().nearRadius() : radius;
         Location here = player.getLocation();
         List<Map.Entry<String, Double>> near = HologramModule.get().store().all().entrySet().stream()
@@ -96,7 +98,7 @@ public final class HologramAdminCommand {
 
     /** A new hologram where the player stands; {@code --template <t>} anywhere in the text starts from one. */
     @Subcommand("create")
-    public void create(Player player, String name, @Optional String text) {
+    public void create(Player player, String name, @Optional @SuggestWith(TemplateFlag.class) String text) {
         String id = name.toLowerCase(Locale.ROOT);
         HologramTemplate template = null;
         Matcher flag = TEMPLATE_FLAG.matcher(text == null ? "" : text);
@@ -160,5 +162,24 @@ public final class HologramAdminCommand {
                     current -> current.withLinkedHologram(saved.getOrDefault(hologram, hologram))));
         }
         send(sender, messages().importDone(), values.put("count", saved.size()));
+    }
+
+    /** The radius near uses when none is given. */
+    public static final class NearRadius implements Completion {
+
+        @Override
+        public Collection<String> suggest(List<String> words, Player player) {
+            return List.of(HologramViews.number(HologramsConfig.get().nearRadius()));
+        }
+    }
+
+    /** {@code --template <t>} for each template, to start the new hologram from one. */
+    public static final class TemplateFlag implements Completion {
+
+        @Override
+        public Collection<String> suggest(List<String> words, Player player) {
+            HologramModule module = HologramModule.get();
+            return module == null ? List.of() : module.templates().names().stream().map(t -> "--template " + t).toList();
+        }
     }
 }

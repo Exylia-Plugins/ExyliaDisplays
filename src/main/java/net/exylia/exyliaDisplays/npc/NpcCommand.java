@@ -2,6 +2,7 @@ package net.exylia.exyliaDisplays.npc;
 
 import net.exylia.exyliaDisplays.ExyliaDisplays;
 import net.exylia.exyliaDisplays.Permissions;
+import net.exylia.exyliaDisplays.common.Completion;
 import net.exylia.exyliaDisplays.common.store.Place;
 import net.exylia.exyliaDisplays.hologram.HologramModule;
 import net.exylia.lib.npc.NpcAnimation;
@@ -9,23 +10,19 @@ import net.exylia.lib.npc.NpcAnimations;
 import net.exylia.lib.npc.NpcLook;
 import net.exylia.lib.npc.NpcPose;
 import net.exylia.lib.text.Values;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
-import org.jetbrains.annotations.NotNull;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.CommandPlaceholder;
 import revxrsal.commands.annotation.Optional;
 import revxrsal.commands.annotation.Single;
 import revxrsal.commands.annotation.Subcommand;
 import revxrsal.commands.annotation.SuggestWith;
-import revxrsal.commands.autocomplete.SuggestionProvider;
-import revxrsal.commands.bukkit.actor.BukkitCommandActor;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
-import revxrsal.commands.node.ExecutionContext;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -99,12 +96,12 @@ public final class NpcCommand {
     }
 
     @Subcommand("<name> rename")
-    public void rename(CommandSender sender, @SuggestWith(Names.class) String name, String renamed) {
+    public void rename(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(NpcSuggestions.class) String renamed) {
         NpcDialogs.rename(sender, name, renamed.toLowerCase(Locale.ROOT));
     }
 
     @Subcommand("<name> clone")
-    public void cloneNpc(CommandSender sender, @SuggestWith(Names.class) String name, String copy) {
+    public void cloneNpc(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(NpcSuggestions.class) String copy) {
         NpcDialogs.copy(sender, name, copy.toLowerCase(Locale.ROOT));
     }
 
@@ -141,8 +138,9 @@ public final class NpcCommand {
 
     /** Moves it without turning it; the world stays the same unless one is given. */
     @Subcommand("<name> move")
-    public void move(CommandSender sender, @SuggestWith(Names.class) String name, double x, double y, double z,
-                     @Optional String world) {
+    public void move(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(NpcSuggestions.class) double x,
+                     @SuggestWith(NpcSuggestions.class) double y, @SuggestWith(NpcSuggestions.class) double z,
+                     @Optional @SuggestWith(NpcSuggestions.class) String world) {
         property(sender, name, "location", NpcViews.number(x) + " " + NpcViews.number(y) + " " + NpcViews.number(z),
                 current -> current.withLocation(new Place(world == null ? current.location().world() : world,
                         x, y, z, current.location().yaw(), current.location().pitch())));
@@ -156,7 +154,8 @@ public final class NpcCommand {
 
     /** Turns it: yaw 0 south, 90 west, 180 north, -90 east; pitch looks down (positive) or up. */
     @Subcommand("<name> rotate")
-    public void rotate(CommandSender sender, @SuggestWith(Names.class) String name, double yaw, @Optional Double pitch) {
+    public void rotate(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(NpcSuggestions.class) double yaw,
+                       @Optional @SuggestWith(NpcSuggestions.class) Double pitch) {
         double tilt = pitch == null ? 0 : pitch;
         if (tilt < -90 || tilt > 90) {
             invalid(sender, "pitch", NpcViews.number(tilt), "-90 - 90");
@@ -199,7 +198,7 @@ public final class NpcCommand {
 
     /** An account name, {@code @mirror} for each viewer's own, or {@code @none} for the default. */
     @Subcommand("<name> skin")
-    public void skin(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(Skins.class) String skin) {
+    public void skin(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(NpcSuggestions.class) String skin) {
         StoredNpc.Skin parsed = StoredNpc.Skin.parse(skin);
         if (parsed == null) {
             send(sender, messages().invalidSkin(), Values.of().putText("skin", skin));
@@ -222,7 +221,7 @@ public final class NpcCommand {
     }
 
     @Subcommand("<name> scale")
-    public void scale(CommandSender sender, @SuggestWith(Names.class) String name, double scale) {
+    public void scale(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(NpcSuggestions.class) double scale) {
         if (scale < 0.0625 || scale > 16) {
             invalid(sender, "scale", NpcViews.number(scale), "0.0625 - 16");
             return;
@@ -232,7 +231,7 @@ public final class NpcCommand {
 
     /** An outline colour as {@code #RRGGBB}, or {@code none}. */
     @Subcommand("<name> glow")
-    public void glow(CommandSender sender, @SuggestWith(Names.class) String name, String colour) {
+    public void glow(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(NpcSuggestions.class) String colour) {
         String glow = colour.equalsIgnoreCase("none") || colour.equalsIgnoreCase("off") ? "" : colour.trim();
         if (!glow.isEmpty() && !StoredNpc.isColour(glow)) {
             send(sender, messages().invalidColour(), Values.of().putText("value", colour));
@@ -249,7 +248,8 @@ public final class NpcCommand {
      */
     @Subcommand("<name> equip")
     public void equip(CommandSender sender, @SuggestWith(Names.class) String name,
-                      @SuggestWith(Slots.class) String slot, @Optional String item) {
+                      @SuggestWith(NpcSuggestions.class) String slot,
+                      @Optional @SuggestWith(NpcSuggestions.class) String item) {
         if (slot.equalsIgnoreCase("clear")) {
             edited(sender, name, current -> current.withEquipment(Map.of()), messages().equipmentCleared(), Values.of());
             return;
@@ -278,7 +278,8 @@ public final class NpcCommand {
 
     @Subcommand("<name> look")
     public void look(CommandSender sender, @SuggestWith(Names.class) String name,
-                     @SuggestWith(LookModes.class) String mode, @Optional Double range) {
+                     @SuggestWith(NpcSuggestions.class) String mode,
+                     @Optional @SuggestWith(NpcSuggestions.class) Double range) {
         // Written the way npcs.yml writes it (each-viewer), or as the constant (EACH_VIEWER).
         NpcLook look;
         try {
@@ -297,7 +298,7 @@ public final class NpcCommand {
     }
 
     @Subcommand("<name> viewdistance")
-    public void viewDistance(CommandSender sender, @SuggestWith(Names.class) String name, double blocks) {
+    public void viewDistance(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(NpcSuggestions.class) double blocks) {
         if (blocks <= 0) {
             invalid(sender, "view-distance", NpcViews.number(blocks), "> 0");
             return;
@@ -307,7 +308,7 @@ public final class NpcCommand {
 
     /** Without a permission, everyone sees it. */
     @Subcommand("<name> permission")
-    public void permission(CommandSender sender, @SuggestWith(Names.class) String name, @Optional String permission) {
+    public void permission(CommandSender sender, @SuggestWith(Names.class) String name, @Optional @SuggestWith(NpcSuggestions.class) String permission) {
         String value = permission == null ? "" : permission.trim();
         property(sender, name, "permission", value.isEmpty() ? "-" : value, current -> current.withPermission(value));
     }
@@ -317,7 +318,8 @@ public final class NpcCommand {
     // ------------------------------------------------------------------
 
     @Subcommand("<name> label set")
-    public void labelSet(CommandSender sender, @SuggestWith(Names.class) String name, String text) {
+    public void labelSet(CommandSender sender, @SuggestWith(Names.class) String name,
+                         @SuggestWith(NpcSuggestions.class) String text) {
         label(sender, name, current -> List.of(text));
     }
 
@@ -331,7 +333,7 @@ public final class NpcCommand {
     }
 
     @Subcommand("<name> label remove")
-    public void labelRemove(CommandSender sender, @SuggestWith(Names.class) String name, int line) {
+    public void labelRemove(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(NpcSuggestions.class) int line) {
         StoredNpc npc = NpcModule.get().store().get(name).orElse(null);
         if (npc != null && (line < 1 || line > npc.label().lines().size())) {
             invalid(sender, "label line", String.valueOf(line), "1 - " + npc.label().lines().size());
@@ -351,7 +353,7 @@ public final class NpcCommand {
 
     /** The gap between the top of its head and the label's bottom line. */
     @Subcommand("<name> label height")
-    public void labelHeight(CommandSender sender, @SuggestWith(Names.class) String name, double blocks) {
+    public void labelHeight(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(NpcSuggestions.class) double blocks) {
         property(sender, name, "label height", NpcViews.number(blocks), current -> current.withLabel(
                 new StoredNpc.Label(current.label().lines(), blocks)));
     }
@@ -403,7 +405,7 @@ public final class NpcCommand {
     }
 
     @Subcommand("<name> action remove")
-    public void actionRemove(CommandSender sender, @SuggestWith(Names.class) String name, int index) {
+    public void actionRemove(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(NpcSuggestions.class) int index) {
         StoredNpc npc = NpcModule.get().store().get(name).orElse(null);
         if (npc == null) {
             send(sender, messages().notFound(), Values.of().putText("name", name));
@@ -444,7 +446,7 @@ public final class NpcCommand {
 
     /** Who may use it; without a permission, everyone. */
     @Subcommand("<name> action permission")
-    public void actionPermission(CommandSender sender, @SuggestWith(Names.class) String name, @Optional String permission) {
+    public void actionPermission(CommandSender sender, @SuggestWith(Names.class) String name, @Optional @SuggestWith(NpcSuggestions.class) String permission) {
         String value = permission == null ? "" : permission.trim();
         interactions(sender, name, "use permission", value.isEmpty() ? "-" : value,
                 click -> new StoredNpc.Interactions(click.actions(), value, click.cooldown(), click.denyMessage(),
@@ -453,7 +455,7 @@ public final class NpcCommand {
 
     /** Between two uses by the same player: {@code 500ms}, {@code 2s}, {@code 1m}, or 0. */
     @Subcommand("<name> action cooldown")
-    public void actionCooldown(CommandSender sender, @SuggestWith(Names.class) String name, String time) {
+    public void actionCooldown(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(NpcSuggestions.class) String time) {
         long millis = NpcDialogs.cooldown(time);
         if (millis < 0) {
             invalid(sender, "cooldown", time, "500ms, 2s, 1m, 0");
@@ -466,7 +468,7 @@ public final class NpcCommand {
 
     /** Told to a player without the permission; without text, the one in messages/npcs.yml. */
     @Subcommand("<name> action denymessage")
-    public void actionDenyMessage(CommandSender sender, @SuggestWith(Names.class) String name, @Optional String text) {
+    public void actionDenyMessage(CommandSender sender, @SuggestWith(Names.class) String name, @Optional @SuggestWith(NpcSuggestions.class) String text) {
         String value = text == null ? "" : text.trim();
         interactions(sender, name, "deny message", value.isEmpty() ? "-" : value,
                 click -> new StoredNpc.Interactions(click.actions(), click.permission(), click.cooldown(), value,
@@ -475,7 +477,7 @@ public final class NpcCommand {
 
     /** Told to a player still waiting; without text, the one in messages/npcs.yml. */
     @Subcommand("<name> action cooldownmessage")
-    public void actionCooldownMessage(CommandSender sender, @SuggestWith(Names.class) String name, @Optional String text) {
+    public void actionCooldownMessage(CommandSender sender, @SuggestWith(Names.class) String name, @Optional @SuggestWith(NpcSuggestions.class) String text) {
         String value = text == null ? "" : text.trim();
         interactions(sender, name, "cooldown message", value.isEmpty() ? "-" : value,
                 click -> new StoredNpc.Interactions(click.actions(), click.permission(), click.cooldown(),
@@ -500,7 +502,8 @@ public final class NpcCommand {
      */
     @Subcommand("<name> animation")
     public void animation(CommandSender sender, @SuggestWith(Names.class) String name,
-                          @SuggestWith(Triggers.class) String trigger, @Optional @SuggestWith(Presets.class) String value) {
+                          @SuggestWith(NpcSuggestions.class) String trigger,
+                          @Optional @SuggestWith(NpcSuggestions.class) String value) {
         String text = value == null || value.isBlank() || value.trim().equalsIgnoreCase("none")
                 || value.trim().equalsIgnoreCase("reset") ? "" : value.trim();
         String key = trigger.trim().toLowerCase(Locale.ROOT);
@@ -552,7 +555,7 @@ public final class NpcCommand {
 
     /** Plays an animation now, for everyone who sees it, to try it out. */
     @Subcommand("<name> play")
-    public void play(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(Presets.class) String animation) {
+    public void play(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(NpcSuggestions.class) String animation) {
         if (!exists(sender, name) || !NpcDialogs.readable(sender, animation)) return;
         var live = NpcModule.get().renderer().live(name);
         if (live.isEmpty()) {
@@ -633,66 +636,27 @@ public final class NpcCommand {
     // ------------------------------------------------------------------
 
     /** Every NPC's name. */
-    public static final class Names implements SuggestionProvider<BukkitCommandActor> {
+    public static final class Names implements Completion {
         @Override
-        public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
+        public Collection<String> suggest(List<String> words, Player player) {
             return NpcModule.get() == null ? List.of() : NpcModule.get().store().names();
         }
     }
 
     /** Every hologram's name, while the hologram module runs. */
-    public static final class Holograms implements SuggestionProvider<BukkitCommandActor> {
+    public static final class Holograms implements Completion {
         @Override
-        public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
+        public Collection<String> suggest(List<String> words, Player player) {
             return HologramModule.get() == null ? List.of() : HologramModule.get().store().names();
         }
     }
 
-    /** The slots, and {@code clear}. */
-    public static final class Slots implements SuggestionProvider<BukkitCommandActor> {
-        @Override
-        public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
-            List<String> slots = new ArrayList<>(StoredNpc.SLOTS);
-            slots.add("clear");
-            return slots;
-        }
-    }
-
-    /** The animation triggers and settings. */
-    public static final class Triggers implements SuggestionProvider<BukkitCommandActor> {
-        @Override
-        public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
-            List<String> triggers = new ArrayList<>(StoredNpc.TRIGGERS);
-            triggers.addAll(List.of("idle-every", "greet-range", "greet-cooldown"));
-            return triggers;
-        }
-    }
-
-    /** The animation presets, and {@code none}. */
-    public static final class Presets implements SuggestionProvider<BukkitCommandActor> {
-        @Override
-        public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
-            List<String> presets = new ArrayList<>(NpcAnimation.presets());
-            presets.add("none");
-            return presets;
-        }
-    }
-
-    /** The look modes as npcs.yml writes them. */
-    public static final class LookModes implements SuggestionProvider<BukkitCommandActor> {
-        @Override
-        public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
-            return Arrays.stream(NpcLook.values())
-                    .map(look -> look.name().toLowerCase(Locale.ROOT).replace('_', '-')).toList();
-        }
-    }
-
     /** The special skins, and the players online. */
-    public static final class Skins implements SuggestionProvider<BukkitCommandActor> {
+    public static final class Skins implements Completion {
         @Override
-        public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
+        public Collection<String> suggest(List<String> words, Player player) {
             List<String> skins = new ArrayList<>(List.of("@mirror", "@none"));
-            ExyliaDisplays.getInstance().getServer().getOnlinePlayers().forEach(player -> skins.add(player.getName()));
+            Bukkit.getOnlinePlayers().forEach(online -> skins.add(online.getName()));
             return skins;
         }
     }
