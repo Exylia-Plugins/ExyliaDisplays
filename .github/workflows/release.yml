@@ -27,3 +27,15 @@ jobs:
           cp "build/libs/ExyliaDisplays-${version}.jar" build/libs/ExyliaDisplays.jar
           gh release create "$GITHUB_REF_NAME" "build/libs/ExyliaDisplays-${version}.jar" build/libs/ExyliaDisplays.jar \
             --title "ExyliaDisplays ${version}" --generate-notes
+
+  # Mirrors the release above to Modrinth; skipped while MODRINTH_TOKEN or the project id is unset.
+  modrinth:
+    needs: release
+    uses: Exylia-Plugins/.github/.github/workflows/modrinth.yml@main
+    with:
+      version: ${{ github.ref_name }}
+      name: ExyliaDisplays
+      project-id: ${{ vars.MODRINTH_PROJECT_ID }}
+      loaders: '["folia","paper","purpur"]'
+      dependencies: '[{"project_id":"G0BDxMIG","dependency_type":"required"},{"project_id":"HYKaKraK","dependency_type":"required"},{"project_id":"lKEzGugV","dependency_type":"optional"},{"project_id":"w02MKsTg","dependency_type":"optional"},{"project_id":"5QNgOj66","dependency_type":"optional"},{"project_id":"EeyAn23L","dependency_type":"optional"}]'
+    secrets: inherit
