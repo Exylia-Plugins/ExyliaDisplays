@@ -1,0 +1,187 @@
+# DO NOT EDIT — REGENERATED ON EVERY STARTUP.
+#
+# One hologram's lines, top first.
+
+title: "{primary}&lSATIRLAR {letters_black}» {highlight}%holo_name% {muted}%current_page%/%total_pages%"
+size: 54
+type: PAGINATION
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+  pagination:
+    material: LIGHT_GRAY_STAINED_GLASS_PANE
+    name: "{muted}Başka satır yok"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Aşağıdan metin, eşya, blok ya da kafa ekle."
+      - ""
+    hide_tooltip: false
+
+pagination:
+  slots: '0-35'
+
+  item_template:
+    material: "%line_icon%"
+    name: "{secondary}&lSATIR %line_number%"
+    lore:
+      - ""
+      - "{secondary}Metin:"
+      - " {letters_black}▎ {letters}%line_text%"
+      - ""
+      - "{secondary}Etiketler:"
+      - " {letters_black}▎ {info}%line_tags%%line_style%"
+      - ""
+      - "{warning}➥ Sol tık {letters_black}» {letters}metni düzenle"
+      - "{warning}➥ Sağ tık {letters_black}» {letters}stil, hareket, görünürlük"
+      - "{warning}➥ Shift-sol tık {letters_black}» {letters}yukarı taşı"
+      - "{warning}➥ Shift-sağ tık {letters_black}» {letters}aşağı taşı"
+      - "{warning}➥ F {letters_black}» {letters}kopyala"
+      - "{error}➥ Q {letters_black}» {letters}kaldır"
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_line_text"
+      - "right: exyliadisplays:holo_line_style"
+      - "shift_left: exyliadisplays:holo_line_up"
+      - "shift_right: exyliadisplays:holo_line_down"
+      - "swap: exyliadisplays:holo_line_duplicate"
+      - "drop: exyliadisplays:holo_line_delete"
+
+  navigation:
+    previous:
+      slot: 48
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
+      name: '{error}&l← ÖNCEKİ SAYFA'
+      lore:
+        - ""
+        - " {letters_black}▎ {letters}Sayfa {info}%current_page%{letters_black}/{info}%total_pages%"
+        - ""
+      actions:
+        - 'previous_page'
+    next:
+      slot: 50
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
+      name: '{success}&lSONRAKİ SAYFA →'
+      lore:
+        - ""
+        - " {letters_black}▎ {letters}Sayfa {info}%current_page%{letters_black}/{info}%total_pages%"
+        - ""
+      actions:
+        - 'next_page'
+
+items:
+  add-text:
+    slot: 45
+    material: OAK_SIGN
+    name: "{primary}&lMETİN EKLE"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}En alta yeni bir satır."
+      - ""
+      - "{warning}➥ Yazmak için tıkla"
+      - ""
+    actions:
+      - "exyliadisplays:holo_add_line"
+
+  add-item:
+    slot: 46
+    material: ITEM_FRAME
+    name: "{primary}&lEŞYA EKLE"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Oyuncuya dönük, yüzen bir eşya."
+      - ""
+      - "{warning}➥ Seçmek için tıkla"
+      - ""
+    actions:
+      - "exyliadisplays:holo_add_item"
+
+  add-block:
+    slot: 47
+    material: GRASS_BLOCK
+    name: "{primary}&lBLOK EKLE"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Yüzen bir blok; döndürmek için {highlight}dönüş"
+      - " {letters_black}▎ {letters}değerini stilinden ver."
+      - ""
+      - "{warning}➥ Seçmek için tıkla"
+      - ""
+    actions:
+      - "exyliadisplays:holo_add_block"
+
+  add-head:
+    slot: 51
+    material: PLAYER_HEAD
+    name: "{primary}&lKAFA EKLE"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Ad, UUID, doku ya da skin URL'si ile"
+      - " {letters_black}▎ {letters}bir oyuncu kafası. {highlight}Boyutu {letters}ile"
+      - " {letters_black}▎ {letters}küçük ya da büyük yap."
+      - ""
+      - "{warning}➥ Seçmek için tıkla"
+      - ""
+    actions:
+      - "exyliadisplays:holo_add_head"
+
+  pages:
+    slot: 52
+    material: BOOK
+    name: "{primary}&lSAYFA {letters_black}[{info}%holo_page%{letters_black}/{info}%holo_pages%{letters_black}]"
+    lore:
+      - ""
+      - "{secondary}Bilgi:"
+      - " {letters_black}▎ {letters}Her oyuncu aynı anda bir sayfa"
+      - " {letters_black}▎ {letters}görür; {highlight}[PAGE] next {letters}tıklaması çevirir."
+      - ""
+      - "{secondary}Durum:"
+      - " {letters_black}▎ {letters}Düzenlenen {letters_black}» {info}sayfa %holo_page%"
+      - " {letters_black}▎ {letters}Çevirme aralığı {letters_black}» {info}%holo_page_interval% tick ⌚"
+      - ""
+      - "{warning}➥ Sol tık {letters_black}» {letters}sonraki sayfa"
+      - "{warning}➥ Sağ tık {letters_black}» {letters}önceki sayfa"
+      - "{warning}➥ Shift-sol tık {letters_black}» {letters}sayfa ekle"
+      - "{warning}➥ Shift-sağ tık {letters_black}» {letters}bu sayfanın tıklama eylemleri"
+      - "{error}➥ Q {letters_black}» {letters}bu sayfayı kaldır"
+      - "{letters_black}Onaylaman istenecek."
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_page_next"
+      - "right: exyliadisplays:holo_page_previous"
+      - "shift_left: exyliadisplays:holo_page_add"
+      - "shift_right: exyliadisplays:holo_page_click"
+      - "drop: exyliadisplays:holo_page_delete"
+
+  back:
+    slot: 49
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: '{error}&lGERİ'
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Hologramına döner."
+      - ""
+      - "{warning}➥ Geri dönmek için tıkla"
+      - ""
+    actions:
+      - "exyliadisplays:holo_open_hub"
+
+  all-lines:
+    slot: 53
+    material: WRITABLE_BOOK
+    name: "{primary}&lHEPSİNİ BİRDEN DÜZENLE"
+    lore:
+      - ""
+      - "{secondary}Bilgi:"
+      - " {letters_black}▎ {letters}Tüm satırlar tek kutuda, her biri"
+      - " {letters_black}▎ {letters}bir sırada: etiketler dahil bütün bir"
+      - " {letters_black}▎ {letters}hologramı yazmanın en hızlı yolu."
+      - ""
+      - "{warning}➥ Açmak için tıkla"
+      - ""
+    actions:
+      - "exyliadisplays:holo_all_lines"

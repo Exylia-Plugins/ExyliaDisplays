@@ -360,7 +360,7 @@ Two boss bars show the axis, value and step, and the keys. Leaving, dying, chang
 
   `/holo <name> show` and `hide` work in both modes: in `all` they take a player off or put them on `hidden-from`, in `manual` they put them on or take them off `shown-to`; `@a` means every player online. Only the exceptions are written, as UUIDs, so a renamed player keeps their place. An attached hologram rides its player whenever they are online (joining, respawning and changing worlds included) and a saved mob whenever its chunk is loaded, and is hidden while they are away. A mob that is not saved with its chunk is ridden until it is gone or the server restarts, without being written down.
 
-- **`lang/<code>/messages.yml`**, **`messages/holograms.yml`**, **`messages/npcs.yml`** and **`menus/`** contain every message and screen, in English, Spanish and Russian. The language follows ExyliaLib's.
+- **`lang/<code>/messages.yml`**, **`messages/holograms.yml`**, **`messages/npcs.yml`** and **`menus/`** contain every message and screen, in English, Spanish, Russian and Turkish. The language follows ExyliaLib's.
 
 ## Building
 

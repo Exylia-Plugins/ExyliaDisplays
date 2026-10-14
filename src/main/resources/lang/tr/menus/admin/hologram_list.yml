@@ -1,0 +1,101 @@
+# DO NOT EDIT — REGENERATED ON EVERY STARTUP.
+#
+# Every hologram on this server, and the button that creates a new one.
+
+title: "{primary}&lHOLOGRAMLAR {muted}%current_page%/%total_pages%"
+size: 54
+type: PAGINATION
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+  pagination:
+    material: LIGHT_GRAY_STAINED_GLASS_PANE
+    name: "{muted}Başka hologram yok"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Burada görmek için bir tane oluştur."
+      - ""
+    hide_tooltip: false
+
+pagination:
+  slots: '0-35'
+
+  item_template:
+    material: "%holo_icon%"
+    name: "{primary}&l%holo_name%"
+    lore:
+      - ""
+      - "{secondary}Bilgi:"
+      - " {letters_black}▎ {letters}Metin {letters_black}» %holo_preview%"
+      - " {letters_black}▎ {letters}Dünya {letters_black}» {info}%holo_world%"
+      - " {letters_black}▎ {letters}Konum {letters_black}» {info}%holo_xyz%"
+      - " {letters_black}▎ {letters}Satırlar {letters_black}» {info}%holo_lines%"
+      - ""
+      - "{secondary}Durum:"
+      - " {letters_black}▎ {letters}Durum {letters_black}» %holo_status%"
+      - ""
+      - "{warning}➥ Sol tık {letters_black}» {letters}düzenle"
+      - "{warning}➥ Shift-sol tık {letters_black}» {letters}ışınlan"
+      - "{error}➥ Sağ tık {letters_black}» {letters}sil"
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_edit"
+      - "shift_left: exyliadisplays:holo_row_teleport"
+      - "right: exyliadisplays:holo_row_delete"
+
+  navigation:
+    previous:
+      slot: 48
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
+      name: '{error}&l← ÖNCEKİ SAYFA'
+      lore:
+        - ""
+        - " {letters_black}▎ {letters}Sayfa {info}%current_page%{letters_black}/{info}%total_pages%"
+        - ""
+      actions:
+        - 'previous_page'
+    next:
+      slot: 50
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
+      name: '{success}&lSONRAKİ SAYFA →'
+      lore:
+        - ""
+        - " {letters_black}▎ {letters}Sayfa {info}%current_page%{letters_black}/{info}%total_pages%"
+        - ""
+      actions:
+        - 'next_page'
+
+items:
+  create:
+    slot: 45
+    material: NETHER_STAR
+    name: "{primary}&lHOLOGRAM OLUŞTUR"
+    lore:
+      - ""
+      - "{secondary}Bilgi:"
+      - " {letters_black}▎ {letters}Durduğun yerde, {highlight}hazır bir"
+      - " {letters_black}▎ {letters}başlangıçtan{letters} yeni bir hologram."
+      - ""
+      - "{warning}➥ Oluşturmak için tıkla"
+      - ""
+    actions:
+      - "exyliadisplays:holo_create"
+
+  info:
+    slot: 49
+    material: BOOK
+    name: "{primary}&lHOLOGRAMLAR"
+    lore:
+      - ""
+      - "{secondary}Bilgi:"
+      - " {letters_black}▎ {letters}Hologramlar {letters_black}» {info}%holo_count%"
+      - ""
+      - "{secondary}İpucu:"
+      - " {letters_black}▎ {letters}Buradaki her şey ayrıca"
+      - " {letters_black}▎ {highlight}holograms.yml {letters}içinde; o dosyayı"
+      - " {letters_black}▎ {letters}kaydetmek hemen uygular."
+      - ""

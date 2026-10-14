@@ -1,0 +1,300 @@
+# DO NOT EDIT — REGENERATED ON EVERY STARTUP.
+#
+# One hologram: its state, and a card for each part of it.
+
+title: "{primary}&lHOLOGRAM {letters_black}» {highlight}%holo_name%"
+size: 45
+type: SIMPLE
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+
+items:
+  header:
+    slot: 4
+    material: "%holo_toggle_icon%"
+    name: "{primary}&l%holo_name%"
+    lore:
+      - ""
+      - "{secondary}Bilgi:"
+      - " {letters_black}▎ {letters}Metin {letters_black}» %holo_preview%"
+      - " {letters_black}▎ {letters}Satırlar {letters_black}» {info}%lines%"
+      - ""
+      - "{secondary}Durum:"
+      - " {letters_black}▎ {letters}Durum {letters_black}» %status%"
+      - ""
+      - "{warning}➥ Sol tık {letters_black}» {letters}göster ya da gizle"
+      - "{warning}➥ Sağ tık {letters_black}» {letters}yeniden adlandır"
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_toggle"
+      - "right: exyliadisplays:holo_rename"
+
+  lines:
+    slot: 19
+    material: WRITABLE_BOOK
+    name: "{primary}&lSATIRLAR"
+    lore:
+      - ""
+      - "{secondary}Bilgi:"
+      - " {letters_black}▎ {letters}Metin, eşya ve bloklar; her birinin"
+      - " {letters_black}▎ {highlight}boyutu{letters}, {highlight}hareketi {letters}ve {highlight}kimin gördüğü{letters} ayrı."
+      - ""
+      - "{secondary}Durum:"
+      - " {letters_black}▎ {letters}Satırlar {letters_black}» {info}%lines%"
+      - ""
+      - "{warning}➥ Düzenlemek için tıkla"
+      - ""
+    actions:
+      - "exyliadisplays:holo_open_lines"
+
+  appearance:
+    slot: 20
+    material: GLOW_INK_SAC
+    name: "{primary}&lGÖRÜNÜM"
+    lore:
+      - ""
+      - "{secondary}Bilgi:"
+      - " {letters_black}▎ {letters}Hologramın tamamının nasıl çizildiği."
+      - ""
+      - "{secondary}Durum:"
+      - " {letters_black}▎ {letters}Yön {letters_black}» {info}%holo_billboard%"
+      - " {letters_black}▎ {letters}Ölçek {letters_black}» {info}%holo_scale%"
+      - " {letters_black}▎ {letters}Aralık {letters_black}» {info}%holo_spacing%"
+      - " {letters_black}▎ {letters}Gölge {letters_black}» %holo_shadow%"
+      - ""
+      - "{warning}➥ Sol tık {letters_black}» {letters}şekil ve boyut"
+      - "{warning}➥ Sağ tık {letters_black}» {letters}renk ve ışık"
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_appearance"
+      - "right: exyliadisplays:holo_appearance_light"
+
+  distance:
+    slot: 21
+    material: TARGET
+    name: "{primary}&lMESAFEYE GÖRE BOYUT"
+    lore:
+      - ""
+      - "{secondary}Bilgi:"
+      - " {letters_black}▎ {letters}Her izleyicinin mesafesiyle büyür,"
+      - " {letters_black}▎ {letters}böylece uzaktan da {highlight}okunur {letters}kalır."
+      - ""
+      - "{secondary}Durum:"
+      - " {letters_black}▎ {letters}Büyüme {letters_black}» %holo_distance%"
+      - ""
+      - "{warning}➥ Düzenlemek için tıkla"
+      - ""
+    actions:
+      - "exyliadisplays:holo_distance_scale"
+
+  visibility:
+    slot: 22
+    material: ENDER_EYE
+    name: "{primary}&lGÖRÜNÜRLÜK"
+    lore:
+      - ""
+      - "{secondary}Bilgi:"
+      - " {letters_black}▎ {letters}Kimin, ne kadar uzaktan gördüğü"
+      - " {letters_black}▎ {letters}ve ne sıklıkla yenilendiği."
+      - ""
+      - "{secondary}Durum:"
+      - " {letters_black}▎ {letters}Görenler {letters_black}» %permission%"
+      - " {letters_black}▎ {letters}Mesafe {letters_black}» {info}%view_distance%"
+      - " {letters_black}▎ {letters}Oyuncu başına {letters_black}» %per_player%"
+      - " {letters_black}▎ {letters}Yenileme {letters_black}» {info}%holo_interval% {letters}tick"
+      - " {letters_black}▎ {letters}Oyuncular {letters_black}» %visibility%"
+      - ""
+      - "{warning}➥ Sol tık {letters_black}» {letters}düzenle"
+      - "{warning}➥ Sağ tık {letters_black}» {letters}herkes ya da yalnızca seçili oyuncular"
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_visibility"
+      - "right: exyliadisplays:holo_visibility_mode"
+
+  click:
+    slot: 23
+    material: LEVER
+    name: "{primary}&lTIKLAMA EYLEMLERİ"
+    lore:
+      - ""
+      - "{secondary}Bilgi:"
+      - " {letters_black}▎ {letters}Tıklamanın işlevi, {highlight}buton"
+      - " {letters_black}▎ {highlight}panelinin {letters}görünümü ve {highlight}butonlar{letters}:"
+      - " {letters_black}▎ {letters}satırlar onları {highlight}<button:name> {letters}ile çalıştırır."
+      - ""
+      - "{secondary}Durum:"
+      - " {letters_black}▎ {letters}Tıklayınca {letters_black}» %click%"
+      - " {letters_black}▎ {letters}Görünüm {letters_black}» %holo_click_style%"
+      - " {letters_black}▎ {letters}Butonlar {letters_black}» %holo_buttons%"
+      - " {letters_black}▎ {letters}Büyüme {letters_black}» {info}%holo_hover%x"
+      - ""
+      - "{warning}➥ Sol tık {letters_black}» {letters}eylemler"
+      - "{warning}➥ Sağ tık {letters_black}» {letters}görünüm ve ses"
+      - "{warning}➥ Shift tık {letters_black}» {letters}butonlar"
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_click"
+      - "right: exyliadisplays:holo_click_look"
+      - "shift_left: exyliadisplays:holo_buttons"
+      - "shift_right: exyliadisplays:holo_buttons"
+
+  location:
+    slot: 24
+    material: COMPASS
+    name: "{primary}&lKONUM"
+    lore:
+      - ""
+      - "{secondary}Durum:"
+      - " {letters_black}▎ {letters}Dünya {letters_black}» {info}%world%"
+      - " {letters_black}▎ {letters}Konum {letters_black}» {info}%xyz%"
+      - " {letters_black}▎ {letters}Yön {letters_black}» {info}%facing%"
+      - ""
+      - "{warning}➥ Sol tık {letters_black}» {letters}tam konum ve dönüş"
+      - "{warning}➥ Sağ tık {letters_black}» {letters}buraya taşı"
+      - "{warning}➥ Shift-sol tık {letters_black}» {letters}bloğunun ortasına al"
+      - "{warning}➥ Shift-sağ tık {letters_black}» {letters}bana dönsün"
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_location"
+      - "right: exyliadisplays:holo_move_here"
+      - "shift_left: exyliadisplays:holo_centre"
+      - "shift_right: exyliadisplays:holo_face"
+
+  attach:
+    slot: 25
+    material: LEAD
+    name: "{primary}&lBAĞLI OLDUĞU"
+    lore:
+      - ""
+      - "{secondary}Bilgi:"
+      - " {letters_black}▎ {letters}Bir {highlight}oyuncuya {letters}ya da {highlight}moba{letters} biner,"
+      - " {letters_black}▎ {letters}nereye giderse onunla hareket eder."
+      - ""
+      - "{secondary}Durum:"
+      - " {letters_black}▎ {letters}Bindiği {letters_black}» %attached%"
+      - " {letters_black}▎ {letters}Yükseklik {letters_black}» {info}%attach_offset%"
+      - ""
+      - "{warning}➥ Sol tık {letters_black}» {letters}neye bineceğini seç"
+      - "{warning}➥ Sağ tık {letters_black}» {letters}konumuna geri döndür"
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_attach"
+      - "right: exyliadisplays:holo_detach"
+
+  teleport:
+    slot: 36
+    material: ENDER_PEARL
+    name: "{primary}&lIŞINLAN"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Ona dönük şekilde yanına git."
+      - ""
+      - "{warning}➥ Işınlanmak için tıkla"
+      - ""
+    actions:
+      - "exyliadisplays:holo_teleport"
+
+  clone:
+    slot: 37
+    material: PAPER
+    name: "{primary}&lKOPYALA"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Yeni bir adla, aynı yerde"
+      - " {letters_black}▎ {letters}bir kopya."
+      - ""
+      - "{warning}➥ Kopyalamak için tıkla"
+      - ""
+    actions:
+      - "exyliadisplays:holo_clone"
+
+  adjust:
+    slot: 38
+    material: SPYGLASS
+    name: "{primary}&lİNCE AYAR"
+    lore:
+      - ""
+      - "{secondary}Bilgi:"
+      - " {letters_black}▎ {letters}Ona bakarken onu"
+      - " {letters_black}▎ {highlight}fare tekerleğiyle {letters}taşı, döndür, ölçekle."
+      - ""
+      - "{secondary}Kontroller:"
+      - " {letters_black}▎ {letters}Kaydır {letters_black}» {info}değeri değiştir"
+      - " {letters_black}▎ {letters}Eğil + kaydır {letters_black}» {info}adım boyutu"
+      - " {letters_black}▎ {letters}F {letters_black}» {info}sonraki eksen"
+      - " {letters_black}▎ {letters}Eğil + tık {letters_black}» {info}hizala"
+      - " {letters_black}▎ {letters}Tık {letters_black}» {info}kaydet"
+      - ""
+      - "{warning}➥ Başlamak için tıkla"
+      - ""
+    actions:
+      - "exyliadisplays:holo_adjust"
+
+  back:
+    slot: 40
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: '{error}&lGERİ'
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Tüm hologramlara döner."
+      - ""
+      - "{warning}➥ Geri dönmek için tıkla"
+      - ""
+    actions:
+      - "exyliadisplays:holo_open_list"
+
+  templates:
+    slot: 41
+    material: PAINTING
+    name: "{primary}&lŞABLONLAR"
+    lore:
+      - ""
+      - "{secondary}Bilgi:"
+      - " {letters_black}▎ {letters}Bu görünümü yeniden kullanmak için"
+      - " {letters_black}▎ {letters}sakla ya da kayıtlı birini giydir."
+      - ""
+      - "{secondary}Durum:"
+      - " {letters_black}▎ {letters}Kayıtlı şablonlar {letters_black}» {info}%holo_templates%"
+      - ""
+      - "{warning}➥ Sol tık {letters_black}» {letters}bu görünümü kaydet"
+      - "{warning}➥ Sağ tık {letters_black}» {letters}şablon uygula"
+      - ""
+    actions:
+      - "left: exyliadisplays:holo_template_save"
+      - "right: exyliadisplays:holo_template_apply"
+
+  undo:
+    slot: 42
+    material: CLOCK
+    name: "{primary}&lGERİ AL"
+    lore:
+      - ""
+      - "{secondary}Bilgi:"
+      - " {letters_black}▎ {letters}Son değişikliği geri alır; burada,"
+      - " {letters_black}▎ {letters}komutla ya da dosyada yapılmış olsun."
+      - ""
+      - "{secondary}Durum:"
+      - " {letters_black}▎ {letters}Geri alınabilir {letters_black}» {info}%holo_undo%"
+      - ""
+      - "{warning}➥ Geri almak için tıkla"
+      - ""
+    actions:
+      - "exyliadisplays:holo_undo"
+
+  delete:
+    slot: 44
+    material: BARRIER
+    name: "{error}&lSİL"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Kalıcı olarak siler."
+      - " {letters_black}Onaylaman istenecek."
+      - ""
+      - "{error}➥ Silmek için tıkla"
+      - ""
+    actions:
+      - "exyliadisplays:holo_delete"
