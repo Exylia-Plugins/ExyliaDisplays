@@ -269,7 +269,7 @@ public final class NpcDialogs {
                 .text(USE_PERMISSION, words.usePermissionLabel(), click.permission())
                 .hint(words.usePermissionHint())
                 .field(COOLDOWN, FormField.text(COOLDOWN, words.cooldownLabel())
-                        .defaultValue(NpcViews.number(click.cooldown() / 1000.0) + "s")
+                        .defaultValue(NpcViews.number(click.cooldown() / 1000.0) + "s").optional()
                         .validate(value -> cooldown(value) >= 0, "500ms, 2s, 1m"))
                 .hint(words.cooldownHint())
                 .text(DENY, words.denyLabel(), click.denyMessage())
@@ -341,7 +341,7 @@ public final class NpcDialogs {
     }
 
     private static FormField<String> time(FormKey<String> key, String label, java.time.Duration current) {
-        return FormField.text(key, label).defaultValue(NpcViews.seconds(current))
+        return FormField.text(key, label).defaultValue(NpcViews.seconds(current)).optional()
                 .validate(value -> cooldown(value) >= 0, "500ms, 20s, 1m");
     }
 
