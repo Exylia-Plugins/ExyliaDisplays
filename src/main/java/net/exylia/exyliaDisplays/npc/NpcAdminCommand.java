@@ -3,6 +3,9 @@ package net.exylia.exyliaDisplays.npc;
 import net.exylia.exyliaDisplays.ExyliaDisplays;
 import net.exylia.exyliaDisplays.Permissions;
 import net.exylia.exyliaDisplays.common.Completion;
+import net.exylia.exyliaDisplays.common.store.Names;
+import net.exylia.exyliaDisplays.hologram.HologramModule;
+import net.exylia.exyliaDisplays.hologram.migration.ForeignImport;
 import net.exylia.exyliaDisplays.npc.migration.NpcImport;
 import net.exylia.lib.config.ConfigIssue;
 import net.exylia.lib.text.Values;
@@ -120,8 +123,26 @@ public final class NpcAdminCommand {
             return;
         }
         // 'replace' corrects what an earlier import of the same plugin brought, instead of copying it.
-        int added = NpcModule.get().store().addAll(result.npcs(), "replace".equalsIgnoreCase(mode));
-        send(sender, messages().importDone(), values.put("count", added));
+        Map<String, String> saved = NpcModule.get().store().importAll(result.npcs(), "replace".equalsIgnoreCase(mode));
+        if (source == NpcImport.Source.FANCYNPCS) linkFancyHolograms(plugin, saved);
+        send(sender, messages().importDone(), values.put("count", saved.size()));
+    }
+
+    /**
+     * Holograms brought from FancyHolograms before these NPCs follow them now: a FancyHologram
+     * names the FancyNpc it stands over, and that link waits for the NPC to be imported. An NPC
+     * already carrying a hologram keeps it.
+     */
+    private static void linkFancyHolograms(ExyliaDisplays plugin, Map<String, String> saved) {
+        HologramModule holograms = HologramModule.get();
+        if (holograms == null) return;
+        ForeignImport.run(plugin.getPlugin(), ForeignImport.Source.FANCYHOLOGRAMS).links().forEach((hologram, npc) -> {
+            String name = saved.get(npc);
+            String linked = Names.sanitize(hologram);
+            if (name == null || !holograms.store().exists(linked)) return;
+            NpcModule.get().store().edit(name, current -> current.linkedHologram().isBlank()
+                    ? current.withLinkedHologram(linked) : current);
+        });
     }
 
     /** The radius near uses when none is given. */
