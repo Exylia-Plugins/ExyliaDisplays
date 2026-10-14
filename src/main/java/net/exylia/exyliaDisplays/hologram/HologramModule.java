@@ -62,8 +62,7 @@ public final class HologramModule implements DisplayModule {
             renderer.apply(name, hologram);
         });
         renderer.applyAll(store.all());
-        templates = new EntryStore<>(Configs.define(core.getPlugin(), "templates", HologramTemplate.Templates.class)
-                        .version(2).migration(1, HologramTemplate.Templates.SEED_WHEN_EMPTY).load(),
+        templates = new EntryStore<>(HologramTemplate.Templates.load(core.getPlugin()),
                 HologramTemplate.Templates::templates, HologramTemplate.Templates::new, (name, template) -> { });
 
         watcher = new FileWatcher(new File(core.getPlugin().getDataFolder(), "holograms.yml").toPath(),

@@ -19,7 +19,7 @@ Built on [ExyliaLib](https://github.com/DiGround-s/ExyliaLib): everything is pac
 | **Motion** | `<spin>`, `<sway>`, `<bob>`, `<pulse>`, each with its own period: the client interpolates between keyframes, so the server sends two packets a second, not twenty |
 | **Colour that moves** | `<shine>` sweeps a band of light across a title; `<flow>` makes a gradient's colours run along it; `<rainbow>` runs a soft rainbow through it |
 | **Text that moves** | `<frames>` turns a line between several texts, `<marquee>` scrolls a long one, `<fade>`, `<blink>`, `<typewriter>` and `<scramble>` bring it in |
-| **Buttons** | A clickable hologram gets a lit panel that grows and presses when clicked, and a line tagged `<button:join>` is a button of its own with its own actions |
+| **Buttons** | A line tagged `<button:join>` is a button of its own, with its own actions, that lights up, grows and presses; a hologram clickable as a whole gets a slim panel fitted to its lines. Clicks reach as far as the highlight |
 | **Readable from afar** | `distance-scale` grows a hologram with each viewer's distance; `<autoscale>` does it for one line |
 | **Presets and templates** | One click puts several tags on a line (title, badge, ticker, live, glitch, far, button...); eight ready-made templates (welcome, kiosk, status, showcase, landmark, vault, event, signpost) use every tag and setting between them |
 | **NPCs that move** | Animations on left and right click, an idle one every few seconds, and a greeting for whoever walks up; NPCs can sit |
@@ -192,12 +192,13 @@ holograms:
       color: '{primary}'         # palette name, #RRGGBB or #AARRGGBB
       hover-color: '{secondary}'
       sound: 'UI_BUTTON_CLICK;0.6;1.4'
+      range: 8                   # blocks away it can be aimed at and clicked
       buttons:
         join: ['arena join']
         spectate: ['left: arena spectate', '[PAGE] next']
 ```
 
-A clickable hologram gets a panel that lights up while looked at and presses when clicked; `style: NONE` keeps only the hover growth. In the hologram's editor, **SIZE BY DISTANCE** edits the curve, and **CLICK ACTIONS** edits the actions (left-click), the look and sound (right-click) and the buttons (shift-click).
+A `<button:...>` line is drawn as a button, its own background sized to its label (a column of buttons shares one width), that lights up while aimed at and presses when clicked. A hologram without button lines that is clickable as a whole gets one slim panel fitted to its lines instead; `style: NONE` keeps only the hover growth. Left-clicks, and right-clicks holding an item, work from as far as `range` (default 8 blocks); a right-click with an empty hand only from as close as the game lets a hand reach an entity (3 blocks in survival), because the client sends nothing further away. In the hologram's editor, **SIZE BY DISTANCE** edits the curve, and **CLICK ACTIONS** edits the actions (left-click), the look and sound (right-click) and the buttons (shift-click).
 
 Anything else at the start of a line, such as `<gradient:...>`, stays as text. Colours use ExyliaLib's palette tokens (`{primary}`, `{highlight}`...) as well as `&` codes, hex and MiniMessage.
 

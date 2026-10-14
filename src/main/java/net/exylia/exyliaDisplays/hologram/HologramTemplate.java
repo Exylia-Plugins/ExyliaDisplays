@@ -1,6 +1,8 @@
 package net.exylia.exyliaDisplays.hologram;
 
 import net.exylia.lib.config.Comment;
+import net.exylia.lib.config.ConfigFile;
+import net.exylia.lib.config.Configs;
 import net.exylia.lib.config.Migration;
 import net.exylia.lib.config.Time;
 import net.exylia.lib.hologram.HologramConfig;
@@ -83,20 +85,41 @@ public record HologramTemplate(
             if (empty) data.remove("templates");
         };
 
-        /** A new install's templates: between them, every line tag and every setting at least once. */
-        public Templates() {
-            this(defaults());
+        /**
+         * Brings the default templates a server was seeded with up to today's, once: only those still
+         * exactly as seeded, so a template a server edited, or saved over, is never touched.
+         *
+         * <p>Version 2 to 3 does nothing to the file itself; it only tells the plugin, which reads the
+         * file typed, that the comparison is due. See {@link #upgradeDefaults()}.
+         */
+        public static ConfigFile<Templates> load(org.bukkit.plugin.Plugin plugin) {
+            java.util.concurrent.atomic.AtomicBoolean upgrade = new java.util.concurrent.atomic.AtomicBoolean();
+            ConfigFile<Templates> file = Configs.define(plugin, "templates", Templates.class)
+                    .version(3)
+                    .migration(1, SEED_WHEN_EMPTY)
+                    .migration(2, data -> upgrade.set(true))
+                    .load();
+            if (upgrade.get()) file.update(Templates::upgradeDefaults);
+            return file;
         }
 
-        public Templates {
-            templates = templates == null ? Map.of() : Collections.unmodifiableMap(new LinkedHashMap<>(templates));
+        /** These templates with every one still as 2.8 to 2.9 seeded it replaced by today's default. */
+        public Templates upgradeDefaults() {
+            Map<String, HologramTemplate> today = defaults();
+            Map<String, HologramTemplate> upgraded = new LinkedHashMap<>(templates);
+            seededBefore().forEach((name, seeded) -> {
+                if (seeded.equals(upgraded.get(name))) upgraded.put(name, today.get(name));
+            });
+            return new Templates(upgraded);
         }
 
-        static Map<String, HologramTemplate> defaults() {
+        /**
+         * The templates 2.8.0 to 2.9.x seeded that have changed since, exactly as they were: the one
+         * thing {@link #upgradeDefaults()} compares a server's copy with. Never edit these.
+         */
+        static Map<String, HologramTemplate> seededBefore() {
             Map<String, HologramTemplate> templates = new LinkedHashMap<>();
             HologramConfig.Properties plain = new HologramConfig.Properties();
-
-            // Three pages that turn on their own every 10s; a click turns them by hand.
             templates.put("welcome", new HologramTemplate(List.of(
                     "<head:Notch><size:0.9><bob:0.06,period=4>",
                     "<size:2.2><shine:highlight,speed=14,pause=3,width=4>{primary}&lWELCOME",
@@ -122,8 +145,6 @@ public record HologramTemplate(
                     200, plain, new HologramConfig.Refresh(),
                     new HologramConfig.Click(List.of("[PAGE] next"), 2.5, 300, 1.05, HologramConfig.Click.STYLE_BUTTON,
                             "{primary}", "{secondary}", "ITEM_BOOK_PAGE_TURN;0.8;1.0", Map.of())));
-
-            // One panel per destination: each button line runs its own commands.
             templates.put("kiosk", new HologramTemplate(List.of(
                     "<item:COMPASS><size:0.8><spin:60><glow:#8a51c4>",
                     "<size:1.6>{primary}&lTRAVEL",
@@ -133,6 +154,67 @@ public record HologramTemplate(
                     "<size:1.1><button:arena>{error}&l⚔ ARENA"), List.of(), 0, plain, new HologramConfig.Refresh(),
                     new HologramConfig.Click(List.of("[ACTION_BAR] {letters}Pick one of the buttons"), 2.0, 400, 1.1,
                             HologramConfig.Click.STYLE_BUTTON, "{primary}", "{secondary}", "UI_BUTTON_CLICK;0.6;1.4",
+                            Map.of(
+                                    "spawn", List.of("spawn"),
+                                    "shop", List.of("warp shop"),
+                                    "arena", List.of(
+                                            "left: [MESSAGE] {letters}The arena opens at {highlight}8 PM{letters}.",
+                                            "right: warp arena")))));
+            return templates;
+        }
+
+        /** A new install's templates: between them, every line tag and every setting at least once. */
+        public Templates() {
+            this(defaults());
+        }
+
+        public Templates {
+            templates = templates == null ? Map.of() : Collections.unmodifiableMap(new LinkedHashMap<>(templates));
+        }
+
+        static Map<String, HologramTemplate> defaults() {
+            Map<String, HologramTemplate> templates = new LinkedHashMap<>();
+            HologramConfig.Properties plain = new HologramConfig.Properties();
+
+            // Three pages that turn on their own every 10s; a click anywhere turns them by hand. The whole
+            // hologram is the button: one slim panel, neutral at rest and purple when aimed at.
+            templates.put("welcome", new HologramTemplate(List.of(
+                    "<head:Notch><size:0.8><bob:0.06,period=4>",
+                    "<size:1.8><shine:highlight,speed=14,pause=3,width=4>{primary}&lWELCOME",
+                    "<flow:3>{secondary}to the server, {highlight}%player_name%",
+                    "<size:0.4> ",
+                    "{warning}➥ {letters}Click for the next page"), List.of(
+                    new HologramConfig.Page(List.of(
+                            "<size:1.4>{primary}&lRULES",
+                            "<gap:0.08>{letters_black}▎ {letters}Be kind, play fair",
+                            "{letters_black}▎ {letters}No griefing, no cheats",
+                            "{letters_black}▎ {letters}Have fun out there",
+                            "<size:0.4> ",
+                            "{warning}➥ {letters}Click on {letters_black}· {letters}right-click back"), List.of(
+                            "left: [PAGE] next",
+                            "right: [PAGE] previous")),
+                    new HologramConfig.Page(List.of(
+                            "<size:1.4>{primary}&lGET STARTED",
+                            "<gap:0.08><typewriter:30>{letters}Type {highlight}/spawn {letters}to come back here",
+                            "<typewriter:30>{letters}and {highlight}/help {letters}for the rest",
+                            "<size:0.4> ",
+                            "{warning}➥ {letters}Click to start over"), List.of(
+                            "[PAGE] first"))),
+                    200, plain, new HologramConfig.Refresh(),
+                    new HologramConfig.Click(List.of("[PAGE] next"), 2.5, 300, 1.03, HologramConfig.Click.STYLE_BUTTON,
+                            "{neutral}", "{primary}", "ITEM_BOOK_PAGE_TURN;0.8;1.0", Map.of())));
+
+            // One button per destination: each button line runs its own commands. Icons carry the colour,
+            // labels stay in the body colour so every button reads the same, and they light up purple.
+            templates.put("kiosk", new HologramTemplate(List.of(
+                    "<item:COMPASS><size:0.7><spin:60><glow:#8a51c4>",
+                    "<size:1.4>{primary}&lTRAVEL",
+                    "<opacity:200>{letters_black}Pick a destination",
+                    "<gap:0.22><button:spawn>{success}⌂ {letters}&lSPAWN",
+                    "<gap:0.08><button:shop>{highlight}✦ {letters}&lSHOP",
+                    "<gap:0.08><button:arena>{error}⚔ {letters}&lARENA"), List.of(), 0, plain, new HologramConfig.Refresh(),
+                    new HologramConfig.Click(List.of("[ACTION_BAR] {letters}Pick one of the buttons"), 2.0, 400, 1.06,
+                            HologramConfig.Click.STYLE_BUTTON, "{neutral}", "{primary}", "UI_BUTTON_CLICK;0.6;1.4",
                             Map.of(
                                     "spawn", List.of("spawn"),
                                     "shop", List.of("warp shop"),

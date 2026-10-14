@@ -157,4 +157,35 @@ class ConfigFilesTest {
                     "lang/es/" + name + ".yml has no " + key.trim());
         }
     }
+
+    @Test
+    @DisplayName("default templates a server never touched move to today's look, once; edited ones are kept")
+    void untouchedDefaultTemplatesUpgradeOnce() {
+        Map<String, HologramTemplate> before = HologramTemplate.Templates.seededBefore();
+        HologramTemplate oldKiosk = before.get("kiosk");
+        HologramTemplate editedKiosk = new HologramTemplate(List.of("{primary}&lMY KIOSK"), oldKiosk.pages(),
+                oldKiosk.pageInterval(), oldKiosk.appearance(), oldKiosk.refresh(), oldKiosk.click());
+        Map<String, HologramTemplate> seeded = new java.util.LinkedHashMap<>(new HologramTemplate.Templates().templates());
+        seeded.put("welcome", before.get("welcome"));
+        seeded.put("kiosk", editedKiosk);
+        // As 2.9 left it: the file at version 2.
+        Configs.define(plugin(), "templates", HologramTemplate.Templates.class).version(2).load()
+                .update(current -> new HologramTemplate.Templates(seeded));
+        Configs.releaseAll();
+
+        Map<String, HologramTemplate> read = HologramTemplate.Templates.load(plugin()).get().templates();
+        Map<String, HologramTemplate> today = new HologramTemplate.Templates().templates();
+        assertEquals(today.get("welcome"), read.get("welcome"), "an untouched default takes the new look");
+        assertEquals(editedKiosk, read.get("kiosk"), "an edited one is never touched");
+        assertEquals(today.get("event"), read.get("event"));
+
+        // Once: a server that puts the old look back afterwards keeps it.
+        HologramTemplate.Templates.load(plugin()).update(current -> {
+            Map<String, HologramTemplate> back = new java.util.LinkedHashMap<>(current.templates());
+            back.put("welcome", before.get("welcome"));
+            return new HologramTemplate.Templates(back);
+        });
+        Configs.releaseAll();
+        assertEquals(before.get("welcome"), HologramTemplate.Templates.load(plugin()).get().templates().get("welcome"));
+    }
 }

@@ -793,7 +793,7 @@ public final class HologramCommand {
     private static HologramConfig.Click restyled(HologramConfig.Click click, String style, String color, String hoverColor,
                                                  String sound) {
         return new HologramConfig.Click(click.commands(), click.width(), click.cooldown(), click.hoverScale(),
-                style, color, hoverColor, sound, click.buttons());
+                style, color, hoverColor, sound, click.buttons(), click.range());
     }
 
     private static void clickLook(CommandSender sender, String name, String property, String value,

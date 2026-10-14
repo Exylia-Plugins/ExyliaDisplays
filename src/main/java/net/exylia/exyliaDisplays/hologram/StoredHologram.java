@@ -284,12 +284,12 @@ public record StoredHologram(
 
     /**
      * A click section with other commands, width, cooldown and hover growth, keeping its button
-     * look, sound and buttons: the four-argument constructor would reset them.
+     * look, sound, buttons and reach: the four-argument constructor would reset them.
      */
     public static HologramConfig.Click clickWith(HologramConfig.Click click, List<String> commands, double width,
                                                  long cooldown, double hoverScale) {
         return new HologramConfig.Click(commands, width, cooldown, hoverScale, click.style(), click.color(),
-                click.hoverColor(), click.sound(), click.buttons());
+                click.hoverColor(), click.sound(), click.buttons(), click.range());
     }
 
     // ------------------------------------------------------------------

@@ -433,7 +433,8 @@ public final class HologramDialogs {
             HologramConfig.Click now = current.click();
             return current.withClick(new HologramConfig.Click(now.commands(), now.width(), now.cooldown(), now.hoverScale(),
                     values.getOr(CLICK_STYLE, now.style()), values.getOr(CLICK_COLOR, now.color()),
-                    values.getOr(CLICK_HOVER_COLOR, now.hoverColor()), values.getOr(CLICK_SOUND, "").trim(), now.buttons()));
+                    values.getOr(CLICK_HOVER_COLOR, now.hoverColor()), values.getOr(CLICK_SOUND, "").trim(), now.buttons(),
+                    now.range()));
         }, back));
     }
 
