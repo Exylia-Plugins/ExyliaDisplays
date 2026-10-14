@@ -11,6 +11,7 @@ import net.exylia.lib.item.Source;
 import net.exylia.lib.npc.NpcAnimation;
 import net.exylia.lib.npc.NpcAnimations;
 import net.exylia.lib.npc.NpcLook;
+import net.exylia.lib.npc.NpcPerformance;
 import net.exylia.lib.npc.NpcPose;
 import net.exylia.lib.text.Values;
 import net.exylia.lib.util.editor.EditorForm;
@@ -75,6 +76,8 @@ public final class NpcDialogs {
     private static final FormKey<String> GREET = FormKey.text("greet");
     private static final FormKey<BigDecimal> GREET_RANGE = FormKey.decimal("greet_range");
     private static final FormKey<String> GREET_COOLDOWN = FormKey.text("greet_cooldown");
+    private static final FormKey<BigDecimal> PERFORM_RANGE = FormKey.decimal("perform_range");
+    private static final FormKey<String> TRIGGER = FormKey.text("trigger");
 
     private NpcDialogs() {
         throw new AssertionError("No instances.");
@@ -318,7 +321,8 @@ public final class NpcDialogs {
         animationBox(form, GREET, words.greetLabel(), now.greet()).hint(hint)
                 .decimal(GREET_RANGE, words.greetRangeLabel(), BigDecimal.valueOf(now.greetRange()))
                 .field(GREET_COOLDOWN, time(GREET_COOLDOWN, words.greetCooldownLabel(), now.greetCooldown()))
-                .hint(words.timeHint());
+                .hint(words.timeHint())
+                .decimal(PERFORM_RANGE, words.performRangeLabel(), BigDecimal.valueOf(now.performRange()));
         answer(player, form.ask(values -> values), back, values -> {
             String idle = values.getOr(IDLE, "").trim();
             String greet = values.getOr(GREET, "").trim();
@@ -331,9 +335,35 @@ public final class NpcDialogs {
                 return current.withAnimations(new NpcAnimations(a.leftClick(), a.rightClick(), idle,
                         java.time.Duration.ofMillis(Math.max(0, cooldown(values.getOr(IDLE_EVERY, "0")))), greet,
                         Math.max(0, values.getDecimal(GREET_RANGE).doubleValue()),
-                        java.time.Duration.ofMillis(Math.max(0, cooldown(values.getOr(GREET_COOLDOWN, "0"))))));
+                        java.time.Duration.ofMillis(Math.max(0, cooldown(values.getOr(GREET_COOLDOWN, "0")))),
+                        Math.max(0, values.getDecimal(PERFORM_RANGE).doubleValue())));
             }, back);
         });
+    }
+
+    /**
+     * Puts a performance picked from the picker on one trigger, asked in a window, and brings the
+     * picker back. Checked first, so a stale row (an emote removed since) is reported, not saved.
+     */
+    public static void pickPerformance(Player player, String name, String performance) {
+        StoredNpc npc = NpcModule.get().store().get(name).orElse(null);
+        if (npc == null) return;
+        Runnable back = () -> NpcViews.openPerformances(player, name);
+        if (!readable(player, performance)) {
+            back.run();
+            return;
+        }
+        NpcsMessages.Animations words = messages().animations();
+        List<FormField.Option> triggers = List.of(
+                new FormField.Option("right-click", words.rightClickLabel()),
+                new FormField.Option("left-click", words.leftClickLabel()),
+                new FormField.Option("idle", words.idleLabel()),
+                new FormField.Option("greet", words.greetLabel()));
+        EditorForm form = form(player, Values.of().putText("performance", performance).apply(words.pickTitle()))
+                .choice(TRIGGER, words.pickTriggerLabel(), "right-click", triggers)
+                .hint(words.pickHint());
+        answer(player, form.ask(values -> values), back, values ->
+                save(player, name, current -> current.withAnimation(values.getOr(TRIGGER, "right-click"), performance), back));
     }
 
     private static EditorForm animationBox(EditorForm form, FormKey<String> key, String label, String current) {
@@ -345,15 +375,26 @@ public final class NpcDialogs {
                 .validate(value -> cooldown(value) >= 0, "500ms, 20s, 1m");
     }
 
-    /** The words of an animation nobody knows; empty when every word reads. */
+    /** The words of an animation nobody knows; empty when every word reads, and for a performance. */
     static List<String> unknownWords(String text) {
         List<String> unknown = new ArrayList<>();
+        if (NpcPerformance.isPerformance(text == null ? "" : text.trim())) return unknown;
         NpcAnimation.parse(text, unknown::add);
         return unknown;
     }
 
-    /** Whether every word of an animation reads, telling the sender the ones that do not. */
+    /**
+     * Whether every animation reads, telling the sender what does not: a performance that cannot
+     * play, or the words of moves nobody knows.
+     */
     static boolean readable(CommandSender sender, String... texts) {
+        for (String text : texts) {
+            String problem = NpcPerformances.problem(text);
+            if (problem != null) {
+                plugin().getMessages().send(sender, problem, Values.of());
+                return false;
+            }
+        }
         List<String> unknown = new ArrayList<>();
         for (String text : texts) unknown.addAll(unknownWords(text));
         if (unknown.isEmpty()) return true;

@@ -202,7 +202,10 @@ public record NpcsMessages(
                         " {warning}action permission|cooldown|denymessage|cooldownmessage|faceclicker",
                         " {warning}animation <left-click|right-click|idle|greet> [animation] {letters_black}» {letters}wave, nod, bow... {muted}(none clears)",
                         " {warning}animation idle-every|greet-cooldown <time> {letters_black}· {warning}animation greet-range <blocks>",
+                        " {warning}animation perform-range <blocks> {letters_black}» {letters}who is shown a performance",
                         " {warning}play <animation> {letters_black}» {letters}try one now {letters_black}· {warning}sit <on|off>",
+                        " {secondary}Performances {letters_black}» {letters}a whole-body animation instead of moves:",
+                        " {info}anim:<file> {letters_black}· {info}emote:<id> {muted}(ExyliaEmotes) {letters_black}· {info}keys:<frames>",
                         ""),
                 "%prefix% {letters}NPCs {letters_black}({info}%count%{letters_black})",
                 " <click:run_command:'/npc %name%'><hover:show_text:'{letters}Click to edit'>{highlight}%name%</hover></click> {letters_black}» {letters}%world% {info}%x% %y% %z% {letters_black}· %skin% {letters_black}· %status%",
@@ -462,7 +465,32 @@ public record NpcsMessages(
             @Comment("Under the lengths of time.")
             String timeHint,
             @Comment("The switch in the body window.")
-            String sittingLabel) {
+            String sittingLabel,
+            @Comment("emote:<id> while ExyliaEmotes is not installed. Placeholder: %id%.")
+            String emotesMissing,
+            @Comment("emote:<id> that ExyliaEmotes does not have. Placeholders: %id%, %emotes%.")
+            String unknownEmote,
+            @Comment("keys:<frames> that do not read. Placeholder: %problems%.")
+            String invalidFrames,
+            @Comment("A value with a colon that is no performance. Placeholder: %value%.")
+            String invalidPerformance,
+            @Comment("/npc <name> play of a performance on a sitting NPC, which never performs. Placeholder: %name%.")
+            String performSitting,
+            @Comment("/npc <name> play while another performance plays. Placeholder: %name%.")
+            String performBusy,
+            @Comment("/npc <name> play of a performance nobody got: nobody within perform-range, or it draws no body. Placeholders: %name%, %range%.")
+            String performSkipped,
+            @Comment("What a trigger shows in menus when it plays frames written in place.")
+            String customPerformance,
+            @Comment("In the second window: how close a player has to be to be shown a performance.")
+            String performRangeLabel,
+            @Comment("The performance picker: what a row is. Shown as %perf_kind%.")
+            String kindEmote,
+            String kindAnimation,
+            @Comment("The window a picked performance asks in. Placeholder: %performance%.")
+            String pickTitle,
+            String pickTriggerLabel,
+            String pickHint) {
 
         public Animations() {
             this(NO + "{error}Unknown animation words: {highlight}%words%{error}. Use a preset ({highlight}%presets%{error}) or swing, offhand, hurt, crouch, stand and waits like 250ms.",
@@ -472,7 +500,7 @@ public record NpcsMessages(
                     "{primary}&lANIMATIONS {letters_black}» {highlight}CLICKS",
                     "On left-click",
                     "On right-click",
-                    "A preset (%presets%) or moves joined by commas: swing, offhand, hurt, crouch, stand, 250ms. Empty for none.",
+                    "A preset (%presets%), moves joined by commas (swing, offhand, hurt, crouch, stand, 250ms), or one performance: anim:<file>, emote:<id>, keys:<frames>. Empty for none.",
                     "{primary}&lANIMATIONS {letters_black}» {highlight}IDLE & GREET",
                     "On its own",
                     "Every (such as 20s, 0 = never)",
@@ -480,7 +508,21 @@ public record NpcsMessages(
                     "Greet within (blocks)",
                     "Greet the same player again after",
                     "Lengths of time read 500ms, 20s, 1m.",
-                    "Sitting");
+                    "Sitting",
+                    NO + "{error}ExyliaEmotes is not installed, so {highlight}emote:%id% {error}has nothing to play.",
+                    NO + "{error}There is no emote {highlight}%id%{error}. Solo emotes: {info}%emotes%",
+                    NO + "{error}Those frames do not read: {highlight}%problems%",
+                    NO + "{highlight}%value% {error}is no performance. Use {highlight}anim:<file>{error}, {highlight}emote:<id> {error}or {highlight}keys:<frames>{error}.",
+                    NO + "{highlight}%name% {error}is sitting, and a sitting NPC never performs.",
+                    NO + "{highlight}%name% {error}is already performing; try again when it ends.",
+                    NO + "{highlight}%name% {error}performed for nobody: no one within {info}%range% {error}blocks, or it draws no body.",
+                    "{info}custom performance",
+                    "Show performances within (blocks)",
+                    "{secondary}Emote",
+                    "{secondary}Animation file",
+                    "{primary}&lPERFORMANCE {letters_black}» {highlight}%performance%",
+                    "Play it",
+                    "A sitting NPC never performs. It replaces what that trigger played.");
         }
     }
 

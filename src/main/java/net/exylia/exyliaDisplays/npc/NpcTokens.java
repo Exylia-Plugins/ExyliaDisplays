@@ -7,6 +7,7 @@ import net.exylia.lib.hologram.HologramConfig;
 import net.exylia.lib.hologram.Holograms;
 import net.exylia.lib.interaction.Interactions;
 import net.exylia.lib.npc.NpcAnimation;
+import net.exylia.lib.npc.NpcPerformance;
 import net.exylia.lib.text.Values;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -38,12 +39,18 @@ final class NpcTokens {
     /** Registers the tokens; before any NPC's lines compile, or the lines naming them are skipped. */
     void register() {
         token("SAY", (player, npc, argument) -> say(player, npc, argument));
-        token("ANIMATE", (player, npc, argument) -> renderer.live(npc).ifPresent(placed -> placed.play(animation(argument))));
+        token("ANIMATE", (player, npc, argument) -> renderer.live(npc).ifPresent(placed -> {
+            String trimmed = argument == null ? "" : argument.trim();
+            // A performance is skipped while another plays or nobody is near: nothing queues.
+            if (NpcPerformance.isPerformance(trimmed)) placed.perform(NpcPerformance.parse(trimmed));
+            else placed.play(animation(trimmed));
+        }));
         token("LOOK", (player, npc, argument) -> renderer.turnTo(npc, player));
     }
 
     /**
-     * What an {@code [ANIMATE]} line plays: a preset or moves ({@code wave}, {@code swing, 250ms, hurt}).
+     * What an {@code [ANIMATE]} line plays when it is no performance ({@code anim:}, {@code emote:},
+     * {@code keys:}, which perform instead): a preset or moves ({@code wave}, {@code swing, 250ms, hurt}).
      * A bare token swings, and a line written before animations existed ({@code hurt}, anything
      * else) keeps its meaning: a flinch or a swing.
      */

@@ -8,6 +8,7 @@ import net.exylia.exyliaDisplays.hologram.HologramModule;
 import net.exylia.lib.npc.NpcAnimation;
 import net.exylia.lib.npc.NpcAnimations;
 import net.exylia.lib.npc.NpcLook;
+import net.exylia.lib.npc.NpcPerformance;
 import net.exylia.lib.npc.NpcPose;
 import net.exylia.lib.text.Values;
 import org.bukkit.Bukkit;
@@ -498,7 +499,8 @@ public final class NpcCommand {
     /**
      * What a trigger plays: {@code left-click}, {@code right-click}, {@code idle} or {@code greet}
      * take an animation (no text or {@code none} clears it); {@code idle-every} and
-     * {@code greet-cooldown} a length of time; {@code greet-range} blocks.
+     * {@code greet-cooldown} a length of time; {@code greet-range} and {@code perform-range} blocks.
+     * An animation is vanilla moves or one performance ({@code anim:}, {@code emote:}, {@code keys:}).
      */
     @Subcommand("<name> animation")
     public void animation(CommandSender sender, @SuggestWith(Names.class) String name,
@@ -518,11 +520,11 @@ public final class NpcCommand {
                 property(sender, name, "animation " + key, NpcViews.seconds(time), current -> {
                     NpcAnimations a = current.animations();
                     return current.withAnimations(key.equals("idle-every")
-                            ? new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), time, a.greet(), a.greetRange(), a.greetCooldown())
-                            : new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), a.idleEvery(), a.greet(), a.greetRange(), time));
+                            ? new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), time, a.greet(), a.greetRange(), a.greetCooldown(), a.performRange())
+                            : new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), a.idleEvery(), a.greet(), a.greetRange(), time, a.performRange()));
                 });
             }
-            case "greet-range" -> {
+            case "greet-range", "perform-range" -> {
                 double blocks;
                 try {
                     blocks = Double.parseDouble(text);
@@ -530,20 +532,23 @@ public final class NpcCommand {
                     blocks = -1;
                 }
                 if (blocks < 0) {
-                    invalid(sender, "animation greet-range", text, "0+");
+                    invalid(sender, "animation " + key, text, "0+");
                     return;
                 }
                 double range = blocks;
-                property(sender, name, "animation greet-range", NpcViews.number(range), current -> {
+                property(sender, name, "animation " + key, NpcViews.number(range), current -> {
                     NpcAnimations a = current.animations();
-                    return current.withAnimations(new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(),
-                            a.idleEvery(), a.greet(), range, a.greetCooldown()));
+                    return current.withAnimations(key.equals("greet-range")
+                            ? new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), a.idleEvery(), a.greet(),
+                                    range, a.greetCooldown(), a.performRange())
+                            : new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), a.idleEvery(), a.greet(),
+                                    a.greetRange(), a.greetCooldown(), range));
                 });
             }
             default -> {
                 if (new StoredNpc().withAnimation(key, text) == null) {
                     invalid(sender, "animation", trigger, String.join(", ", StoredNpc.TRIGGERS)
-                            + ", idle-every, greet-range, greet-cooldown");
+                            + ", idle-every, greet-range, greet-cooldown, perform-range");
                     return;
                 }
                 if (!NpcDialogs.readable(sender, text)) return;
@@ -553,7 +558,10 @@ public final class NpcCommand {
         }
     }
 
-    /** Plays an animation now, for everyone who sees it, to try it out. */
+    /**
+     * Plays an animation now, for everyone who sees it, to try it out. A performance plays for
+     * everyone within its perform-range, and says so when it was skipped.
+     */
     @Subcommand("<name> play")
     public void play(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(NpcSuggestions.class) String animation) {
         if (!exists(sender, name) || !NpcDialogs.readable(sender, animation)) return;
@@ -562,8 +570,23 @@ public final class NpcCommand {
             send(sender, messages().animations().notShown(), Values.of().putText("name", name));
             return;
         }
-        live.get().play(NpcAnimation.parse(animation));
-        send(sender, messages().animations().played(), Values.of().putText("name", name).putText("animation", animation.trim()));
+        Values values = Values.of().putText("name", name).putText("animation", animation.trim());
+        if (!NpcPerformance.isPerformance(animation.trim())) {
+            live.get().play(NpcAnimation.parse(animation));
+            send(sender, messages().animations().played(), values);
+            return;
+        }
+        StoredNpc npc = NpcModule.get().store().get(name).orElseThrow();
+        NpcsMessages.Animations words = messages().animations();
+        if (npc.sitting()) {
+            send(sender, words.performSitting(), values);
+        } else if (live.get().isPerforming()) {
+            send(sender, words.performBusy(), values);
+        } else if (live.get().perform(NpcPerformance.parse(animation.trim()))) {
+            send(sender, words.played(), values);
+        } else {
+            send(sender, words.performSkipped(), values.put("range", NpcViews.number(npc.animations().performRange())));
+        }
     }
 
     /** Sits on an invisible seat, hips at its location, or stands. */

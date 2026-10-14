@@ -17,6 +17,8 @@ depend:
   - packetevents
 
 softdepend:
+  # NPCs can play its emotes (emote:<id>); its emotes.yml is read, never changed.
+  - ExyliaEmotes
   # Required, but soft so this plugin still starts without it: it then downloads ExyliaLib
   # and asks for a restart.
   - ExyliaLib

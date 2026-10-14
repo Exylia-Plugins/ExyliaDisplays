@@ -26,6 +26,7 @@ public final class NpcModule implements DisplayModule {
     public static final String MENU_LIST = "menus/admin/npc_list";
     public static final String MENU_HUB = "menus/admin/npc_hub";
     public static final String MENU_EQUIPMENT = "menus/admin/npc_equipment";
+    public static final String MENU_PERFORMANCES = "menus/admin/npc_performances";
 
     private static NpcModule instance;
 
@@ -33,6 +34,7 @@ public final class NpcModule implements DisplayModule {
     private EntryStore<NpcFile, StoredNpc> store;
     private NpcRenderer renderer;
     private FileWatcher watcher;
+    private NpcPerformances performances;
     private final NpcAdjust adjust = new NpcAdjust();
 
     /** The running module; only called by code that runs because the module does. */
@@ -47,7 +49,7 @@ public final class NpcModule implements DisplayModule {
 
     @Override
     public List<String> menus() {
-        return List.of(MENU_LIST, MENU_HUB, MENU_EQUIPMENT);
+        return List.of(MENU_LIST, MENU_HUB, MENU_EQUIPMENT, MENU_PERFORMANCES);
     }
 
     @Override
@@ -57,6 +59,9 @@ public final class NpcModule implements DisplayModule {
         NpcsMessages.install(Configs.define(core.getPlugin(), "messages/npcs", NpcsMessages.class)
                 .translated().load());
 
+        // Before any NPC shows: an emote: performance asks the resolver this registers.
+        performances = new NpcPerformances(core);
+        performances.enable();
         renderer = new NpcRenderer(core, adjust::preview);
         // Before the first NPC compiles its lines: a token unknown then is a line skipped.
         new NpcTokens(core, renderer).register();
@@ -80,6 +85,7 @@ public final class NpcModule implements DisplayModule {
 
     @Override
     public void reload() {
+        performances.refresh();
         renderer.applyAll(store.all());
         watcher.stop();
         if (DisplaysConfig.get().watchFiles()) watcher.start();
@@ -90,6 +96,7 @@ public final class NpcModule implements DisplayModule {
         adjust.saveAll();
         if (watcher != null) watcher.stop();
         if (renderer != null) renderer.clear();
+        if (performances != null) performances.disable();
         instance = null;
     }
 

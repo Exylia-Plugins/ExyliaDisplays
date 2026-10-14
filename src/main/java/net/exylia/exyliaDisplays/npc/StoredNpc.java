@@ -87,6 +87,9 @@ public record StoredNpc(
         boolean sitting,
 
         @Comment("Gestures it plays: on a left or right click, on its own every while, or to greet a player.")
+        @Comment("Each is vanilla moves (wave, 'swing, 250ms, hurt') or one performance, a whole-body animation:")
+        @Comment("anim:<file> (plugins/ExyliaDisplays/animations), emote:<id> (ExyliaEmotes) or keys:<frames>.")
+        @Comment("perform-range is how close a player has to be to see one; a sitting NPC never performs.")
         @Comment("/npc <name> animation <trigger> <text> sets one; /npc <name> play <animation> tries it.")
         NpcAnimations animations) {
 
@@ -264,7 +267,8 @@ public record StoredNpc(
             @Comment("first limits a line to that click. A bare line is a command as the player, 'console: ...'")
             @Comment("from the console. [SERVER] lobby, [TELEPORT] world;x;y;z, [MESSAGE] text, [SOUND] name,")
             @Comment("[TITLE] a;b, [DELAY] 1s, [ACTION] ns:id, plus [SAY] text;5s (a speech bubble only the")
-            @Comment("clicker sees), [ANIMATE] wave (a preset or moves like 'swing, 250ms, hurt') and [LOOK]")
+            @Comment("clicker sees), [ANIMATE] wave (a preset, moves like 'swing, 250ms, hurt', or a performance")
+            @Comment("like 'anim:bow' or 'emote:salute') and [LOOK]")
             @Comment("(turn to the clicker). %npc% is its name.")
             List<String> actions,
             @Comment("Only players with this permission can use it. Leave empty for everyone.")
@@ -489,10 +493,10 @@ public record StoredNpc(
         NpcAnimations a = animations;
         String t = text == null ? "" : text.trim();
         NpcAnimations edited = switch (trigger == null ? "" : trigger.trim().toLowerCase(Locale.ROOT)) {
-            case "left-click", "left" -> new NpcAnimations(t, a.rightClick(), a.idle(), a.idleEvery(), a.greet(), a.greetRange(), a.greetCooldown());
-            case "right-click", "right" -> new NpcAnimations(a.leftClick(), t, a.idle(), a.idleEvery(), a.greet(), a.greetRange(), a.greetCooldown());
-            case "idle" -> new NpcAnimations(a.leftClick(), a.rightClick(), t, a.idleEvery(), a.greet(), a.greetRange(), a.greetCooldown());
-            case "greet" -> new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), a.idleEvery(), t, a.greetRange(), a.greetCooldown());
+            case "left-click", "left" -> new NpcAnimations(t, a.rightClick(), a.idle(), a.idleEvery(), a.greet(), a.greetRange(), a.greetCooldown(), a.performRange());
+            case "right-click", "right" -> new NpcAnimations(a.leftClick(), t, a.idle(), a.idleEvery(), a.greet(), a.greetRange(), a.greetCooldown(), a.performRange());
+            case "idle" -> new NpcAnimations(a.leftClick(), a.rightClick(), t, a.idleEvery(), a.greet(), a.greetRange(), a.greetCooldown(), a.performRange());
+            case "greet" -> new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), a.idleEvery(), t, a.greetRange(), a.greetCooldown(), a.performRange());
             default -> null;
         };
         return edited == null ? null : withAnimations(edited);

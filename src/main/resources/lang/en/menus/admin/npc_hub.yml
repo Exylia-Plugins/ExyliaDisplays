@@ -104,8 +104,9 @@ items:
       - ""
       - "{secondary}Information:"
       - " {letters_black}▎ {letters}Gestures it plays: {highlight}wave{letters}, {highlight}nod{letters},"
-      - " {letters_black}▎ {highlight}bow{letters}... on a click, on its own, or"
-      - " {letters_black}▎ {letters}to greet a player who walks up."
+      - " {letters_black}▎ {highlight}bow{letters}... or a whole-body {highlight}performance{letters},"
+      - " {letters_black}▎ {letters}on a click, on its own, or to greet"
+      - " {letters_black}▎ {letters}a player who walks up."
       - ""
       - "{secondary}Status:"
       - " {letters_black}▎ {letters}Left-click {letters_black}» %anim_left%"
@@ -113,13 +114,16 @@ items:
       - " {letters_black}▎ {letters}On its own {letters_black}» %anim_idle% {letters_black}· {info}%anim_idle_every% ⌚"
       - " {letters_black}▎ {letters}Greet {letters_black}» %anim_greet% {letters_black}· {info}%anim_greet_range% {letters}blocks"
       - " {letters_black}▎ {letters}Sitting {letters_black}» %sitting%"
+      - " {letters_black}▎ {letters}Performances within {letters_black}» {info}%anim_perform_range% {letters}blocks"
       - ""
       - "{warning}➥ Left-click {letters_black}» {letters}what a click plays"
       - "{warning}➥ Right-click {letters_black}» {letters}on its own, and to greet"
+      - "{warning}➥ Shift-left-click {letters_black}» {letters}pick a performance"
       - ""
     actions:
       - "left: exyliadisplays:npc_animations"
       - "right: exyliadisplays:npc_animations_auto"
+      - "shift_left: exyliadisplays:npc_open_performances"
 
   interactions:
     slot: 23

@@ -71,6 +71,10 @@ public final class NpcActions {
         hub("interactions_rules", (player, name) -> NpcDialogs.interactions(player, name, true));
         hub("animations", (player, name) -> NpcDialogs.animations(player, name, false));
         hub("animations_auto", (player, name) -> NpcDialogs.animations(player, name, true));
+        hub("open_performances", NpcViews::openPerformances);
+        performance("perform_pick", NpcDialogs::pickPerformance);
+        // The same as /npc <name> play, said the same way; the picker stays open.
+        performance("perform_try", (player, name, value) -> new NpcCommand().play(player, name, value));
         hub("visibility", NpcDialogs::visibility);
         hub("location", NpcDialogs::location);
         hub("move_here", (player, name) -> {
@@ -154,6 +158,23 @@ public final class NpcActions {
             if (name != null && slot != null && NpcModule.get().store().exists(name)) {
                 action.run(ctx.player(), name, slot);
                 NpcViews.openEquipment(ctx.player(), name);
+            }
+            return ActionResult.success();
+        });
+    }
+
+    @FunctionalInterface
+    private interface PerformanceAction {
+        void run(Player player, String name, String performance);
+    }
+
+    /** A row of the performance picker, which is the performance, on the screen of one NPC. */
+    private void performance(String id, PerformanceAction action) {
+        actions.registerSync(PREFIX + id, Permissions.NPCS, (ctx, args) -> {
+            String name = screenNpc(ctx);
+            String value = ctx.get(UiKeys.ENTRY).filter(String.class::isInstance).map(String.class::cast).orElse(null);
+            if (name != null && value != null && NpcModule.get().store().exists(name)) {
+                action.run(ctx.player(), name, value);
             }
             return ActionResult.success();
         });

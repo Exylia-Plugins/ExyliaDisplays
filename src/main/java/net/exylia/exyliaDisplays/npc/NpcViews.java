@@ -76,6 +76,35 @@ public final class NpcViews {
         plugin().getMenus().show(player, NpcModule.MENU_EQUIPMENT, context, null);
     }
 
+    /**
+     * The performance picker: every ExyliaEmotes emote and every animation file, a row each, to
+     * put on one of the NPC's triggers or to try on it.
+     */
+    public static void openPerformances(Player player, String name) {
+        StoredNpc npc = NpcModule.get().store().get(name).orElse(null);
+        if (npc == null) {
+            openList(player);
+            return;
+        }
+        NpcsMessages.Animations words = NpcsMessages.get().animations();
+        List<UiEntry> rows = new ArrayList<>();
+        NpcPerformances.catalog().emotes().values().forEach(emote -> rows.add(UiEntry.of("emote:" + emote.id())
+                .with("perf_icon", emote.material())
+                .withFormatted("perf_name", emote.name())
+                .withVerbatim("perf_value", "emote:" + emote.id())
+                .withFormatted("perf_kind", words.kindEmote())
+                .build()));
+        NpcPerformances.catalog().animations().forEach(file -> rows.add(UiEntry.of("anim:" + file)
+                .with("perf_icon", "MUSIC_DISC_CAT")
+                .withFormatted("perf_name", "{primary}&l" + Values.inert(file.toUpperCase(java.util.Locale.ROOT)))
+                .withVerbatim("perf_value", "anim:" + file)
+                .withFormatted("perf_kind", words.kindAnimation())
+                .build()));
+        Map<String, Object> context = context(name, npc);
+        context.put("perf_count", rows.size());
+        plugin().getMenus().show(player, NpcModule.MENU_PERFORMANCES, context, rows);
+    }
+
     // ------------------------------------------------------------------
     // Values
     // ------------------------------------------------------------------
@@ -133,13 +162,15 @@ public final class NpcViews {
                 .put("anim_idle_every", seconds(npc.animations().idleEvery()))
                 .put("anim_greet", animation(npc.animations().greet()))
                 .put("anim_greet_range", number(npc.animations().greetRange()))
-                .put("anim_greet_cooldown", seconds(npc.animations().greetCooldown()));
+                .put("anim_greet_cooldown", seconds(npc.animations().greetCooldown()))
+                .put("anim_perform_range", number(npc.animations().performRange()));
     }
 
-    /** What a trigger plays, or the word for nothing. */
+    /** What a trigger plays, or the word for nothing; frames written in place are too long for a lore line. */
     static String animation(String text) {
-        return text.isBlank() ? NpcsMessages.get().states().nothing()
-                : Values.of().putText("animation", text).apply(NpcsMessages.get().animations().playing());
+        if (text.isBlank()) return NpcsMessages.get().states().nothing();
+        if (text.toLowerCase(java.util.Locale.ROOT).contains("keys:")) return NpcsMessages.get().animations().customPerformance();
+        return Values.of().putText("animation", text).apply(NpcsMessages.get().animations().playing());
     }
 
     /** A length of time as the windows take it back: {@code 20s}, {@code 0.5s}. */

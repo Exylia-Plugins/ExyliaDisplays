@@ -86,8 +86,8 @@ class NpcConfigFilesTest {
         ConfigFile<NpcFile> file = Configs.define(plugin(), "npcs", NpcFile.class).load();
         StoredNpc guide = new StoredNpc().withLocation(new Place("lobby", 0.5, 64, -3.5, 180, 0))
                 .withSitting(true)
-                .withAnimations(new NpcAnimations("wave", "swing, 250ms, hurt", "nod", Duration.ofSeconds(15),
-                        "bow", 6.0, Duration.ofSeconds(45)));
+                .withAnimations(new NpcAnimations("wave", "swing, 250ms, hurt", "emote:bow", Duration.ofSeconds(15),
+                        "follow:2;keys:0.3 arm_r=150,0,20 | 0.4 stand", 6.0, Duration.ofSeconds(45), 12.5));
         file.update(current -> new NpcFile(Map.of("guide", guide)));
 
         String written = Files.readString(folder.resolve("npcs.yml"));
@@ -98,6 +98,10 @@ class NpcConfigFilesTest {
         StoredNpc read = Configs.define(plugin(), "npcs", NpcFile.class).load().get().npcs().get("guide");
         assertEquals(guide, read);
         assertEquals(Duration.ofSeconds(15), read.animations().idleEvery());
+        assertEquals(12.5, read.animations().performRange());
+        assertTrue(written.contains("perform-range: 12.5"), written);
+        // An edit of one trigger keeps the perform range.
+        assertEquals(12.5, read.withAnimation("idle", "nod").animations().performRange());
     }
 
     @Test

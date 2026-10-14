@@ -4,6 +4,8 @@ import net.exylia.exyliaDisplays.npc.NpcsConfig;
 import net.exylia.lib.hologram.HologramLine;
 import net.exylia.lib.npc.NpcAnimation;
 import net.exylia.lib.npc.NpcAnimations;
+import net.exylia.lib.npc.NpcPerformance;
+import net.exylia.exyliaDisplays.npc.NpcPerformances;
 import net.exylia.lib.config.Configs;
 import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.AfterEach;
@@ -67,13 +69,18 @@ class DefaultsShowcaseTest {
     }
 
     @Test
-    @DisplayName("every NPC preset's label parses and its animations know every word")
+    @DisplayName("every NPC preset's label parses, its moves know every word and its performances play")
     void npcPresets() {
         new NpcsConfig().presets().forEach((name, preset) -> {
             preset.label().forEach(line -> assertParses("npc preset " + name, line));
             NpcAnimations animations = preset.body().animations();
             for (String text : List.of(animations.leftClick(), animations.rightClick(), animations.idle(),
                     animations.greet())) {
+                if (NpcPerformance.isPerformance(text)) {
+                    assertEquals(null, NpcPerformances.problem(text), "npc preset " + name + ": performance " + text);
+                    assertFalse(preset.body().sitting(), "npc preset " + name + " sits, and a sitting NPC never performs");
+                    continue;
+                }
                 List<String> unknown = new ArrayList<>();
                 NpcAnimation.parse(text, unknown::add);
                 assertTrue(unknown.isEmpty(), "npc preset " + name + ": unknown animation words " + unknown);

@@ -108,7 +108,7 @@ public final class NpcSuggestions implements Completion {
             case "animation" -> {
                 if (index == 0) {
                     values.addAll(StoredNpc.TRIGGERS);
-                    values.addAll(List.of("idle-every", "greet-range", "greet-cooldown"));
+                    values.addAll(List.of("idle-every", "greet-range", "greet-cooldown", "perform-range"));
                 } else {
                     values.addAll(animation(npc.animations(), args.get(0).toLowerCase(Locale.ROOT)));
                 }
@@ -117,6 +117,7 @@ public final class NpcSuggestions implements Completion {
                 NpcAnimations a = npc.animations();
                 values.addAll(List.of(a.leftClick(), a.rightClick(), a.idle(), a.greet()));
                 values.addAll(NpcAnimation.presets());
+                values.addAll(NpcPerformances.names());
             }
             default -> {
             }
@@ -124,7 +125,7 @@ public final class NpcSuggestions implements Completion {
         return values;
     }
 
-    /** {@code /npc <name> animation <trigger>}: what it plays now first, then the presets. */
+    /** {@code /npc <name> animation <trigger>}: what it plays now first, then the presets and the performances. */
     static List<String> animation(NpcAnimations a, String trigger) {
         return switch (trigger) {
             case "left-click", "left" -> presets(a.leftClick());
@@ -134,6 +135,7 @@ public final class NpcSuggestions implements Completion {
             case "idle-every" -> List.of(seconds(a.idleEvery()));
             case "greet-cooldown" -> List.of(seconds(a.greetCooldown()));
             case "greet-range" -> List.of(number(a.greetRange()));
+            case "perform-range" -> List.of(number(a.performRange()));
             default -> List.of();
         };
     }
@@ -142,6 +144,7 @@ public final class NpcSuggestions implements Completion {
         List<String> values = new ArrayList<>();
         values.add(current);
         values.addAll(NpcAnimation.presets());
+        values.addAll(NpcPerformances.names());
         values.add("none");
         return values;
     }

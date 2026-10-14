@@ -110,7 +110,8 @@ public record NpcsConfig(
             Map<String, String> equipment,
             @Comment("Where it turns its head, and how close a player has to be.")
             StoredNpc.Look look,
-            @Comment("Gestures on a click, every while, or to greet a player who walks up.")
+            @Comment("Gestures on a click, every while, or to greet a player who walks up: vanilla moves,")
+            @Comment("or one performance (anim:<file>, emote:<id>, keys:<frames>); a sitting NPC never performs.")
             NpcAnimations animations) implements Sparse {
 
         public Body() {
@@ -139,19 +140,36 @@ public record NpcsConfig(
         }
     }
 
+    /**
+     * A bow as a performance: a hand to the chest, a fold at the waist, held, and back up. Frames
+     * written in place, so it needs no animation file and no other plugin.
+     */
+    static final String GREETER_BOW = "follow:1;breathe:1;keys:0.26 plant=1 up=0.01 spine=-4 head=-8 arms=0,0,4 elbows=12 ease=sine_out"
+            + " | 0.10 arm_r=40,-30,6 elbow_r=60,-30 arm_l=-10,0,10 elbow_l=24,-60 ease=sine_in"
+            + " | 0.12 arm_r=34,-26,4 elbow_r=118,-40 arm_l=-24,0,16 elbow_l=60,-90 spine=-2 head=-4 ease=quad_out"
+            + " | 0.14 flip=14 up=-0.01 spine=4 head=0 ease=sine_in"
+            + " | 0.20 flip=32 up=-0.035 spine=15 head=8 ease=cubic_out"
+            + " | 0.40 flip=35 up=-0.045 spine=18 head=10 ease=sine_in_out"
+            + " | 0.16 flip=20 up=-0.025 spine=12 head=6 ease=sine_in"
+            + " | 0.20 flip=0 up=0 spine=-3 head=-6 arm_r=30,-22,4 elbow_r=84,-30 arm_l=-10,0,12 elbow_l=30,-60 ease=cubic_out"
+            + " | 0.12 arm_r=12,-10,6 elbow_r=46,-10 arm_l=0,0,8 elbow_l=18,0 spine=0 ease=sine_in"
+            + " | 0.14 arm_r=4,-4,5 elbow_r=14,0 arm_l=0,0,6 elbow_l=12,0 head=3 spine=1 ease=back_out"
+            + " | 0.22 stand ease=sine_in_out";
+
     private static Map<String, Preset> defaultPresets() {
         Map<String, Preset> presets = new LinkedHashMap<>();
         presets.put("simple", new Preset("Simple name", "", List.of("<size:1.2>{primary}&l%npc%"), List.of()));
-        // Waves at whoever walks up, nods now and then, and talks back when clicked.
+        // Waves at whoever walks up, nods now and then, and bows with its whole body when clicked.
         presets.put("greeter", new Preset("Greeter", "", List.of(
                 "<size:1.3><shine:highlight,pause=4>{primary}&l%npc%",
                 "<opacity:200>{letters_black}Your first friend here"), List.of(
                 "right: [SAY] {letters}Welcome, {highlight}%player_name%{letters}! The portals are behind me.;6s",
                 "left: [SAY] {error}Hey, that hurt!;2s"),
                 new Body(false, "", Map.of(), new StoredNpc.Look(NpcLook.EACH_VIEWER, 10),
-                        new NpcAnimations("flinch", "wave", "nod", Duration.ofSeconds(25), "wave", 5,
-                                Duration.ofMinutes(2)))));
-        // Sits behind the bar, raises a glass now and then and pours one when asked.
+                        new NpcAnimations("flinch", GREETER_BOW, "nod", Duration.ofSeconds(25), "wave", 5,
+                                Duration.ofMinutes(2), NpcAnimations.DEFAULT_PERFORM_RANGE))));
+        // Sits behind the bar, raises a glass now and then and pours one when asked. Vanilla moves
+        // only: a sitting NPC never performs.
         presets.put("bartender", new Preset("Sitting bartender", "", List.of(
                 "<size:1.2>{highlight}&lBARTENDER",
                 "<range:6><typewriter>{letters_black}What can I get you?"), List.of(
@@ -161,6 +179,7 @@ public record NpcsConfig(
                         new NpcAnimations("", "cheer", "swing, 600ms, swing", Duration.ofSeconds(18), "nod", 4,
                                 Duration.ofMinutes(1)))));
         // Armoured and outlined, follows the nearest player with its eyes and bows to visitors.
+        // Vanilla moves: a performance's body does not draw chest, legs and feet armour.
         presets.put("guard", new Preset("Watchful guard", "", List.of(
                 "<size:1.2>{error}&lGUARD",
                 "<opacity:190>{letters_black}Keep the peace"), List.of(

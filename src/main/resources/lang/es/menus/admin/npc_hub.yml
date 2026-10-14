@@ -104,7 +104,8 @@ items:
       - ""
       - "{secondary}Información:"
       - " {letters_black}▎ {letters}Gestos que hace: {highlight}saludar{letters}, {highlight}asentir{letters},"
-      - " {letters_black}▎ {highlight}reverencia{letters}... al hacer clic, por su cuenta"
+      - " {letters_black}▎ {highlight}reverencia{letters}... o una {highlight}actuación {letters}de cuerpo"
+      - " {letters_black}▎ {letters}entero, al hacer clic, por su cuenta"
       - " {letters_black}▎ {letters}o para saludar a quien se acerca."
       - ""
       - "{secondary}Estado:"
@@ -113,13 +114,16 @@ items:
       - " {letters_black}▎ {letters}Por su cuenta {letters_black}» %anim_idle% {letters_black}· {info}%anim_idle_every% ⌚"
       - " {letters_black}▎ {letters}Saludo {letters_black}» %anim_greet% {letters_black}· {info}%anim_greet_range% {letters}bloques"
       - " {letters_black}▎ {letters}Sentado {letters_black}» %sitting%"
+      - " {letters_black}▎ {letters}Actuaciones a menos de {letters_black}» {info}%anim_perform_range% {letters}bloques"
       - ""
       - "{warning}➥ Clic izquierdo {letters_black}» {letters}qué hace al recibir un clic"
       - "{warning}➥ Clic derecho {letters_black}» {letters}por su cuenta y al saludar"
+      - "{warning}➥ Shift + clic izquierdo {letters_black}» {letters}elegir una actuación"
       - ""
     actions:
       - "left: exyliadisplays:npc_animations"
       - "right: exyliadisplays:npc_animations_auto"
+      - "shift_left: exyliadisplays:npc_open_performances"
 
   interactions:
     slot: 23

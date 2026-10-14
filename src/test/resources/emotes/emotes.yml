@@ -1,0 +1,33 @@
+# A slice of ExyliaEmotes' emotes.yml: a one-shot, a loop, a duet and a broken entry.
+categories:
+  social:
+    name: '{primary}&lSOCIAL'
+
+emotes:
+  bow:
+    category: social
+    tier: rare
+    name: '{primary}&lBOW'
+    material: FEATHER
+    effects:
+      - '[RAGDOLL] {victim};intact:0;follow:1;breathe:1;keys:0.26 plant=1 spine=-4 head=-8 | 0.40 flip=35 spine=18 | 0.22 stand ease=sine_in_out'
+      - '[CAMERA] keys:0.00 distance=3.4 yaw=95 pitch=14 height=1.4 | 0.50 distance=3.0 pitch=8 ease=out'
+      - '[DELAY] 0.7'
+      - '[SOUND] ITEM_ARMOR_EQUIP_LEATHER;0.5;1.4'
+  wave:
+    category: social
+    tier: common
+    material: PLAYER_HEAD
+    effects:
+      - '[RAGDOLL] {victim};intact:0;follow:1;loop:true;loop_from:0.2;keys:0.2 arm_r=150,0,20 | 0.3 arm_r=150,0,60 | 0.3 arm_r=150,0,20'
+  handshake:
+    category: social
+    tier: epic
+    kind: duet
+    name: '{primary}&lHANDSHAKE'
+    material: TARGET
+    effects:
+      - '[RAGDOLL] {victim};intact:0;keys:0.3 arm_r=90,0,0 | 0.3 stand'
+  empty:
+    category: social
+    name: '{primary}&lEMPTY'

@@ -104,7 +104,8 @@ items:
       - ""
       - "{secondary}Информация:"
       - " {letters_black}▎ {letters}Жесты: {highlight}помахать{letters}, {highlight}кивнуть{letters},"
-      - " {letters_black}▎ {highlight}поклониться{letters}... по клику, сам по себе"
+      - " {letters_black}▎ {highlight}поклониться{letters}... или {highlight}выступление {letters}всем"
+      - " {letters_black}▎ {letters}телом, по клику, сам по себе"
       - " {letters_black}▎ {letters}или чтобы поприветствовать игрока."
       - ""
       - "{secondary}Статус:"
@@ -113,13 +114,16 @@ items:
       - " {letters_black}▎ {letters}Сам по себе {letters_black}» %anim_idle% {letters_black}· {info}%anim_idle_every% ⌚"
       - " {letters_black}▎ {letters}Приветствие {letters_black}» %anim_greet% {letters_black}· {info}%anim_greet_range% {letters}блоков"
       - " {letters_black}▎ {letters}Сидит {letters_black}» %sitting%"
+      - " {letters_black}▎ {letters}Выступления ближе {letters_black}» {info}%anim_perform_range% {letters}блоков"
       - ""
       - "{warning}➥ ЛКМ {letters_black}» {letters}что играет по клику"
       - "{warning}➥ ПКМ {letters_black}» {letters}сам по себе и приветствие"
+      - "{warning}➥ Shift+ЛКМ {letters_black}» {letters}выбрать выступление"
       - ""
     actions:
       - "left: exyliadisplays:npc_animations"
       - "right: exyliadisplays:npc_animations_auto"
+      - "shift_left: exyliadisplays:npc_open_performances"
 
   interactions:
     slot: 23

@@ -34,7 +34,7 @@ Built on [ExyliaLib](https://github.com/DiGround-s/ExyliaLib): everything is pac
 - [PacketEvents](https://modrinth.com/plugin/packetevents)
 - [ExyliaLib](https://github.com/DiGround-s/ExyliaLib/releases). If it is missing, the plugin downloads the latest release on first start and asks for a restart.
 
-Optional: PlaceholderAPI, whose placeholders work in any line and any action.
+Optional: PlaceholderAPI, whose placeholders work in any line and any action; ExyliaEmotes, whose emotes NPCs can perform.
 
 ## Updates
 
@@ -80,7 +80,7 @@ actions:
 | `[DELAY] 1s` | Waits before the lines after it |
 | `[MESSAGE] text` · `[TITLE] title;subtitle` · `[ACTION_BAR] text` · `[SOUND] NAME;volume;pitch` · `[TOAST] ...` · `[PARTICLE] ...` | Shown only to the player who clicked |
 | `[SAY] text;5s` | NPCs: a speech bubble above the NPC, only for the player who clicked |
-| `[ANIMATE] wave` · `[ANIMATE] swing, 300ms, hurt` | NPCs: plays an animation, a preset or moves (see [NPC animations](#npc-animations)); `[ANIMATE] swing` and `[ANIMATE] hurt` read as before |
+| `[ANIMATE] wave` · `[ANIMATE] swing, 300ms, hurt` · `[ANIMATE] anim:bow` | NPCs: plays an animation, a preset, moves or a [performance](#performances); `[ANIMATE] swing` and `[ANIMATE] hurt` read as before |
 | `[LOOK]` | NPCs: turns to the player who clicked |
 | `[ACTION] namespace:id` | Runs an action another Exylia plugin registered |
 
@@ -246,6 +246,46 @@ npcs:
 
 An animation is a preset (`wave`, `wave-offhand`, `nod`, `bow`, `flinch`, `punch`, `cheer`) or moves joined by commas: `swing`, `offhand`, `hurt`, `crouch`, `stand` and waits such as `250ms`. In game, **ANIMATIONS** in the NPC's editor edits the click animations (left-click) and the idle and greeting ones (right-click); a word nobody knows is reported and nothing is saved.
 
+### Performances
+
+Any of the four triggers can hold one **performance** instead of vanilla moves: a whole-body
+animation, the ragdoll body ExyliaEmotes dances with, wearing the NPC's skin and standing in its
+place. A value with a colon is a performance; one without is moves.
+
+```yaml
+    animations:
+      right-click: 'anim:bow'            # plugins/ExyliaDisplays/animations/bow.json
+      idle: 'emote:salute'               # an ExyliaEmotes emote
+      idle-every: 45s
+      greet: 'follow:1;keys:0.25 arm_r=150,0,30 elbow_r=40 | 0.3 arm_r=150,0,60 | 0.3 stand'
+      perform-range: 24.0                # who is shown it; an idle with nobody this close is skipped
+```
+
+| Written | What it plays |
+|---|---|
+| `anim:<name>` | a Blockbench or Emotecraft animation file from `plugins/ExyliaDisplays/animations` |
+| `emote:<id>` | an emote of ExyliaEmotes (below) |
+| `keys:<frames>` | frames written in place, in `[RAGDOLL]`'s frame format; `[RAGDOLL]` options such as `follow:2;breathe:0;` may come first |
+
+Frames and emote ids are checked before they are saved, by command or window. In game,
+shift-left-click **ANIMATIONS** in the NPC's editor for the **performance picker**: every emote and
+animation file, left-click one to put it on a trigger, right-click to try it on the NPC.
+`/npc <name> play <value>` tries one too and says when it was skipped, and `[ANIMATE] anim:bow`
+performs from a click action.
+
+Limits: one performance at a time per NPC (others are skipped, not queued); a **sitting NPC never
+performs**; players who walk up mid-play see the plain NPC; the body draws the NPC's head item and
+held items but not chest, legs and feet armour; a looping emote is cut after 8 seconds. A body is a
+few dozen display entities per viewer, so prefer vanilla moves for anything a crowd clicks all day.
+
+### ExyliaEmotes
+
+With ExyliaEmotes installed, `emote:<id>` plays any
+of its solo emotes (duets are written for two people and are left out). Its `emotes.yml` is read,
+never changed, when this plugin starts, on `/npcadmin reload`, when ExyliaEmotes is enabled and
+whenever the file is saved; ExyliaEmotes is an optional dependency and nothing else of it is used.
+Without it, `emote:` values are refused with a message saying so.
+
 ## Commands
 
 | Command | Permission | |
@@ -254,7 +294,7 @@ An animation is a preset (`wave`, `wave-offhand`, `nod`, `bow`, `flinch`, `punch
 | `/holoadmin` (`/hologramadmin`) | `exyliadisplays.holograms` | Every hologram, on a screen, plus what is not about one hologram: `create <name> [text] [--template <t>]`, `list`, `near`, `templates`, `templates delete <t>`, `import`, `reload`, `help` |
 | `/holo <name> [setting] ...` (`/hologram`) | `exyliadisplays.holograms` | One hologram: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `adjust` (see below), `rename`, `clone`, `enable`, `disable`, `delete`, `undo` (takes back its last change, up to 10); templates with `savetemplate <t>` and `applytemplate <t>`; lines with `addline`, `setline`, `insertline`, `removeline`, `moveline`, `lines`, and one tag of one line with `line <n> <tag> [value]`; pages with `page add`, `page remove <n>`, `page <n>` (turns it for you), `pageinterval <ticks>`, and any line command on another page as `page <n> addline\|setline\|insertline\|removeline\|moveline\|line ...`; the look with `billboard`, `alignment`, `scale`, `shadow`, `seethrough`, `linewidth`, `spacing`, `opacity`, `background`, `brightness`; who sees it with `viewdistance`, `permission`, `perplayer`, `refresh`, `autoupdate`; which players see it with `visibility all\|manual`, `show\|hide <player\|@a>`, `viewers [clear]`; what it rides with `attach <player\|uuid\|nearest>`, `detach`, `attachoffset <blocks>`; size by distance with `distancescale <on\|off\|start end min max>`; clicks with `click add\|remove\|clear\|width\|cooldown\|hover`, the button look with `click style <button\|none>`, `click color\|hovercolor <colour>`, `click sound [sound]`, and buttons with `button <button> <action>` and `button <button> remove`; presets with `line <n> preset <preset>` |
 | `/npcadmin` (`/npcsadmin`) | `exyliadisplays.npcs` | Every NPC, on a screen, plus what is not about one NPC: `create <name> [skin]`, `list`, `near`, `import`, `reload`, `help` |
-| `/npc <name> [setting] ...` (`/npcs`) | `exyliadisplays.npcs` | One NPC: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `adjust` (see below), `rename`, `clone`, `enable`, `disable`, `delete`, `undo` (takes back its last change, up to 10); the look with `skin`, `texture <value> [signature]`, `pose`, `scale`, `glow`, `equip <slot\|clear> [item]`, `equipment`; `look <mode> [range]`, `viewdistance`, `permission`; the label with `label set\|add\|remove\|clear\|height`, or a whole hologram with `link`, `unlink`; clicks with `action add\|remove\|clear\|list` and `action permission\|cooldown\|denymessage\|cooldownmessage\|faceclicker`; animations with `animation <left-click\|right-click\|idle\|greet> [animation]`, `animation idle-every\|greet-cooldown <time>`, `animation greet-range <blocks>`, `play <animation>` (to everyone watching) and `sit <on\|off>` |
+| `/npc <name> [setting] ...` (`/npcs`) | `exyliadisplays.npcs` | One NPC: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `adjust` (see below), `rename`, `clone`, `enable`, `disable`, `delete`, `undo` (takes back its last change, up to 10); the look with `skin`, `texture <value> [signature]`, `pose`, `scale`, `glow`, `equip <slot\|clear> [item]`, `equipment`; `look <mode> [range]`, `viewdistance`, `permission`; the label with `label set\|add\|remove\|clear\|height`, or a whole hologram with `link`, `unlink`; clicks with `action add\|remove\|clear\|list` and `action permission\|cooldown\|denymessage\|cooldownmessage\|faceclicker`; animations with `animation <left-click\|right-click\|idle\|greet> [animation]`, `animation idle-every\|greet-cooldown <time>`, `animation greet-range\|perform-range <blocks>`, `play <animation>` (to everyone watching; a performance to everyone within its perform-range) and `sit <on\|off>` |
 
 `exyliadisplays.admin` includes both module permissions; `exyliadisplays.*` grants everything. If Citizens is installed too, its `/npc` and this one compete for the name; use `/npcs <name>` (`/npcadmin` does not clash).
 
