@@ -72,8 +72,26 @@ items:
       - "left: exyliadisplays:holo_appearance"
       - "right: exyliadisplays:holo_appearance_light"
 
-  visibility:
+  distance:
     slot: 21
+    material: TARGET
+    name: "{primary}&lTAMAÑO POR DISTANCIA"
+    lore:
+      - ""
+      - "{secondary}Información:"
+      - " {letters_black}▎ {letters}Crece con la distancia de cada jugador,"
+      - " {letters_black}▎ {letters}para seguir {highlight}legible {letters}desde lejos."
+      - ""
+      - "{secondary}Estado:"
+      - " {letters_black}▎ {letters}Crece {letters_black}» %holo_distance%"
+      - ""
+      - "{warning}➥ Clic para editar"
+      - ""
+    actions:
+      - "exyliadisplays:holo_distance_scale"
+
+  visibility:
+    slot: 22
     material: ENDER_EYE
     name: "{primary}&lVISIBILIDAD"
     lore:
@@ -103,19 +121,25 @@ items:
     lore:
       - ""
       - "{secondary}Información:"
-      - " {letters_black}▎ {letters}Qué hace un clic: enviar a un servidor,"
-      - " {letters_black}▎ {letters}ejecutar comandos, mostrar mensajes,"
-      - " {letters_black}▎ {letters}sonar, con {highlight}izquierdo {letters}y {highlight}derecho {letters}aparte."
-      - " {letters_black}▎ {letters}Crece un poco al mirarlo."
+      - " {letters_black}▎ {letters}Qué hace un clic, cómo se ve el {highlight}panel"
+      - " {letters_black}▎ {highlight}de botón {letters}y los {highlight}botones {letters}que ejecutan"
+      - " {letters_black}▎ {letters}las líneas con {highlight}<button:nombre>{letters}."
       - ""
       - "{secondary}Estado:"
       - " {letters_black}▎ {letters}Al clic {letters_black}» %click%"
+      - " {letters_black}▎ {letters}Aspecto {letters_black}» %holo_click_style%"
+      - " {letters_black}▎ {letters}Botones {letters_black}» %holo_buttons%"
       - " {letters_black}▎ {letters}Crece a {letters_black}» {info}%holo_hover%x"
       - ""
-      - "{warning}➥ Clic para editar"
+      - "{warning}➥ Clic izquierdo {letters_black}» {letters}acciones"
+      - "{warning}➥ Clic derecho {letters_black}» {letters}aspecto y sonido"
+      - "{warning}➥ Shift-clic {letters_black}» {letters}botones"
       - ""
     actions:
-      - "exyliadisplays:holo_click"
+      - "left: exyliadisplays:holo_click"
+      - "right: exyliadisplays:holo_click_look"
+      - "shift_left: exyliadisplays:holo_buttons"
+      - "shift_right: exyliadisplays:holo_buttons"
 
   location:
     slot: 24

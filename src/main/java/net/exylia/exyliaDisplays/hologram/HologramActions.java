@@ -82,6 +82,9 @@ public final class HologramActions {
         hub("template_apply", HologramDialogs::applyTemplate);
         hub("visibility", HologramDialogs::visibility);
         hub("click", HologramDialogs::click);
+        hub("click_look", HologramDialogs::clickLook);
+        hub("buttons", HologramDialogs::buttons);
+        hub("distance_scale", HologramDialogs::distanceScale);
         hub("location", HologramDialogs::location);
         hub("move_here", (player, name) -> {
             Position here = Position.facing(player.getLocation());

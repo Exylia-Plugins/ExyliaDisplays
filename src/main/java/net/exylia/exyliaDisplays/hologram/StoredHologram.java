@@ -42,9 +42,14 @@ public record StoredHologram(
 
         @Comment("The lines, top first. Colours like {primary}, MiniMessage and %placeholders% work.")
         @Comment("Start a line with tags to style it alone, e.g. '<size:2><shine>{accent}&lTHE ARENA':")
-        @Comment("  look: <size:2> <opacity:160> <background:#66000000> <shadow:false>")
+        @Comment("  look: <size:2> <opacity:160> <background:#66000000> <shadow:false> <gap:0.3>")
+        @Comment("  layout: <align:left> <width:120> <billboard:fixed> <seethrough> <brightness:15> <autoscale> <autoscale:4,24,3>")
         @Comment("  models: <item:DIAMOND> <block:BEACON> <glow> <glow:#8a51c4>")
-        @Comment("  motion: <spin> <bob> <pulse> <typewriter> <shine> <flow>")
+        @Comment("  movement: <spin> <sway:15,period=4> <bob:0.08,period=3> <pulse:0.06,period=2>")
+        @Comment("  colour: <shine> <shine:highlight,speed=10,pause=2.5,width=3> <flow> <rainbow:6>")
+        @Comment("  text: <typewriter> <scramble:20> <marquee:24,speed=6> <fade:3> <blink:1>")
+        @Comment("  frames: <frames:2>{letters}First||{letters}Second (each shown 2 seconds)")
+        @Comment("  click: <button:join> runs click.buttons.join when this line is clicked")
         @Comment("  who sees it: <range:8> <perm:vip.rank> <perm:!vip.rank> <if:\"%player_level% >= 10\">")
         @Comment("  heads: <head:Notch> <head:<uuid, base64 texture or textures.minecraft.net url>>")
         List<String> lines,
@@ -176,7 +181,7 @@ public record StoredHologram(
         if (look.billboard().equalsIgnoreCase("CENTER")) {
             look = new HologramConfig.Properties("FIXED", look.alignment(), look.scaleX(), look.scaleY(), look.scaleZ(),
                     look.shadow(), look.seeThrough(), look.lineWidth(), look.lineSpacing(), look.textOpacity(),
-                    look.defaultBackground(), look.backgroundColor(), look.brightness(), look.glowing());
+                    look.defaultBackground(), look.backgroundColor(), look.brightness(), look.glowing(), look.distanceScale());
         }
         return withLocation(location.withFacing(yaw, pitch)).withAppearance(look);
     }
@@ -273,8 +278,18 @@ public record StoredHologram(
             return withPages(all);
         }
         HologramConfig.Page second = all.remove(0);
-        return withLines(second.lines()).withPages(all).withClick(new HologramConfig.Click(
-                second.click(), click.width(), click.cooldown(), click.hoverScale()));
+        return withLines(second.lines()).withPages(all).withClick(
+                clickWith(click, second.click(), click.width(), click.cooldown(), click.hoverScale()));
+    }
+
+    /**
+     * A click section with other commands, width, cooldown and hover growth, keeping its button
+     * look, sound and buttons: the four-argument constructor would reset them.
+     */
+    public static HologramConfig.Click clickWith(HologramConfig.Click click, List<String> commands, double width,
+                                                 long cooldown, double hoverScale) {
+        return new HologramConfig.Click(commands, width, cooldown, hoverScale, click.style(), click.color(),
+                click.hoverColor(), click.sound(), click.buttons());
     }
 
     // ------------------------------------------------------------------

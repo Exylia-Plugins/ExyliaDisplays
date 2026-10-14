@@ -72,8 +72,26 @@ items:
       - "left: exyliadisplays:holo_appearance"
       - "right: exyliadisplays:holo_appearance_light"
 
-  visibility:
+  distance:
     slot: 21
+    material: TARGET
+    name: "{primary}&lРАЗМЕР ПО ДИСТАНЦИИ"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Растёт с расстоянием до игрока,"
+      - " {letters_black}▎ {letters}чтобы оставаться {highlight}читаемой {letters}издалека."
+      - ""
+      - "{secondary}Состояние:"
+      - " {letters_black}▎ {letters}Рост {letters_black}» %holo_distance%"
+      - ""
+      - "{warning}➥ Нажмите, чтобы изменить"
+      - ""
+    actions:
+      - "exyliadisplays:holo_distance_scale"
+
+  visibility:
+    slot: 22
     material: ENDER_EYE
     name: "{primary}&lВИДИМОСТЬ"
     lore:
@@ -103,19 +121,25 @@ items:
     lore:
       - ""
       - "{secondary}Информация:"
-      - " {letters_black}▎ {letters}Что делает клик: отправить на сервер,"
-      - " {letters_black}▎ {letters}выполнить команды, показать текст,"
-      - " {letters_black}▎ {letters}звук; {highlight}ЛКМ {letters}и {highlight}ПКМ {letters}отдельно."
-      - " {letters_black}▎ {letters}Слегка растёт при наведении."
+      - " {letters_black}▎ {letters}Что делает клик, как выглядит {highlight}панель"
+      - " {letters_black}▎ {letters}и какие {highlight}кнопки {letters}запускают строки"
+      - " {letters_black}▎ {letters}с тегом {highlight}<button:имя>{letters}."
       - ""
-      - "{secondary}Статус:"
-      - " {letters_black}▎ {letters}По клику {letters_black}» %click%"
-      - " {letters_black}▎ {letters}Растёт до {letters_black}» {info}%holo_hover%x"
+      - "{secondary}Состояние:"
+      - " {letters_black}▎ {letters}При клике {letters_black}» %click%"
+      - " {letters_black}▎ {letters}Вид {letters_black}» %holo_click_style%"
+      - " {letters_black}▎ {letters}Кнопки {letters_black}» %holo_buttons%"
+      - " {letters_black}▎ {letters}Увеличение {letters_black}» {info}%holo_hover%x"
       - ""
-      - "{warning}➥ Нажми, чтобы изменить"
+      - "{warning}➥ ЛКМ {letters_black}» {letters}действия"
+      - "{warning}➥ ПКМ {letters_black}» {letters}вид и звук"
+      - "{warning}➥ Shift-клик {letters_black}» {letters}кнопки"
       - ""
     actions:
-      - "exyliadisplays:holo_click"
+      - "left: exyliadisplays:holo_click"
+      - "right: exyliadisplays:holo_click_look"
+      - "shift_left: exyliadisplays:holo_buttons"
+      - "shift_right: exyliadisplays:holo_buttons"
 
   location:
     slot: 24

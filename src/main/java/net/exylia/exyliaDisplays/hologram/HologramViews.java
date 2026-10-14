@@ -86,6 +86,10 @@ public final class HologramViews {
         context.put("holo_interval", hologram.refresh().updateInterval());
         context.put("holo_click_width", number(click.width()));
         context.put("holo_hover", number(click.hoverScale()));
+        context.put("holo_click_style", click.buttonStyle() ? states.styleButton() : states.styleNone());
+        context.put("holo_buttons", click.buttons().isEmpty() ? states.noButtons()
+                : Values.of("count", click.buttons().size()).apply(states.buttonCount()));
+        context.put("holo_distance", distanceScale(look.distanceScale()));
         context.put("holo_pages", hologram.pageCount());
         context.put("holo_page_interval", hologram.pageInterval());
         // Live while the screen is open: an edit from a window or a command changes them.
@@ -227,7 +231,9 @@ public final class HologramViews {
         if (model != null && Material.matchMaterial(model) != null) return model;
         if (line.text().isBlank()) return "LIGHT_GRAY_STAINED_GLASS_PANE";
         if (line.typewriter() != null || line.spin() != null || line.bob() != null
-                || line.pulse() != null || line.shine() != null || line.flow() != null) return "AMETHYST_SHARD";
+                || line.pulse() != null || line.shine() != null || line.flow() != null || line.sway() != null
+                || line.rainbow() != null || line.frames() != null || line.marquee() != null || line.fade() != null
+                || line.blink() != null || line.scramble() != null) return "AMETHYST_SHARD";
         if (line.range() != null || line.permission() != null || line.condition() != null) return "ENDER_EYE";
         return "PAPER";
     }
@@ -260,6 +266,14 @@ public final class HologramViews {
         HologramsMessages.States states = HologramsMessages.get().states();
         if (!hologram.enabled()) return states.disabled();
         return HologramModule.get().renderer().isWaiting(name) ? states.waiting() : states.enabled();
+    }
+
+    /** Whether it grows with distance, and along which curve, as the hub and messages show it. */
+    static String distanceScale(HologramConfig.DistanceScale curve) {
+        HologramsMessages.States states = HologramsMessages.get().states();
+        if (!curve.enabled()) return states.distanceOff();
+        return Values.of().put("start", number(curve.start())).put("end", number(curve.end()))
+                .put("min", number(curve.min())).put("max", number(curve.max())).apply(states.distanceOn());
     }
 
     /** Which way it faces: turn, then tilt. */

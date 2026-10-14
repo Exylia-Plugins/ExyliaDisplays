@@ -4,6 +4,8 @@ import net.exylia.exyliaDisplays.ExyliaDisplays;
 import net.exylia.exyliaDisplays.Permissions;
 import net.exylia.exyliaDisplays.common.store.Place;
 import net.exylia.exyliaDisplays.hologram.HologramModule;
+import net.exylia.lib.npc.NpcAnimation;
+import net.exylia.lib.npc.NpcAnimations;
 import net.exylia.lib.npc.NpcLook;
 import net.exylia.lib.npc.NpcPose;
 import net.exylia.lib.text.Values;
@@ -488,6 +490,96 @@ public final class NpcCommand {
     }
 
     // ------------------------------------------------------------------
+    // Animations
+    // ------------------------------------------------------------------
+
+    /**
+     * What a trigger plays: {@code left-click}, {@code right-click}, {@code idle} or {@code greet}
+     * take an animation (no text or {@code none} clears it); {@code idle-every} and
+     * {@code greet-cooldown} a length of time; {@code greet-range} blocks.
+     */
+    @Subcommand("<name> animation")
+    public void animation(CommandSender sender, @SuggestWith(Names.class) String name,
+                          @SuggestWith(Triggers.class) String trigger, @Optional @SuggestWith(Presets.class) String value) {
+        String text = value == null || value.isBlank() || value.trim().equalsIgnoreCase("none")
+                || value.trim().equalsIgnoreCase("reset") ? "" : value.trim();
+        String key = trigger.trim().toLowerCase(Locale.ROOT);
+        switch (key) {
+            case "idle-every", "greet-cooldown" -> {
+                long millis = NpcDialogs.cooldown(text);
+                if (text.isEmpty() || millis < 0) {
+                    invalid(sender, "animation " + key, text, "500ms, 20s, 1m, 0");
+                    return;
+                }
+                java.time.Duration time = java.time.Duration.ofMillis(millis);
+                property(sender, name, "animation " + key, NpcViews.seconds(time), current -> {
+                    NpcAnimations a = current.animations();
+                    return current.withAnimations(key.equals("idle-every")
+                            ? new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), time, a.greet(), a.greetRange(), a.greetCooldown())
+                            : new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), a.idleEvery(), a.greet(), a.greetRange(), time));
+                });
+            }
+            case "greet-range" -> {
+                double blocks;
+                try {
+                    blocks = Double.parseDouble(text);
+                } catch (NumberFormatException typo) {
+                    blocks = -1;
+                }
+                if (blocks < 0) {
+                    invalid(sender, "animation greet-range", text, "0+");
+                    return;
+                }
+                double range = blocks;
+                property(sender, name, "animation greet-range", NpcViews.number(range), current -> {
+                    NpcAnimations a = current.animations();
+                    return current.withAnimations(new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(),
+                            a.idleEvery(), a.greet(), range, a.greetCooldown()));
+                });
+            }
+            default -> {
+                if (new StoredNpc().withAnimation(key, text) == null) {
+                    invalid(sender, "animation", trigger, String.join(", ", StoredNpc.TRIGGERS)
+                            + ", idle-every, greet-range, greet-cooldown");
+                    return;
+                }
+                if (!NpcDialogs.readable(sender, text)) return;
+                property(sender, name, "animation " + key, text.isEmpty() ? "-" : text,
+                        current -> current.withAnimation(key, text));
+            }
+        }
+    }
+
+    /** Plays an animation now, for everyone who sees it, to try it out. */
+    @Subcommand("<name> play")
+    public void play(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(Presets.class) String animation) {
+        if (!exists(sender, name) || !NpcDialogs.readable(sender, animation)) return;
+        var live = NpcModule.get().renderer().live(name);
+        if (live.isEmpty()) {
+            send(sender, messages().animations().notShown(), Values.of().putText("name", name));
+            return;
+        }
+        live.get().play(NpcAnimation.parse(animation));
+        send(sender, messages().animations().played(), Values.of().putText("name", name).putText("animation", animation.trim()));
+    }
+
+    /** Sits on an invisible seat, hips at its location, or stands. */
+    @Subcommand("<name> sit")
+    public void sit(CommandSender sender, @SuggestWith(Names.class) String name,
+                    @revxrsal.commands.annotation.Suggest({"on", "off"}) String state) {
+        Boolean sitting = switch (state.trim().toLowerCase(Locale.ROOT)) {
+            case "on", "true", "yes" -> true;
+            case "off", "false", "no" -> false;
+            default -> null;
+        };
+        if (sitting == null) {
+            invalid(sender, "sitting", state, "on, off");
+            return;
+        }
+        property(sender, name, "sitting", sitting ? "on" : "off", current -> current.withSitting(sitting));
+    }
+
+    // ------------------------------------------------------------------
 
     private static void interactions(CommandSender sender, String name, String property, String value,
                                      UnaryOperator<StoredNpc.Interactions> change) {
@@ -563,6 +655,26 @@ public final class NpcCommand {
             List<String> slots = new ArrayList<>(StoredNpc.SLOTS);
             slots.add("clear");
             return slots;
+        }
+    }
+
+    /** The animation triggers and settings. */
+    public static final class Triggers implements SuggestionProvider<BukkitCommandActor> {
+        @Override
+        public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
+            List<String> triggers = new ArrayList<>(StoredNpc.TRIGGERS);
+            triggers.addAll(List.of("idle-every", "greet-range", "greet-cooldown"));
+            return triggers;
+        }
+    }
+
+    /** The animation presets, and {@code none}. */
+    public static final class Presets implements SuggestionProvider<BukkitCommandActor> {
+        @Override
+        public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
+            List<String> presets = new ArrayList<>(NpcAnimation.presets());
+            presets.add("none");
+            return presets;
         }
     }
 

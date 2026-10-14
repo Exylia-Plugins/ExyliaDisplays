@@ -13,6 +13,7 @@ import java.util.Map;
  * @param defaultViewDistance the view distance of a new hologram
  * @param nearRadius          the radius /holoadmin near uses when none is given
  * @param presets             what a new hologram can start from
+ * @param linePresets         tags a line can take at once, by name
  */
 public record HologramsConfig(
         @Comment("How far above your feet a hologram you create stands, in blocks.")
@@ -26,14 +27,20 @@ public record HologramsConfig(
 
         @Comment("What a hologram created from the menu can start from. Add your own:")
         @Comment("'name' is shown in the list, and %hologram% in a line becomes the new hologram's name.")
-        Map<String, Preset> presets) {
+        Map<String, Preset> presets,
+
+        @Comment("Line presets: several tags put on a line at once, from its style window or with")
+        @Comment("/holo <name> line <n> preset <preset>. The preset's tags replace the line's own of the same")
+        @Comment("kind; its text and its other tags stay. Add your own: name: '<tag><tag>...'")
+        Map<String, String> linePresets) {
 
     public HologramsConfig() {
-        this(2.0, 48.0, 20.0, defaultPresets());
+        this(2.0, 48.0, 20.0, defaultPresets(), defaultLinePresets());
     }
 
     public HologramsConfig {
         if (presets == null) presets = Map.of();
+        if (linePresets == null) linePresets = Map.of();
         if (spawnHeight < 0) spawnHeight = 0;
         if (defaultViewDistance <= 0) defaultViewDistance = 48.0;
         if (nearRadius <= 0) nearRadius = 20.0;
@@ -85,6 +92,18 @@ public record HologramsConfig(
                 "{letters}to the server",
                 "<size:0.5> ",
                 "<range:12><typewriter>{letters_black}Read the rules at the board behind you")));
+        return presets;
+    }
+
+    private static Map<String, String> defaultLinePresets() {
+        Map<String, String> presets = new LinkedHashMap<>();
+        presets.put("title", "<size:1.6><gap:0.15><shine>");
+        presets.put("subtitle", "<size:0.9><opacity:191>");
+        presets.put("highlight", "<rainbow>");
+        presets.put("subtle", "<opacity:200><fade:4>");
+        presets.put("ticker", "<marquee:28,speed=5>");
+        // A line of its own to click: it runs click.buttons.main.
+        presets.put("button", "<gap:0.12><size:1.15><button:main>");
         return presets;
     }
 

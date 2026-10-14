@@ -69,6 +69,8 @@ public final class NpcActions {
         hub("link", NpcDialogs::link);
         hub("interactions", (player, name) -> NpcDialogs.interactions(player, name, false));
         hub("interactions_rules", (player, name) -> NpcDialogs.interactions(player, name, true));
+        hub("animations", (player, name) -> NpcDialogs.animations(player, name, false));
+        hub("animations_auto", (player, name) -> NpcDialogs.animations(player, name, true));
         hub("visibility", NpcDialogs::visibility);
         hub("location", NpcDialogs::location);
         hub("move_here", (player, name) -> {

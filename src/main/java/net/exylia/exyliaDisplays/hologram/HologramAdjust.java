@@ -176,7 +176,7 @@ public final class HologramAdjust {
         return base.withLocation(work.location()).withAppearance(new HologramConfig.Properties(
                 w.billboard(), b.alignment(), w.scaleX(), w.scaleY(), w.scaleZ(), b.shadow(), b.seeThrough(),
                 b.lineWidth(), w.lineSpacing(), b.textOpacity(), b.defaultBackground(), b.backgroundColor(),
-                b.brightness(), b.glowing()));
+                b.brightness(), b.glowing(), b.distanceScale()));
     }
 
     private static StoredHologram moved(StoredHologram hologram, double dx, double dy, double dz) {
@@ -190,14 +190,14 @@ public final class HologramAdjust {
         return hologram.withAppearance(new HologramConfig.Properties(p.billboard(), p.alignment(),
                 p.scaleX() * factor, scale, p.scaleZ() * factor, p.shadow(), p.seeThrough(), p.lineWidth(),
                 p.lineSpacing(), p.textOpacity(), p.defaultBackground(), p.backgroundColor(), p.brightness(),
-                p.glowing()));
+                p.glowing(), p.distanceScale()));
     }
 
     private static StoredHologram spaced(StoredHologram hologram, double spacing) {
         HologramConfig.Properties p = hologram.appearance();
         return hologram.withAppearance(new HologramConfig.Properties(p.billboard(), p.alignment(), p.scaleX(),
                 p.scaleY(), p.scaleZ(), p.shadow(), p.seeThrough(), p.lineWidth(), spacing, p.textOpacity(),
-                p.defaultBackground(), p.backgroundColor(), p.brightness(), p.glowing()));
+                p.defaultBackground(), p.backgroundColor(), p.brightness(), p.glowing(), p.distanceScale()));
     }
 
     /** A pinpoint at the anchor, for the adjusting player only, so the exact spot is visible. */

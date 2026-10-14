@@ -8,6 +8,8 @@ import net.exylia.lib.effect.Ticks;
 import net.exylia.lib.input.FormField;
 import net.exylia.lib.input.FormKey;
 import net.exylia.lib.item.Source;
+import net.exylia.lib.npc.NpcAnimation;
+import net.exylia.lib.npc.NpcAnimations;
 import net.exylia.lib.npc.NpcLook;
 import net.exylia.lib.npc.NpcPose;
 import net.exylia.lib.text.Values;
@@ -65,6 +67,14 @@ public final class NpcDialogs {
     private static final FormKey<BigDecimal> Z = FormKey.decimal("z");
     private static final FormKey<BigDecimal> YAW = FormKey.decimal("yaw");
     private static final FormKey<BigDecimal> PITCH = FormKey.decimal("pitch");
+    private static final FormKey<Boolean> SITTING = FormKey.flag("sitting");
+    private static final FormKey<String> LEFT_CLICK = FormKey.text("left_click");
+    private static final FormKey<String> RIGHT_CLICK = FormKey.text("right_click");
+    private static final FormKey<String> IDLE = FormKey.text("idle");
+    private static final FormKey<String> IDLE_EVERY = FormKey.text("idle_every");
+    private static final FormKey<String> GREET = FormKey.text("greet");
+    private static final FormKey<BigDecimal> GREET_RANGE = FormKey.decimal("greet_range");
+    private static final FormKey<String> GREET_COOLDOWN = FormKey.text("greet_cooldown");
 
     private NpcDialogs() {
         throw new AssertionError("No instances.");
@@ -174,8 +184,10 @@ public final class NpcDialogs {
                     .decimal(SCALE, words.scaleLabel(), BigDecimal.valueOf(npc.scale()))
                     .field(GLOW, FormField.text(GLOW, words.glowLabel()).defaultValue(npc.glow()).optional()
                             .validate(glow -> glow.isBlank() || StoredNpc.isColour(glow), "#RRGGBB"))
-                    .hint(words.glowHint());
+                    .hint(words.glowHint())
+                    .flag(SITTING, messages().animations().sittingLabel(), npc.sitting());
             answer(player, form.ask(values -> values), back, values -> save(player, name, current -> current
+                    .withSitting(values.getBoolean(SITTING))
                     .withPose(NpcPose.of(values.getOr(POSE, "STANDING")))
                     .withScale(positive(values.getDecimal(SCALE), current.scale()))
                     .withGlow(values.getOr(GLOW, "").trim()), back));
@@ -270,6 +282,84 @@ public final class NpcDialogs {
                         values.getOr(DENY, "").trim(),
                         values.getOr(WAIT, "").trim(),
                         values.getBoolean(FACE))), back));
+    }
+
+    /**
+     * What it plays: on a click or, with {@code auto}, on its own and to greet a player. Two
+     * windows, so each fits on screen. Words nobody knows are reported and nothing is saved.
+     */
+    public static void animations(Player player, String name, boolean auto) {
+        StoredNpc npc = NpcModule.get().store().get(name).orElse(null);
+        if (npc == null) return;
+        NpcsMessages.Animations words = messages().animations();
+        NpcAnimations now = npc.animations();
+        String hint = Values.of("presets", String.join(", ", NpcAnimation.presets())).apply(words.animationHint());
+        Runnable back = () -> NpcViews.openHub(player, name);
+        Runnable again = () -> animations(player, name, auto);
+        if (!auto) {
+            EditorForm form = form(player, words.clickTitle());
+            animationBox(form, LEFT_CLICK, words.leftClickLabel(), now.leftClick());
+            animationBox(form, RIGHT_CLICK, words.rightClickLabel(), now.rightClick()).hint(hint);
+            answer(player, form.ask(values -> values), back, values -> {
+                String left = values.getOr(LEFT_CLICK, "").trim();
+                String right = values.getOr(RIGHT_CLICK, "").trim();
+                if (!readable(player, left, right)) {
+                    again.run();
+                    return;
+                }
+                save(player, name, current -> current.withAnimation("left-click", left).withAnimation("right-click", right), back);
+            });
+            return;
+        }
+        EditorForm form = form(player, words.autoTitle());
+        animationBox(form, IDLE, words.idleLabel(), now.idle());
+        form.field(IDLE_EVERY, time(IDLE_EVERY, words.idleEveryLabel(), now.idleEvery()));
+        animationBox(form, GREET, words.greetLabel(), now.greet()).hint(hint)
+                .decimal(GREET_RANGE, words.greetRangeLabel(), BigDecimal.valueOf(now.greetRange()))
+                .field(GREET_COOLDOWN, time(GREET_COOLDOWN, words.greetCooldownLabel(), now.greetCooldown()))
+                .hint(words.timeHint());
+        answer(player, form.ask(values -> values), back, values -> {
+            String idle = values.getOr(IDLE, "").trim();
+            String greet = values.getOr(GREET, "").trim();
+            if (!readable(player, idle, greet)) {
+                again.run();
+                return;
+            }
+            save(player, name, current -> {
+                NpcAnimations a = current.animations();
+                return current.withAnimations(new NpcAnimations(a.leftClick(), a.rightClick(), idle,
+                        java.time.Duration.ofMillis(Math.max(0, cooldown(values.getOr(IDLE_EVERY, "0")))), greet,
+                        Math.max(0, values.getDecimal(GREET_RANGE).doubleValue()),
+                        java.time.Duration.ofMillis(Math.max(0, cooldown(values.getOr(GREET_COOLDOWN, "0"))))));
+            }, back);
+        });
+    }
+
+    private static EditorForm animationBox(EditorForm form, FormKey<String> key, String label, String current) {
+        return form.field(key, FormField.text(key, label).defaultValue(current).optional());
+    }
+
+    private static FormField<String> time(FormKey<String> key, String label, java.time.Duration current) {
+        return FormField.text(key, label).defaultValue(NpcViews.seconds(current))
+                .validate(value -> cooldown(value) >= 0, "500ms, 20s, 1m");
+    }
+
+    /** The words of an animation nobody knows; empty when every word reads. */
+    static List<String> unknownWords(String text) {
+        List<String> unknown = new ArrayList<>();
+        NpcAnimation.parse(text, unknown::add);
+        return unknown;
+    }
+
+    /** Whether every word of an animation reads, telling the sender the ones that do not. */
+    static boolean readable(CommandSender sender, String... texts) {
+        List<String> unknown = new ArrayList<>();
+        for (String text : texts) unknown.addAll(unknownWords(text));
+        if (unknown.isEmpty()) return true;
+        plugin().getMessages().send(sender, messages().animations().unknownWords(), Values.of()
+                .putText("words", String.join(", ", unknown))
+                .putText("presets", String.join(", ", NpcAnimation.presets())));
+        return false;
     }
 
     /** Puts the NPC back as it was before its last change, telling the sender how it went. */

@@ -49,7 +49,7 @@ items:
       - " {letters_black}▎ {letters}Glow {letters_black}» %glow%"
       - ""
       - "{warning}➥ Left-click {letters_black}» {letters}skin"
-      - "{warning}➥ Right-click {letters_black}» {letters}pose, size and outline"
+      - "{warning}➥ Right-click {letters_black}» {letters}pose, size, outline and sitting"
       - ""
     actions:
       - "left: exyliadisplays:npc_appearance"
@@ -95,6 +95,31 @@ items:
     actions:
       - "left: exyliadisplays:npc_label"
       - "right: exyliadisplays:npc_link"
+
+  animations:
+    slot: 22
+    material: FEATHER
+    name: "{primary}&lANIMATIONS"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}Gestures it plays: {highlight}wave{letters}, {highlight}nod{letters},"
+      - " {letters_black}▎ {highlight}bow{letters}... on a click, on its own, or"
+      - " {letters_black}▎ {letters}to greet a player who walks up."
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}Left-click {letters_black}» %anim_left%"
+      - " {letters_black}▎ {letters}Right-click {letters_black}» %anim_right%"
+      - " {letters_black}▎ {letters}On its own {letters_black}» %anim_idle% {letters_black}· {info}%anim_idle_every% ⌚"
+      - " {letters_black}▎ {letters}Greet {letters_black}» %anim_greet% {letters_black}· {info}%anim_greet_range% {letters}blocks"
+      - " {letters_black}▎ {letters}Sitting {letters_black}» %sitting%"
+      - ""
+      - "{warning}➥ Left-click {letters_black}» {letters}what a click plays"
+      - "{warning}➥ Right-click {letters_black}» {letters}on its own, and to greet"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_animations"
+      - "right: exyliadisplays:npc_animations_auto"
 
   interactions:
     slot: 23

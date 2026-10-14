@@ -72,8 +72,26 @@ items:
       - "left: exyliadisplays:holo_appearance"
       - "right: exyliadisplays:holo_appearance_light"
 
-  visibility:
+  distance:
     slot: 21
+    material: TARGET
+    name: "{primary}&lSIZE BY DISTANCE"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}Grows with each viewer's distance,"
+      - " {letters_black}▎ {letters}so it stays {highlight}readable {letters}from far away."
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}Grows {letters_black}» %holo_distance%"
+      - ""
+      - "{warning}➥ Click to edit"
+      - ""
+    actions:
+      - "exyliadisplays:holo_distance_scale"
+
+  visibility:
+    slot: 22
     material: ENDER_EYE
     name: "{primary}&lVISIBILITY"
     lore:
@@ -103,19 +121,25 @@ items:
     lore:
       - ""
       - "{secondary}Information:"
-      - " {letters_black}▎ {letters}What a click does: send to a server,"
-      - " {letters_black}▎ {letters}run commands, show messages, play"
-      - " {letters_black}▎ {letters}sounds, with {highlight}left {letters}and {highlight}right {letters}apart."
-      - " {letters_black}▎ {letters}It grows a little while looked at."
+      - " {letters_black}▎ {letters}What a click does, how the {highlight}button"
+      - " {letters_black}▎ {highlight}panel {letters}looks, and the {highlight}buttons {letters}single"
+      - " {letters_black}▎ {letters}lines run with {highlight}<button:name>{letters}."
       - ""
       - "{secondary}Status:"
       - " {letters_black}▎ {letters}On click {letters_black}» %click%"
+      - " {letters_black}▎ {letters}Look {letters_black}» %holo_click_style%"
+      - " {letters_black}▎ {letters}Buttons {letters_black}» %holo_buttons%"
       - " {letters_black}▎ {letters}Grows to {letters_black}» {info}%holo_hover%x"
       - ""
-      - "{warning}➥ Click to edit"
+      - "{warning}➥ Left-click {letters_black}» {letters}actions"
+      - "{warning}➥ Right-click {letters_black}» {letters}look and sound"
+      - "{warning}➥ Shift-click {letters_black}» {letters}buttons"
       - ""
     actions:
-      - "exyliadisplays:holo_click"
+      - "left: exyliadisplays:holo_click"
+      - "right: exyliadisplays:holo_click_look"
+      - "shift_left: exyliadisplays:holo_buttons"
+      - "shift_right: exyliadisplays:holo_buttons"
 
   location:
     slot: 24

@@ -4,6 +4,7 @@ import net.exylia.exyliaDisplays.common.store.Place;
 import net.exylia.lib.config.Comment;
 import net.exylia.lib.config.Time;
 import net.exylia.lib.item.Items;
+import net.exylia.lib.npc.NpcAnimations;
 import net.exylia.lib.npc.NpcLook;
 import net.exylia.lib.npc.NpcPose;
 import net.exylia.lib.npc.NpcSkin;
@@ -37,6 +38,8 @@ import java.util.regex.Pattern;
  * @param label          the lines floating above its head
  * @param linkedHologram a hologram of holograms.yml kept above its head
  * @param interactions   what clicking it does
+ * @param sitting        whether it sits on an invisible seat
+ * @param animations     the gestures it plays on a click, on its own, or to greet a player
  */
 public record StoredNpc(
         @Comment("Set to false to keep it in this file without showing it.")
@@ -78,7 +81,14 @@ public record StoredNpc(
         String linkedHologram,
 
         @Comment("What clicking it does, and who may.")
-        Interactions interactions) {
+        Interactions interactions,
+
+        @Comment("Sit on an invisible seat, hips at its location: place it on a stair or a block's top.")
+        boolean sitting,
+
+        @Comment("Gestures it plays: on a left or right click, on its own every while, or to greet a player.")
+        @Comment("/npc <name> animation <trigger> <text> sets one; /npc <name> play <animation> tries it.")
+        NpcAnimations animations) {
 
     /** Slot names as the file writes them, in the order screens show them. */
     public static final List<String> SLOTS = List.of("head", "chest", "legs", "feet", "hand", "off_hand");
@@ -87,7 +97,7 @@ public record StoredNpc(
 
     public StoredNpc() {
         this(true, new Place(), new Skin(), NpcPose.STANDING, 1.0, "", Map.of(), new Look(), 48.0, "",
-                new Label(), "", new Interactions());
+                new Label(), "", new Interactions(), false, new NpcAnimations());
     }
 
     public StoredNpc {
@@ -103,6 +113,7 @@ public record StoredNpc(
         if (label == null) label = new Label();
         if (linkedHologram == null) linkedHologram = "";
         if (interactions == null) interactions = new Interactions();
+        if (animations == null) animations = new NpcAnimations();
     }
 
     // ------------------------------------------------------------------
@@ -253,7 +264,8 @@ public record StoredNpc(
             @Comment("first limits a line to that click. A bare line is a command as the player, 'console: ...'")
             @Comment("from the console. [SERVER] lobby, [TELEPORT] world;x;y;z, [MESSAGE] text, [SOUND] name,")
             @Comment("[TITLE] a;b, [DELAY] 1s, [ACTION] ns:id, plus [SAY] text;5s (a speech bubble only the")
-            @Comment("clicker sees), [ANIMATE] swing|hurt and [LOOK] (turn to the clicker). %npc% is its name.")
+            @Comment("clicker sees), [ANIMATE] wave (a preset or moves like 'swing, 250ms, hurt') and [LOOK]")
+            @Comment("(turn to the clicker). %npc% is its name.")
             List<String> actions,
             @Comment("Only players with this permission can use it. Leave empty for everyone.")
             String permission,
@@ -296,7 +308,9 @@ public record StoredNpc(
                 .glow(glowRgb())
                 .look(look.mode())
                 .lookRange(look.range())
-                .viewDistance(viewDistance);
+                .viewDistance(viewDistance)
+                .sitting(sitting)
+                .animations(animations);
         equipment.forEach((slot, icon) -> {
             EquipmentSlot parsed = slot(slot);
             if (parsed != null && !icon.isBlank()) spec.equip(parsed, Items.icon(icon));
@@ -308,7 +322,8 @@ public record StoredNpc(
     public boolean looksLike(StoredNpc other) {
         return other != null && skin.equals(other.skin) && pose == other.pose && scale == other.scale
                 && glow.equals(other.glow) && equipment.equals(other.equipment) && look.equals(other.look)
-                && viewDistance == other.viewDistance;
+                && viewDistance == other.viewDistance && sitting == other.sitting
+                && animations.equals(other.animations);
     }
 
     /** The outline as {@code 0xRRGGBB}, or -1 for none or a colour that cannot be read. */
@@ -331,7 +346,8 @@ public record StoredNpc(
             case SNEAKING -> 1.5;
             case LYING, CRAWLING, SPINNING -> 0.6;
         };
-        return standing * scale;
+        // Sitting lowers the head by about half a block: an estimate of the seat's drop, never below a crawl.
+        return (sitting ? Math.max(0.6, standing - 0.5) : standing) * scale;
     }
 
     /** Where the label's bottom line stands, above its feet. */
@@ -370,55 +386,63 @@ public record StoredNpc(
     // ------------------------------------------------------------------
 
     public StoredNpc withEnabled(boolean value) {
-        return new StoredNpc(value, location, skin, pose, scale, glow, equipment, look, viewDistance, permission, label, linkedHologram, interactions);
+        return new StoredNpc(value, location, skin, pose, scale, glow, equipment, look, viewDistance, permission, label, linkedHologram, interactions, sitting, animations);
     }
 
     public StoredNpc withLocation(Place value) {
-        return new StoredNpc(enabled, value, skin, pose, scale, glow, equipment, look, viewDistance, permission, label, linkedHologram, interactions);
+        return new StoredNpc(enabled, value, skin, pose, scale, glow, equipment, look, viewDistance, permission, label, linkedHologram, interactions, sitting, animations);
     }
 
     public StoredNpc withSkin(Skin value) {
-        return new StoredNpc(enabled, location, value, pose, scale, glow, equipment, look, viewDistance, permission, label, linkedHologram, interactions);
+        return new StoredNpc(enabled, location, value, pose, scale, glow, equipment, look, viewDistance, permission, label, linkedHologram, interactions, sitting, animations);
     }
 
     public StoredNpc withPose(NpcPose value) {
-        return new StoredNpc(enabled, location, skin, value, scale, glow, equipment, look, viewDistance, permission, label, linkedHologram, interactions);
+        return new StoredNpc(enabled, location, skin, value, scale, glow, equipment, look, viewDistance, permission, label, linkedHologram, interactions, sitting, animations);
     }
 
     public StoredNpc withScale(double value) {
-        return new StoredNpc(enabled, location, skin, pose, value, glow, equipment, look, viewDistance, permission, label, linkedHologram, interactions);
+        return new StoredNpc(enabled, location, skin, pose, value, glow, equipment, look, viewDistance, permission, label, linkedHologram, interactions, sitting, animations);
     }
 
     public StoredNpc withGlow(String value) {
-        return new StoredNpc(enabled, location, skin, pose, scale, value, equipment, look, viewDistance, permission, label, linkedHologram, interactions);
+        return new StoredNpc(enabled, location, skin, pose, scale, value, equipment, look, viewDistance, permission, label, linkedHologram, interactions, sitting, animations);
     }
 
     public StoredNpc withEquipment(Map<String, String> value) {
-        return new StoredNpc(enabled, location, skin, pose, scale, glow, value, look, viewDistance, permission, label, linkedHologram, interactions);
+        return new StoredNpc(enabled, location, skin, pose, scale, glow, value, look, viewDistance, permission, label, linkedHologram, interactions, sitting, animations);
     }
 
     public StoredNpc withLook(Look value) {
-        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, value, viewDistance, permission, label, linkedHologram, interactions);
+        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, value, viewDistance, permission, label, linkedHologram, interactions, sitting, animations);
     }
 
     public StoredNpc withViewDistance(double value) {
-        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, look, value, permission, label, linkedHologram, interactions);
+        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, look, value, permission, label, linkedHologram, interactions, sitting, animations);
     }
 
     public StoredNpc withPermission(String value) {
-        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, look, viewDistance, value, label, linkedHologram, interactions);
+        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, look, viewDistance, value, label, linkedHologram, interactions, sitting, animations);
     }
 
     public StoredNpc withLabel(Label value) {
-        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, look, viewDistance, permission, value, linkedHologram, interactions);
+        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, look, viewDistance, permission, value, linkedHologram, interactions, sitting, animations);
     }
 
     public StoredNpc withLinkedHologram(String value) {
-        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, look, viewDistance, permission, label, value, interactions);
+        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, look, viewDistance, permission, label, value, interactions, sitting, animations);
+    }
+
+    public StoredNpc withSitting(boolean value) {
+        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, look, viewDistance, permission, label, linkedHologram, interactions, value, animations);
+    }
+
+    public StoredNpc withAnimations(NpcAnimations value) {
+        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, look, viewDistance, permission, label, linkedHologram, interactions, sitting, value);
     }
 
     public StoredNpc withInteractions(Interactions value) {
-        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, look, viewDistance, permission, label, linkedHologram, value);
+        return new StoredNpc(enabled, location, skin, pose, scale, glow, equipment, look, viewDistance, permission, label, linkedHologram, value, sitting, animations);
     }
 
     // ------------------------------------------------------------------
@@ -451,6 +475,27 @@ public record StoredNpc(
         List<String> edited = new ArrayList<>(interactions.actions());
         edited.remove(index);
         return withInteractions(interactions.withActions(edited));
+    }
+
+    /** The triggers {@link #withAnimation} takes, as npcs.yml writes them. */
+    public static final List<String> TRIGGERS = List.of("left-click", "right-click", "idle", "greet");
+
+    /**
+     * Plays another animation on one trigger; an empty text plays nothing there.
+     *
+     * @return the changed NPC, or {@code null} when the trigger is none of {@link #TRIGGERS}
+     */
+    public StoredNpc withAnimation(String trigger, String text) {
+        NpcAnimations a = animations;
+        String t = text == null ? "" : text.trim();
+        NpcAnimations edited = switch (trigger == null ? "" : trigger.trim().toLowerCase(Locale.ROOT)) {
+            case "left-click", "left" -> new NpcAnimations(t, a.rightClick(), a.idle(), a.idleEvery(), a.greet(), a.greetRange(), a.greetCooldown());
+            case "right-click", "right" -> new NpcAnimations(a.leftClick(), t, a.idle(), a.idleEvery(), a.greet(), a.greetRange(), a.greetCooldown());
+            case "idle" -> new NpcAnimations(a.leftClick(), a.rightClick(), t, a.idleEvery(), a.greet(), a.greetRange(), a.greetCooldown());
+            case "greet" -> new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), a.idleEvery(), t, a.greetRange(), a.greetCooldown());
+            default -> null;
+        };
+        return edited == null ? null : withAnimations(edited);
     }
 
     public StoredNpc withLabelLines(List<String> lines) {

@@ -16,8 +16,13 @@ Built on [ExyliaLib](https://github.com/DiGround-s/ExyliaLib): everything is pac
 | **Per-line size** | `<size:2.2>` makes one hologram line bigger, and the lines above move up to make room |
 | **Models in the stack** | `<item:DIAMOND>`, `<block:BEACON>` and `<head:Notch>` lines between text lines, with glow outlines |
 | **Pages per player** | A hologram can have several pages and every player reads their own: a `[PAGE] next` click turns it for them alone, or each player's page turns on its own every `page-interval` |
-| **Motion** | `<spin>`, `<bob>`, `<pulse>`: the client interpolates between keyframes, so the server sends two packets a second, not twenty |
-| **Colour that moves** | `<shine>` sweeps a band of light across a title; `<flow>` makes a gradient's colours run along it |
+| **Motion** | `<spin>`, `<sway>`, `<bob>`, `<pulse>`, each with its own period: the client interpolates between keyframes, so the server sends two packets a second, not twenty |
+| **Colour that moves** | `<shine>` sweeps a band of light across a title; `<flow>` makes a gradient's colours run along it; `<rainbow>` runs a soft rainbow through it |
+| **Text that moves** | `<frames>` turns a line between several texts, `<marquee>` scrolls a long one, `<fade>`, `<blink>`, `<typewriter>` and `<scramble>` bring it in |
+| **Buttons** | A clickable hologram gets a lit panel that grows and presses when clicked, and a line tagged `<button:join>` is a button of its own with its own actions |
+| **Readable from afar** | `distance-scale` grows a hologram with each viewer's distance; `<autoscale>` does it for one line |
+| **Presets** | One click puts several tags on a line (title, subtitle, ticker, button...); add your own in `config.yml` |
+| **NPCs that move** | Animations on left and right click, an idle one every few seconds, and a greeting for whoever walks up; NPCs can sit |
 | **Lines for some players** | `<range:8>`, `<perm:vip>`, `<if:"%player_level% >= 10">`: the stack re-lays itself out for each viewer |
 | **Three ways to edit** | Screens and dialogs, `/holo` and `/npc` commands, or `holograms.yml` and `npcs.yml`, which are applied as soon as you save them |
 | **Imports** | DecentHolograms, HolographicDisplays, FancyHolograms, Citizens and FancyNpcs, pages and heads included. Their files are read and never changed. Import NPCs before holograms so a FancyHolograms hologram linked to an NPC stays linked |
@@ -75,7 +80,7 @@ actions:
 | `[DELAY] 1s` | Waits before the lines after it |
 | `[MESSAGE] text` · `[TITLE] title;subtitle` · `[ACTION_BAR] text` · `[SOUND] NAME;volume;pitch` · `[TOAST] ...` · `[PARTICLE] ...` | Shown only to the player who clicked |
 | `[SAY] text;5s` | NPCs: a speech bubble above the NPC, only for the player who clicked |
-| `[ANIMATE] swing` · `[ANIMATE] hurt` | NPCs: swings an arm, or flinches |
+| `[ANIMATE] wave` · `[ANIMATE] swing, 300ms, hurt` | NPCs: plays an animation, a preset or moves (see [NPC animations](#npc-animations)); `[ANIMATE] swing` and `[ANIMATE] hurt` read as before |
 | `[LOOK]` | NPCs: turns to the player who clicked |
 | `[ACTION] namespace:id` | Runs an action another Exylia plugin registered |
 
@@ -118,17 +123,69 @@ lines:
 | `<item:DIAMOND>` / `<block:BEACON>` | a floating item or block instead of text |
 | `<head:Notch>` | a player head: a name, a UUID, a base64 texture or a `textures.minecraft.net` URL. `<size:0.5>` makes it small, `<size:2>` large |
 | `<glow>` / `<glow:#8a51c4>` | glow outline on an item or block line |
+| `<gap:0.3>` | extra blocks above the line; negative pulls the lines above closer |
+| `<align:left>` / `center` / `right` | the line's own alignment |
+| `<width:120>` | where the line wraps, in pixels |
+| `<billboard:fixed>` / `center` / `vertical` / `horizontal` | how the line turns towards the player |
+| `<seethrough>` / `<seethrough:false>` | whether it shows through blocks |
+| `<brightness:15>` | its light level, 0 to 15, -1 for the light where it stands |
+| `<autoscale>` / `<autoscale:4,24,3>` | grows with the viewer's distance: on the hologram's curve, or its own `start,end,max` |
 | `<spin>` / `<spin:180>` | turns, in degrees a second |
-| `<bob>` / `<bob:0.15>` | floats up and down, in blocks |
-| `<pulse>` / `<pulse:0.1>` | grows and shrinks by that fraction |
-| `<shine>` / `<shine:#ffd700>` | a band of light sweeps over it every few seconds |
+| `<sway>` / `<sway:20,period=6>` | turns back and forth by that many degrees |
+| `<bob>` / `<bob:0.15,period=3>` | floats up and down, in blocks |
+| `<pulse>` / `<pulse:0.1,period=2>` | grows and shrinks by that fraction |
+| `<shine>` / `<shine:highlight,speed=15,pause=1,width=4>` | a band of light sweeps over it every few seconds |
 | `<flow>` / `<flow:8>` | its colours flow along it |
+| `<rainbow>` / `<rainbow:10>` | a soft rainbow runs along it, in characters a second |
+| `<frames:2>` | the text is split by `\|\|` into frames that take turns, each shown 2 seconds |
+| `<marquee:24,speed=6>` | shows 24 characters of a longer line at a time, scrolling |
+| `<fade:3>` / `<blink:1>` | fades out and back in, or shows and hides, every that many seconds |
 | `<typewriter>` / `<typewriter:40>` | typed in, in characters a second |
+| `<scramble>` / `<scramble:30>` | random glyphs settle into it from the left |
+| `<button:join>` | clicking this line runs `click.buttons.join` instead of the hologram's click actions |
 | `<range:8>` | only within 8 blocks |
 | `<perm:node>` / `<perm:!node>` | only with (or without) a permission |
 | `<if:"%placeholder% >= 10">` | only while the comparison holds |
 
-Anything else at the start of a line, such as `<gradient:...>`, stays as text. Colours use ExyliaLib's palette tokens (`{primary}`, `{highlight}`...) as well as `&` codes, hex and MiniMessage.
+In game, right-click a line on the lines screen: a **preset**, or one window per theme (look, layout, movement, colour effects, text effects, frames, who sees it). By command, `/holo <name> line <n> <tag> [value]` sets one tag (`line 2 sway 20,period=6`, `on` for the bare tag, no value to take it off) and `/holo <name> line <n> preset <preset>` several at once.
+
+### Presets
+
+A preset puts several tags on a line at once; its tags replace the line's own of the same kind, and the text stays. They live in `config.yml` under `holograms.line-presets`, and you can add your own:
+
+```yaml
+line-presets:
+  title: '<size:1.6><gap:0.15><shine>'
+  subtitle: '<size:0.9><opacity:191>'
+  highlight: '<rainbow>'
+  subtle: '<opacity:200><fade:4>'
+  ticker: '<marquee:28,speed=5>'
+  button: '<gap:0.12><size:1.15><button:main>'
+```
+
+### Buttons and size by distance
+
+```yaml
+holograms:
+  arena:
+    lines:
+      - '{primary}&lTHE ARENA'
+      - '<gap:0.1><button:join>{success}&l▶ JOIN'
+      - '<button:spectate>{info}Spectate'
+    appearance:
+      distance-scale: {enabled: true, start: 8.0, end: 32.0, min: 1.0, max: 2.5}
+    click:
+      commands: ['[MESSAGE] {letters}Pick a button below.']
+      style: BUTTON              # BUTTON or NONE
+      color: '{primary}'         # palette name, #RRGGBB or #AARRGGBB
+      hover-color: '{secondary}'
+      sound: 'UI_BUTTON_CLICK;0.6;1.4'
+      buttons:
+        join: ['arena join']
+        spectate: ['left: arena spectate', '[PAGE] next']
+```
+
+A clickable hologram gets a panel that lights up while looked at and presses when clicked; `style: NONE` keeps only the hover growth. In the hologram's editor, **SIZE BY DISTANCE** edits the curve, and **CLICK ACTIONS** edits the actions (left-click), the look and sound (right-click) and the buttons (shift-click).
 
 Anything else at the start of a line, such as `<gradient:...>`, stays as text. Colours use ExyliaLib's palette tokens (`{primary}`, `{highlight}`...) as well as `&` codes, hex and MiniMessage.
 
@@ -159,15 +216,33 @@ holograms:
 the player who clicked. In game, the book on the lines screen moves between pages (left and right
 click), adds one (shift-left), edits that page's click actions (shift-right) or removes it (Q).
 
+## NPC animations
+
+```yaml
+npcs:
+  guide:
+    sitting: false
+    animations:
+      left-click: 'flinch'
+      right-click: 'wave'
+      idle: 'nod'
+      idle-every: 20s           # 0 for never
+      greet: 'bow'              # seen only by the player who walks up
+      greet-range: 4.0
+      greet-cooldown: 30s
+```
+
+An animation is a preset (`wave`, `wave-offhand`, `nod`, `bow`, `flinch`, `punch`, `cheer`) or moves joined by commas: `swing`, `offhand`, `hurt`, `crouch`, `stand` and waits such as `250ms`. In game, **ANIMATIONS** in the NPC's editor edits the click animations (left-click) and the idle and greeting ones (right-click); a word nobody knows is reported and nothing is saved.
+
 ## Commands
 
 | Command | Permission | |
 | --- | --- | --- |
 | `/displays help\|modules\|reload` | `exyliadisplays.admin` | The plugin as a whole |
 | `/holoadmin` (`/hologramadmin`) | `exyliadisplays.holograms` | Every hologram, on a screen, plus what is not about one hologram: `create <name> [text] [--template <t>]`, `list`, `near`, `templates`, `templates delete <t>`, `import`, `reload`, `help` |
-| `/holo <name> [setting] ...` (`/hologram`) | `exyliadisplays.holograms` | One hologram: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `adjust` (see below), `rename`, `clone`, `enable`, `disable`, `delete`, `undo` (takes back its last change, up to 10); templates with `savetemplate <t>` and `applytemplate <t>`; lines with `addline`, `setline`, `insertline`, `removeline`, `moveline`, `lines`, and one tag of one line with `line <n> <tag> [value]`; pages with `page add`, `page remove <n>`, `page <n>` (turns it for you), `pageinterval <ticks>`, and any line command on another page as `page <n> addline\|setline\|insertline\|removeline\|moveline\|line ...`; the look with `billboard`, `alignment`, `scale`, `shadow`, `seethrough`, `linewidth`, `spacing`, `opacity`, `background`, `brightness`; who sees it with `viewdistance`, `permission`, `perplayer`, `refresh`, `autoupdate`; which players see it with `visibility all\|manual`, `show\|hide <player\|@a>`, `viewers [clear]`; what it rides with `attach <player\|uuid\|nearest>`, `detach`, `attachoffset <blocks>`; clicks with `click add\|remove\|clear\|width\|cooldown\|hover` |
+| `/holo <name> [setting] ...` (`/hologram`) | `exyliadisplays.holograms` | One hologram: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `adjust` (see below), `rename`, `clone`, `enable`, `disable`, `delete`, `undo` (takes back its last change, up to 10); templates with `savetemplate <t>` and `applytemplate <t>`; lines with `addline`, `setline`, `insertline`, `removeline`, `moveline`, `lines`, and one tag of one line with `line <n> <tag> [value]`; pages with `page add`, `page remove <n>`, `page <n>` (turns it for you), `pageinterval <ticks>`, and any line command on another page as `page <n> addline\|setline\|insertline\|removeline\|moveline\|line ...`; the look with `billboard`, `alignment`, `scale`, `shadow`, `seethrough`, `linewidth`, `spacing`, `opacity`, `background`, `brightness`; who sees it with `viewdistance`, `permission`, `perplayer`, `refresh`, `autoupdate`; which players see it with `visibility all\|manual`, `show\|hide <player\|@a>`, `viewers [clear]`; what it rides with `attach <player\|uuid\|nearest>`, `detach`, `attachoffset <blocks>`; size by distance with `distancescale <on\|off\|start end min max>`; clicks with `click add\|remove\|clear\|width\|cooldown\|hover`, the button look with `click style <button\|none>`, `click color\|hovercolor <colour>`, `click sound [sound]`, and buttons with `button <button> <action>` and `button <button> remove`; presets with `line <n> preset <preset>` |
 | `/npcadmin` (`/npcsadmin`) | `exyliadisplays.npcs` | Every NPC, on a screen, plus what is not about one NPC: `create <name> [skin]`, `list`, `near`, `import`, `reload`, `help` |
-| `/npc <name> [setting] ...` (`/npcs`) | `exyliadisplays.npcs` | One NPC: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `adjust` (see below), `rename`, `clone`, `enable`, `disable`, `delete`, `undo` (takes back its last change, up to 10); the look with `skin`, `texture <value> [signature]`, `pose`, `scale`, `glow`, `equip <slot\|clear> [item]`, `equipment`; `look <mode> [range]`, `viewdistance`, `permission`; the label with `label set\|add\|remove\|clear\|height`, or a whole hologram with `link`, `unlink`; clicks with `action add\|remove\|clear\|list` and `action permission\|cooldown\|denymessage\|cooldownmessage\|faceclicker` |
+| `/npc <name> [setting] ...` (`/npcs`) | `exyliadisplays.npcs` | One NPC: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `adjust` (see below), `rename`, `clone`, `enable`, `disable`, `delete`, `undo` (takes back its last change, up to 10); the look with `skin`, `texture <value> [signature]`, `pose`, `scale`, `glow`, `equip <slot\|clear> [item]`, `equipment`; `look <mode> [range]`, `viewdistance`, `permission`; the label with `label set\|add\|remove\|clear\|height`, or a whole hologram with `link`, `unlink`; clicks with `action add\|remove\|clear\|list` and `action permission\|cooldown\|denymessage\|cooldownmessage\|faceclicker`; animations with `animation <left-click\|right-click\|idle\|greet> [animation]`, `animation idle-every\|greet-cooldown <time>`, `animation greet-range <blocks>`, `play <animation>` (to everyone watching) and `sit <on\|off>` |
 
 `exyliadisplays.admin` includes both module permissions; `exyliadisplays.*` grants everything. If Citizens is installed too, its `/npc` and this one compete for the name; use `/npcs <name>` (`/npcadmin` does not clash).
 
@@ -194,7 +269,8 @@ Two boss bars show the axis, value and step, and the keys. Leaving, dying, chang
   - which modules run;
   - file watching;
   - each module's defaults;
-  - the **presets** offered when creating from the menu (add your own).
+  - the **presets** offered when creating from the menu (add your own);
+  - the **line presets** a line can take at once (add your own).
 - **`holograms.yml`** and **`npcs.yml`** hold everything you place. Edit them while the server runs and the change is applied within a second. A hand-written entry only needs the keys it changes. An NPC:
 
   ```yaml
@@ -203,6 +279,7 @@ Two boss bars show the axis, value and step, and the keys. Leaving, dying, chang
       location: {world: lobby, x: 0.5, y: 64.0, z: -3.5, yaw: 180.0, pitch: 0.0}
       skin: {type: player, player: Notch}      # player, texture, mirror, none
       pose: standing                           # sneaking, lying, crawling, spinning
+      sitting: false
       look: {mode: each-viewer, range: 8.0}    # fixed, nearest, each-viewer
       glow: '#8a51c4'
       equipment: {hand: DIAMOND_SWORD}
@@ -231,7 +308,7 @@ Two boss bars show the axis, value and step, and the keys. Leaving, dying, chang
 
   `/holo <name> show` and `hide` work in both modes: in `all` they take a player off or put them on `hidden-from`, in `manual` they put them on or take them off `shown-to`; `@a` means every player online. Only the exceptions are written, as UUIDs, so a renamed player keeps their place. An attached hologram rides its player whenever they are online (joining, respawning and changing worlds included) and a saved mob whenever its chunk is loaded, and is hidden while they are away. A mob that is not saved with its chunk is ridden until it is gone or the server restarts, without being written down.
 
-- **`lang/<code>/messages.yml`**, **`messages/holograms.yml`**, **`messages/npcs.yml`** and **`menus/`** contain every message and screen, in English and Spanish. The language follows ExyliaLib's.
+- **`lang/<code>/messages.yml`**, **`messages/holograms.yml`**, **`messages/npcs.yml`** and **`menus/`** contain every message and screen, in English, Spanish and Russian. The language follows ExyliaLib's.
 
 ## Building
 

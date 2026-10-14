@@ -49,7 +49,7 @@ items:
       - " {letters_black}▎ {letters}Brillo {letters_black}» %glow%"
       - ""
       - "{warning}➥ Clic izquierdo {letters_black}» {letters}skin"
-      - "{warning}➥ Clic derecho {letters_black}» {letters}postura, tamaño y contorno"
+      - "{warning}➥ Clic derecho {letters_black}» {letters}postura, tamaño, contorno y sentado"
       - ""
     actions:
       - "left: exyliadisplays:npc_appearance"
@@ -95,6 +95,31 @@ items:
     actions:
       - "left: exyliadisplays:npc_label"
       - "right: exyliadisplays:npc_link"
+
+  animations:
+    slot: 22
+    material: FEATHER
+    name: "{primary}&lANIMACIONES"
+    lore:
+      - ""
+      - "{secondary}Información:"
+      - " {letters_black}▎ {letters}Gestos que hace: {highlight}saludar{letters}, {highlight}asentir{letters},"
+      - " {letters_black}▎ {highlight}reverencia{letters}... al hacer clic, por su cuenta"
+      - " {letters_black}▎ {letters}o para saludar a quien se acerca."
+      - ""
+      - "{secondary}Estado:"
+      - " {letters_black}▎ {letters}Clic izquierdo {letters_black}» %anim_left%"
+      - " {letters_black}▎ {letters}Clic derecho {letters_black}» %anim_right%"
+      - " {letters_black}▎ {letters}Por su cuenta {letters_black}» %anim_idle% {letters_black}· {info}%anim_idle_every% ⌚"
+      - " {letters_black}▎ {letters}Saludo {letters_black}» %anim_greet% {letters_black}· {info}%anim_greet_range% {letters}bloques"
+      - " {letters_black}▎ {letters}Sentado {letters_black}» %sitting%"
+      - ""
+      - "{warning}➥ Clic izquierdo {letters_black}» {letters}qué hace al recibir un clic"
+      - "{warning}➥ Clic derecho {letters_black}» {letters}por su cuenta y al saludar"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_animations"
+      - "right: exyliadisplays:npc_animations_auto"
 
   interactions:
     slot: 23

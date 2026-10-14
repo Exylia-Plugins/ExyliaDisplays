@@ -49,7 +49,7 @@ items:
       - " {letters_black}▎ {letters}Свечение {letters_black}» %glow%"
       - ""
       - "{warning}➥ ЛКМ {letters_black}» {letters}скин"
-      - "{warning}➥ ПКМ {letters_black}» {letters}поза, размер и контур"
+      - "{warning}➥ ПКМ {letters_black}» {letters}поза, размер, контур и посадка"
       - ""
     actions:
       - "left: exyliadisplays:npc_appearance"
@@ -95,6 +95,31 @@ items:
     actions:
       - "left: exyliadisplays:npc_label"
       - "right: exyliadisplays:npc_link"
+
+  animations:
+    slot: 22
+    material: FEATHER
+    name: "{primary}&lАНИМАЦИИ"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Жесты: {highlight}помахать{letters}, {highlight}кивнуть{letters},"
+      - " {letters_black}▎ {highlight}поклониться{letters}... по клику, сам по себе"
+      - " {letters_black}▎ {letters}или чтобы поприветствовать игрока."
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}ЛКМ {letters_black}» %anim_left%"
+      - " {letters_black}▎ {letters}ПКМ {letters_black}» %anim_right%"
+      - " {letters_black}▎ {letters}Сам по себе {letters_black}» %anim_idle% {letters_black}· {info}%anim_idle_every% ⌚"
+      - " {letters_black}▎ {letters}Приветствие {letters_black}» %anim_greet% {letters_black}· {info}%anim_greet_range% {letters}блоков"
+      - " {letters_black}▎ {letters}Сидит {letters_black}» %sitting%"
+      - ""
+      - "{warning}➥ ЛКМ {letters_black}» {letters}что играет по клику"
+      - "{warning}➥ ПКМ {letters_black}» {letters}сам по себе и приветствие"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_animations"
+      - "right: exyliadisplays:npc_animations_auto"
 
   interactions:
     slot: 23

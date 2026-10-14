@@ -4,6 +4,7 @@ import net.exylia.exyliaDisplays.common.store.Place;
 import net.exylia.exyliaDisplays.config.DisplaysConfig;
 import net.exylia.lib.config.ConfigFile;
 import net.exylia.lib.config.Configs;
+import net.exylia.lib.npc.NpcAnimations;
 import net.exylia.lib.npc.NpcLook;
 import net.exylia.lib.npc.NpcPose;
 import org.bukkit.plugin.Plugin;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** npcs.yml, the npcs section of config.yml and messages/npcs.yml, through ExyliaLib's config module. */
@@ -79,6 +81,26 @@ class NpcConfigFilesTest {
     }
 
     @Test
+    @DisplayName("animations and sitting are written to npcs.yml and read back the same")
+    void animationsRoundTrip() throws IOException {
+        ConfigFile<NpcFile> file = Configs.define(plugin(), "npcs", NpcFile.class).load();
+        StoredNpc guide = new StoredNpc().withLocation(new Place("lobby", 0.5, 64, -3.5, 180, 0))
+                .withSitting(true)
+                .withAnimations(new NpcAnimations("wave", "swing, 250ms, hurt", "nod", Duration.ofSeconds(15),
+                        "bow", 6.0, Duration.ofSeconds(45)));
+        file.update(current -> new NpcFile(Map.of("guide", guide)));
+
+        String written = Files.readString(folder.resolve("npcs.yml"));
+        assertTrue(written.contains("sitting: true"), written);
+        assertTrue(written.contains("left-click: wave"), written);
+
+        Configs.releaseAll();
+        StoredNpc read = Configs.define(plugin(), "npcs", NpcFile.class).load().get().npcs().get("guide");
+        assertEquals(guide, read);
+        assertEquals(Duration.ofSeconds(15), read.animations().idleEvery());
+    }
+
+    @Test
     @DisplayName("a hand-written NPC with only a location gets the defaults, and durations read as written")
     void sparseNpc() throws IOException {
         Files.writeString(folder.resolve("npcs.yml"), """
@@ -108,6 +130,8 @@ class NpcConfigFilesTest {
         assertTrue(bob.interactions().faceClicker());
         assertTrue(bob.label().lines().isEmpty());
         assertEquals(48.0, bob.viewDistance());
+        assertFalse(bob.sitting());
+        assertTrue(bob.animations().isEmpty());
     }
 
     @Test

@@ -45,8 +45,18 @@ import java.util.regex.Pattern;
 public final class HologramCommand {
 
     /** The tags {@code /holo <name> line <n> <tag>} sets, as a line writes them. */
-    private static final List<String> TAGS = List.of("text", "size", "head", "opacity", "background", "shadow", "glow",
-            "spin", "bob", "pulse", "typewriter", "shine", "flow", "range", "permission", "condition");
+    static final List<String> TAGS = List.of("text", "preset", "size", "head", "opacity", "background", "shadow",
+            "glow", "gap", "align", "width", "billboard", "seethrough", "brightness", "autoscale", "spin", "sway", "bob",
+            "pulse", "shine", "flow", "rainbow", "typewriter", "scramble", "marquee", "fade", "blink", "frames", "range",
+            "permission", "condition", "button");
+    /**
+     * The tags set by reading them as a line writes them, options included, so
+     * {@code line 2 sway 20,period=6} is {@code <sway:20,period=6>} and {@code on} is the bare tag.
+     */
+    private static final java.util.Set<String> WRITTEN = java.util.Set.of("gap", "align", "width", "billboard",
+            "seethrough", "brightness", "autoscale", "sway", "bob", "pulse", "shine", "rainbow", "scramble", "marquee",
+            "fade", "blink", "frames", "button");
+    private static final Pattern PALETTE = Pattern.compile("\\{[a-z_]+}");
     private static final Pattern COLOUR = Pattern.compile("#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})");
 
     private static HologramsMessages messages() {
@@ -261,8 +271,7 @@ public final class HologramCommand {
      */
     @Subcommand("<name> line")
     public void lineTag(CommandSender sender, @SuggestWith(Names.class) String name, int line,
-                        @Suggest({"text", "size", "head", "opacity", "background", "shadow", "glow", "spin", "bob", "pulse",
-                                "typewriter", "shine", "flow", "range", "permission", "condition"}) String tag,
+                        @SuggestWith(Tags.class) String tag,
                         @Optional String value) {
         lineTag(sender, name, 1, line, tag, value);
     }
@@ -346,15 +355,38 @@ public final class HologramCommand {
 
     @Subcommand("<name> page <page> line")
     public void lineTag(CommandSender sender, @SuggestWith(Names.class) String name, int page, int line,
-                        @Suggest({"text", "size", "head", "opacity", "background", "shadow", "glow", "spin", "bob", "pulse",
-                                "typewriter", "shine", "flow", "range", "permission", "condition"}) String tag,
+                        @SuggestWith(Tags.class) String tag,
                         @Optional String value) {
         if (!hasLine(sender, name, page, line)) return;
         String raw = HologramModule.get().store().get(name).orElseThrow().pageView(page - 1).lines().get(line - 1);
         String set = value == null || value.isBlank() || value.equalsIgnoreCase("reset") ? null : value.trim();
+        String key = tag.toLowerCase(Locale.ROOT);
+        if (key.equals("preset") || WRITTEN.contains(key)) {
+            String styled;
+            if (key.equals("preset")) {
+                java.util.Map<String, String> presets = HologramsConfig.get().linePresets();
+                String preset = set == null ? null : presets.get(set.toLowerCase(Locale.ROOT));
+                if (preset == null) {
+                    send(sender, messages().presetNotFound(), Values.of().putText("preset", set == null ? "" : set)
+                            .putText("presets", String.join(", ", presets.keySet())));
+                    return;
+                }
+                styled = LineStyle.withPreset(raw, preset);
+            } else {
+                styled = set == null ? cleared(raw, key) : written(raw, key, set);
+            }
+            if (styled == null) {
+                invalid(sender, tag, value, "<" + key + ":...>, on, reset");
+                return;
+            }
+            edited(sender, name, current -> current.onPage(page - 1,
+                            view -> view.hasLine(line - 1) ? view.setLine(line - 1, styled) : view),
+                    messages().lineSet(), Values.of("line", line));
+            return;
+        }
         HologramLine.Builder edited = HologramLine.parse(raw).toBuilder();
         try {
-            switch (tag.toLowerCase(Locale.ROOT)) {
+            switch (key) {
                 case "text" -> edited.text(set == null ? "" : set);
                 case "size" -> edited.size(decimal(set, 1));
                 case "head" -> {
@@ -366,10 +398,7 @@ public final class HologramCommand {
                 case "shadow" -> edited.shadow(set == null ? null : bool(set));
                 case "glow" -> edited.glow(set == null ? null : set.equalsIgnoreCase("team") ? "" : set);
                 case "spin" -> edited.spin(decimal(set, HologramLine.DEFAULT_SPIN));
-                case "bob" -> edited.bob(decimal(set, HologramLine.DEFAULT_BOB));
-                case "pulse" -> edited.pulse(decimal(set, HologramLine.DEFAULT_PULSE));
                 case "typewriter" -> edited.typewriter(decimal(set, HologramLine.DEFAULT_TYPEWRITER));
-                case "shine" -> edited.shine(set == null ? null : set.equalsIgnoreCase("on") ? "" : set);
                 case "flow" -> edited.flow(decimal(set, HologramLine.DEFAULT_FLOW));
                 case "range" -> edited.range(decimal(set, 0));
                 case "permission" -> edited.permission(set);
@@ -387,6 +416,45 @@ public final class HologramCommand {
         edited(sender, name, current -> current.onPage(page - 1,
                         view -> view.hasLine(line - 1) ? view.setLine(line - 1, styled) : view),
                 messages().lineSet(), Values.of("line", line));
+    }
+
+    /**
+     * A line with one tag set as written, options included; {@code on} is the bare tag.
+     *
+     * @return the line, or {@code null} when the value does not read as that tag
+     */
+    static String written(String raw, String key, String value) {
+        String tag = value.equalsIgnoreCase("on") ? "<" + key + ">"
+                : "<" + key + ":" + (value.contains(">") ? "\"" + value + "\"" : value) + ">";
+        if (!HologramLine.parse(tag).text().isEmpty()) return null;
+        return LineStyle.withPreset(raw, tag);
+    }
+
+    /** A line without one of the {@link #WRITTEN} tags, and without its options. */
+    static String cleared(String raw, String key) {
+        HologramLine.Builder line = HologramLine.parse(raw).toBuilder();
+        switch (key) {
+            case "gap" -> line.gap(null);
+            case "align" -> line.align(null);
+            case "width" -> line.width(null);
+            case "billboard" -> line.billboard(null);
+            case "seethrough" -> line.seeThrough(null);
+            case "brightness" -> line.brightness(null);
+            case "autoscale" -> line.autoscale(null);
+            case "sway" -> line.sway(null);
+            case "bob" -> line.bob(null);
+            case "pulse" -> line.pulse(null);
+            case "shine" -> line.shine(null);
+            case "rainbow" -> line.rainbow(null);
+            case "scramble" -> line.scramble(null);
+            case "marquee" -> line.marquee(null);
+            case "fade" -> line.fade(null);
+            case "blink" -> line.blink(null);
+            case "frames" -> line.frames(null);
+            case "button" -> line.button(null);
+            default -> throw new IllegalArgumentException(key);
+        }
+        return line.build().raw();
     }
 
     private static void pagesSet(CommandSender sender, String name, StoredHologram saved) {
@@ -501,6 +569,54 @@ public final class HologramCommand {
         look(sender, name, "brightness", String.valueOf(level), look -> look.brightness = level);
     }
 
+    /** Grows it with the viewer's distance: {@code on}, {@code off}, or {@code <start> <end> <min> <max>}, which turns it on. */
+    @Subcommand("<name> distancescale")
+    public void distanceScale(CommandSender sender, @SuggestWith(Names.class) String name,
+                              @Suggest({"on", "off", "8 32 1 2.5"}) String value) {
+        StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
+        if (hologram == null) {
+            send(sender, messages().notFound(), Values.of().putText("name", name));
+            return;
+        }
+        HologramConfig.DistanceScale curve = distanceScale(hologram.appearance().distanceScale(), value);
+        if (curve == null) {
+            invalid(sender, "distance-scale", value, "on, off, <start> <end> <min 0.1-10> <max 0.1-10>");
+            return;
+        }
+        property(sender, name, "distance-scale", curve.enabled()
+                        ? HologramViews.number(curve.min()) + "x-" + HologramViews.number(curve.max()) + "x, "
+                        + HologramViews.number(curve.start()) + "-" + HologramViews.number(curve.end()) + " blocks" : "off",
+                current -> current.withAppearance(current.appearance().withDistanceScale(curve)));
+    }
+
+    /**
+     * What {@code /holo <name> distancescale} reads: {@code on} or {@code off} keep the curve, four
+     * numbers replace it and turn it on.
+     *
+     * @return the curve, or {@code null} when the value does not read
+     */
+    static HologramConfig.DistanceScale distanceScale(HologramConfig.DistanceScale current, String value) {
+        String[] parts = value == null ? new String[0] : value.trim().split("\\s+");
+        if (parts.length == 1) {
+            return switch (parts[0].toLowerCase(Locale.ROOT)) {
+                case "on", "true", "yes" -> new HologramConfig.DistanceScale(true, current.start(), current.end(), current.min(), current.max());
+                case "off", "false", "no" -> new HologramConfig.DistanceScale(false, current.start(), current.end(), current.min(), current.max());
+                default -> null;
+            };
+        }
+        if (parts.length != 4) return null;
+        try {
+            double start = Double.parseDouble(parts[0]);
+            double end = Double.parseDouble(parts[1]);
+            double min = Double.parseDouble(parts[2]);
+            double max = Double.parseDouble(parts[3]);
+            if (start < 0 || end <= start || min < 0.1 || min > 10 || max < 0.1 || max > 10) return null;
+            return new HologramConfig.DistanceScale(true, start, end, min, max);
+        } catch (NumberFormatException typo) {
+            return null;
+        }
+    }
+
     // ------------------------------------------------------------------
     // Who sees it
     // ------------------------------------------------------------------
@@ -574,14 +690,14 @@ public final class HologramCommand {
             return;
         }
         property(sender, name, "click width", HologramViews.number(blocks), current -> current.withClick(
-                new HologramConfig.Click(current.click().commands(), blocks, current.click().cooldown(), current.click().hoverScale())));
+                StoredHologram.clickWith(current.click(), current.click().commands(), blocks, current.click().cooldown(), current.click().hoverScale())));
     }
 
     /** Milliseconds before the same player's next click counts. */
     @Subcommand("<name> click cooldown")
     public void clickCooldown(CommandSender sender, @SuggestWith(Names.class) String name, long millis) {
         property(sender, name, "click cooldown", Math.max(0, millis) + "ms", current -> current.withClick(
-                new HologramConfig.Click(current.click().commands(), current.click().width(), millis, current.click().hoverScale())));
+                StoredHologram.clickWith(current.click(), current.click().commands(), current.click().width(), millis, current.click().hoverScale())));
     }
 
     /** How much it grows while looked at; 1 turns it off. */
@@ -592,7 +708,91 @@ public final class HologramCommand {
             return;
         }
         property(sender, name, "click hover", HologramViews.number(scale), current -> current.withClick(
-                new HologramConfig.Click(current.click().commands(), current.click().width(), current.click().cooldown(), scale)));
+                StoredHologram.clickWith(current.click(), current.click().commands(), current.click().width(), current.click().cooldown(), scale)));
+    }
+
+    /** {@code button} draws a panel behind what can be clicked; {@code none} only grows it. */
+    @Subcommand("<name> click style")
+    public void clickStyle(CommandSender sender, @SuggestWith(Names.class) String name,
+                           @Suggest({"button", "none"}) String style) {
+        String value = style.toUpperCase(Locale.ROOT);
+        if (!value.equals(HologramConfig.Click.STYLE_BUTTON) && !value.equals(HologramConfig.Click.STYLE_NONE)) {
+            invalid(sender, "click style", style, "button, none");
+            return;
+        }
+        clickLook(sender, name, "click style", value, click -> restyled(click, value, click.color(), click.hoverColor(), click.sound()));
+    }
+
+    /** The panel's colour: a palette name such as {primary}, or #RRGGBB / #AARRGGBB. */
+    @Subcommand("<name> click color")
+    public void clickColor(CommandSender sender, @SuggestWith(Names.class) String name,
+                           @Suggest({"{primary}", "{secondary}", "{accent}", "{info}", "{success}", "{highlight}"}) String colour) {
+        if (!panelColour(colour)) {
+            invalid(sender, "click color", colour, "{primary}, #RRGGBB, #AARRGGBB");
+            return;
+        }
+        clickLook(sender, name, "click color", colour, click -> restyled(click, click.style(), colour, click.hoverColor(), click.sound()));
+    }
+
+    /** The panel's colour while a player looks at it. */
+    @Subcommand("<name> click hovercolor")
+    public void clickHoverColor(CommandSender sender, @SuggestWith(Names.class) String name,
+                                @Suggest({"{secondary}", "{secondary_light}", "{primary}", "{highlight}"}) String colour) {
+        if (!panelColour(colour)) {
+            invalid(sender, "click hover-color", colour, "{secondary}, #RRGGBB, #AARRGGBB");
+            return;
+        }
+        clickLook(sender, name, "click hover-color", colour, click -> restyled(click, click.style(), click.color(), colour, click.sound()));
+    }
+
+    /** A sound on every click, as [SOUND] takes it; none clears it. */
+    @Subcommand("<name> click sound")
+    public void clickSound(CommandSender sender, @SuggestWith(Names.class) String name,
+                           @Optional @Suggest({"UI_BUTTON_CLICK;0.6;1.4", "none"}) String sound) {
+        String value = sound == null || sound.isBlank() || sound.equalsIgnoreCase("none") ? "" : sound.trim();
+        clickLook(sender, name, "click sound", value.isEmpty() ? "-" : value,
+                click -> restyled(click, click.style(), click.color(), click.hoverColor(), value));
+    }
+
+    /**
+     * Adds an action to a button, which a line tagged {@code <button:name>} runs when clicked;
+     * {@code remove} removes the button.
+     */
+    @Subcommand("<name> button")
+    public void button(CommandSender sender, @SuggestWith(Names.class) String name,
+                       @Suggest({"main"}) String button, String action) {
+        String id = button.toLowerCase(Locale.ROOT);
+        if (!net.exylia.exyliaDisplays.common.store.Names.valid(id)) {
+            invalid(sender, "button", button, "a-z, 0-9, - and _");
+            return;
+        }
+        boolean remove = action.trim().equalsIgnoreCase("remove");
+        clickLook(sender, name, "button " + id, remove ? "-" : action.trim(), click -> {
+            java.util.Map<String, List<String>> buttons = new java.util.LinkedHashMap<>(click.buttons());
+            if (remove) {
+                buttons.remove(id);
+            } else {
+                List<String> lines = new ArrayList<>(buttons.getOrDefault(id, List.of()));
+                lines.add(action.trim());
+                buttons.put(id, lines);
+            }
+            return click.withButtons(buttons);
+        });
+    }
+
+    private static boolean panelColour(String colour) {
+        return PALETTE.matcher(colour).matches() || COLOUR.matcher(colour).matches();
+    }
+
+    private static HologramConfig.Click restyled(HologramConfig.Click click, String style, String color, String hoverColor,
+                                                 String sound) {
+        return new HologramConfig.Click(click.commands(), click.width(), click.cooldown(), click.hoverScale(),
+                style, color, hoverColor, sound, click.buttons());
+    }
+
+    private static void clickLook(CommandSender sender, String name, String property, String value,
+                                  UnaryOperator<HologramConfig.Click> change) {
+        property(sender, name, property, value, current -> current.withClick(change.apply(current.click())));
     }
 
     // ------------------------------------------------------------------
@@ -703,6 +903,7 @@ public final class HologramCommand {
         double scaleX, scaleY, scaleZ, lineSpacing;
         boolean shadow, seeThrough, defaultBackground, glowing;
         int lineWidth, textOpacity, brightness;
+        HologramConfig.DistanceScale distanceScale;
 
         Look(HologramConfig.Properties p) {
             billboard = p.billboard();
@@ -719,11 +920,12 @@ public final class HologramCommand {
             backgroundColor = p.backgroundColor();
             brightness = p.brightness();
             glowing = p.glowing();
+            distanceScale = p.distanceScale();
         }
 
         HologramConfig.Properties build() {
             return new HologramConfig.Properties(billboard, alignment, scaleX, scaleY, scaleZ, shadow, seeThrough,
-                    lineWidth, lineSpacing, textOpacity, defaultBackground, backgroundColor, brightness, glowing);
+                    lineWidth, lineSpacing, textOpacity, defaultBackground, backgroundColor, brightness, glowing, distanceScale);
         }
     }
 
@@ -742,7 +944,7 @@ public final class HologramCommand {
             HologramConfig.Click click = current.click();
             List<String> commands = new ArrayList<>(click.commands());
             change.accept(commands);
-            return current.withClick(new HologramConfig.Click(commands, click.width(), click.cooldown(), click.hoverScale()));
+            return current.withClick(StoredHologram.clickWith(click, commands, click.width(), click.cooldown(), click.hoverScale()));
         });
     }
 
@@ -837,6 +1039,15 @@ public final class HologramCommand {
         public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
             ExyliaDisplays plugin = ExyliaDisplays.getInstance();
             return plugin == null ? List.of() : HologramModule.get().store().names();
+        }
+    }
+
+    /** The tags {@code line <n> <tag>} sets. */
+    public static final class Tags implements SuggestionProvider<BukkitCommandActor> {
+
+        @Override
+        public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
+            return TAGS;
         }
     }
 

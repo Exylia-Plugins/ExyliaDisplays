@@ -22,7 +22,9 @@ import org.bukkit.entity.Player;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Consumer;
@@ -73,6 +75,17 @@ public final class HologramDialogs {
     private static final FormKey<String> ATTACH_TARGET = FormKey.text("attach_target");
     private static final FormKey<BigDecimal> ATTACH_OFFSET = FormKey.decimal("attach_offset");
     private static final FormKey<BigDecimal> HOVER = FormKey.decimal("hover");
+    private static final FormKey<String> CLICK_STYLE = FormKey.text("click_style");
+    private static final FormKey<String> CLICK_COLOR = FormKey.text("click_color");
+    private static final FormKey<String> CLICK_HOVER_COLOR = FormKey.text("click_hover_color");
+    private static final FormKey<String> CLICK_SOUND = FormKey.text("click_sound");
+    private static final FormKey<String> NEW_BUTTON = FormKey.text("new_button");
+    private static final FormKey<String> NEW_BUTTON_ACTIONS = FormKey.text("new_button_actions");
+    private static final FormKey<Boolean> DISTANCE_ON = FormKey.flag("distance_on");
+    private static final FormKey<BigDecimal> DISTANCE_START = FormKey.decimal("distance_start");
+    private static final FormKey<BigDecimal> DISTANCE_END = FormKey.decimal("distance_end");
+    private static final FormKey<BigDecimal> DISTANCE_MIN = FormKey.decimal("distance_min");
+    private static final FormKey<BigDecimal> DISTANCE_MAX = FormKey.decimal("distance_max");
     private static final FormKey<String> WORLD = FormKey.text("world");
     private static final FormKey<BigDecimal> X = FormKey.decimal("x");
     private static final FormKey<BigDecimal> Y = FormKey.decimal("y");
@@ -284,12 +297,13 @@ public final class HologramDialogs {
                     values.getBoolean(TEXT_SHADOW), values.getBoolean(SEE_THROUGH), now.lineWidth(), now.lineSpacing(),
                     (int) Math.clamp(values.getLong(TEXT_OPACITY), 0, 255), values.getBoolean(DEFAULT_BACKGROUND),
                     values.getOr(BACKGROUND, "").isBlank() ? "#00000000" : values.getOr(BACKGROUND, "").trim(),
-                    (int) Math.clamp(values.getLong(BRIGHTNESS), -1, 15), now.glowing())
+                    (int) Math.clamp(values.getLong(BRIGHTNESS), -1, 15), now.glowing(), now.distanceScale())
                     : new HologramConfig.Properties(values.getOr(BILLBOARD, now.billboard()), values.getOr(ALIGNMENT, now.alignment()),
                     positive(values.getDecimal(SCALE_X), now.scaleX()), positive(values.getDecimal(SCALE_Y), now.scaleY()),
                     positive(values.getDecimal(SCALE_Z), now.scaleZ()), now.shadow(), now.seeThrough(),
                     (int) Math.max(1, values.getLong(LINE_WIDTH)), Math.max(0, values.getDecimal(SPACING).doubleValue()),
-                    now.textOpacity(), now.defaultBackground(), now.backgroundColor(), now.brightness(), now.glowing()));
+                    now.textOpacity(), now.defaultBackground(), now.backgroundColor(), now.brightness(), now.glowing(),
+                    now.distanceScale()));
         }, back));
     }
 
@@ -380,13 +394,110 @@ public final class HologramDialogs {
                 .integer(COOLDOWN, words.cooldownLabel(), click.cooldown())
                 .decimal(HOVER, words.hoverLabel(), BigDecimal.valueOf(click.hoverScale()))
                 .hint(words.hoverHint());
-        answer(player, form.ask(values -> new HologramConfig.Click(
-                Arrays.stream(values.getOr(COMMANDS, "").split("\\R")).map(String::trim)
-                        .filter(command -> !command.isEmpty()).toList(),
-                positive(values.getDecimal(WIDTH), click.width()),
-                Math.max(0, values.getLong(COOLDOWN)),
-                positive(values.getDecimal(HOVER), 1))), back,
-                edited -> save(player, name, current -> current.withClick(edited), back));
+        answer(player, form.ask(values -> values), back, values -> save(player, name, current -> current.withClick(
+                StoredHologram.clickWith(current.click(), rows(values.getOr(COMMANDS, "")),
+                        positive(values.getDecimal(WIDTH), click.width()),
+                        Math.max(0, values.getLong(COOLDOWN)),
+                        positive(values.getDecimal(HOVER), 1))), back));
+    }
+
+    /** The palette names a button panel can take, as the click section writes them. */
+    static final List<String> PANEL_COLOURS = List.of("{primary}", "{secondary}", "{secondary_light}", "{accent}",
+            "{info}", "{success}", "{warning}", "{error}", "{highlight}", "{neutral}");
+
+    /** How a clickable hologram looks: the button panel, its colours, and the sound of a click. */
+    public static void clickLook(Player player, String name) {
+        StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
+        if (hologram == null) return;
+        HologramConfig.Click click = hologram.click();
+        HologramsMessages.Dialogs words = words();
+        Runnable back = () -> HologramViews.openHub(player, name);
+        EditorForm form = form(player, words.clickLookTitle())
+                .choice(CLICK_STYLE, words.clickStyleLabel(), click.buttonStyle() ? HologramConfig.Click.STYLE_BUTTON
+                        : HologramConfig.Click.STYLE_NONE, List.of(
+                        new FormField.Option(HologramConfig.Click.STYLE_BUTTON, words.styleButtonOption()),
+                        new FormField.Option(HologramConfig.Click.STYLE_NONE, words.styleNoneOption())))
+                .choice(CLICK_COLOR, words.clickColorLabel(), click.color(), panelColours(click.color()))
+                .choice(CLICK_HOVER_COLOR, words.clickHoverColorLabel(), click.hoverColor(), panelColours(click.hoverColor()))
+                .field(CLICK_SOUND, FormField.text(CLICK_SOUND, words.clickSoundLabel()).defaultValue(click.sound()).optional())
+                .hint(words.clickSoundHint());
+        answer(player, form.ask(values -> values), back, values -> save(player, name, current -> {
+            HologramConfig.Click now = current.click();
+            return current.withClick(new HologramConfig.Click(now.commands(), now.width(), now.cooldown(), now.hoverScale(),
+                    values.getOr(CLICK_STYLE, now.style()), values.getOr(CLICK_COLOR, now.color()),
+                    values.getOr(CLICK_HOVER_COLOR, now.hoverColor()), values.getOr(CLICK_SOUND, "").trim(), now.buttons()));
+        }, back));
+    }
+
+    private static List<FormField.Option> panelColours(String current) {
+        List<FormField.Option> options = new ArrayList<>();
+        PANEL_COLOURS.forEach(colour -> options.add(new FormField.Option(colour,
+                colour + colour.substring(1, colour.length() - 1))));
+        if (!PANEL_COLOURS.contains(current)) options.add(0, new FormField.Option(current, Values.inert(current)));
+        return options;
+    }
+
+    /**
+     * The buttons: what clicking a line tagged {@code <button:name>} runs. One box per button, one
+     * action per row, and a box for a new one; emptying a box removes that button.
+     */
+    public static void buttons(Player player, String name) {
+        StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
+        if (hologram == null) return;
+        HologramsMessages.Dialogs words = words();
+        Runnable back = () -> HologramViews.openHub(player, name);
+        Map<String, FormKey<String>> keys = new LinkedHashMap<>();
+        EditorForm form = form(player, words.buttonsTitle());
+        hologram.click().buttons().forEach((button, lines) -> {
+            FormKey<String> key = FormKey.text("button_" + keys.size());
+            keys.put(button, key);
+            form.field(key, FormField.text(key, Values.of().putText("button", button).apply(words.buttonActionsLabel()))
+                    .defaultValue(String.join("\n", lines)).lines(4).optional());
+        });
+        if (!keys.isEmpty()) form.hint(words.buttonsHint());
+        form.field(NEW_BUTTON, FormField.text(NEW_BUTTON, words.newButtonLabel()).defaultValue("").optional()
+                        .validate(typed -> typed.isBlank() || Names.valid(typed.trim().toLowerCase(java.util.Locale.ROOT)),
+                                words.newButtonHint()))
+                .hint(words.newButtonHint())
+                .field(NEW_BUTTON_ACTIONS, FormField.text(NEW_BUTTON_ACTIONS, words.newButtonActionsLabel())
+                        .defaultValue("").lines(4).optional());
+        answer(player, form.ask(values -> values), back, values -> save(player, name, current -> {
+            Map<String, List<String>> buttons = new LinkedHashMap<>(current.click().buttons());
+            keys.forEach((button, key) -> {
+                List<String> lines = rows(values.getOr(key, ""));
+                if (lines.isEmpty()) buttons.remove(button);
+                else buttons.put(button, lines);
+            });
+            String added = values.getOr(NEW_BUTTON, "").trim().toLowerCase(java.util.Locale.ROOT);
+            List<String> addedLines = rows(values.getOr(NEW_BUTTON_ACTIONS, ""));
+            if (!added.isEmpty() && !addedLines.isEmpty()) buttons.put(added, addedLines);
+            return current.withClick(current.click().withButtons(buttons));
+        }, back));
+    }
+
+    /** How the whole hologram grows with the viewer's distance. */
+    public static void distanceScale(Player player, String name) {
+        StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
+        if (hologram == null) return;
+        HologramConfig.DistanceScale curve = hologram.appearance().distanceScale();
+        HologramsMessages.Dialogs words = words();
+        Runnable back = () -> HologramViews.openHub(player, name);
+        EditorForm form = form(player, words.distanceTitle())
+                .flag(DISTANCE_ON, words.distanceEnabledLabel(), curve.enabled())
+                .hint(words.distanceHint())
+                .decimal(DISTANCE_START, words.distanceStartLabel(), BigDecimal.valueOf(curve.start()))
+                .decimal(DISTANCE_END, words.distanceEndLabel(), BigDecimal.valueOf(curve.end()))
+                .decimal(DISTANCE_MIN, words.distanceMinLabel(), BigDecimal.valueOf(curve.min()))
+                .decimal(DISTANCE_MAX, words.distanceMaxLabel(), BigDecimal.valueOf(curve.max()));
+        answer(player, form.ask(values -> new HologramConfig.DistanceScale(values.getBoolean(DISTANCE_ON),
+                values.getDecimal(DISTANCE_START).doubleValue(), values.getDecimal(DISTANCE_END).doubleValue(),
+                values.getDecimal(DISTANCE_MIN).doubleValue(), values.getDecimal(DISTANCE_MAX).doubleValue())), back,
+                edited -> save(player, name, current -> current.withAppearance(current.appearance().withDistanceScale(edited)), back));
+    }
+
+    /** A box's rows, one action each, blank ones dropped. */
+    static List<String> rows(String box) {
+        return Arrays.stream(box.split("\\R")).map(String::trim).filter(row -> !row.isEmpty()).toList();
     }
 
     /** The exact position, for a nudge a step at a time. */
@@ -656,11 +767,10 @@ public final class HologramDialogs {
         EditorForm form = form(player, Values.of("page", page + 1).apply(words().pageClickTitle()))
                 .text(COMMANDS, words().commandsLabel(), String.join("\n", commands), 6)
                 .hint(words().pageClickHint());
-        answer(player, form.ask(values -> Arrays.stream(values.getOr(COMMANDS, "").split("\\R")).map(String::trim)
-                .filter(command -> !command.isEmpty()).toList()), back, edited -> save(player, name, current -> {
+        answer(player, form.ask(values -> rows(values.getOr(COMMANDS, ""))), back, edited -> save(player, name, current -> {
             if (page == 0) {
                 HologramConfig.Click click = current.click();
-                return current.withClick(new HologramConfig.Click(edited, click.width(), click.cooldown(), click.hoverScale()));
+                return current.withClick(StoredHologram.clickWith(click, edited, click.width(), click.cooldown(), click.hoverScale()));
             }
             if (!current.hasPage(page)) return current;
             List<HologramConfig.Page> pages = new ArrayList<>(current.pages());

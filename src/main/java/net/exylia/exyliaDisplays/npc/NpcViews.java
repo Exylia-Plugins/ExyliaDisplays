@@ -125,7 +125,26 @@ public final class NpcViews {
                 .put("cooldown", number(click.cooldown() / 1000.0))
                 .put("face_clicker", click.faceClicker() ? states.yes() : states.no())
                 .put("equipment", npc.equipment().isEmpty() ? states.nothing()
-                        : Values.of("count", npc.equipment().size()).apply(states.equipmentCount()));
+                        : Values.of("count", npc.equipment().size()).apply(states.equipmentCount()))
+                .put("sitting", npc.sitting() ? states.yes() : states.no())
+                .put("anim_left", animation(npc.animations().leftClick()))
+                .put("anim_right", animation(npc.animations().rightClick()))
+                .put("anim_idle", animation(npc.animations().idle()))
+                .put("anim_idle_every", seconds(npc.animations().idleEvery()))
+                .put("anim_greet", animation(npc.animations().greet()))
+                .put("anim_greet_range", number(npc.animations().greetRange()))
+                .put("anim_greet_cooldown", seconds(npc.animations().greetCooldown()));
+    }
+
+    /** What a trigger plays, or the word for nothing. */
+    static String animation(String text) {
+        return text.isBlank() ? NpcsMessages.get().states().nothing()
+                : Values.of().putText("animation", text).apply(NpcsMessages.get().animations().playing());
+    }
+
+    /** A length of time as the windows take it back: {@code 20s}, {@code 0.5s}. */
+    static String seconds(java.time.Duration duration) {
+        return number(duration.toMillis() / 1000.0) + "s";
     }
 
     /** What is worn in a slot, as its icon string, or empty. */

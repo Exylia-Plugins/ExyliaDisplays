@@ -128,6 +128,7 @@ class ConfigFilesTest {
     void config() {
         DisplaysConfig config = Configs.define(plugin(), "config", DisplaysConfig.class).load().get();
         assertEquals(new HologramsConfig().presets().keySet(), config.holograms().presets().keySet());
+        assertEquals(new HologramsConfig().linePresets(), config.holograms().linePresets());
         assertTrue(config.enabled("holograms"));
         assertTrue(config.enabled("npcs"));
         assertTrue(config.enabled("a-module-the-file-does-not-name"));

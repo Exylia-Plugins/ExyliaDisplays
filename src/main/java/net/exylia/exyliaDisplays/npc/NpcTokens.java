@@ -6,6 +6,7 @@ import net.exylia.lib.hologram.Hologram;
 import net.exylia.lib.hologram.HologramConfig;
 import net.exylia.lib.hologram.Holograms;
 import net.exylia.lib.interaction.Interactions;
+import net.exylia.lib.npc.NpcAnimation;
 import net.exylia.lib.text.Values;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -37,11 +38,20 @@ final class NpcTokens {
     /** Registers the tokens; before any NPC's lines compile, or the lines naming them are skipped. */
     void register() {
         token("SAY", (player, npc, argument) -> say(player, npc, argument));
-        token("ANIMATE", (player, npc, argument) -> renderer.live(npc).ifPresent(placed -> {
-            if (argument.trim().toLowerCase(Locale.ROOT).startsWith("hurt")) placed.hurt();
-            else placed.swing();
-        }));
+        token("ANIMATE", (player, npc, argument) -> renderer.live(npc).ifPresent(placed -> placed.play(animation(argument))));
         token("LOOK", (player, npc, argument) -> renderer.turnTo(npc, player));
+    }
+
+    /**
+     * What an {@code [ANIMATE]} line plays: a preset or moves ({@code wave}, {@code swing, 250ms, hurt}).
+     * A bare token swings, and a line written before animations existed ({@code hurt}, anything
+     * else) keeps its meaning: a flinch or a swing.
+     */
+    static NpcAnimation animation(String argument) {
+        String trimmed = argument == null ? "" : argument.trim();
+        NpcAnimation parsed = trimmed.isEmpty() ? NpcAnimation.none() : NpcAnimation.parse(trimmed);
+        if (!parsed.isEmpty()) return parsed;
+        return NpcAnimation.parse(trimmed.toLowerCase(Locale.ROOT).startsWith("hurt") ? "hurt" : "swing");
     }
 
     @FunctionalInterface

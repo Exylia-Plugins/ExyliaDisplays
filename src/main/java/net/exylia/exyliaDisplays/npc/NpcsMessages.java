@@ -116,7 +116,10 @@ public record NpcsMessages(
         Dialogs dialogs,
 
         @Comment("Fine adjustment with the mouse wheel: /npc <name> adjust.")
-        Adjust adjust) {
+        Adjust adjust,
+
+        @Comment("Animations: /npc <name> animation|play, and their windows.")
+        Animations animations) {
 
     public NpcsMessages {
         if (help == null) help = List.of();
@@ -124,6 +127,7 @@ public record NpcsMessages(
         if (states == null) states = new States();
         if (dialogs == null) dialogs = new Dialogs();
         if (adjust == null) adjust = new Adjust();
+        if (animations == null) animations = new Animations();
     }
 
     private static final String OK = "[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% ";
@@ -196,6 +200,9 @@ public record NpcsMessages(
                         " {warning}link <hologram> {letters_black}· {warning}unlink {letters_black}· {warning}viewdistance {letters_black}· {warning}permission [perm]",
                         " {warning}action add <line> {letters_black}· {warning}action remove <n> {letters_black}· {warning}action clear {letters_black}· {warning}action list",
                         " {warning}action permission|cooldown|denymessage|cooldownmessage|faceclicker",
+                        " {warning}animation <left-click|right-click|idle|greet> [animation] {letters_black}» {letters}wave, nod, bow... {muted}(none clears)",
+                        " {warning}animation idle-every|greet-cooldown <time> {letters_black}· {warning}animation greet-range <blocks>",
+                        " {warning}play <animation> {letters_black}» {letters}try one now {letters_black}· {warning}sit <on|off>",
                         ""),
                 "%prefix% {letters}NPCs {letters_black}({info}%count%{letters_black})",
                 " <click:run_command:'/npc %name%'><hover:show_text:'{letters}Click to edit'>{highlight}%name%</hover></click> {letters_black}» {letters}%world% {info}%x% %y% %z% {letters_black}· %skin% {letters_black}· %status%",
@@ -224,7 +231,8 @@ public record NpcsMessages(
                 new States(),
                 new Dialogs(),
 
-                new Adjust());
+                new Adjust(),
+                new Animations());
     }
 
     /**
@@ -423,6 +431,56 @@ public record NpcsMessages(
                             + "{letters_black}▎ {letters}F {letters_black}» {info}axis {letters_black}▎ {letters}Sneak+click {letters_black}» {info}snap "
                             + "{letters_black}▎ {letters}Click {letters_black}» {success}save",
                     "X", "Y", "Z", "Forward", "Turn", "Tilt", "Scale", "Label height");
+        }
+    }
+
+    /**
+     * Animations: what the commands say, the animations windows, and the hub's words.
+     */
+    public record Animations(
+            @Comment("Words an animation does not know. Placeholders: %words%, %presets%.")
+            String unknownWords,
+            @Comment("/npc <name> play. Placeholders: %name%, %animation%.")
+            String played,
+            @Comment("/npc <name> play while it is not in the world. Placeholder: %name%.")
+            String notShown,
+            @Comment("What a trigger plays, in menus. Placeholder: %animation%. A trigger with none shows states.nothing.")
+            String playing,
+            @Comment("The first window: what a click plays.")
+            String clickTitle,
+            String leftClickLabel,
+            String rightClickLabel,
+            @Comment("Under every animation box. Placeholder: %presets%.")
+            String animationHint,
+            @Comment("The second window: on its own, and to greet a player.")
+            String autoTitle,
+            String idleLabel,
+            String idleEveryLabel,
+            String greetLabel,
+            String greetRangeLabel,
+            String greetCooldownLabel,
+            @Comment("Under the lengths of time.")
+            String timeHint,
+            @Comment("The switch in the body window.")
+            String sittingLabel) {
+
+        public Animations() {
+            this(NO + "{error}Unknown animation words: {highlight}%words%{error}. Use a preset ({highlight}%presets%{error}) or swing, offhand, hurt, crouch, stand and waits like 250ms.",
+                    OK + "{letters}Playing {info}%animation% {letters}on {highlight}%name%{letters}.",
+                    NO + "{highlight}%name% {error}is not in the world right now.",
+                    "{info}%animation%",
+                    "{primary}&lANIMATIONS {letters_black}» {highlight}CLICKS",
+                    "On left-click",
+                    "On right-click",
+                    "A preset (%presets%) or moves joined by commas: swing, offhand, hurt, crouch, stand, 250ms. Empty for none.",
+                    "{primary}&lANIMATIONS {letters_black}» {highlight}IDLE & GREET",
+                    "On its own",
+                    "Every (such as 20s, 0 = never)",
+                    "To greet a player",
+                    "Greet within (blocks)",
+                    "Greet the same player again after",
+                    "Lengths of time read 500ms, 20s, 1m.",
+                    "Sitting");
         }
     }
 
