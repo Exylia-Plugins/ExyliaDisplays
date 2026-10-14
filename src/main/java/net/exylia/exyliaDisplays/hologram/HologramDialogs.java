@@ -432,17 +432,18 @@ public final class HologramDialogs {
         HologramsMessages.Attach words = HologramsMessages.get().attach();
         Runnable back = () -> HologramViews.openHub(player, name);
         java.util.UUID target = HologramModule.get().renderer().target(name, hologram);
+        String npc = HologramActions.linkedNpc(name);
+        String before = npc != null ? HologramActions.NPC + npc : target == null ? "" : HologramViews.targetName(target);
         EditorForm form = form(player, words.dialogTitle())
-                .text(ATTACH_TARGET, words.targetLabel(), target == null ? "" : HologramViews.targetName(target))
+                .text(ATTACH_TARGET, words.targetLabel(), before)
                 .hint(words.targetHint())
                 .decimal(ATTACH_OFFSET, words.offsetLabel(), BigDecimal.valueOf(hologram.attach().offset()));
         answer(player, form.ask(values -> values), back, values -> {
             double offset = Math.clamp(values.getDecimal(ATTACH_OFFSET).doubleValue(), -16, 16);
             HologramModule.get().store().edit(name, current -> current.withAttach(current.attach().withOffset(offset)));
             String typed = values.getOr(ATTACH_TARGET, "").trim();
-            String before = target == null ? "" : HologramViews.targetName(target);
             if (typed.isEmpty()) {
-                if (target != null) HologramActions.detach(player, name);
+                if (!before.isEmpty()) HologramActions.detach(player, name);
             } else if (!typed.equals(before)) {
                 HologramActions.attach(player, name, typed);
             }

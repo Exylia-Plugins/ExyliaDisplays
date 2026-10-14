@@ -197,8 +197,8 @@ attach:
   riding: '{info}%target%'
   away: '{warning}%target% {muted}(ausente)'
   dialog-title: '{primary}&lMONTAR'
-  target-label: 'Jugador, UUID de entidad o ''nearest'''
-  target-hint: 'Vacío para que vuelva a su ubicación. Un jugador se vuelve a montar cada vez que entra; ''nearest'' es la entidad más cercana a ti.'
+  target-label: 'Jugador, UUID de entidad, ''nearest'' o npc:<nombre>'
+  target-hint: 'Vacío para que vuelva a su ubicación. Un jugador se vuelve a montar cada vez que entra; ''nearest'' es la entidad más cercana a ti; npc:<nombre> lo mantiene sobre la cabeza de ese NPC.'
   offset-label: 'Altura sobre ella (bloques)'
 adjust:
   started: '[sound:BLOCK_NOTE_BLOCK_PLING|0.6|1.6]%prefix% {letters}Ajustando {highlight}%name%{letters}: usa la rueda para moverlo y {highlight}F {letters}para el siguiente eje. <click:run_command:''/holo %name% adjust save''>{success}&l[✔ GUARDAR]</click> <click:run_command:''/holo %name% adjust cancel''>{error}&l[✘ DESHACER]</click>'

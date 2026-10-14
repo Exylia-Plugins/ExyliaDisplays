@@ -495,8 +495,8 @@ public record HologramsMessages(
                     "{info}%target%",
                     "{warning}%target% {muted}(away)",
                     "{primary}&lATTACH",
-                    "Player, entity UUID or 'nearest'",
-                    "Empty to stand at its location again. A player is ridden again whenever they join; 'nearest' is the closest entity to you.",
+                    "Player, entity UUID, 'nearest' or npc:<name>",
+                    "Empty to stand at its location again. A player is ridden again whenever they join; 'nearest' is the closest entity to you; npc:<name> keeps it over that NPC's head.",
                     "Height above it (blocks)");
         }
     }

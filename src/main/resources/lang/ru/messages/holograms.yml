@@ -197,8 +197,8 @@ attach:
   riding: '{info}%target%'
   away: '{warning}%target% {muted}(отсутствует)'
   dialog-title: '{primary}&lЗАКРЕПИТЬ'
-  target-label: 'Игрок, UUID сущности или ''nearest'''
-  target-hint: 'Пусто — вернуть на своё место. К игроку она закрепляется заново при каждом входе; ''nearest'' — ближайшая к тебе сущность.'
+  target-label: 'Игрок, UUID сущности, ''nearest'' или npc:<имя>'
+  target-hint: 'Пусто — вернуть на своё место. К игроку она закрепляется заново при каждом входе; ''nearest'' — ближайшая к тебе сущность; npc:<имя> держит её над головой этого NPC.'
   offset-label: 'Высота над ней (блоки)'
 adjust:
   started: '[sound:BLOCK_NOTE_BLOCK_PLING|0.6|1.6]%prefix% {letters}Настройка {highlight}%name%{letters}: колёсико двигает, {highlight}F {letters}— следующая ось. <click:run_command:''/holo %name% adjust save''>{success}&l[✔ СОХРАНИТЬ]</click> <click:run_command:''/holo %name% adjust cancel''>{error}&l[✘ ОТМЕНИТЬ]</click>'

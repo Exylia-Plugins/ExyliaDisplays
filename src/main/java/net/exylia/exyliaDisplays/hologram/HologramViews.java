@@ -152,6 +152,8 @@ public final class HologramViews {
     /** What it rides: nothing, the entity it rides now, or the one it waits for. */
     static String attached(String name, StoredHologram hologram) {
         HologramsMessages.Attach words = HologramsMessages.get().attach();
+        String npc = HologramActions.linkedNpc(name);
+        if (npc != null) return Values.of().putText("target", HologramActions.NPC + npc).apply(words.riding());
         HologramRenderer renderer = HologramModule.get().renderer();
         java.util.UUID target = renderer.target(name, hologram);
         if (target == null) return words.none();

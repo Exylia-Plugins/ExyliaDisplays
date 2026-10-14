@@ -7,6 +7,7 @@ import net.exylia.exyliaDisplays.npc.StoredNpc;
 import net.exylia.lib.npc.NpcLook;
 import net.exylia.lib.npc.NpcPose;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.EquipmentSlot;
@@ -23,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * NPCs brought over from Citizens and FancyNpcs, read from their save files.
@@ -305,8 +307,9 @@ public final class NpcImport {
     /**
      * {@code skin.mirrorSkin}, the old {@code skin.value}/{@code skin.signature}, then
      * {@code skin.identifier} (or the older {@code skin.uuid}): the texture FancyNpcs cached for it
-     * in {@code .data/skins}, else the account it names. A UUID, URL or file it has not cached yet
-     * cannot be read without fetching it, and is left as the default skin.
+     * in {@code .data/skins}, else the account it names (a UUID through the name the server knows
+     * it by), and a placeholder is the viewer's own skin. A URL or file it has not cached cannot be
+     * read without fetching it, and is left as the default skin.
      */
     private static StoredNpc.Skin fancySkin(ConfigurationSection npc, File cache) {
         if (npc.getBoolean("skin.mirrorSkin", npc.getBoolean("mirrorSkin", false))) return StoredNpc.Skin.mirror();
@@ -324,8 +327,18 @@ public final class NpcImport {
         } catch (Exception notCached) {
             // Not cached: read the identifier itself below.
         }
-        StoredNpc.Skin account = StoredNpc.Skin.parse(identifier);
-        return account == null ? new StoredNpc.Skin() : account;
+        // A placeholder such as %player_name% is the viewer's own skin, which is what mirror draws.
+        if (identifier.startsWith("%") && identifier.endsWith("%")) return StoredNpc.Skin.mirror();
+        String account = identifier;
+        try {
+            // A UUID FancyNpcs no longer caches: the name it last played under, when the server knows it.
+            String known = Bukkit.getOfflinePlayer(UUID.fromString(identifier)).getName();
+            if (known != null) account = known;
+        } catch (IllegalArgumentException notUuid) {
+            // A name, kept as it is.
+        }
+        StoredNpc.Skin skin = StoredNpc.Skin.parse(account);
+        return skin == null ? new StoredNpc.Skin() : skin;
     }
 
     /**

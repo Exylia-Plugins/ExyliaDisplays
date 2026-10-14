@@ -89,12 +89,9 @@ public final class NpcCommand {
     // The NPC itself
     // ------------------------------------------------------------------
 
+    /** Typed on purpose, so it deletes at once: no confirmation and no screen, unlike the delete button. */
     @Subcommand("<name> delete")
     public void delete(CommandSender sender, @SuggestWith(Names.class) String name) {
-        if (sender instanceof Player player) {
-            if (exists(player, name)) NpcDialogs.delete(player, name, () -> { });
-            return;
-        }
         send(sender, NpcModule.get().store().delete(name) ? messages().deleted() : messages().notFound(),
                 Values.of().putText("name", name));
     }

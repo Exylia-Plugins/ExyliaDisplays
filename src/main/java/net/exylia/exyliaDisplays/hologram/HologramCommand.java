@@ -110,12 +110,9 @@ public final class HologramCommand {
     // The hologram itself
     // ------------------------------------------------------------------
 
+    /** Typed on purpose, so it deletes at once: no confirmation and no screen, unlike the delete button. */
     @Subcommand("<name> delete")
     public void delete(CommandSender sender, @SuggestWith(Names.class) String name) {
-        if (sender instanceof Player player) {
-            if (exists(player, name)) HologramDialogs.delete(player, name, () -> { });
-            return;
-        }
         Values values = Values.of().putText("name", name);
         send(sender, HologramModule.get().store().delete(name) ? messages().deleted() : messages().notFound(), values);
     }
@@ -655,10 +652,10 @@ public final class HologramCommand {
     // What it rides
     // ------------------------------------------------------------------
 
-    /** Rides a player (by name or UUID), an entity (by UUID), or the entity nearest to the player. */
+    /** Rides a player (by name or UUID), an entity (by UUID), the entity nearest to the player, or an NPC ({@code npc:<name>}). */
     @Subcommand("<name> attach")
     public void attach(CommandSender sender, @SuggestWith(Names.class) String name,
-                       @SuggestWith(Players.class) String target) {
+                       @SuggestWith(Targets.class) String target) {
         HologramActions.attach(sender, name, target);
     }
 
@@ -823,7 +820,19 @@ public final class HologramCommand {
         }
     }
 
-    /** Online players, {@code @a} and {@code nearest}, for show, hide and attach. */
+    /** What attach takes: online players, {@code nearest} and {@code npc:<name>}. */
+    public static final class Targets implements SuggestionProvider<BukkitCommandActor> {
+
+        @Override
+        public @NotNull Collection<String> getSuggestions(@NotNull ExecutionContext<BukkitCommandActor> context) {
+            List<String> names = new ArrayList<>(List.of("nearest"));
+            Bukkit.getOnlinePlayers().forEach(player -> names.add(player.getName()));
+            names.addAll(HologramActions.npcTargets());
+            return names;
+        }
+    }
+
+    /** Online players, {@code @a} and {@code nearest}, for show and hide. */
     public static final class Players implements SuggestionProvider<BukkitCommandActor> {
 
         @Override

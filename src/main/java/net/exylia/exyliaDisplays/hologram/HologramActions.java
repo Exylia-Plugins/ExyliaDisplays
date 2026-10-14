@@ -7,6 +7,7 @@ import net.exylia.exyliaDisplays.hologram.HologramDialogs;
 import net.exylia.exyliaDisplays.hologram.HologramViews;
 import net.exylia.exyliaDisplays.common.store.Position;
 import net.exylia.exyliaDisplays.hologram.StoredHologram;
+import net.exylia.exyliaDisplays.npc.NpcModule;
 import net.exylia.lib.action.ActionContext;
 import net.exylia.lib.action.ActionResult;
 import net.exylia.lib.action.PluginActions;
@@ -21,6 +22,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
@@ -202,9 +205,9 @@ public final class HologramActions {
     }
 
     /**
-     * Makes a hologram ride a player, an entity or the entity nearest to the sender, telling them
-     * how it went. A player or an entity saved with its chunk is written to holograms.yml; any
-     * other entity is ridden until it is gone or the server restarts.
+     * Makes a hologram ride a player, an entity, the entity nearest to the sender or an NPC
+     * ({@code npc:<name>}), telling them how it went. A player or an entity saved with its chunk is
+     * written to holograms.yml; any other entity is ridden until it is gone or the server restarts.
      *
      * @return whether it was attached
      */
@@ -214,6 +217,9 @@ public final class HologramActions {
         if (!HologramModule.get().store().exists(name)) {
             plugin.getMessages().send(sender, HologramsMessages.get().notFound(), Values.of().putText("name", name));
             return false;
+        }
+        if (target.trim().regionMatches(true, 0, NPC, 0, NPC.length())) {
+            return attachToNpc(sender, name, target.trim().substring(NPC.length()).toLowerCase(Locale.ROOT));
         }
         Entity entity = entity(sender, target.trim());
         UUID saved;
@@ -239,9 +245,57 @@ public final class HologramActions {
             return true;
         }
         renderer.forget(name);
+        unlinkNpcs(name);
         HologramModule.get().store().edit(name, current -> current.withAttach(current.attach().withEntity(saved)));
         plugin.getMessages().send(sender, words.attached(), values);
         return true;
+    }
+
+    /** How an attach target names an NPC: {@code npc:<name>}. */
+    public static final String NPC = "npc:";
+
+    /** Kept over an NPC's head by linking it there, as {@code /npc <name> link} does. */
+    private static boolean attachToNpc(CommandSender sender, String name, String npc) {
+        ExyliaDisplays plugin = ExyliaDisplays.getInstance();
+        NpcModule npcs = NpcModule.get();
+        if (npcs == null || !npcs.store().exists(npc)) {
+            plugin.getMessages().send(sender, HologramsMessages.get().attach().targetNotFound(),
+                    Values.of().putText("target", NPC + npc));
+            return false;
+        }
+        HologramModule.get().renderer().forget(name);
+        HologramModule.get().store().edit(name, current -> current.withAttach(current.attach().withEntity(null)));
+        // Two NPCs cannot carry one hologram: both would pull it to themselves.
+        unlinkNpcs(name);
+        npcs.store().edit(npc, current -> current.withLinkedHologram(name));
+        plugin.getMessages().send(sender, HologramsMessages.get().attach().attached(),
+                Values.of().putText("name", name).putText("target", NPC + npc));
+        return true;
+    }
+
+    /** The NPC that keeps a hologram over its head, or {@code null}. */
+    public static String linkedNpc(String name) {
+        NpcModule npcs = NpcModule.get();
+        if (npcs == null) return null;
+        return npcs.store().all().entrySet().stream()
+                .filter(entry -> entry.getValue().linkedHologram().equals(name))
+                .map(java.util.Map.Entry::getKey).findFirst().orElse(null);
+    }
+
+    /** NPC names written as attach targets, for suggestions. */
+    public static List<String> npcTargets() {
+        NpcModule npcs = NpcModule.get();
+        return npcs == null ? List.of() : npcs.store().names().stream().map(npc -> NPC + npc).toList();
+    }
+
+    private static void unlinkNpcs(String name) {
+        NpcModule npcs = NpcModule.get();
+        if (npcs == null) return;
+        npcs.store().all().forEach((npc, stored) -> {
+            if (stored.linkedHologram().equals(name)) {
+                npcs.store().edit(npc, current -> current.withLinkedHologram(""));
+            }
+        });
     }
 
     /** Back to its location: drops what it rides, saved or not. */
@@ -252,6 +306,7 @@ public final class HologramActions {
             return;
         }
         HologramModule.get().renderer().forget(name);
+        unlinkNpcs(name);
         HologramModule.get().store().edit(name, current -> current.withAttach(current.attach().withEntity(null)));
         plugin.getMessages().send(sender, HologramsMessages.get().attach().detached(), Values.of().putText("name", name));
     }
