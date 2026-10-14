@@ -33,7 +33,7 @@ public final class EntryStore<F extends Record, T> {
     private final Function<F, Map<String, T>> read;
     private final Function<Map<String, T>, F> write;
     private final BiConsumer<String, T> changed;
-    private volatile long lastWrite;
+    private volatile Runnable written = () -> {};
 
     /**
      * @param file    the file
@@ -124,8 +124,7 @@ public final class EntryStore<F extends Record, T> {
         }
         Map<String, T> renamed = new LinkedHashMap<>();
         all().forEach((name, value) -> renamed.put(name.equals(from) ? to : name, value));
-        lastWrite = System.currentTimeMillis();
-        file.update(current -> write.apply(renamed));
+        write(renamed);
         changed.accept(from, null);
         changed.accept(to, entry);
         return true;
@@ -167,8 +166,7 @@ public final class EntryStore<F extends Record, T> {
         if (added.isEmpty()) {
             return names;
         }
-        lastWrite = System.currentTimeMillis();
-        file.update(current -> write.apply(merged));
+        write(merged);
         added.forEach(changed);
         return names;
     }
@@ -178,15 +176,25 @@ public final class EntryStore<F extends Record, T> {
         return file.reload();
     }
 
-    /** When this plugin last wrote the file, so a watcher can tell its own writes apart. */
-    public long lastWrite() {
-        return lastWrite;
+    /**
+     * Runs after every write of the file is on disk, off the main thread, so a watcher can take
+     * this plugin's own writes as already seen.
+     */
+    public void onWritten(Runnable listener) {
+        written = listener;
     }
 
     private void save(Consumer<Map<String, T>> change) {
         Map<String, T> edited = new LinkedHashMap<>(all());
         change.accept(edited);
-        lastWrite = System.currentTimeMillis();
-        file.update(current -> write.apply(edited));
+        write(edited);
+    }
+
+    /**
+     * Publishes the entries at once and writes the file off the main thread: a burst of edits from
+     * a screen is one write, and the server never waits on the disk.
+     */
+    private void write(Map<String, T> entries) {
+        file.updateAsync(current -> write.apply(entries)).thenRun(() -> written.run());
     }
 }

@@ -63,7 +63,8 @@ public final class HologramModule implements DisplayModule {
         renderer.applyAll(store.all());
 
         watcher = new FileWatcher(new File(core.getPlugin().getDataFolder(), "holograms.yml").toPath(),
-                core.getTasks(), store::lastWrite, this::applyFileEdit, core.getPlugin().getLogger());
+                core.getTasks(), this::applyFileEdit, core.getPlugin().getLogger());
+        store.onWritten(watcher::remember);
         if (DisplaysConfig.get().watchFiles()) watcher.start();
 
         new HologramActions(core).registerAll();

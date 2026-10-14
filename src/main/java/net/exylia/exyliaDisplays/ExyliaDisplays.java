@@ -92,9 +92,15 @@ public final class ExyliaDisplays {
                 debug.log("Module " + module.id() + " is switched off in config.yml.");
                 continue;
             }
-            module.enable(this);
-            menus.register(module.menus());
-            modules.add(module);
+            try {
+                module.enable(this);
+                menus.register(module.menus());
+                modules.add(module);
+            } catch (RuntimeException failure) {
+                debug.error("Module " + module.id() + " failed to start and stays off.", failure);
+                // What it started before failing (a file watcher, entities in the world) goes with it.
+                module.disable();
+            }
         }
         // After the modules: compiling a menu resolves every action its buttons name.
         menus.load();

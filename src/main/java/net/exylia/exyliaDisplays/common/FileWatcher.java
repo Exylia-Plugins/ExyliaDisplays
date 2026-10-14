@@ -13,16 +13,17 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.LongSupplier;
 import java.util.logging.Logger;
 
 /**
- * Notices a hand edit of {@code holograms.yml} and applies it, so editing the file is as live as
- * editing in game.
+ * Notices a hand edit of a module's file ({@code holograms.yml}, {@code npcs.yml}...) and applies
+ * it, so editing the file is as live as editing in game.
  *
  * <p>Saving a file is often several writes in a row, so the reload waits until the file has been
  * quiet for half a second. A write this plugin made itself is recognised by its contents and
- * ignored; reloading after every edit made in game would be a reload for nothing.
+ * ignored: the store hands every write it finishes to {@link #remember()}, so however late the
+ * check runs, the file still reads as already seen. Reloading after every edit made in game would
+ * be a reload for nothing.
  */
 public final class FileWatcher {
 
@@ -31,7 +32,6 @@ public final class FileWatcher {
 
     private final Path file;
     private final TaskScheduler tasks;
-    private final LongSupplier ownWrite;
     private final Runnable reload;
     private final Logger logger;
     private final AtomicInteger generation = new AtomicInteger();
@@ -40,14 +40,12 @@ public final class FileWatcher {
 
     /**
      * @param file     the file to watch
-     * @param tasks    where the reload runs
-     * @param ownWrite when this plugin last wrote the file, in epoch milliseconds
-     * @param reload   what to do with a hand edit, on the main thread
+     * @param tasks  where the reload runs
+     * @param reload what to do with a hand edit, on the main thread
      */
-    public FileWatcher(Path file, TaskScheduler tasks, LongSupplier ownWrite, Runnable reload, Logger logger) {
+    public FileWatcher(Path file, TaskScheduler tasks, Runnable reload, Logger logger) {
         this.file = file;
         this.tasks = tasks;
-        this.ownWrite = ownWrite;
         this.reload = reload;
         this.logger = logger;
     }
@@ -60,7 +58,7 @@ public final class FileWatcher {
             file.getParent().register(watching, StandardWatchEventKinds.ENTRY_MODIFY,
                     StandardWatchEventKinds.ENTRY_CREATE);
             service = watching;
-            Thread thread = new Thread(() -> loop(watching), "ExyliaHolograms-file-watcher");
+            Thread thread = new Thread(() -> loop(watching), "ExyliaDisplays-watcher-" + file.getFileName());
             thread.setDaemon(true);
             thread.start();
         } catch (IOException | UnsupportedOperationException failure) {
@@ -117,9 +115,6 @@ public final class FileWatcher {
             return;
         }
         lastSeen = now;
-        if (System.currentTimeMillis() - ownWrite.getAsLong() < 1500L) {
-            return;
-        }
         reload.run();
         remember();
     }
