@@ -41,6 +41,8 @@ public final class InteractionGate {
     private final long cooldownMillis;
     /** When each player may use it again, in epoch milliseconds. */
     private final Map<UUID, Long> readyAt = new ConcurrentHashMap<>();
+    /** How many players {@link #readyAt} may hold before the ones already ready are dropped. */
+    private volatile int pruneAt = 64;
 
     /**
      * @param interaction    what runs
@@ -102,10 +104,30 @@ public final class InteractionGate {
         }
         if (cooldownMillis > 0) {
             readyAt.put(player, now + cooldownMillis);
+            prune(now);
         } else if (ready != null) {
             readyAt.remove(player);
         }
         return Verdict.RUN;
+    }
+
+    /**
+     * Drops the players whose cooldown already ran out, once there are enough of them to matter.
+     *
+     * <p>The next prune waits until the map doubles again, so the cost stays spread over the
+     * clicks. A player still waiting is kept, so leaving and joining again never skips the wait.
+     */
+    private void prune(long now) {
+        if (readyAt.size() < pruneAt) {
+            return;
+        }
+        readyAt.values().removeIf(ready -> ready <= now);
+        pruneAt = Math.max(64, readyAt.size() * 2);
+    }
+
+    /** How many players it remembers, for tests. */
+    int tracked() {
+        return readyAt.size();
     }
 
     /** How long a player still waits, in milliseconds; 0 when they need not. */

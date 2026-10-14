@@ -18,6 +18,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -55,6 +56,8 @@ public final class HologramRenderer implements Listener {
     private final Map<String, UUID> temporary = new ConcurrentHashMap<>();
     /** The entity each shown hologram should ride. */
     private final Map<String, UUID> wanted = new ConcurrentHashMap<>();
+    /** {@link #wanted} the other way round, so an entity coming and going is one lookup, not a scan. */
+    private final Map<UUID, Set<String>> riders = new ConcurrentHashMap<>();
     /** The holograms riding, or about to ride, an entity. */
     private final Map<String, Mount> mounts = new ConcurrentHashMap<>();
 
@@ -136,6 +139,7 @@ public final class HologramRenderer implements Listener {
         mounts.values().forEach(mount -> mount.follow().cancel());
         mounts.clear();
         wanted.clear();
+        riders.clear();
         temporary.clear();
         Holograms.removeAll(plugin);
         shown.clear();
@@ -188,11 +192,16 @@ public final class HologramRenderer implements Listener {
 
     private void mount(String name, UUID target, Hologram live) {
         unmount(name);
+        unwant(name);
         if (target == null) {
-            wanted.remove(name);
             return;
         }
         wanted.put(name, target);
+        riders.compute(target, (key, names) -> {
+            Set<String> riding = names == null ? ConcurrentHashMap.newKeySet() : names;
+            riding.add(name);
+            return riding;
+        });
         Entity entity = Bukkit.getEntity(target);
         if (entity != null && present(entity)) {
             ride(name, live, entity, 1);
@@ -219,6 +228,13 @@ public final class HologramRenderer implements Listener {
             }
         });
         mounts.put(name, new Mount(entity, follow, pending));
+    }
+
+    private void unwant(String name) {
+        UUID target = wanted.remove(name);
+        if (target != null) {
+            riders.computeIfPresent(target, (key, names) -> names.remove(name) && names.isEmpty() ? null : names);
+        }
     }
 
     private void unmount(String name) {
@@ -251,7 +267,7 @@ public final class HologramRenderer implements Listener {
 
     private void hide(String name) {
         unmount(name);
-        wanted.remove(name);
+        unwant(name);
         Holograms.remove(plugin, name);
         shown.remove(name);
     }
@@ -269,34 +285,30 @@ public final class HologramRenderer implements Listener {
     /** A player joining, respawning or changing worlds, or a saved mob loading: its holograms ride it again. */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityAdded(EntityAddToWorldEvent event) {
-        UUID id = event.getEntity().getUniqueId();
-        if (!wanted.containsValue(id)) {
+        Set<String> names = riders.get(event.getEntity().getUniqueId());
+        if (names == null) {
             return;
         }
         Entity entity = event.getEntity();
-        wanted.forEach((name, target) -> {
-            if (target.equals(id)) {
-                Holograms.get(plugin, name).ifPresent(live -> ride(name, live, entity, MOUNT_DELAY));
-            }
-        });
+        for (String name : names) {
+            Holograms.get(plugin, name).ifPresent(live -> ride(name, live, entity, MOUNT_DELAY));
+        }
     }
 
     /** The entity left its world: its holograms hide until it is back, or drop an unsaved attachment for good. */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityRemoved(EntityRemoveFromWorldEvent event) {
         UUID id = event.getEntity().getUniqueId();
-        if (!wanted.containsValue(id)) {
+        Set<String> names = riders.get(id);
+        if (names == null) {
             return;
         }
-        wanted.forEach((name, target) -> {
-            if (!target.equals(id)) {
-                return;
-            }
+        for (String name : names) {
             unmount(name);
             // An entity that is not saved never comes back once it leaves its world.
             if (id.equals(temporary.get(name))) {
                 tasks.run(() -> forget(name));
             }
-        });
+        }
     }
 }

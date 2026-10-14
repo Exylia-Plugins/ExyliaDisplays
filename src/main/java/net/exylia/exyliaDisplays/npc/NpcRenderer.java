@@ -121,6 +121,7 @@ public final class NpcRenderer implements Listener {
         shown.clear();
         waiting.clear();
         gates.clear();
+        turns.clear();
     }
 
     public boolean isWaiting(String name) {
@@ -269,6 +270,7 @@ public final class NpcRenderer implements Listener {
         Holograms.remove(plugin, LABEL + name);
         shown.remove(name);
         gates.remove(name);
+        turns.remove(name);
     }
 
     @EventHandler

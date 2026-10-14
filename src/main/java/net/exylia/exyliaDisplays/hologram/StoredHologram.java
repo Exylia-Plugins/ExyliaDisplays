@@ -364,9 +364,13 @@ public record StoredHologram(
             return manual() ? shownTo : hiddenFrom;
         }
 
+        /** Asked for every viewer several times a second, so an empty list answers without a string. */
         public boolean sees(UUID player) {
-            String id = player.toString();
-            return manual() ? shownTo.contains(id) : !hiddenFrom.contains(id);
+            List<String> players = players();
+            if (players.isEmpty()) {
+                return !manual();
+            }
+            return manual() == players.contains(player.toString());
         }
 
         public Visibility withMode(String value) {

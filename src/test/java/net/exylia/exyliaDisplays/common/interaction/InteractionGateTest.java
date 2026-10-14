@@ -42,4 +42,17 @@ class InteractionGateTest {
         assertEquals(InteractionGate.Verdict.RUN, gate.check(ALEX, node -> false, 0));
         assertEquals(InteractionGate.Verdict.RUN, gate.check(ALEX, node -> false, 0));
     }
+
+    @Test
+    @DisplayName("players whose cooldown ran out are forgotten, the ones still waiting are not")
+    void prunesExpired() {
+        InteractionGate gate = new InteractionGate(Interaction.empty(), "", 1000);
+        for (int i = 0; i < 63; i++) {
+            gate.check(UUID.randomUUID(), node -> true, 0);
+        }
+        assertEquals(63, gate.tracked());
+        gate.check(ALEX, node -> true, 1500);
+        assertEquals(1, gate.tracked());
+        assertEquals(InteractionGate.Verdict.COOLING_DOWN, gate.check(ALEX, node -> true, 2000));
+    }
 }

@@ -128,6 +128,7 @@ class StoredHologramTest {
         assertEquals(List.of(), shown.cleared().shownTo());
         assertEquals(List.of(ana.toString()), shown.cleared().hiddenFrom(), "the other mode's list is kept");
         assertEquals("all", new StoredHologram.Visibility("typo", null, null).mode());
+        assertFalse(new StoredHologram.Visibility("manual", null, null).sees(ana), "manual with nobody listed hides it");
     }
 
     @Test
