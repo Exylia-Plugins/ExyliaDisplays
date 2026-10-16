@@ -12,6 +12,7 @@ import net.exylia.lib.hologram.HologramLine;
 import net.exylia.lib.input.FormField;
 import net.exylia.lib.input.FormKey;
 import net.exylia.lib.input.FormValues;
+import net.exylia.lib.text.Text;
 import net.exylia.lib.text.Values;
 import net.exylia.lib.util.editor.EditorForm;
 import org.bukkit.Bukkit;
@@ -213,7 +214,8 @@ public final class HologramDialogs {
         Runnable back = () -> HologramViews.openLines(player, name, page);
         EditorForm form = form(player, words().allLinesTitle())
                 .text(TEXT, words().allLinesLabel(), String.join("\n", hologram.get().lines()), 12)
-                .hint(words().allLinesHint());
+                // It lists tags as examples: parsed, <rainbow> and <shine> would colour the rest of the note.
+                .hint(Text.escape(words().allLinesHint()));
         answer(player, form.ask(values -> values.getOr(TEXT, "")), back, text -> {
             List<String> lines = new ArrayList<>(Arrays.asList(text.split("\\R", -1)));
             while (!lines.isEmpty() && lines.get(lines.size() - 1).isBlank()) {
