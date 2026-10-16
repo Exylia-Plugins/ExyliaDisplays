@@ -78,7 +78,7 @@ public final class NpcModule implements DisplayModule {
         store.onWritten(watcher::remember);
         if (DisplaysConfig.get().watchFiles()) watcher.start();
         // Edited in the browser as a form drawn from the file's own schema.
-        WebEditor.of(core.getPlugin()).subject(ID, file)
+        WebEditor.of(core.getPlugin()).subject(ID, file, "displays/npc")
                 .title("NPCs")
                 .permission(Permissions.NPCS)
                 .sensitive("npcs.*.interactions.actions")
