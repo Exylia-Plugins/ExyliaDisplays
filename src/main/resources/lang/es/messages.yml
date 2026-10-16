@@ -9,6 +9,7 @@ help:
   - ' <click:run_command:''/npcadmin''>{warning}/npcadmin</click> {letters_black}» {letters}NPCs, en un menú {letters_black}· <click:run_command:''/npcadmin help''>{info}[ayuda]</click>'
   - ' <click:run_command:''/displays modules''>{warning}/displays modules</click> {letters_black}» {letters}qué está activo'
   - ' <click:run_command:''/displays reload''>{warning}/displays reload</click> {letters_black}» {letters}volver a leer todos los archivos'
+  - ' <click:run_command:''/displays editor''>{warning}/displays editor</click> {letters_black}» {letters}hologramas y NPCs en el navegador'
   - ''
 module: ' {letters_black}▎ {letters}%module% {letters_black}» %status%'
 'on': '{success}Activo'

@@ -7,6 +7,7 @@ import net.exylia.exyliaDisplays.common.store.EntryStore;
 import net.exylia.exyliaDisplays.config.DisplaysConfig;
 import net.exylia.exyliaDisplays.module.DisplayModule;
 import net.exylia.lib.config.ConfigFile;
+import net.exylia.lib.web.WebEditor;
 import net.exylia.lib.config.ConfigIssue;
 import net.exylia.lib.config.Configs;
 import net.exylia.lib.text.Values;
@@ -69,6 +70,13 @@ public final class HologramModule implements DisplayModule {
                 core.getTasks(), this::applyFileEdit, core.getPlugin().getLogger());
         store.onWritten(watcher::remember);
         if (DisplaysConfig.get().watchFiles()) watcher.start();
+        // The browser edits the same file the watcher guards; a change it writes is applied
+        // the way a hand edit is. Clicks run commands, so they are confirmed before writing.
+        WebEditor.of(core.getPlugin()).subject(ID, file, "displays/hologram")
+                .title("Holograms")
+                .permission(Permissions.HOLOGRAMS)
+                .sensitive("holograms.*.click.commands", "holograms.*.click.buttons", "holograms.*.pages.click")
+                .onApplied(this::applyFileEdit);
 
         new HologramActions(core).registerAll();
         core.getLamp().register(new HologramCommand());
@@ -86,6 +94,7 @@ public final class HologramModule implements DisplayModule {
     @Override
     public void disable() {
         adjust.saveAll();
+        WebEditor.of(core.getPlugin()).remove(ID);
         if (watcher != null) watcher.stop();
         if (renderer != null) renderer.clear();
         instance = null;

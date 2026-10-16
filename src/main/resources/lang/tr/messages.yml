@@ -9,6 +9,7 @@ help:
   - ' <click:run_command:''/npcadmin''>{warning}/npcadmin</click> {letters_black}» {letters}NPC''ler, bir menüde {letters_black}· <click:run_command:''/npcadmin help''>{info}[yardım]</click>'
   - ' <click:run_command:''/displays modules''>{warning}/displays modules</click> {letters_black}» {letters}neyin etkin olduğu'
   - ' <click:run_command:''/displays reload''>{warning}/displays reload</click> {letters_black}» {letters}tüm dosyaları yeniden oku'
+  - ' <click:run_command:''/displays editor''>{warning}/displays editor</click> {letters_black}» {letters}tarayıcıda hologramlar ve NPC''ler'
   - ''
 module: ' {letters_black}▎ {letters}%module% {letters_black}» %status%'
 'on': '{success}Etkin'

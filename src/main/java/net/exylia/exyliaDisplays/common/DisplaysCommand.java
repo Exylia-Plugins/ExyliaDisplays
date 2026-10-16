@@ -6,6 +6,7 @@ import net.exylia.exyliaDisplays.config.DisplaysMessages;
 import net.exylia.exyliaDisplays.module.DisplayModule;
 import net.exylia.exyliaDisplays.module.Modules;
 import net.exylia.lib.text.Values;
+import net.exylia.lib.web.WebEditor;
 import org.bukkit.command.CommandSender;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.CommandPlaceholder;
@@ -41,6 +42,12 @@ public final class DisplaysCommand {
             core().getMessages().send(sender, messages.module(), Values.of().put("module", id)
                     .put("status", core().isRunning(id) ? messages.on() : messages.off()));
         }
+    }
+
+    /** Every module's file in the browser; the link and the rest of the flow come from ExyliaLib. */
+    @Subcommand("editor")
+    public void editor(CommandSender sender) {
+        WebEditor.open(sender, core().getPlugin());
     }
 
     @Subcommand("reload")

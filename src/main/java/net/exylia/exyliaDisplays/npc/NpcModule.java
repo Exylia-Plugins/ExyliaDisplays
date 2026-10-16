@@ -7,6 +7,7 @@ import net.exylia.exyliaDisplays.common.store.EntryStore;
 import net.exylia.exyliaDisplays.config.DisplaysConfig;
 import net.exylia.exyliaDisplays.module.DisplayModule;
 import net.exylia.lib.config.ConfigFile;
+import net.exylia.lib.web.WebEditor;
 import net.exylia.lib.config.ConfigIssue;
 import net.exylia.lib.config.Configs;
 import net.exylia.lib.text.Values;
@@ -76,6 +77,12 @@ public final class NpcModule implements DisplayModule {
                 core.getTasks(), this::applyFileEdit, core.getPlugin().getLogger());
         store.onWritten(watcher::remember);
         if (DisplaysConfig.get().watchFiles()) watcher.start();
+        // Edited in the browser as a form drawn from the file's own schema.
+        WebEditor.of(core.getPlugin()).subject(ID, file)
+                .title("NPCs")
+                .permission(Permissions.NPCS)
+                .sensitive("npcs.*.interactions.actions")
+                .onApplied(this::applyFileEdit);
 
         new NpcActions(core).registerAll();
         core.getLamp().register(new NpcCommand());
@@ -94,6 +101,7 @@ public final class NpcModule implements DisplayModule {
     @Override
     public void disable() {
         adjust.saveAll();
+        WebEditor.of(core.getPlugin()).remove(ID);
         if (watcher != null) watcher.stop();
         if (renderer != null) renderer.clear();
         if (performances != null) performances.disable();

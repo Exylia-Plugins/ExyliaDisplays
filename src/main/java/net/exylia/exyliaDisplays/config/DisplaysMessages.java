@@ -47,6 +47,7 @@ public record DisplaysMessages(
                         " <click:run_command:'/npcadmin'>{warning}/npcadmin</click> {letters_black}» {letters}NPCs, on a screen {letters_black}· <click:run_command:'/npcadmin help'>{info}[help]</click>",
                         " <click:run_command:'/displays modules'>{warning}/displays modules</click> {letters_black}» {letters}what is running",
                         " <click:run_command:'/displays reload'>{warning}/displays reload</click> {letters_black}» {letters}read every file again",
+                        " <click:run_command:'/displays editor'>{warning}/displays editor</click> {letters_black}» {letters}holograms and NPCs in the browser",
                         ""),
                 " {letters_black}▎ {letters}%module% {letters_black}» %status%",
                 "{success}Running",

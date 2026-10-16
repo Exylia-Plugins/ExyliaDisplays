@@ -157,6 +157,7 @@ public record HologramsMessages(
                         " <click:run_command:'/holoadmin near'>{warning}/holoadmin near [radius]</click> {letters_black}» {letters}the ones around you",
                         " <click:suggest_command:'/holoadmin import '>{warning}/holoadmin import <plugin> [replace]</click> {letters_black}» {letters}DecentHolograms, HolographicDisplays, FancyHolograms",
                         " <click:run_command:'/holoadmin reload'>{warning}/holoadmin reload</click> {letters_black}» {letters}read holograms.yml again",
+                        " <click:run_command:'/holoadmin editor'>{warning}/holoadmin editor</click> {letters_black}» {letters}edit them in the browser",
                         "",
                         " {secondary}Edit one {letters_black}» {warning}/holo <name> {letters_black}opens its editor",
                         " {warning}info {letters_black}· {warning}tp {letters_black}· {warning}movehere {letters_black}· {warning}move <x> <y> <z> [world] {letters_black}· {warning}center",

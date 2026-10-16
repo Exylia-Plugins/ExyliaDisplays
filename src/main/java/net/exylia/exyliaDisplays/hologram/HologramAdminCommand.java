@@ -9,6 +9,7 @@ import net.exylia.exyliaDisplays.npc.NpcModule;
 import net.exylia.lib.config.ConfigIssue;
 import net.exylia.lib.text.Values;
 import org.bukkit.Location;
+import net.exylia.lib.web.WebEditor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import revxrsal.commands.annotation.Command;
@@ -54,6 +55,12 @@ public final class HologramAdminCommand {
     @Subcommand("help")
     public void help(CommandSender sender) {
         ExyliaDisplays.getInstance().getMessages().send(sender, messages().help(), Values.of());
+    }
+
+    /** The holograms, and every other file this plugin offers, in the browser. */
+    @Subcommand("editor")
+    public void editor(CommandSender sender) {
+        WebEditor.open(sender, ExyliaDisplays.getInstance().getPlugin());
     }
 
     @Subcommand("list")
