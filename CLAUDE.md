@@ -10,7 +10,7 @@ Formerly ExyliaHolograms: holograms, NPCs and future "things in the world" modul
 ## ExyliaLib
 
 - Always the newest: `build.gradle` resolves the latest GitHub release (or a newer one in mavenLocal) at build time, and that version becomes plugin.yml's `exylia-lib`. There is no pinned version to bump; `-PexyliaLibVersion` pins one for a single build.
-- The bootstrap installer downloads the latest release, falling back to the built-against one.
+- When ExyliaLib is missing, `bootstrap/ExyliaLibMissing` only logs where to download it: nothing is downloaded without the owner (Modrinth rule).
 - Updates of this plugin come from ExyliaLib's `PluginUpdater` (`exylia-updates` in plugin.yml, the fixed-name `ExyliaDisplays.jar` on every release).
 - Generic pieces live in ExyliaLib, not here: line tags (`HologramLine`), placed NPCs (`Npcs.of(plugin).place`), click interactions (`Interactions`, `Click`). A new interaction token that only makes sense for one module is registered by that module with `Interactions.token`.
 

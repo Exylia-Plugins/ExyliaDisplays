@@ -19,8 +19,8 @@ depend:
 softdepend:
   # NPCs can play its emotes (emote:<id>); its emotes.yml is read, never changed.
   - ExyliaEmotes
-  # Required, but soft so this plugin still starts without it: it then downloads ExyliaLib
-  # and asks for a restart.
+  # Required, but soft so this plugin still starts without it: it then says where to get ExyliaLib
+  # and stays off until it is installed.
   - ExyliaLib
   - PlaceholderAPI
   # Read by /holoadmin import and /npcadmin import; never changed. Listed so they load first when both are
