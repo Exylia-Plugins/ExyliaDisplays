@@ -13,13 +13,13 @@ import net.exylia.lib.action.ActionResult;
 import net.exylia.lib.action.PluginActions;
 import net.exylia.lib.text.Values;
 import net.exylia.lib.ui.UiKeys;
+import net.exylia.lib.util.teleport.Teleports;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.Comparator;
 import java.util.List;
@@ -175,8 +175,11 @@ public final class HologramActions {
         view.setYaw(180f);
         view.setPitch(-10f);
         player.closeInventory();
-        player.teleportAsync(view, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRun(() ->
-                plugin.getMessages().send(player, HologramsMessages.get().teleported(), Values.of().putText("name", name)));
+        Teleports.of(plugin.getPlugin()).to(player, view).warmup(0).start().future().thenAccept(result -> {
+            if (result.isSuccess()) {
+                plugin.getMessages().send(player, HologramsMessages.get().teleported(), Values.of().putText("name", name));
+            }
+        });
     }
 
     // ------------------------------------------------------------------

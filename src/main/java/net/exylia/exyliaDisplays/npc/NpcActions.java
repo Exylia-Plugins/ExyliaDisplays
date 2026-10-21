@@ -8,9 +8,9 @@ import net.exylia.lib.action.ActionResult;
 import net.exylia.lib.action.PluginActions;
 import net.exylia.lib.text.Values;
 import net.exylia.lib.ui.UiKeys;
+import net.exylia.lib.util.teleport.Teleports;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.function.BiConsumer;
@@ -123,8 +123,11 @@ public final class NpcActions {
         view.setYaw(at.getYaw() + 180f);
         view.setPitch(0f);
         player.closeInventory();
-        player.teleportAsync(view, PlayerTeleportEvent.TeleportCause.PLUGIN).thenRun(() ->
-                plugin.getMessages().send(player, NpcsMessages.get().teleported(), Values.of().putText("name", name)));
+        Teleports.of(plugin.getPlugin()).to(player, view).warmup(0).start().future().thenAccept(result -> {
+            if (result.isSuccess()) {
+                plugin.getMessages().send(player, NpcsMessages.get().teleported(), Values.of().putText("name", name));
+            }
+        });
     }
 
     // ------------------------------------------------------------------
