@@ -30,7 +30,7 @@ Built on [ExyliaLib](https://github.com/DiGround-s/ExyliaLib): everything is pac
 
 ## Requirements
 
-- Paper or Folia 1.21+, Java 21 (dialog windows need 1.21.6+; older clients and Bedrock players get the same fields through chat or forms)
+- Paper or Folia 1.21.4 or newer, Java 21 (dialog windows need 1.21.6+; older clients and Bedrock players get the same fields through chat or forms)
 - [PacketEvents](https://modrinth.com/plugin/packetevents)
 - [ExyliaLib](https://modrinth.com/plugin/exylialib) ([GitHub releases](https://github.com/DiGround-s/ExyliaLib/releases)). Install it first; without it the plugin stays off and says where to get it.
 
