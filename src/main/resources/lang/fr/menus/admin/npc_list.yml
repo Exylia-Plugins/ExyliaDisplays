@@ -1,0 +1,102 @@
+# NE PAS MODIFIER — RÉGÉNÉRÉ À CHAQUE DÉMARRAGE.
+#
+# Tous les PNJ du serveur, et le bouton pour en créer un.
+
+title: "{primary}&lPNJ {muted}%current_page%/%total_pages%"
+size: 54
+type: PAGINATION
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+  pagination:
+    material: LIGHT_GRAY_STAINED_GLASS_PANE
+    name: "{muted}Plus aucun PNJ"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Crées-en un pour le voir ici."
+      - ""
+    hide_tooltip: false
+
+pagination:
+  slots: '0-35'
+
+  item_template:
+    material: "%npc_icon%"
+    name: "{primary}&l%npc_name%"
+    lore:
+      - ""
+      - "{secondary}Information :"
+      - " {letters_black}▎ {letters}Étiquette {letters_black}» %npc_preview%"
+      - " {letters_black}▎ {letters}Skin {letters_black}» %npc_skin%"
+      - " {letters_black}▎ {letters}Monde {letters_black}» {info}%npc_world%"
+      - " {letters_black}▎ {letters}Position {letters_black}» {info}%npc_xyz%"
+      - " {letters_black}▎ {letters}Au clic {letters_black}» %npc_actions%"
+      - ""
+      - "{secondary}Statut :"
+      - " {letters_black}▎ {letters}État {letters_black}» %npc_status%"
+      - ""
+      - "{warning}➥ Clic gauche {letters_black}» {letters}modifier"
+      - "{warning}➥ Shift-clic gauche {letters_black}» {letters}se téléporter"
+      - "{error}➥ Clic droit {letters_black}» {letters}supprimer"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_edit"
+      - "shift_left: exyliadisplays:npc_row_teleport"
+      - "right: exyliadisplays:npc_row_delete"
+
+  navigation:
+    previous:
+      slot: 48
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
+      name: '{error}&l← PAGE PRÉCÉDENTE'
+      lore:
+        - ""
+        - " {letters_black}▎ {letters}Page {info}%current_page%{letters_black}/{info}%total_pages%"
+        - ""
+      actions:
+        - 'previous_page'
+    next:
+      slot: 50
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
+      name: '{success}&lPAGE SUIVANTE →'
+      lore:
+        - ""
+        - " {letters_black}▎ {letters}Page {info}%current_page%{letters_black}/{info}%total_pages%"
+        - ""
+      actions:
+        - 'next_page'
+
+items:
+  create:
+    slot: 45
+    material: NETHER_STAR
+    name: "{primary}&lCRÉER UN PNJ"
+    lore:
+      - ""
+      - "{secondary}Information :"
+      - " {letters_black}▎ {letters}Un nouveau PNJ là où tu es, à partir"
+      - " {letters_black}▎ {letters}d'un {highlight}modèle de départ {letters}et d'un skin."
+      - ""
+      - "{warning}➥ Clique pour créer"
+      - ""
+    actions:
+      - "exyliadisplays:npc_create"
+
+  info:
+    slot: 49
+    material: BOOK
+    name: "{primary}&lPNJ"
+    lore:
+      - ""
+      - "{secondary}Information :"
+      - " {letters_black}▎ {letters}PNJ {letters_black}» {info}%npc_count%"
+      - ""
+      - "{secondary}Astuce :"
+      - " {letters_black}▎ {letters}Tout ceci se trouve aussi dans"
+      - " {letters_black}▎ {highlight}npcs.yml{letters}, et enregistrer ce"
+      - " {letters_black}▎ {letters}fichier l'applique aussitôt."
+      - ""

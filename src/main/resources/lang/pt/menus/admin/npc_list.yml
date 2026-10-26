@@ -1,0 +1,102 @@
+# NÃO EDITE — REGENERADO A CADA INICIALIZAÇÃO.
+#
+# Todos os NPCs deste servidor e o botão que cria um novo.
+
+title: "{primary}&lNPCS {muted}%current_page%/%total_pages%"
+size: 54
+type: PAGINATION
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+  pagination:
+    material: LIGHT_GRAY_STAINED_GLASS_PANE
+    name: "{muted}Não há mais NPCs"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Crie um para vê-lo listado aqui."
+      - ""
+    hide_tooltip: false
+
+pagination:
+  slots: '0-35'
+
+  item_template:
+    material: "%npc_icon%"
+    name: "{primary}&l%npc_name%"
+    lore:
+      - ""
+      - "{secondary}Informações:"
+      - " {letters_black}▎ {letters}Rótulo {letters_black}» %npc_preview%"
+      - " {letters_black}▎ {letters}Skin {letters_black}» %npc_skin%"
+      - " {letters_black}▎ {letters}Mundo {letters_black}» {info}%npc_world%"
+      - " {letters_black}▎ {letters}Posição {letters_black}» {info}%npc_xyz%"
+      - " {letters_black}▎ {letters}Ao clicar {letters_black}» %npc_actions%"
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}Estado {letters_black}» %npc_status%"
+      - ""
+      - "{warning}➥ Clique esquerdo {letters_black}» {letters}editar"
+      - "{warning}➥ Shift + clique esquerdo {letters_black}» {letters}teleportar"
+      - "{error}➥ Clique direito {letters_black}» {letters}excluir"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_edit"
+      - "shift_left: exyliadisplays:npc_row_teleport"
+      - "right: exyliadisplays:npc_row_delete"
+
+  navigation:
+    previous:
+      slot: 48
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
+      name: '{error}&l← PÁGINA ANTERIOR'
+      lore:
+        - ""
+        - " {letters_black}▎ {letters}Página {info}%current_page%{letters_black}/{info}%total_pages%"
+        - ""
+      actions:
+        - 'previous_page'
+    next:
+      slot: 50
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
+      name: '{success}&lPRÓXIMA PÁGINA →'
+      lore:
+        - ""
+        - " {letters_black}▎ {letters}Página {info}%current_page%{letters_black}/{info}%total_pages%"
+        - ""
+      actions:
+        - 'next_page'
+
+items:
+  create:
+    slot: 45
+    material: NETHER_STAR
+    name: "{primary}&lCRIAR NPC"
+    lore:
+      - ""
+      - "{secondary}Informações:"
+      - " {letters_black}▎ {letters}Um novo NPC onde você está, com"
+      - " {letters_black}▎ {letters}um {highlight}modelo pronto {letters}e uma skin."
+      - ""
+      - "{warning}➥ Clique para criar"
+      - ""
+    actions:
+      - "exyliadisplays:npc_create"
+
+  info:
+    slot: 49
+    material: BOOK
+    name: "{primary}&lNPCS"
+    lore:
+      - ""
+      - "{secondary}Informações:"
+      - " {letters_black}▎ {letters}NPCs {letters_black}» {info}%npc_count%"
+      - ""
+      - "{secondary}Dica:"
+      - " {letters_black}▎ {letters}Tudo aqui também está em"
+      - " {letters_black}▎ {highlight}npcs.yml{letters}, e salvar esse"
+      - " {letters_black}▎ {letters}arquivo aplica na hora."
+      - ""

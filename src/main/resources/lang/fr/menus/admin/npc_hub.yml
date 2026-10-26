@@ -1,0 +1,288 @@
+# NE PAS MODIFIER — RÉGÉNÉRÉ À CHAQUE DÉMARRAGE.
+#
+# Un PNJ : son état, et une carte pour chacune de ses parties.
+
+title: "{primary}&lPNJ {letters_black}» {highlight}%npc_name%"
+size: 45
+type: SIMPLE
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+
+items:
+  header:
+    slot: 4
+    material: "%npc_icon%"
+    name: "{primary}&l%npc_name%"
+    lore:
+      - ""
+      - "{secondary}Information :"
+      - " {letters_black}▎ {letters}Étiquette {letters_black}» %npc_preview%"
+      - " {letters_black}▎ {letters}Skin {letters_black}» %skin%"
+      - ""
+      - "{secondary}Statut :"
+      - " {letters_black}▎ {letters}État {letters_black}» %status%"
+      - " {letters_black}▎ {letters}Vu en ce moment {letters_black}» {info}%npc_viewers% {letters}joueurs"
+      - ""
+      - "{warning}➥ Clic gauche {letters_black}» {letters}afficher ou masquer"
+      - "{warning}➥ Clic droit {letters_black}» {letters}renommer"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_toggle"
+      - "right: exyliadisplays:npc_rename"
+
+  appearance:
+    slot: 19
+    material: ARMOR_STAND
+    name: "{primary}&lAPPARENCE"
+    lore:
+      - ""
+      - "{secondary}Information :"
+      - " {letters_black}▎ {letters}Son skin, sa pose, sa taille et son contour."
+      - ""
+      - "{secondary}Statut :"
+      - " {letters_black}▎ {letters}Skin {letters_black}» %skin%"
+      - " {letters_black}▎ {letters}Pose {letters_black}» {info}%pose%"
+      - " {letters_black}▎ {letters}Échelle {letters_black}» {info}%scale%"
+      - " {letters_black}▎ {letters}Lueur {letters_black}» %glow%"
+      - ""
+      - "{warning}➥ Clic gauche {letters_black}» {letters}skin"
+      - "{warning}➥ Clic droit {letters_black}» {letters}pose, taille, contour et assis"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_appearance"
+      - "right: exyliadisplays:npc_appearance_body"
+
+  equipment:
+    slot: 20
+    material: DIAMOND_CHESTPLATE
+    name: "{primary}&lÉQUIPEMENT"
+    lore:
+      - ""
+      - "{secondary}Information :"
+      - " {letters_black}▎ {letters}Ce qu'il porte et tient, pris"
+      - " {letters_black}▎ {letters}de l'item dans {highlight}ta main{letters}."
+      - ""
+      - "{secondary}Statut :"
+      - " {letters_black}▎ {letters}Porte {letters_black}» %equipment%"
+      - ""
+      - "{warning}➥ Clique pour ouvrir"
+      - ""
+    actions:
+      - "exyliadisplays:npc_open_equipment"
+
+  label:
+    slot: 21
+    material: NAME_TAG
+    name: "{primary}&lÉTIQUETTE"
+    lore:
+      - ""
+      - "{secondary}Information :"
+      - " {letters_black}▎ {letters}Les lignes au-dessus de sa tête, avec"
+      - " {letters_black}▎ {letters}chaque {highlight}tag d'hologramme{letters}, ou tout un"
+      - " {letters_black}▎ {letters}hologramme qui le suit."
+      - ""
+      - "{secondary}Statut :"
+      - " {letters_black}▎ {letters}Étiquette {letters_black}» %label%"
+      - " {letters_black}▎ {letters}Écart {letters_black}» {info}%npc_height% {letters}blocs"
+      - " {letters_black}▎ {letters}Hologramme {letters_black}» %link%"
+      - ""
+      - "{warning}➥ Clic gauche {letters_black}» {letters}modifier l'étiquette"
+      - "{warning}➥ Clic droit {letters_black}» {letters}lier un hologramme"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_label"
+      - "right: exyliadisplays:npc_link"
+
+  animations:
+    slot: 22
+    material: FEATHER
+    name: "{primary}&lANIMATIONS"
+    lore:
+      - ""
+      - "{secondary}Information :"
+      - " {letters_black}▎ {letters}Les gestes qu'il joue : {highlight}saluer{letters}, {highlight}acquiescer{letters},"
+      - " {letters_black}▎ {highlight}s'incliner{letters}... ou une {highlight}performance {letters}complète,"
+      - " {letters_black}▎ {letters}au clic, tout seul, ou pour accueillir"
+      - " {letters_black}▎ {letters}un joueur qui s'approche."
+      - ""
+      - "{secondary}Statut :"
+      - " {letters_black}▎ {letters}Clic gauche {letters_black}» %anim_left%"
+      - " {letters_black}▎ {letters}Clic droit {letters_black}» %anim_right%"
+      - " {letters_black}▎ {letters}Tout seul {letters_black}» %anim_idle% {letters_black}· {info}%anim_idle_every% ⌚"
+      - " {letters_black}▎ {letters}Accueil {letters_black}» %anim_greet% {letters_black}· {info}%anim_greet_range% {letters}blocs"
+      - " {letters_black}▎ {letters}Assis {letters_black}» %sitting%"
+      - " {letters_black}▎ {letters}Performances à moins de {letters_black}» {info}%anim_perform_range% {letters}blocs"
+      - ""
+      - "{warning}➥ Clic gauche {letters_black}» {letters}ce que joue un clic"
+      - "{warning}➥ Clic droit {letters_black}» {letters}tout seul, et l'accueil"
+      - "{warning}➥ Shift-clic gauche {letters_black}» {letters}choisir une performance"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_animations"
+      - "right: exyliadisplays:npc_animations_auto"
+      - "shift_left: exyliadisplays:npc_open_performances"
+
+  interactions:
+    slot: 23
+    material: LEVER
+    name: "{primary}&lINTERACTIONS"
+    lore:
+      - ""
+      - "{secondary}Information :"
+      - " {letters_black}▎ {letters}Ce que fait un clic : envoyer vers un serveur,"
+      - " {letters_black}▎ {letters}lancer des commandes, {highlight}parler {letters}dans une bulle,"
+      - " {letters_black}▎ {letters}frapper, avec {highlight}gauche {letters}et {highlight}droit {letters}séparés."
+      - ""
+      - "{secondary}Statut :"
+      - " {letters_black}▎ {letters}Au clic {letters_black}» %actions%"
+      - " {letters_black}▎ {letters}Utilisé par {letters_black}» %use_permission%"
+      - " {letters_black}▎ {letters}Cooldown {letters_black}» {info}%cooldown%s ⌚"
+      - " {letters_black}▎ {letters}Se tourne vers le joueur {letters_black}» %face_clicker%"
+      - ""
+      - "{warning}➥ Clic gauche {letters_black}» {letters}ce que fait un clic"
+      - "{warning}➥ Clic droit {letters_black}» {letters}qui peut l'utiliser, et à quelle fréquence"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_interactions"
+      - "right: exyliadisplays:npc_interactions_rules"
+
+  visibility:
+    slot: 24
+    material: ENDER_EYE
+    name: "{primary}&lVISIBILITÉ"
+    lore:
+      - ""
+      - "{secondary}Information :"
+      - " {letters_black}▎ {letters}Où sa tête se tourne, qui le voit,"
+      - " {letters_black}▎ {letters}et à quelle distance."
+      - ""
+      - "{secondary}Statut :"
+      - " {letters_black}▎ {letters}Regarde {letters_black}» {info}%look%"
+      - " {letters_black}▎ {letters}Portée du regard {letters_black}» {info}%look_range% {letters}blocs"
+      - " {letters_black}▎ {letters}Visible par {letters_black}» %permission%"
+      - " {letters_black}▎ {letters}Distance {letters_black}» {info}%view_distance% {letters}blocs"
+      - ""
+      - "{warning}➥ Clique pour modifier"
+      - ""
+    actions:
+      - "exyliadisplays:npc_visibility"
+
+  location:
+    slot: 25
+    material: COMPASS
+    name: "{primary}&lEMPLACEMENT"
+    lore:
+      - ""
+      - "{secondary}Statut :"
+      - " {letters_black}▎ {letters}Monde {letters_black}» {info}%world%"
+      - " {letters_black}▎ {letters}Position {letters_black}» {info}%xyz%"
+      - " {letters_black}▎ {letters}Orientation {letters_black}» {info}%yaw%° {letters_black}· {info}%pitch%°"
+      - ""
+      - "{warning}➥ Clic gauche {letters_black}» {letters}position et rotation exactes"
+      - "{warning}➥ Clic droit {letters_black}» {letters}déplacer ici"
+      - "{warning}➥ Shift-clic gauche {letters_black}» {letters}centrer sur son bloc"
+      - "{warning}➥ Shift-clic droit {letters_black}» {letters}tourner vers moi"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_location"
+      - "right: exyliadisplays:npc_move_here"
+      - "shift_left: exyliadisplays:npc_centre"
+      - "shift_right: exyliadisplays:npc_face_me"
+
+  teleport:
+    slot: 36
+    material: ENDER_PEARL
+    name: "{primary}&lTÉLÉPORTATION"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Va jusqu'à lui, face à lui."
+      - ""
+      - "{warning}➥ Clique pour te téléporter"
+      - ""
+    actions:
+      - "exyliadisplays:npc_teleport"
+
+  clone:
+    slot: 37
+    material: PAPER
+    name: "{primary}&lDUPLIQUER"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Une copie sous un nouveau nom,"
+      - " {letters_black}▎ {letters}au même endroit."
+      - ""
+      - "{warning}➥ Clique pour dupliquer"
+      - ""
+    actions:
+      - "exyliadisplays:npc_clone"
+
+  adjust:
+    slot: 38
+    material: SPYGLASS
+    name: "{primary}&lRÉGLAGE FIN"
+    lore:
+      - ""
+      - "{secondary}Information :"
+      - " {letters_black}▎ {letters}Déplace, tourne et redimensionne-le à la"
+      - " {letters_black}▎ {highlight}molette {letters}en le regardant."
+      - ""
+      - "{secondary}Commandes :"
+      - " {letters_black}▎ {letters}Molette {letters_black}» {info}changer la valeur"
+      - " {letters_black}▎ {letters}Accroupi + molette {letters_black}» {info}taille du pas"
+      - " {letters_black}▎ {letters}F {letters_black}» {info}axe suivant"
+      - " {letters_black}▎ {letters}Accroupi + clic {letters_black}» {info}aligner"
+      - " {letters_black}▎ {letters}Clic {letters_black}» {info}enregistrer"
+      - ""
+      - "{warning}➥ Clique pour commencer"
+      - ""
+    actions:
+      - "exyliadisplays:npc_adjust"
+
+  back:
+    slot: 40
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: '{error}&lRETOUR'
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Revient à tous les PNJ."
+      - ""
+      - "{warning}➥ Clique pour revenir"
+      - ""
+    actions:
+      - "exyliadisplays:npc_open_list"
+
+  undo:
+    slot: 42
+    material: CLOCK
+    name: "{primary}&lANNULER"
+    lore:
+      - ""
+      - "{secondary}Information :"
+      - " {letters_black}▎ {letters}Annule la dernière modification, faite"
+      - " {letters_black}▎ {letters}ici, par commande ou dans le fichier."
+      - ""
+      - "{secondary}Statut :"
+      - " {letters_black}▎ {letters}Modifications à annuler {letters_black}» {info}%npc_undo%"
+      - ""
+      - "{warning}➥ Clique pour annuler"
+      - ""
+    actions:
+      - "exyliadisplays:npc_undo"
+
+  delete:
+    slot: 44
+    material: BARRIER
+    name: "{error}&lSUPPRIMER"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Le supprime définitivement."
+      - " {letters_black}Une confirmation te sera demandée."
+      - ""
+      - "{error}➥ Clique pour supprimer"
+      - ""
+    actions:
+      - "exyliadisplays:npc_delete"

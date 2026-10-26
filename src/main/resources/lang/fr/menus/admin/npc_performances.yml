@@ -1,0 +1,97 @@
+# NE PAS MODIFIER — RÉGÉNÉRÉ À CHAQUE DÉMARRAGE.
+#
+# Les performances qu'un PNJ peut jouer : les emotes solo d'ExyliaEmotes et les fichiers
+# d'animation de plugins/ExyliaDisplays/animations. Une ligne va sur un de ses déclencheurs,
+# ou s'essaie sur lui.
+
+title: "{primary}&lPERFORMANCES {letters_black}» {highlight}%npc_name% {muted}%current_page%/%total_pages%"
+size: 54
+type: PAGINATION
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+  pagination:
+    material: LIGHT_GRAY_STAINED_GLASS_PANE
+    name: "{muted}Plus aucune performance"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Installe {highlight}ExyliaEmotes{letters}, ou dépose des fichiers"
+      - " {letters_black}▎ {letters}d'animation dans {highlight}plugins/ExyliaDisplays/animations{letters}."
+      - ""
+    hide_tooltip: false
+
+pagination:
+  slots: '0-35'
+
+  item_template:
+    material: "%perf_icon%"
+    name: "%perf_name%"
+    lore:
+      - ""
+      - "{secondary}Information :"
+      - " {letters_black}▎ {letters}Type {letters_black}» %perf_kind%"
+      - " {letters_black}▎ {letters}Écrit {letters_black}» {info}%perf_value%"
+      - ""
+      - "{warning}➥ Clic gauche {letters_black}» {letters}l'assigner à un déclencheur"
+      - "{warning}➥ Clic droit {letters_black}» {letters}l'essayer maintenant"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_perform_pick"
+      - "right: exyliadisplays:npc_perform_try"
+
+  navigation:
+    previous:
+      slot: 48
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
+      name: '{error}&l← PAGE PRÉCÉDENTE'
+      lore:
+        - ""
+        - " {letters_black}▎ {letters}Page {info}%current_page%{letters_black}/{info}%total_pages%"
+        - ""
+      actions:
+        - 'previous_page'
+    next:
+      slot: 50
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
+      name: '{success}&lPAGE SUIVANTE →'
+      lore:
+        - ""
+        - " {letters_black}▎ {letters}Page {info}%current_page%{letters_black}/{info}%total_pages%"
+        - ""
+      actions:
+        - 'next_page'
+
+items:
+  info:
+    slot: 45
+    material: BOOK
+    name: "{primary}&lPERFORMANCES"
+    lore:
+      - ""
+      - "{secondary}Information :"
+      - " {letters_black}▎ {letters}Disponibles {letters_black}» {info}%perf_count%"
+      - ""
+      - "{secondary}Astuce :"
+      - " {letters_black}▎ {letters}Une performance est une animation"
+      - " {letters_black}▎ {letters}du corps entier, jouée pour les joueurs à"
+      - " {letters_black}▎ {info}%anim_perform_range% {letters}blocs ou moins ; un PNJ"
+      - " {letters_black}▎ {letters}assis ne joue jamais."
+      - ""
+
+  back:
+    slot: 49
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: '{error}&lRETOUR'
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Revient au PNJ."
+      - ""
+      - "{warning}➥ Clique pour revenir"
+      - ""
+    actions:
+      - "exyliadisplays:npc_open_hub"

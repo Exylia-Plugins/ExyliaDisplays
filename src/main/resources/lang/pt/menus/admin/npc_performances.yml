@@ -1,0 +1,96 @@
+# NÃO EDITE — REGENERADO A CADA INICIALIZAÇÃO.
+#
+# As performances que um NPC pode fazer: os emotes solo do ExyliaEmotes e os arquivos de animação em
+# plugins/ExyliaDisplays/animations. Cada item vai para um dos seus gatilhos ou é testado nele.
+
+title: "{primary}&lPERFORMANCES {letters_black}» {highlight}%npc_name% {muted}%current_page%/%total_pages%"
+size: 54
+type: PAGINATION
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+  pagination:
+    material: LIGHT_GRAY_STAINED_GLASS_PANE
+    name: "{muted}Não há mais performances"
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Instale o {highlight}ExyliaEmotes{letters} ou coloque arquivos"
+      - " {letters_black}▎ {letters}de animação em {highlight}plugins/ExyliaDisplays/animations{letters}."
+      - ""
+    hide_tooltip: false
+
+pagination:
+  slots: '0-35'
+
+  item_template:
+    material: "%perf_icon%"
+    name: "%perf_name%"
+    lore:
+      - ""
+      - "{secondary}Informações:"
+      - " {letters_black}▎ {letters}Tipo {letters_black}» %perf_kind%"
+      - " {letters_black}▎ {letters}Escrito {letters_black}» {info}%perf_value%"
+      - ""
+      - "{warning}➥ Clique esquerdo {letters_black}» {letters}colocar num gatilho"
+      - "{warning}➥ Clique direito {letters_black}» {letters}testar agora"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_perform_pick"
+      - "right: exyliadisplays:npc_perform_try"
+
+  navigation:
+    previous:
+      slot: 48
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
+      name: '{error}&l← PÁGINA ANTERIOR'
+      lore:
+        - ""
+        - " {letters_black}▎ {letters}Página {info}%current_page%{letters_black}/{info}%total_pages%"
+        - ""
+      actions:
+        - 'previous_page'
+    next:
+      slot: 50
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
+      name: '{success}&lPRÓXIMA PÁGINA →'
+      lore:
+        - ""
+        - " {letters_black}▎ {letters}Página {info}%current_page%{letters_black}/{info}%total_pages%"
+        - ""
+      actions:
+        - 'next_page'
+
+items:
+  info:
+    slot: 45
+    material: BOOK
+    name: "{primary}&lPERFORMANCES"
+    lore:
+      - ""
+      - "{secondary}Informações:"
+      - " {letters_black}▎ {letters}Disponíveis {letters_black}» {info}%perf_count%"
+      - ""
+      - "{secondary}Dica:"
+      - " {letters_black}▎ {letters}Uma performance é uma animação"
+      - " {letters_black}▎ {letters}de corpo inteiro. Toca para jogadores a até"
+      - " {letters_black}▎ {info}%anim_perform_range% {letters}blocos; um NPC sentado"
+      - " {letters_black}▎ {letters}nunca faz performances."
+      - ""
+
+  back:
+    slot: 49
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: '{error}&lVOLTAR'
+    lore:
+      - ""
+      - " {letters_black}▎ {letters}Volta para o NPC."
+      - ""
+      - "{warning}➥ Clique para voltar"
+      - ""
+    actions:
+      - "exyliadisplays:npc_open_hub"
