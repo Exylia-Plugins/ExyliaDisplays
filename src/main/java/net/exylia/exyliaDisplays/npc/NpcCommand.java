@@ -397,12 +397,30 @@ public final class NpcCommand {
     // ------------------------------------------------------------------
 
     @Subcommand("<name> action add")
-    public void actionAdd(CommandSender sender, @SuggestWith(Names.class) String name, String line) {
+    public void actionAdd(CommandSender sender, @SuggestWith(Names.class) String name,
+                          @SuggestWith(NpcSuggestions.class) String line) {
         StoredNpc saved = edited(sender, name, current -> current.addAction(line), null, Values.of());
         if (saved != null) {
             send(sender, messages().actionAdded(), Values.of().putText("name", name)
                     .put("index", saved.interactions().actions().size()));
         }
+    }
+
+    @Subcommand("<name> action set")
+    public void actionSet(CommandSender sender, @SuggestWith(Names.class) String name,
+                          @SuggestWith(NpcSuggestions.class) int index, @SuggestWith(NpcSuggestions.class) String line) {
+        StoredNpc npc = NpcModule.get().store().get(name).orElse(null);
+        if (npc == null) {
+            send(sender, messages().notFound(), Values.of().putText("name", name));
+            return;
+        }
+        if (!npc.hasAction(index - 1)) {
+            send(sender, messages().actionNotFound(), Values.of().put("index", index)
+                    .put("count", npc.interactions().actions().size()));
+            return;
+        }
+        property(sender, name, "action " + index, line,
+                current -> current.hasAction(index - 1) ? current.setAction(index - 1, line) : current);
     }
 
     @Subcommand("<name> action remove")

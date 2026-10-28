@@ -3,6 +3,7 @@ package net.exylia.exyliaDisplays.npc;
 import net.exylia.exyliaDisplays.common.Completion;
 import net.exylia.exyliaDisplays.common.store.Place;
 import net.exylia.exyliaDisplays.common.store.Position;
+import net.exylia.lib.interaction.Interactions;
 import net.exylia.lib.npc.NpcAnimation;
 import net.exylia.lib.npc.NpcAnimations;
 import org.bukkit.Bukkit;
@@ -96,6 +97,17 @@ public final class NpcSuggestions implements Completion {
             case "action" -> {
                 StoredNpc.Interactions click = npc.interactions();
                 switch (index == 0 ? "" : args.get(0).toLowerCase(Locale.ROOT)) {
+                    case "add" -> {
+                        if (index == 1) values.addAll(Interactions.starters());
+                    }
+                    case "set" -> {
+                        if (index == 1) values.addAll(Completion.numbers(1, click.actions().size()));
+                        if (index == 2) {
+                            int action = Completion.number(args.get(1)) - 1;
+                            if (npc.hasAction(action)) values.add(click.actions().get(action));
+                            values.addAll(Interactions.starters());
+                        }
+                    }
                     case "remove" -> values.addAll(Completion.numbers(1, click.actions().size()));
                     case "permission" -> values.add(click.permission());
                     case "cooldown" -> values.addAll(List.of(seconds(Duration.ofMillis(click.cooldown())), "0"));

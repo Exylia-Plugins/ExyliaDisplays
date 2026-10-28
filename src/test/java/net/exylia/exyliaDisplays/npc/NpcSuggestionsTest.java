@@ -17,6 +17,7 @@ class NpcSuggestionsTest {
     private static final StoredNpc NPC = new StoredNpc()
             .withLabelLines(List.of("{primary}&lGUIDE", "{letters}Right-click"))
             .withScale(1.5)
+            .addAction("[MESSAGE] {letters}Hello")
             .withAnimations(new NpcAnimations("", "swing, 250ms, hurt", "", Duration.ofSeconds(20), "", 6, Duration.ofSeconds(30)));
 
     private static List<String> typed(String input) {
@@ -35,5 +36,9 @@ class NpcSuggestionsTest {
         assertEquals(List.of("20s"), typed("/npc guide animation idle-every "));
         assertTrue(typed("/npc guide skin ").contains("Steve"));
         assertEquals(List.of(), typed("/npc guide label add "));
+        assertEquals(List.of("1"), typed("/npc guide action set "));
+        assertEquals("[MESSAGE] {letters}Hello", typed("/npc guide action set 1 ").get(0));
+        assertTrue(typed("/npc guide action add ").containsAll(List.of("right:", "[SOUND]", "console:")));
+        assertEquals(List.of("[MESSAGE]"), typed("/npc guide action add [ME"));
     }
 }

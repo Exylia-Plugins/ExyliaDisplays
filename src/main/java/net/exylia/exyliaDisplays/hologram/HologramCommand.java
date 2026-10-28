@@ -669,7 +669,8 @@ public final class HologramCommand {
     // ------------------------------------------------------------------
 
     @Subcommand("<name> click add")
-    public void clickAdd(CommandSender sender, @SuggestWith(Names.class) String name, String action) {
+    public void clickAdd(CommandSender sender, @SuggestWith(Names.class) String name,
+                         @SuggestWith(HologramSuggestions.class) String action) {
         click(sender, name, "click", action, commands -> commands.add(action));
     }
 

@@ -475,6 +475,12 @@ public record StoredNpc(
         return withInteractions(interactions.withActions(edited));
     }
 
+    public StoredNpc setAction(int index, String line) {
+        List<String> edited = new ArrayList<>(interactions.actions());
+        edited.set(index, line);
+        return withInteractions(interactions.withActions(edited));
+    }
+
     public StoredNpc removeAction(int index) {
         List<String> edited = new ArrayList<>(interactions.actions());
         edited.remove(index);

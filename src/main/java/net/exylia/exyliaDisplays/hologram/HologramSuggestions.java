@@ -4,6 +4,7 @@ import net.exylia.exyliaDisplays.common.Completion;
 import net.exylia.exyliaDisplays.common.store.Position;
 import net.exylia.lib.hologram.HologramConfig;
 import net.exylia.lib.hologram.HologramLine;
+import net.exylia.lib.interaction.Interactions;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -144,6 +145,7 @@ public final class HologramSuggestions implements Completion {
     /** {@code /holo <name> click <setting> <value>}. */
     private static List<String> click(HologramConfig.Click click, String setting) {
         return switch (setting) {
+            case "add" -> Interactions.starters();
             case "remove" -> Completion.numbers(1, click.commands().size());
             case "width" -> List.of(number(click.width()));
             case "cooldown" -> List.of(String.valueOf(click.cooldown()), "0");
