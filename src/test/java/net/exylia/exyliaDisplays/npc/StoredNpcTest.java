@@ -2,6 +2,7 @@ package net.exylia.exyliaDisplays.npc;
 
 import net.exylia.exyliaDisplays.common.store.Place;
 import net.exylia.lib.npc.NpcPose;
+import net.exylia.lib.npc.NpcSkin;
 import org.bukkit.inventory.EquipmentSlot;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,6 +42,25 @@ class StoredNpcTest {
         assertEquals("playerhead-Notch", StoredNpc.Skin.player("Notch").head());
         assertEquals("basehead-abc", StoredNpc.Skin.texture("abc", "").head());
         assertEquals("PLAYER_HEAD", StoredNpc.Skin.mirror().head());
+    }
+
+    @Test
+    @DisplayName("a placeholder skin wears whoever it names, the fallback while it names nobody")
+    void placeholderSkins() {
+        StoredNpc.Skin top = StoredNpc.Skin.parse("%top_kills_1_name%");
+        assertTrue(top.isPlaceholder());
+        assertFalse(StoredNpc.Skin.player("Notch").isPlaceholder());
+        StoredNpc.Skin backed = top.withFallback("Notch");
+        assertEquals(NpcSkin.player("Steve"), backed.wearing("Steve"));
+        assertEquals(NpcSkin.player("Notch"), backed.wearing(null));
+        assertEquals(NpcSkin.none(), top.wearing(null));
+        assertEquals("playerhead-Notch", backed.head());
+        assertEquals("PLAYER_HEAD", top.head());
+        assertEquals("Steve", StoredNpc.Skin.account("Steve"));
+        assertEquals("Steve", StoredNpc.Skin.account("<gold>Steve "));
+        assertNull(StoredNpc.Skin.account("%top_kills_1_name%"));
+        assertNull(StoredNpc.Skin.account("No one yet"));
+        assertNull(StoredNpc.Skin.account(""));
     }
 
     @Test

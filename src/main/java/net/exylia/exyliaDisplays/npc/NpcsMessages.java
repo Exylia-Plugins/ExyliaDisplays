@@ -42,7 +42,7 @@ public record NpcsMessages(
         String stateChanged,
         @Comment("Told after any change to how it looks or behaves. Placeholder: %name%.")
         String saved,
-        @Comment("Not an account name, @mirror or @none. Placeholder: %skin%.")
+        @Comment("Not an account name, a placeholder, @mirror or @none. Placeholder: %skin%.")
         String invalidSkin,
         @Comment("Not a #RRGGBB colour. Placeholder: %value%.")
         String invalidColour,
@@ -147,7 +147,7 @@ public record NpcsMessages(
                 NO + "{error}The world {highlight}%world% {error}is not loaded.",
                 OK + "{letters}NPC {highlight}%name% {letters_black}» %status%",
                 OK + "{success}Saved {highlight}%name%{success}.",
-                NO + "{highlight}%skin% {error}is not an account name. Use a name, {highlight}@mirror {error}or {highlight}@none{error}.",
+                NO + "{highlight}%skin% {error}is not an account name. Use a name, a placeholder, {highlight}@mirror {error}or {highlight}@none{error}.",
                 NO + "{highlight}%value% {error}is not a colour. Use {highlight}#RRGGBB{error}, or {highlight}none{error}.",
                 NO + "{highlight}%value% {error}is not a look mode. Use {highlight}fixed{error}, {highlight}nearest {error}or {highlight}each-viewer{error}.",
                 NO + "{highlight}%slot% {error}is not a slot. Use {highlight}%slots%{error}.",
@@ -193,7 +193,7 @@ public record NpcsMessages(
                         " {warning}adjust {letters_black}» {letters}move, turn and scale it with the mouse wheel {muted}(again saves, adjust cancel undoes)",
                         " {warning}rename <new> {letters_black}· {warning}clone <new> {letters_black}· {warning}enable {letters_black}· {warning}disable {letters_black}· {warning}delete",
                         " {warning}undo {letters_black}» {letters}take back the last change",
-                        " {warning}skin <player|@mirror|@none> {letters_black}· {warning}texture <value> [signature]",
+                        " {warning}skin <player|placeholder|@mirror|@none> [fallback] {letters_black}· {warning}texture <value> [signature]",
                         " {warning}pose {letters_black}· {warning}scale {letters_black}· {warning}glow <#RRGGBB|none> {letters_black}· {warning}look <mode> [range]",
                         " {warning}equip <slot|clear> [item] {letters_black}» {letters}that item, or the one in your hand {letters_black}· {warning}equipment",
                         " {warning}label set|add <text> {letters_black}· {warning}label remove <n> {letters_black}· {warning}label clear {letters_black}· {warning}label height",
@@ -333,7 +333,9 @@ public record NpcsMessages(
             @Comment("The second appearance window: pose, size and outline.")
             String bodyTitle,
             @Comment("The second interactions window: who may use it, how often, and what they are told.")
-            String rulesTitle) {
+            String rulesTitle,
+            @Comment("The account worn while a placeholder skin names nobody.")
+            String skinFallbackLabel) {
 
         public Dialogs() {
             this("{primary}&lNEW NPC",
@@ -341,10 +343,10 @@ public record NpcsMessages(
                     "Lowercase letters, numbers, - and _. Used in /npc <name> commands.",
                     "Start from",
                     "Skin",
-                    "An account name, @mirror for each viewer's own, or empty for the default.",
+                    "An account name, a placeholder that names one, @mirror for each viewer's own, or empty for the default.",
                     "{primary}&lAPPEARANCE {letters_black}» {highlight}SKIN",
                     "Skin from",
-                    "Account name (for PLAYER)",
+                    "Account name or placeholder (for PLAYER)",
                     "Texture (for TEXTURE)",
                     "The value and signature mineskin.org gives for an uploaded skin.",
                     "Signature",
@@ -384,7 +386,8 @@ public record NpcsMessages(
                     "{primary}Name the copy:",
                     "{error}Delete the NPC {highlight}%name%{error}? This cannot be undone.",
                     "{primary}&lAPPEARANCE {letters_black}» {highlight}BODY",
-                    "{primary}&lINTERACTIONS {letters_black}» {highlight}RULES");
+                    "{primary}&lINTERACTIONS {letters_black}» {highlight}RULES",
+                    "Fallback account (while the placeholder names nobody)");
         }
     }
 

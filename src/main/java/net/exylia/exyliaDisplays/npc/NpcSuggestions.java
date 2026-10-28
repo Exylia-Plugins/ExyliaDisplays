@@ -59,8 +59,12 @@ public final class NpcSuggestions implements Completion {
                 if (index == 1) values.addAll(List.of(number(at.pitch()), "0"));
             }
             case "skin" -> {
-                values.add(skin(npc.skin()));
-                values.addAll(List.of("@mirror", "@none"));
+                if (index == 0) {
+                    values.add(skin(npc.skin()));
+                    values.addAll(List.of("@mirror", "@none"));
+                } else if (npc.skin().isPlaceholder()) {
+                    values.add(npc.skin().fallback());
+                }
                 values.addAll(online);
             }
             case "scale" -> values.addAll(List.of(number(npc.scale()), "1"));

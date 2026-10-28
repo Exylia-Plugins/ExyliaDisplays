@@ -11,7 +11,7 @@ teleported: '%prefix% {letters}Téléporté vers {highlight}%name%{letters}.'
 world-missing: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}Le monde {highlight}%world% {error}n''est pas chargé.'
 state-changed: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {letters}PNJ {highlight}%name% {letters_black}» %status%'
 saved: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}{highlight}%name% {success}enregistré.'
-invalid-skin: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%skin% {error}n''est pas un nom de compte. Utilise un nom, {highlight}@mirror {error}ou {highlight}@none{error}.'
+invalid-skin: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%skin% {error}n''est pas un nom de compte. Utilise un nom, un placeholder, {highlight}@mirror {error}ou {highlight}@none{error}.'
 invalid-colour: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%value% {error}n''est pas une couleur. Utilise {highlight}#RRGGBB{error} ou {highlight}none{error}.'
 invalid-look: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%value% {error}n''est pas un mode de regard. Utilise {highlight}fixed{error}, {highlight}nearest {error}ou {highlight}each-viewer{error}.'
 invalid-slot: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%slot% {error}n''est pas un emplacement. Utilise {highlight}%slots%{error}.'
@@ -57,7 +57,7 @@ help:
   - ' {warning}adjust {letters_black}» {letters}le déplacer, tourner et redimensionner à la molette {muted}(à nouveau enregistre, adjust cancel annule)'
   - ' {warning}rename <nouveau> {letters_black}· {warning}clone <nouveau> {letters_black}· {warning}enable {letters_black}· {warning}disable {letters_black}· {warning}delete'
   - ' {warning}undo {letters_black}» {letters}annule la dernière modification'
-  - ' {warning}skin <joueur|@mirror|@none> {letters_black}· {warning}texture <valeur> [signature]'
+  - ' {warning}skin <joueur|placeholder|@mirror|@none> [secours] {letters_black}· {warning}texture <valeur> [signature]'
   - ' {warning}pose {letters_black}· {warning}scale {letters_black}· {warning}glow <#RRGGBB|none> {letters_black}· {warning}look <mode> [portée]'
   - ' {warning}equip <emplacement|clear> [objet] {letters_black}» {letters}cet objet, ou celui en main {letters_black}· {warning}equipment'
   - ' {warning}label set|add <texte> {letters_black}· {warning}label remove <n> {letters_black}· {warning}label clear {letters_black}· {warning}label height'
@@ -120,10 +120,10 @@ dialogs:
   name-hint: Minuscules, chiffres, - et _. Utilisé dans les commandes /npc <nom>.
   preset-label: Partir de
   skin-label: Skin
-  skin-hint: Un nom de compte, @mirror pour celui de chaque joueur, ou vide pour celui par défaut.
+  skin-hint: Un nom de compte, un placeholder qui en donne un, @mirror pour celui de chaque joueur, ou vide pour celui par défaut.
   appearance-title: '{primary}&lAPPARENCE {letters_black}» {highlight}SKIN'
   skin-type-label: Skin depuis
-  skin-player-label: Nom de compte (pour PLAYER)
+  skin-player-label: Nom de compte ou placeholder (pour PLAYER)
   texture-label: Texture (pour TEXTURE)
   texture-hint: La valeur et la signature que donne mineskin.org pour un skin envoyé.
   signature-label: Signature
@@ -164,6 +164,7 @@ dialogs:
   confirm-delete: '{error}Supprimer le PNJ {highlight}%name%{error} ? C''est irréversible.'
   body-title: '{primary}&lAPPARENCE {letters_black}» {highlight}CORPS'
   rules-title: '{primary}&lINTERACTIONS {letters_black}» {highlight}RÈGLES'
+  skin-fallback-label: 'Compte de secours (tant que le placeholder ne nomme personne)'
 adjust:
   started: '[sound:BLOCK_NOTE_BLOCK_PLING|0.6|1.6]%prefix% {letters}Ajustement de {highlight}%name%{letters} : molette pour le déplacer, {highlight}F {letters}pour l''axe suivant. <click:run_command:''/npc %name% adjust save''>{success}&l[✔ ENREGISTRER]</click> <click:run_command:''/npc %name% adjust cancel''>{error}&l[✘ ANNULER]</click>'
   saved: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Ajustement de {highlight}%name% {success}enregistré.'

@@ -9,9 +9,12 @@ import net.exylia.lib.hologram.HologramConfig;
 import net.exylia.lib.hologram.Holograms;
 import net.exylia.lib.interaction.Click;
 import net.exylia.lib.interaction.Interactions;
+import net.exylia.lib.npc.NpcSpec;
 import net.exylia.lib.npc.Npcs;
 import net.exylia.lib.npc.PlacedNpc;
 import net.exylia.lib.npc.PluginNpcs;
+import net.exylia.lib.placeholder.Placeholders;
+import net.exylia.lib.task.TaskHandle;
 import net.exylia.lib.text.Values;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -23,6 +26,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
@@ -56,6 +60,12 @@ public final class NpcRenderer implements Listener {
     private final Map<String, InteractionGate> gates = new ConcurrentHashMap<>();
     /** Bumped on every turn to a clicker, so only the latest turn turns it back. */
     private final Map<String, AtomicInteger> turns = new ConcurrentHashMap<>();
+    /** The account each placeholder skin named last; empty for nobody (the fallback). */
+    private final Map<String, String> wearing = new ConcurrentHashMap<>();
+    /** Placeholder skins not read yet, read on the next second rather than the next refresh. */
+    private final Set<String> unread = ConcurrentHashMap.newKeySet();
+    private final TaskHandle skins;
+    private long nextSkinRead;
 
     public NpcRenderer(ExyliaDisplays core, BiFunction<String, StoredNpc, StoredNpc> overlay) {
         this.core = core;
@@ -63,6 +73,7 @@ public final class NpcRenderer implements Listener {
         this.plugin = core.getPlugin();
         this.npcs = Npcs.of(plugin);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        this.skins = core.getTasks().runTimer(20L, 20L, this::readSkins);
     }
 
     /**
@@ -85,13 +96,19 @@ public final class NpcRenderer implements Listener {
             return;
         }
         StoredNpc before = shown.get(name);
+        if (!npc.skin().isPlaceholder()) {
+            wearing.remove(name);
+        } else if (before == null || !before.skin().equals(npc.skin())) {
+            wearing.remove(name);
+            unread.add(name);
+        }
         Optional<PlacedNpc> live = npcs.placed(name).filter(placed -> !placed.removed());
         if (before != null && live.isPresent()) {
             if (!before.location().equals(npc.location())) live.get().moveTo(at);
-            if (!npc.looksLike(before)) live.get().update(npc.toSpec());
+            if (!npc.looksLike(before)) live.get().update(spec(name, npc));
             if (!before.permission().equals(npc.permission())) live.get().visibleIf(seenBy(npc));
         } else {
-            PlacedNpc placed = npcs.place(name, npc.toSpec(), at);
+            PlacedNpc placed = npcs.place(name, spec(name, npc), at);
             placed.visibleIf(seenBy(npc));
             placed.onClick((player, click) -> clicked(name, player, click));
         }
@@ -114,6 +131,9 @@ public final class NpcRenderer implements Listener {
 
     /** Takes everything down, for a shutdown. */
     public void clear() {
+        skins.cancel();
+        wearing.clear();
+        unread.clear();
         npcs.allPlaced().forEach(PlacedNpc::remove);
         Holograms.all(plugin).stream()
                 .filter(hologram -> hologram.id().startsWith(LABEL) || hologram.id().startsWith(NpcTokens.BUBBLE))
@@ -271,6 +291,44 @@ public final class NpcRenderer implements Listener {
         shown.remove(name);
         gates.remove(name);
         turns.remove(name);
+        wearing.remove(name);
+        unread.remove(name);
+    }
+
+    // ------------------------------------------------------------------
+    // Skins that follow a placeholder
+    // ------------------------------------------------------------------
+
+    /** The spec to draw, wearing whoever its skin's placeholder named last. */
+    private NpcSpec spec(String name, StoredNpc npc) {
+        String account = wearing.get(name);
+        return npc.toSpec(account == null || account.isEmpty() ? null : account);
+    }
+
+    /**
+     * Every second: reads the placeholder skins nobody read yet, and all of them once
+     * {@code skin-refresh} has passed. An NPC is drawn again only when the account changed.
+     *
+     * <p>On the main thread, where PlaceholderAPI may be asked, and for any player online: a
+     * leaderboard's top name is the same for everybody. With nobody online nobody sees it either.
+     */
+    private void readSkins() {
+        long now = System.currentTimeMillis();
+        boolean due = now >= nextSkinRead;
+        if (!due && unread.isEmpty()) return;
+        Player reader = plugin.getServer().getOnlinePlayers().stream().findFirst().orElse(null);
+        if (reader == null) return;
+        if (due) nextSkinRead = now + NpcsConfig.get().skinRefresh().toMillis();
+        shown.forEach((name, npc) -> {
+            if (!npc.skin().isPlaceholder() || !(due || unread.contains(name))) return;
+            unread.remove(name);
+            String account = StoredNpc.Skin.account(Placeholders.apply(npc.skin().player(), reader));
+            String named = account == null ? "" : account;
+            String before = wearing.put(name, named);
+            if (named.equals(before == null ? "" : before)) return;
+            core.getDebug().debug("NPC " + name + " now wears " + (account == null ? "its fallback" : account));
+            live(name).ifPresent(placed -> placed.update(spec(name, npc)));
+        });
     }
 
     @EventHandler

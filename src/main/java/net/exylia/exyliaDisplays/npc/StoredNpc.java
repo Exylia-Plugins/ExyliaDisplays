@@ -9,6 +9,7 @@ import net.exylia.lib.npc.NpcLook;
 import net.exylia.lib.npc.NpcPose;
 import net.exylia.lib.npc.NpcSkin;
 import net.exylia.lib.npc.NpcSpec;
+import net.exylia.lib.text.Text;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.ArrayList;
@@ -127,20 +128,24 @@ public record StoredNpc(
      * What it wears.
      *
      * @param type      where the skin comes from
-     * @param player    the account, for {@code PLAYER}
+     * @param player    the account, for {@code PLAYER}; or a placeholder that names one
      * @param texture   the texture value, for {@code TEXTURE}
      * @param signature the texture's signature, for {@code TEXTURE}
+     * @param fallback  the account worn while {@code player} is a placeholder naming nobody
      */
     public record Skin(
             @Comment("player: the skin an account wears. texture: the texture and signature below.")
             @Comment("mirror: every viewer sees their own skin. none: the default skin.")
             Type type,
-            @Comment("The account, for player.")
+            @Comment("The account, for player. A placeholder that gives one works too, such as a leaderboard's")
+            @Comment("top name: the NPC then wears whoever holds that spot, read again every npcs.skin-refresh.")
             String player,
             @Comment("The base64 texture value, for texture (mineskin.org gives both).")
             String texture,
             @Comment("Mojang's signature of the texture; without it the client draws the default skin.")
-            String signature) {
+            String signature,
+            @Comment("The account worn while 'player' is a placeholder that names nobody yet. Empty for the default skin.")
+            String fallback) {
 
         public enum Type { PLAYER, TEXTURE, MIRROR, NONE }
 
@@ -148,7 +153,12 @@ public record StoredNpc(
         private static final Pattern ACCOUNT = Pattern.compile("[A-Za-z0-9_]{1,16}");
 
         public Skin() {
-            this(Type.NONE, "", "", "");
+            this(Type.NONE, "", "", "", "");
+        }
+
+        /** A skin with no fallback, as written before placeholders. */
+        public Skin(Type type, String player, String texture, String signature) {
+            this(type, player, texture, signature, "");
         }
 
         public Skin {
@@ -156,10 +166,16 @@ public record StoredNpc(
             if (player == null) player = "";
             if (texture == null) texture = "";
             if (signature == null) signature = "";
+            if (fallback == null) fallback = "";
         }
 
         public static Skin player(String name) {
             return new Skin(Type.PLAYER, name, "", "");
+        }
+
+        /** Whoever a placeholder names, the fallback account while it names nobody. */
+        public static Skin placeholder(String placeholder, String fallback) {
+            return new Skin(Type.PLAYER, placeholder, "", "", fallback);
         }
 
         public static Skin texture(String value, String signature) {
@@ -171,20 +187,58 @@ public record StoredNpc(
         }
 
         /**
-         * A skin as a command or a preset writes it: an account name, {@code @mirror}, or
-         * {@code @none} (or nothing).
+         * A skin as a command or a preset writes it: an account name, a placeholder that names one
+         * ({@code %top_kills_1%}), {@code @mirror}, or {@code @none} (or nothing).
          *
-         * @return the skin, or {@code null} when it is not an account name
+         * @return the skin, or {@code null} when it is none of those
          */
         public static Skin parse(String written) {
             String trimmed = written == null ? "" : written.trim();
             if (trimmed.isEmpty() || trimmed.equalsIgnoreCase("@none")) return new Skin();
             if (trimmed.equalsIgnoreCase("@mirror")) return mirror();
-            return ACCOUNT.matcher(trimmed).matches() ? player(trimmed) : null;
+            if (isPlaceholder(trimmed)) return placeholder(trimmed, "");
+            return isAccount(trimmed) ? player(trimmed) : null;
+        }
+
+        /** Whether a name could be a Minecraft account. */
+        public static boolean isAccount(String name) {
+            return name != null && ACCOUNT.matcher(name).matches();
+        }
+
+        private static boolean isPlaceholder(String text) {
+            int open = text.indexOf('%');
+            return open >= 0 && text.indexOf('%', open + 1) > open + 1;
+        }
+
+        /** Whether it wears whoever a placeholder names, so it is read again now and then. */
+        public boolean isPlaceholder() {
+            return type == Type.PLAYER && isPlaceholder(player);
+        }
+
+        /**
+         * The account a placeholder gave, read: its formatting stripped, or {@code null} when what
+         * is left is no account name (an empty leaderboard spot, "None", the placeholder unresolved).
+         */
+        public static String account(String resolved) {
+            String name = Text.strip(resolved).trim();
+            return isAccount(name) ? name : null;
         }
 
         /** What ExyliaLib draws; a section missing what its type needs is the default skin. */
         public NpcSkin toSkin() {
+            return wearing(null);
+        }
+
+        /**
+         * What ExyliaLib draws, given what its placeholder names now.
+         *
+         * @param resolved the account the placeholder named last, or {@code null} for nobody
+         */
+        public NpcSkin wearing(String resolved) {
+            if (isPlaceholder()) {
+                String account = resolved != null ? resolved : fallback;
+                return isAccount(account) ? NpcSkin.player(account) : NpcSkin.none();
+            }
             return switch (type) {
                 case PLAYER -> player.isBlank() ? NpcSkin.none() : NpcSkin.player(player);
                 case TEXTURE -> texture.isBlank() ? NpcSkin.none()
@@ -196,11 +250,16 @@ public record StoredNpc(
 
         /** A head that looks like this skin, as a menu's material; a plain head when there is none. */
         public String head() {
+            String account = isPlaceholder() ? fallback : player;
             return switch (type) {
-                case PLAYER -> player.isBlank() ? "PLAYER_HEAD" : "playerhead-" + player;
+                case PLAYER -> isAccount(account) ? "playerhead-" + account : "PLAYER_HEAD";
                 case TEXTURE -> texture.isBlank() ? "PLAYER_HEAD" : "basehead-" + texture;
                 default -> "PLAYER_HEAD";
             };
+        }
+
+        public Skin withFallback(String value) {
+            return new Skin(type, player, texture, signature, value);
         }
     }
 
@@ -305,8 +364,17 @@ public record StoredNpc(
 
     /** The spec ExyliaLib places. Reads the equipment's items, so it needs a running server. */
     public NpcSpec toSpec() {
+        return toSpec(null);
+    }
+
+    /**
+     * The spec ExyliaLib places, wearing whoever its skin's placeholder named last.
+     *
+     * @param resolved that account, or {@code null} for nobody (the fallback)
+     */
+    public NpcSpec toSpec(String resolved) {
         NpcSpec.Builder spec = NpcSpec.builder()
-                .skin(skin.toSkin())
+                .skin(skin.wearing(resolved))
                 .pose(pose)
                 .scale(scale)
                 .glow(glowRgb())

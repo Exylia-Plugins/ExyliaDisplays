@@ -21,6 +21,7 @@ import java.util.Map;
  * @param sayDuration         how long a {@code [SAY]} bubble stays when the line names no time
  * @param turnBack            how long an NPC keeps facing whoever clicked it
  * @param nearRadius          the radius /npcadmin near uses when none is given
+ * @param skinRefresh         how often a skin written as a placeholder is read again
  * @param presets             what a new NPC can start from
  */
 public record NpcsConfig(
@@ -42,13 +43,17 @@ public record NpcsConfig(
         @Comment("The radius /npcadmin near uses when none is given, in blocks.")
         double nearRadius,
 
+        @Comment("How often a skin written as a placeholder (a leaderboard's top name) is read again. Reads 30s, 5m.")
+        Duration skinRefresh,
+
         @Comment("What an NPC created from the menu can start from. Add your own:")
-        @Comment("'name' is shown in the list, 'skin' is an account name or @mirror (empty for the one typed),")
+        @Comment("'name' is shown in the list, 'skin' is an account name, a placeholder or @mirror (empty for the one typed),")
         @Comment("and %npc% in a label line becomes the new NPC's name.")
         Map<String, Preset> presets) {
 
     public NpcsConfig() {
-        this(48.0, NpcLook.EACH_VIEWER, true, Duration.ofSeconds(5), Duration.ofSeconds(4), 20.0, defaultPresets());
+        this(48.0, NpcLook.EACH_VIEWER, true, Duration.ofSeconds(5), Duration.ofSeconds(4), 20.0, Duration.ofSeconds(30),
+                defaultPresets());
     }
 
     public NpcsConfig {
@@ -57,6 +62,7 @@ public record NpcsConfig(
         if (sayDuration == null || sayDuration.isNegative() || sayDuration.isZero()) sayDuration = Duration.ofSeconds(5);
         if (turnBack == null || turnBack.isNegative()) turnBack = Duration.ofSeconds(4);
         if (nearRadius <= 0) nearRadius = 20.0;
+        if (skinRefresh == null || skinRefresh.compareTo(Duration.ofSeconds(1)) < 0) skinRefresh = Duration.ofSeconds(30);
         if (presets == null) presets = Map.of();
     }
 
@@ -201,6 +207,12 @@ public record NpcsConfig(
                         new StoredNpc.Look(NpcLook.EACH_VIEWER, 8),
                         new NpcAnimations("", "swing", "wave-offhand", Duration.ofSeconds(30), "", 4,
                                 Duration.ofSeconds(30)))));
+        // Frozen where it was placed, for a leaderboard spot or a champion: point its skin at a
+        // placeholder (/npc <name> skin %your_top_1_name% Notch) and it wears whoever holds the spot.
+        presets.put("statue", new Preset("Statue", "", List.of(
+                "<size:1.3><shine:highlight,pause=6>{highlight}&l%npc%",
+                "{letters_black}▎ {letters}Hall of fame"), List.of(),
+                new Body(false, "#ffd700", Map.of(), new StoredNpc.Look(NpcLook.FIXED, 0), new NpcAnimations())));
         // Sends the player to another server of the network.
         presets.put("portal", new Preset("Server portal", "", List.of(
                 "<size:1.4><flow:6>{info}&lSURVIVAL",

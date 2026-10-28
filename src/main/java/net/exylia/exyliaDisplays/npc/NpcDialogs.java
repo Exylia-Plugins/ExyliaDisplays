@@ -44,6 +44,7 @@ public final class NpcDialogs {
     private static final FormKey<String> PRESET = FormKey.text("preset");
     private static final FormKey<String> SKIN = FormKey.text("skin");
     private static final FormKey<String> SKIN_TYPE = FormKey.text("skin_type");
+    private static final FormKey<String> FALLBACK = FormKey.text("skin_fallback");
     private static final FormKey<String> TEXTURE = FormKey.text("texture");
     private static final FormKey<String> SIGNATURE = FormKey.text("signature");
     private static final FormKey<String> POSE = FormKey.text("pose");
@@ -200,13 +201,14 @@ public final class NpcDialogs {
         EditorForm form = form(player, words.appearanceTitle())
                 .choice(SKIN_TYPE, words.skinTypeLabel(), skin.type().name(), options(StoredNpc.Skin.Type.values()))
                 .text(SKIN, words.skinPlayerLabel(), skin.player())
+                .text(FALLBACK, words.skinFallbackLabel(), skin.fallback())
                 .text(TEXTURE, words.textureLabel(), skin.texture(), 2)
                 .hint(words.textureHint())
                 .text(SIGNATURE, words.signatureLabel(), skin.signature(), 2);
         answer(player, form.ask(values -> values), back, values -> save(player, name, current -> current
                 .withSkin(new StoredNpc.Skin(StoredNpc.Skin.Type.valueOf(values.getOr(SKIN_TYPE, "NONE")),
                         values.getOr(SKIN, "").trim(), values.getOr(TEXTURE, "").trim(),
-                        values.getOr(SIGNATURE, "").trim())), back));
+                        values.getOr(SIGNATURE, "").trim(), values.getOr(FALLBACK, "").trim())), back));
     }
 
     /** Every label line in one box, and how high it floats. */

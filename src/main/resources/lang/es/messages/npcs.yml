@@ -11,7 +11,7 @@ teleported: '%prefix% {letters}Teletransportado a {highlight}%name%{letters}.'
 world-missing: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}El mundo {highlight}%world% {error}no está cargado.'
 state-changed: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {letters}NPC {highlight}%name% {letters_black}» %status%'
 saved: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}{highlight}%name% {success}guardado.'
-invalid-skin: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%skin% {error}no es un nombre de cuenta. Usa un nombre, {highlight}@mirror {error}o {highlight}@none{error}.'
+invalid-skin: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%skin% {error}no es un nombre de cuenta. Usa un nombre, un placeholder, {highlight}@mirror {error}o {highlight}@none{error}.'
 invalid-colour: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%value% {error}no es un color. Usa {highlight}#RRGGBB{error}, o {highlight}none{error}.'
 invalid-look: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%value% {error}no es un modo de mirada. Usa {highlight}fixed{error}, {highlight}nearest {error}o {highlight}each-viewer{error}.'
 invalid-slot: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%slot% {error}no es un hueco. Usa {highlight}%slots%{error}.'
@@ -57,7 +57,7 @@ help:
   - ' {warning}adjust {letters_black}» {letters}moverlo, girarlo y escalarlo con la rueda del ratón {muted}(otra vez guarda, adjust cancel deshace)'
   - ' {warning}rename <nuevo> {letters_black}· {warning}clone <nuevo> {letters_black}· {warning}enable {letters_black}· {warning}disable {letters_black}· {warning}delete'
   - ' {warning}undo {letters_black}» {letters}deshace el último cambio'
-  - ' {warning}skin <jugador|@mirror|@none> {letters_black}· {warning}texture <valor> [firma]'
+  - ' {warning}skin <jugador|placeholder|@mirror|@none> [respaldo] {letters_black}· {warning}texture <valor> [firma]'
   - ' {warning}pose {letters_black}· {warning}scale {letters_black}· {warning}glow <#RRGGBB|none> {letters_black}· {warning}look <modo> [alcance]'
   - ' {warning}equip <hueco|clear> [objeto] {letters_black}» {letters}ese objeto, o el de tu mano {letters_black}· {warning}equipment'
   - ' {warning}label set|add <texto> {letters_black}· {warning}label remove <n> {letters_black}· {warning}label clear {letters_black}· {warning}label height'
@@ -120,10 +120,10 @@ dialogs:
   name-hint: Minúsculas, números, - y _. Se usa en los comandos /npc <nombre>.
   preset-label: Empezar desde
   skin-label: Skin
-  skin-hint: Un nombre de cuenta, @mirror para la de cada jugador, o vacío para la de por defecto.
+  skin-hint: Un nombre de cuenta, un placeholder que dé uno, @mirror para la de cada jugador, o vacío para la de por defecto.
   appearance-title: '{primary}&lAPARIENCIA {letters_black}» {highlight}SKIN'
   skin-type-label: Skin de
-  skin-player-label: Nombre de cuenta (para PLAYER)
+  skin-player-label: Nombre de cuenta o placeholder (para PLAYER)
   texture-label: Textura (para TEXTURE)
   texture-hint: El valor y la firma que da mineskin.org para una skin subida.
   signature-label: Firma
@@ -164,6 +164,7 @@ dialogs:
   confirm-delete: '{error}¿Eliminar el NPC {highlight}%name%{error}? No se puede deshacer.'
   body-title: '{primary}&lAPARIENCIA {letters_black}» {highlight}CUERPO'
   rules-title: '{primary}&lINTERACCIONES {letters_black}» {highlight}REGLAS'
+  skin-fallback-label: 'Cuenta de respaldo (mientras el placeholder no nombre a nadie)'
 adjust:
   started: '[sound:BLOCK_NOTE_BLOCK_PLING|0.6|1.6]%prefix% {letters}Ajustando {highlight}%name%{letters}: usa la rueda para moverlo y {highlight}F {letters}para el siguiente eje. <click:run_command:''/npc %name% adjust save''>{success}&l[✔ GUARDAR]</click> <click:run_command:''/npc %name% adjust cancel''>{error}&l[✘ DESHACER]</click>'
   saved: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Ajuste de {highlight}%name% {success}guardado.'

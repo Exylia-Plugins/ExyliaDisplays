@@ -197,15 +197,24 @@ public final class NpcCommand {
     // How it looks
     // ------------------------------------------------------------------
 
-    /** An account name, {@code @mirror} for each viewer's own, or {@code @none} for the default. */
+    /**
+     * An account name, a placeholder that names one (a leaderboard's top name, worn by whoever
+     * holds the spot, with {@code fallback} while nobody does), {@code @mirror} for each viewer's
+     * own, or {@code @none} for the default.
+     */
     @Subcommand("<name> skin")
-    public void skin(CommandSender sender, @SuggestWith(Names.class) String name, @SuggestWith(NpcSuggestions.class) String skin) {
+    public void skin(CommandSender sender, @SuggestWith(Names.class) String name,
+                     @SuggestWith(NpcSuggestions.class) @Single String skin,
+                     @SuggestWith(NpcSuggestions.class) @Optional @Single String fallback) {
         StoredNpc.Skin parsed = StoredNpc.Skin.parse(skin);
-        if (parsed == null) {
-            send(sender, messages().invalidSkin(), Values.of().putText("skin", skin));
+        String backup = fallback == null ? "" : fallback.trim();
+        if (parsed == null || !(backup.isEmpty() || StoredNpc.Skin.isAccount(backup))) {
+            send(sender, messages().invalidSkin(), Values.of().putText("skin", parsed == null ? skin : backup));
             return;
         }
-        property(sender, name, "skin", skin, current -> current.withSkin(parsed));
+        StoredNpc.Skin chosen = parsed.isPlaceholder() ? parsed.withFallback(backup) : parsed;
+        property(sender, name, "skin", backup.isEmpty() ? skin : skin + " (" + backup + ")",
+                current -> current.withSkin(chosen));
     }
 
     /** An uploaded skin's texture value and signature, as mineskin.org gives them. */

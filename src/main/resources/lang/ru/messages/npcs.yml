@@ -11,7 +11,7 @@ teleported: '%prefix% {letters}Телепорт к {highlight}%name%{letters}.'
 world-missing: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}Мир {highlight}%world% {error}не загружен.'
 state-changed: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {letters}NPC {highlight}%name% {letters_black}» %status%'
 saved: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}{highlight}%name% {success}сохранён.'
-invalid-skin: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%skin% {error}— не ник аккаунта. Укажи ник, {highlight}@mirror {error}или {highlight}@none{error}.'
+invalid-skin: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%skin% {error}— не ник аккаунта. Укажи ник, плейсхолдер, {highlight}@mirror {error}или {highlight}@none{error}.'
 invalid-colour: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%value% {error}— не цвет. Укажи {highlight}#RRGGBB{error} или {highlight}none{error}.'
 invalid-look: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%value% {error}— не режим взгляда. Укажи {highlight}fixed{error}, {highlight}nearest {error}или {highlight}each-viewer{error}.'
 invalid-slot: '[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%slot% {error}— не слот. Укажи {highlight}%slots%{error}.'
@@ -57,7 +57,7 @@ help:
   - ' {warning}adjust {letters_black}» {letters}двигать, вращать и масштабировать колёсиком {muted}(повтор сохраняет, adjust cancel отменяет)'
   - ' {warning}rename <новое> {letters_black}· {warning}clone <новое> {letters_black}· {warning}enable {letters_black}· {warning}disable {letters_black}· {warning}delete'
   - ' {warning}undo {letters_black}» {letters}отменить последнее изменение'
-  - ' {warning}skin <игрок|@mirror|@none> {letters_black}· {warning}texture <значение> [подпись]'
+  - ' {warning}skin <игрок|плейсхолдер|@mirror|@none> [запасной] {letters_black}· {warning}texture <значение> [подпись]'
   - ' {warning}pose {letters_black}· {warning}scale {letters_black}· {warning}glow <#RRGGBB|none> {letters_black}· {warning}look <режим> [радиус]'
   - ' {warning}equip <слот|clear> [предмет] {letters_black}» {letters}этот предмет или тот, что в руке {letters_black}· {warning}equipment'
   - ' {warning}label set|add <текст> {letters_black}· {warning}label remove <n> {letters_black}· {warning}label clear {letters_black}· {warning}label height'
@@ -120,10 +120,10 @@ dialogs:
   name-hint: Строчные буквы, цифры, - и _. Используется в командах /npc <имя>.
   preset-label: Начать с
   skin-label: Скин
-  skin-hint: Ник аккаунта, @mirror — скин каждого игрока, или пусто — скин по умолчанию.
+  skin-hint: Ник аккаунта, плейсхолдер, который его даёт, @mirror — скин каждого игрока, или пусто — скин по умолчанию.
   appearance-title: '{primary}&lВНЕШНОСТЬ {letters_black}» {highlight}СКИН'
   skin-type-label: Скин из
-  skin-player-label: Ник аккаунта (для PLAYER)
+  skin-player-label: Ник аккаунта или плейсхолдер (для PLAYER)
   texture-label: Текстура (для TEXTURE)
   texture-hint: Значение и подпись, которые mineskin.org даёт для загруженного скина.
   signature-label: Подпись
@@ -164,6 +164,7 @@ dialogs:
   confirm-delete: '{error}Удалить NPC {highlight}%name%{error}? Это нельзя отменить.'
   body-title: '{primary}&lВНЕШНОСТЬ {letters_black}» {highlight}ТЕЛО'
   rules-title: '{primary}&lВЗАИМОДЕЙСТВИЯ {letters_black}» {highlight}ПРАВИЛА'
+  skin-fallback-label: 'Запасной аккаунт (пока плейсхолдер никого не называет)'
 adjust:
   started: '[sound:BLOCK_NOTE_BLOCK_PLING|0.6|1.6]%prefix% {letters}Настройка {highlight}%name%{letters}: колёсико двигает, {highlight}F {letters}— следующая ось. <click:run_command:''/npc %name% adjust save''>{success}&l[✔ СОХРАНИТЬ]</click> <click:run_command:''/npc %name% adjust cancel''>{error}&l[✘ ОТМЕНИТЬ]</click>'
   saved: '[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Настройка {highlight}%name% {success}сохранена.'
