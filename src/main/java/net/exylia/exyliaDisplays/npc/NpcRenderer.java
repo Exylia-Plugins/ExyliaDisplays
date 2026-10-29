@@ -64,6 +64,8 @@ public final class NpcRenderer implements Listener {
     private final Map<String, String> wearing = new ConcurrentHashMap<>();
     /** Placeholder skins not read yet, read on the next second rather than the next refresh. */
     private final Set<String> unread = ConcurrentHashMap.newKeySet();
+    /** NPCs paused by a command or a screen; runtime only, kept here so a re-placed NPC stays paused. */
+    private final Set<String> paused = ConcurrentHashMap.newKeySet();
     private final TaskHandle skins;
     private long nextSkinRead;
 
@@ -85,6 +87,7 @@ public final class NpcRenderer implements Listener {
     public void apply(String name, StoredNpc saved) {
         StoredNpc npc = overlay.apply(name, saved);
         waiting.remove(name);
+        if (saved == null) paused.remove(name);
         if (npc == null || !npc.enabled()) {
             hide(name);
             return;
@@ -111,6 +114,7 @@ public final class NpcRenderer implements Listener {
             PlacedNpc placed = npcs.place(name, spec(name, npc), at);
             placed.visibleIf(seenBy(npc));
             placed.onClick((player, click) -> clicked(name, player, click));
+            if (paused.contains(name)) placed.pause();
         }
         if (before == null || !before.interactions().equals(npc.interactions())) {
             gates.put(name, gate(name, npc));
@@ -140,6 +144,7 @@ public final class NpcRenderer implements Listener {
                 .forEach(Hologram::remove);
         shown.clear();
         waiting.clear();
+        paused.clear();
         gates.clear();
         turns.clear();
     }
@@ -156,6 +161,28 @@ public final class NpcRenderer implements Listener {
     /** The NPC standing in the world, if it is. */
     public Optional<PlacedNpc> live(String name) {
         return npcs.placed(name).filter(placed -> !placed.removed());
+    }
+
+    /**
+     * Pauses it or lets it act on its own again: no idle, greeting, click animation or head
+     * turning while paused. Not saved; a restart resumes it.
+     */
+    public void pause(String name, boolean pause) {
+        if (pause) paused.add(name);
+        else paused.remove(name);
+        live(name).ifPresent(placed -> {
+            if (pause) placed.pause();
+            else placed.resume();
+        });
+    }
+
+    public boolean isPaused(String name) {
+        return paused.contains(name);
+    }
+
+    /** Whether it plays a performance now, a continuous idle included. */
+    public boolean isPerforming(String name) {
+        return live(name).map(PlacedNpc::isPerforming).orElse(false);
     }
 
     /** How many players see it now. */

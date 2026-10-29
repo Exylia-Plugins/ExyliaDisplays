@@ -264,7 +264,7 @@ place. A value with a colon is a performance; one without is moves.
 
 | Written | What it plays |
 |---|---|
-| `anim:<name>` | a Blockbench or Emotecraft animation file from `plugins/ExyliaDisplays/animations` |
+| `anim:<clip>` | a clip of a Blockbench project (`.bbmodel`), a Blockbench or Emotecraft export (`.json`) in `plugins/ExyliaDisplays/animations` |
 | `emote:<id>` | an emote of ExyliaEmotes (below) |
 | `keys:<frames>` | frames written in place, in `[RAGDOLL]`'s frame format; `[RAGDOLL]` options such as `follow:2;breathe:0;` may come first |
 
@@ -276,8 +276,35 @@ performs from a click action.
 
 Limits: one performance at a time per NPC (others are skipped, not queued); a **sitting NPC never
 performs**; players who walk up mid-play see the plain NPC; the body draws the NPC's head item and
-held items but not chest, legs and feet armour; a looping emote is cut after 8 seconds. A body is a
+held items but not chest, legs and feet armour; a looping emote is cut after 8 seconds unless it is a continuous idle. A body is a
 few dozen display entities per viewer, so prefer vanilla moves for anything a crowd clicks all day.
+
+### Continuous idles, groups, pause and stop
+
+```yaml
+    animations:
+      idle: 'anim:sway'          # a looping clip
+      idle-continuous: true      # loops for as long as anyone is within perform-range
+      idle-group: stage          # NPCs of one group keep their idles in step
+```
+
+With `idle-continuous: true` the idle performance plays without end while somebody is near; a
+click, a greeting or `/npc <name> play` plays over it and it comes back after. Write it as a loop:
+a clip that does not loop replays with a short flash. `/npc <name> group <key|none>` sets the
+group (the same key as `idle-group`), and `/npcadmin group list|play|stop|pause|resume <group>`
+plays an animation on every member at the same instant and tempo, or stops and pauses them.
+`/npc <name> stop` ends what it plays now; `/npc <name> pause` keeps it from idling, greeting and
+animating clicks until `/npc <name> resume` or a restart (clicks and actions still work). The
+**PLAYBACK** button of the performance picker does both.
+
+### Blockbench
+
+`anim:` reads Blockbench projects directly: save the `.bbmodel` into
+`plugins/ExyliaDisplays/animations` and its clips play at once, no export step. The plugin writes
+two templates there on start when they are missing, `player_classic.bbmodel` and
+`player_slim.bbmodel`, a player rig with the bones `anim:` reads and one `wave` clip: open one, add
+clips under Animate, save. `/npcadmin animations` lists every file with its clips (loop, length);
+click a clip to copy its `anim:` name. The body wears the NPC's real skin, no MineSkin upload.
 
 ### ExyliaEmotes
 

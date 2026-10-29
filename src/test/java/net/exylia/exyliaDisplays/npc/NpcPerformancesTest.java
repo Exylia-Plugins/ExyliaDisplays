@@ -1,6 +1,7 @@
 package net.exylia.exyliaDisplays.npc;
 
 import net.exylia.lib.npc.NpcAnimations;
+import net.exylia.lib.ragdoll.RagdollAnimations;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,20 +51,34 @@ class NpcPerformancesTest {
         assertTrue(bow.performance().lines().get(0).startsWith("[RAGDOLL] {victim};"));
         assertEquals("{primary}&lWAVE", emotes.get("wave").name(), "a missing name falls back to the id");
 
-        NpcPerformances.use(new NpcPerformances.Catalog(true, emotes, List.of()));
+        NpcPerformances.use(new NpcPerformances.Catalog(true, emotes, Map::of));
         assertNotNull(NpcPerformances.emote("bow"));
         assertNotNull(NpcPerformances.emote("BOW"), "ids are matched without case");
         assertNull(NpcPerformances.emote("handshake"));
     }
 
+    /** A folder of one Blockbench project with one clip, as ExyliaLib lists it. */
+    private static Map<String, List<RagdollAnimations.Clip>> dance() {
+        return Map.of("dance.bbmodel", List.of(new RagdollAnimations.Clip("dance", List.of("dance"), true,
+                Duration.ofMillis(1600), Duration.ZERO)));
+    }
+
     @Test
-    @DisplayName("animation files are named as anim: calls them")
-    void animationFiles() throws Exception {
-        Files.writeString(folder.resolve("wave.json"), "{}");
-        Files.writeString(folder.resolve("bow.animation.json"), "{}");
-        Files.writeString(folder.resolve("notes.txt"), "");
-        assertEquals(List.of("bow", "wave"), NpcPerformances.animations(folder.toFile()));
-        assertEquals(List.of(), NpcPerformances.animations(folder.resolve("missing").toFile()));
+    @DisplayName("the Blockbench templates are written once, and their wave clip is what anim: offers")
+    void templates() throws Exception {
+        assertEquals(2, RagdollAnimations.writeTemplates(folder.toFile()).size());
+        assertEquals(0, RagdollAnimations.writeTemplates(folder.toFile()).size(), "a file already there is kept");
+        List<String> problems = new java.util.ArrayList<>();
+        Map<String, List<RagdollAnimations.Clip>> files = new java.util.TreeMap<>();
+        for (String file : List.of("player_classic.bbmodel", "player_slim.bbmodel")) {
+            files.put(file, RagdollAnimations.clips(Files.readString(folder.resolve(file)), file, problems::add));
+        }
+        assertTrue(problems.isEmpty(), problems.toString());
+        NpcPerformances.use(new NpcPerformances.Catalog(false, Map.of(), () -> files));
+        assertEquals(List.of("wave"), NpcPerformances.catalog().animations(), "the same clip in both is offered once");
+        assertEquals(List.of("anim:wave"), NpcPerformances.names());
+        assertEquals("player_slim", NpcAdminCommand.base("player_slim.bbmodel"));
+        assertEquals("bow", NpcAdminCommand.base("bow.animation.json"));
     }
 
     @Test
@@ -90,7 +106,7 @@ class NpcPerformancesTest {
         assertNotNull(missing);
         assertTrue(missing.contains("ExyliaEmotes"), missing);
 
-        NpcPerformances.use(new NpcPerformances.Catalog(true, sample(), List.of("dance")));
+        NpcPerformances.use(new NpcPerformances.Catalog(true, sample(), NpcPerformancesTest::dance));
         assertNull(NpcPerformances.problem("emote:bow"));
         String unknown = NpcPerformances.problem("emote:moonwalk");
         assertNotNull(unknown);
@@ -101,7 +117,7 @@ class NpcPerformancesTest {
     @Test
     @DisplayName("the performance windows and commands read emote: and anim: values")
     void dialogsAndSuggestions() {
-        NpcPerformances.use(new NpcPerformances.Catalog(true, sample(), List.of("dance")));
+        NpcPerformances.use(new NpcPerformances.Catalog(true, sample(), NpcPerformancesTest::dance));
         assertTrue(NpcDialogs.unknownWords("emote:bow").isEmpty());
         assertFalse(NpcDialogs.unknownWords("wave, jump").isEmpty());
         assertEquals(List.of("emote:bow", "emote:wave", "anim:dance"), NpcPerformances.names());
@@ -111,5 +127,7 @@ class NpcPerformancesTest {
         List<String> trigger = NpcSuggestions.animation(new NpcAnimations(), "greet");
         assertTrue(trigger.containsAll(List.of("emote:wave", "anim:dance")), trigger.toString());
         assertTrue(NpcSuggestions.animation(new NpcAnimations(), "perform-range").contains("24"));
+        assertEquals(List.of("off", "on"), NpcSuggestions.animation(new NpcAnimations(), "idle-continuous"));
+        assertEquals(List.of("stage", "none"), NpcSuggestions.animation(new NpcAnimations().withIdleGroup("stage"), "idle-group"));
     }
 }

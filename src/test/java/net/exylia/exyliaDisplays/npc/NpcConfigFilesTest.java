@@ -102,6 +102,28 @@ class NpcConfigFilesTest {
         assertTrue(written.contains("perform-range: 12.5"), written);
         // An edit of one trigger keeps the perform range.
         assertEquals(12.5, read.withAnimation("idle", "nod").animations().performRange());
+        assertTrue(written.contains("idle-continuous: false"), written);
+    }
+
+    @Test
+    @DisplayName("a continuous idle and a group are written to npcs.yml and read back")
+    void continuousIdleRoundTrip() throws IOException {
+        ConfigFile<NpcFile> file = Configs.define(plugin(), "npcs", NpcFile.class).load();
+        StoredNpc dancer = new StoredNpc().withLocation(new Place("lobby", 0.5, 64, -3.5, 180, 0))
+                .withAnimation("idle", "anim:wave");
+        dancer = dancer.withAnimations(dancer.animations().withIdleContinuous(true)).withGroup("stage");
+        StoredNpc saved = dancer;
+        file.update(current -> new NpcFile(Map.of("dancer", saved)));
+
+        String written = Files.readString(folder.resolve("npcs.yml"));
+        assertTrue(written.contains("idle-continuous: true"), written);
+        assertTrue(written.contains("idle-group: stage"), written);
+
+        Configs.releaseAll();
+        StoredNpc read = Configs.define(plugin(), "npcs", NpcFile.class).load().get().npcs().get("dancer");
+        assertEquals(saved, read);
+        assertTrue(read.animations().idleContinuous());
+        assertEquals("stage", read.group());
     }
 
     @Test
@@ -136,6 +158,8 @@ class NpcConfigFilesTest {
         assertEquals(48.0, bob.viewDistance());
         assertFalse(bob.sitting());
         assertTrue(bob.animations().isEmpty());
+        assertFalse(bob.animations().idleContinuous(), "an NPC written before 2.15 keeps idle-every");
+        assertEquals("", bob.group());
     }
 
     @Test
@@ -148,21 +172,23 @@ class NpcConfigFilesTest {
     }
 
     @Test
-    @DisplayName("messages/npcs.yml generates, and its Spanish file has every key")
+    @DisplayName("messages/npcs.yml generates, and every translation has every key")
     void messages() throws IOException {
         Configs.define(plugin(), "messages/npcs", NpcsMessages.class).load();
         String english = Files.readString(folder.resolve("messages/npcs.yml"));
-        var stream = NpcConfigFilesTest.class.getClassLoader().getResourceAsStream("lang/es/messages/npcs.yml");
-        assertTrue(stream != null, "no lang/es/messages/npcs.yml");
-        String spanish = new String(stream.readAllBytes());
         List<String> keys = english.lines()
                 .filter(line -> line.matches("^ {0,2}[a-z-]+:.*") && !line.startsWith("config-version"))
                 .map(line -> line.substring(0, line.indexOf(':')))
                 .toList();
-        for (String key : keys) {
-            assertTrue(spanish.lines().anyMatch(line -> line.startsWith(key + ":")
-                            || line.startsWith(key.replaceFirst("^( *)([a-z-]+)$", "$1'$2'") + ":")),
-                    "lang/es/messages/npcs.yml has no " + key.trim());
+        for (String code : List.of("es", "fr", "pt", "ru", "tr")) {
+            var stream = NpcConfigFilesTest.class.getClassLoader().getResourceAsStream("lang/" + code + "/messages/npcs.yml");
+            assertTrue(stream != null, "no lang/" + code + "/messages/npcs.yml");
+            String translated = new String(stream.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+            for (String key : keys) {
+                assertTrue(translated.lines().anyMatch(line -> line.startsWith(key + ":")
+                                || line.startsWith(key.replaceFirst("^( *)([a-z-]+)$", "$1'$2'") + ":")),
+                        "lang/" + code + "/messages/npcs.yml has no " + key.trim());
+            }
         }
     }
 }

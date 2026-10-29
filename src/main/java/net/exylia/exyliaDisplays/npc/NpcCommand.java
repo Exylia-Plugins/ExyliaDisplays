@@ -547,8 +547,8 @@ public final class NpcCommand {
                 property(sender, name, "animation " + key, NpcViews.seconds(time), current -> {
                     NpcAnimations a = current.animations();
                     return current.withAnimations(key.equals("idle-every")
-                            ? new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), time, a.greet(), a.greetRange(), a.greetCooldown(), a.performRange())
-                            : new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), a.idleEvery(), a.greet(), a.greetRange(), time, a.performRange()));
+                            ? new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), time, a.greet(), a.greetRange(), a.greetCooldown(), a.performRange(), a.idleContinuous(), a.idleGroup())
+                            : new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), a.idleEvery(), a.greet(), a.greetRange(), time, a.performRange(), a.idleContinuous(), a.idleGroup()));
                 });
             }
             case "greet-range", "perform-range" -> {
@@ -567,15 +567,25 @@ public final class NpcCommand {
                     NpcAnimations a = current.animations();
                     return current.withAnimations(key.equals("greet-range")
                             ? new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), a.idleEvery(), a.greet(),
-                                    range, a.greetCooldown(), a.performRange())
+                                    range, a.greetCooldown(), a.performRange(), a.idleContinuous(), a.idleGroup())
                             : new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), a.idleEvery(), a.greet(),
-                                    a.greetRange(), a.greetCooldown(), range));
+                                    a.greetRange(), a.greetCooldown(), range, a.idleContinuous(), a.idleGroup()));
                 });
             }
+            case "idle-continuous" -> {
+                Boolean on = onOff(text);
+                if (on == null) {
+                    invalid(sender, "animation " + key, text, "on, off");
+                    return;
+                }
+                property(sender, name, "animation " + key, on ? "on" : "off",
+                        current -> current.withAnimations(current.animations().withIdleContinuous(on)));
+            }
+            case "idle-group" -> group(sender, name, text);
             default -> {
                 if (new StoredNpc().withAnimation(key, text) == null) {
                     invalid(sender, "animation", trigger, String.join(", ", StoredNpc.TRIGGERS)
-                            + ", idle-every, greet-range, greet-cooldown, perform-range");
+                            + ", idle-every, greet-range, greet-cooldown, perform-range, idle-continuous, idle-group");
                     return;
                 }
                 if (!NpcDialogs.readable(sender, text)) return;
@@ -605,31 +615,83 @@ public final class NpcCommand {
         }
         StoredNpc npc = NpcModule.get().store().get(name).orElseThrow();
         NpcsMessages.Animations words = messages().animations();
+        // Asked first and judged after: a continuous idle counts as performing, yet a call replaces it.
         if (npc.sitting()) {
             send(sender, words.performSitting(), values);
-        } else if (live.get().isPerforming()) {
-            send(sender, words.performBusy(), values);
         } else if (live.get().perform(NpcPerformance.parse(animation.trim()))) {
             send(sender, words.played(), values);
+        } else if (live.get().isPerforming()) {
+            send(sender, words.performBusy(), values);
         } else {
             send(sender, words.performSkipped(), values.put("range", NpcViews.number(npc.animations().performRange())));
         }
+    }
+
+    /** Ends what it plays now; a continuous idle comes back on its own unless it is paused. */
+    @Subcommand("<name> stop")
+    public void stop(CommandSender sender, @SuggestWith(Names.class) String name) {
+        if (!exists(sender, name)) return;
+        var live = NpcModule.get().renderer().live(name);
+        Values values = Values.of().putText("name", name);
+        if (live.isEmpty()) {
+            send(sender, messages().animations().notShown(), values);
+            return;
+        }
+        send(sender, live.get().stopPerformance() ? messages().playback().stopped() : messages().playback().nothingPlaying(), values);
+    }
+
+    /** No idle, greeting, click animation or head turning until resumed; clicks still run. Not saved. */
+    @Subcommand("<name> pause")
+    public void pause(CommandSender sender, @SuggestWith(Names.class) String name) {
+        paused(sender, name, true);
+    }
+
+    @Subcommand("<name> resume")
+    public void resume(CommandSender sender, @SuggestWith(Names.class) String name) {
+        paused(sender, name, false);
+    }
+
+    static void paused(CommandSender sender, String name, boolean paused) {
+        if (!exists(sender, name)) return;
+        NpcModule.get().renderer().pause(name, paused);
+        send(sender, paused ? messages().playback().paused() : messages().playback().resumed(), Values.of().putText("name", name));
+    }
+
+    /**
+     * The group it belongs to, or {@code none}: NPCs of one group keep their continuous idles in
+     * step and are played, stopped and paused together with {@code /npcadmin group}. The same key
+     * as {@code animation idle-group}.
+     */
+    @Subcommand("<name> group")
+    public void group(CommandSender sender, @SuggestWith(Names.class) String name,
+                      @Single @SuggestWith(NpcSuggestions.class) String group) {
+        String key = StoredNpc.group(group);
+        if (key == null) {
+            invalid(sender, "group", group, "a-z, 0-9, - and _, or none");
+            return;
+        }
+        property(sender, name, "group", key.isEmpty() ? "-" : key, current -> current.withGroup(key));
     }
 
     /** Sits on an invisible seat, hips at its location, or stands. */
     @Subcommand("<name> sit")
     public void sit(CommandSender sender, @SuggestWith(Names.class) String name,
                     @revxrsal.commands.annotation.Suggest({"on", "off"}) String state) {
-        Boolean sitting = switch (state.trim().toLowerCase(Locale.ROOT)) {
-            case "on", "true", "yes" -> true;
-            case "off", "false", "no" -> false;
-            default -> null;
-        };
+        Boolean sitting = onOff(state);
         if (sitting == null) {
             invalid(sender, "sitting", state, "on, off");
             return;
         }
         property(sender, name, "sitting", sitting ? "on" : "off", current -> current.withSitting(sitting));
+    }
+
+    /** {@code on} or {@code off}, as a switch is typed; {@code null} for anything else. */
+    static Boolean onOff(String typed) {
+        return switch (typed == null ? "" : typed.trim().toLowerCase(Locale.ROOT)) {
+            case "on", "true", "yes" -> true;
+            case "off", "false", "no" -> false;
+            default -> null;
+        };
     }
 
     // ------------------------------------------------------------------
@@ -675,7 +737,7 @@ public final class NpcCommand {
         return saved;
     }
 
-    private static boolean exists(CommandSender sender, String name) {
+    static boolean exists(CommandSender sender, String name) {
         if (NpcModule.get().store().exists(name)) return true;
         send(sender, messages().notFound(), Values.of().putText("name", name));
         return false;

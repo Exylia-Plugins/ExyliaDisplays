@@ -115,15 +115,20 @@ items:
       - " {letters_black}▎ {letters}Приветствие {letters_black}» %anim_greet% {letters_black}· {info}%anim_greet_range% {letters}блоков"
       - " {letters_black}▎ {letters}Сидит {letters_black}» %sitting%"
       - " {letters_black}▎ {letters}Выступления ближе {letters_black}» {info}%anim_perform_range% {letters}блоков"
+      - " {letters_black}▎ {letters}Idle по кругу {letters_black}» %anim_idle_continuous%"
+      - " {letters_black}▎ {letters}Группа {letters_black}» %group%"
+      - " {letters_black}▎ {letters}Состояние {letters_black}» %npc_motion%"
       - ""
       - "{warning}➥ ЛКМ {letters_black}» {letters}что играет по клику"
-      - "{warning}➥ ПКМ {letters_black}» {letters}сам по себе и приветствие"
+      - "{warning}➥ ПКМ {letters_black}» {letters}idle, приветствие и группа"
       - "{warning}➥ Shift+ЛКМ {letters_black}» {letters}выбрать выступление"
+      - "{warning}➥ Shift+ПКМ {letters_black}» {letters}пауза или продолжить"
       - ""
     actions:
       - "left: exyliadisplays:npc_animations"
       - "right: exyliadisplays:npc_animations_auto"
       - "shift_left: exyliadisplays:npc_open_performances"
+      - "shift_right: exyliadisplays:npc_pause_toggle"
 
   interactions:
     slot: 23

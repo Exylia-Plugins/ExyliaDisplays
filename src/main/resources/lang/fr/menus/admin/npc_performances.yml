@@ -82,6 +82,28 @@ items:
       - " {letters_black}▎ {letters}assis ne joue jamais."
       - ""
 
+  playback:
+    slot: 46
+    material: JUKEBOX
+    name: "{primary}&lLECTURE"
+    lore:
+      - ""
+      - "{secondary}Information :"
+      - " {letters_black}▎ {letters}En pause, il ne joue rien tout seul :"
+      - " {letters_black}▎ {letters}ni idle, ni accueil, ni animation de clic."
+      - " {letters_black}▎ {letters}Les clics et leurs actions fonctionnent."
+      - ""
+      - "{secondary}Statut :"
+      - " {letters_black}▎ {letters}État {letters_black}» %npc_motion%"
+      - " {letters_black}▎ {letters}En performance {letters_black}» %npc_performing%"
+      - ""
+      - "{warning}➥ Clic gauche {letters_black}» {letters}pause ou reprise"
+      - "{warning}➥ Clic droit {letters_black}» {letters}arrêter ce qu'il joue"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_playback_toggle"
+      - "right: exyliadisplays:npc_stop"
+
   back:
     slot: 49
     sound: "minecraft:item.bundle.remove_one|1.0|0.5"

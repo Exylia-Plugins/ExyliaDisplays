@@ -115,15 +115,20 @@ items:
       - " {letters_black}▎ {letters}Saudar {letters_black}» %anim_greet% {letters_black}· {info}%anim_greet_range% {letters}blocos"
       - " {letters_black}▎ {letters}Sentado {letters_black}» %sitting%"
       - " {letters_black}▎ {letters}Performances até {letters_black}» {info}%anim_perform_range% {letters}blocos"
+      - " {letters_black}▎ {letters}Idle em loop {letters_black}» %anim_idle_continuous%"
+      - " {letters_black}▎ {letters}Grupo {letters_black}» %group%"
+      - " {letters_black}▎ {letters}Estado {letters_black}» %npc_motion%"
       - ""
       - "{warning}➥ Clique esquerdo {letters_black}» {letters}o que um clique toca"
-      - "{warning}➥ Clique direito {letters_black}» {letters}sozinho e para saudar"
+      - "{warning}➥ Clique direito {letters_black}» {letters}idle, saudação e grupo"
       - "{warning}➥ Shift + clique esquerdo {letters_black}» {letters}escolher performance"
+      - "{warning}➥ Shift + clique direito {letters_black}» {letters}pausar ou retomar"
       - ""
     actions:
       - "left: exyliadisplays:npc_animations"
       - "right: exyliadisplays:npc_animations_auto"
       - "shift_left: exyliadisplays:npc_open_performances"
+      - "shift_right: exyliadisplays:npc_pause_toggle"
 
   interactions:
     slot: 23

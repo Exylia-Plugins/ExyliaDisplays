@@ -115,15 +115,20 @@ items:
       - " {letters_black}▎ {letters}Accueil {letters_black}» %anim_greet% {letters_black}· {info}%anim_greet_range% {letters}blocs"
       - " {letters_black}▎ {letters}Assis {letters_black}» %sitting%"
       - " {letters_black}▎ {letters}Performances à moins de {letters_black}» {info}%anim_perform_range% {letters}blocs"
+      - " {letters_black}▎ {letters}Idle en boucle {letters_black}» %anim_idle_continuous%"
+      - " {letters_black}▎ {letters}Groupe {letters_black}» %group%"
+      - " {letters_black}▎ {letters}État {letters_black}» %npc_motion%"
       - ""
       - "{warning}➥ Clic gauche {letters_black}» {letters}ce que joue un clic"
-      - "{warning}➥ Clic droit {letters_black}» {letters}tout seul, et l'accueil"
+      - "{warning}➥ Clic droit {letters_black}» {letters}idle, accueil et groupe"
       - "{warning}➥ Shift-clic gauche {letters_black}» {letters}choisir une performance"
+      - "{warning}➥ Shift-clic droit {letters_black}» {letters}mettre en pause ou reprendre"
       - ""
     actions:
       - "left: exyliadisplays:npc_animations"
       - "right: exyliadisplays:npc_animations_auto"
       - "shift_left: exyliadisplays:npc_open_performances"
+      - "shift_right: exyliadisplays:npc_pause_toggle"
 
   interactions:
     slot: 23

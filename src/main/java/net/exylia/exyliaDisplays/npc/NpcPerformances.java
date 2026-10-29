@@ -5,6 +5,7 @@ import net.exylia.exyliaDisplays.common.FileWatcher;
 import net.exylia.lib.npc.NpcPerformance;
 import net.exylia.lib.npc.Npcs;
 import net.exylia.lib.ragdoll.RagdollAnimation;
+import net.exylia.lib.ragdoll.RagdollAnimations;
 import net.exylia.lib.text.Values;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,22 +18,26 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TreeSet;
+import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Performances: whole-body animations an NPC plays in place of vanilla moves.
  *
  * <p>Knows what can be played by name: ExyliaEmotes' emotes ({@code emote:<id>}), read from its
- * {@code emotes.yml} (the file is the contract; its classes are never touched), and the animation
- * files in this plugin's {@code animations} folder ({@code anim:<name>}). Both are read into memory
- * when the module starts, on {@code /npcadmin reload}, when ExyliaEmotes is enabled and when its
- * file changes, so completion and the resolver only ever read a map.
+ * {@code emotes.yml} (the file is the contract; its classes are never touched), and the clips of
+ * the animation files in this plugin's {@code animations} folder ({@code anim:<clip>}): Blockbench
+ * projects and exports, and Emotecraft files. Emotes are read into memory when the module starts,
+ * on {@code /npcadmin reload}, when ExyliaEmotes is enabled and when its file changes; the folder is
+ * ExyliaLib's own cache, read again when a file there changes, so a saved project is offered at once.
  */
 public final class NpcPerformances implements Listener {
 
@@ -55,10 +60,18 @@ public final class NpcPerformances implements Listener {
      *
      * @param installed  whether ExyliaEmotes is enabled
      * @param emotes     its solo emotes by id, in its file's order
-     * @param animations the animation files of this plugin's {@code animations} folder, by name
+     * @param files      the animation files of this plugin's {@code animations} folder, each with
+     *                   its clips, read when asked
      */
-    record Catalog(boolean installed, Map<String, Emote> emotes, List<String> animations) {
-        static final Catalog EMPTY = new Catalog(false, Map.of(), List.of());
+    record Catalog(boolean installed, Map<String, Emote> emotes, Supplier<Map<String, List<RagdollAnimations.Clip>>> files) {
+        static final Catalog EMPTY = new Catalog(false, Map.of(), Map::of);
+
+        /** Every clip {@code anim:} plays, by its name, once each, in the folder's order. */
+        List<String> animations() {
+            Set<String> names = new LinkedHashSet<>();
+            files.get().values().forEach(clips -> clips.forEach(clip -> names.add(clip.name())));
+            return List.copyOf(names);
+        }
     }
 
     private static volatile Catalog catalog = Catalog.EMPTY;
@@ -74,9 +87,18 @@ public final class NpcPerformances implements Listener {
     // Life
     // ------------------------------------------------------------------
 
-    /** Reads what there is to play, hands emotes to the NPC library, and follows ExyliaEmotes. */
+    /**
+     * Reads what there is to play, hands emotes to the NPC library, and follows ExyliaEmotes. The
+     * Blockbench templates are written into the animations folder when they are missing.
+     */
     void enable() {
         Npcs.of(core.getPlugin()).emotes(NpcPerformances::emote);
+        try {
+            RagdollAnimations.writeTemplates(folder()).forEach(file ->
+                    core.getPlugin().getLogger().info("Wrote the Blockbench template animations/" + file.getName()));
+        } catch (IOException failed) {
+            core.getPlugin().getLogger().warning("Could not write the Blockbench templates: " + failed.getMessage());
+        }
         core.getServer().getPluginManager().registerEvents(this, core.getPlugin());
         refresh();
     }
@@ -95,14 +117,15 @@ public final class NpcPerformances implements Listener {
         File file = installed ? new File(emotes.getDataFolder(), "emotes.yml") : null;
         Map<String, Emote> read = file != null && file.isFile()
                 ? read(YamlConfiguration.loadConfiguration(file)) : Map.of();
-        catalog = new Catalog(installed, read, animations(new File(core.getPlugin().getDataFolder(), "animations")));
+        String owner = core.getPlugin().getName();
+        catalog = new Catalog(installed, read, () -> RagdollAnimations.files(owner));
         if (watcher != null) watcher.stop();
         watcher = null;
         if (file != null && file.getParentFile().isDirectory()) {
             watcher = new FileWatcher(file.toPath(), core.getTasks(), this::changed, core.getPlugin().getLogger());
             watcher.start();
         }
-        core.getDebug().log("Performances: " + read.size() + " emotes, " + catalog.animations().size() + " animation files");
+        core.getDebug().log("Performances: " + read.size() + " emotes, " + catalog.animations().size() + " animation clips");
     }
 
     private void changed() {
@@ -119,7 +142,7 @@ public final class NpcPerformances implements Listener {
         if (!event.getPlugin().getName().equals(EMOTES_PLUGIN)) return;
         if (watcher != null) watcher.stop();
         watcher = null;
-        catalog = new Catalog(false, Map.of(), catalog.animations());
+        catalog = new Catalog(false, Map.of(), catalog.files());
     }
 
     // ------------------------------------------------------------------
@@ -145,19 +168,6 @@ public final class NpcPerformances implements Listener {
         return Collections.unmodifiableMap(emotes);
     }
 
-    /** The animation files of a folder, by the name {@code anim:} calls them. */
-    static List<String> animations(File folder) {
-        File[] files = folder.listFiles((dir, name) -> name.toLowerCase(Locale.ROOT).endsWith(".json"));
-        if (files == null) return List.of();
-        TreeSet<String> names = new TreeSet<>();
-        for (File file : files) {
-            String name = file.getName();
-            String lower = name.toLowerCase(Locale.ROOT);
-            names.add(name.substring(0, name.length() - (lower.endsWith(".animation.json") ? 15 : 5)));
-        }
-        return List.copyOf(names);
-    }
-
     // ------------------------------------------------------------------
     // Asking
     // ------------------------------------------------------------------
@@ -173,6 +183,11 @@ public final class NpcPerformances implements Listener {
         Map<String, Emote> emotes = catalog.emotes();
         Emote exact = emotes.get(id.trim());
         return exact != null ? exact : emotes.get(id.trim().toLowerCase(Locale.ROOT));
+    }
+
+    /** Where the animation files live: {@code plugins/ExyliaDisplays/animations}. */
+    File folder() {
+        return new File(core.getPlugin().getDataFolder(), "animations");
     }
 
     static Catalog catalog() {

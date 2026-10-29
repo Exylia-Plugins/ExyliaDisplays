@@ -25,6 +25,23 @@ class NpcAnimationEditTest {
     }
 
     @Test
+    @DisplayName("a trigger edit keeps the continuous idle and the group; group keys are read lowercase")
+    void continuousAndGroup() {
+        StoredNpc npc = new StoredNpc().withAnimations(new StoredNpc().animations().withIdleContinuous(true))
+                .withGroup("stage");
+        StoredNpc edited = npc.withAnimation("idle", "anim:sway").withAnimation("greet", "bow");
+        assertTrue(edited.animations().idleContinuous());
+        assertEquals("stage", edited.group());
+        assertEquals("stage", edited.animations().idleGroup(), "a group is the idle group, one concept");
+
+        assertEquals("choir", StoredNpc.group(" Choir "));
+        assertEquals("", StoredNpc.group("none"));
+        assertEquals("", StoredNpc.group(""));
+        assertNull(StoredNpc.group("two words"));
+        assertNull(StoredNpc.group("a".repeat(33)));
+    }
+
+    @Test
     @DisplayName("unknown words are reported, presets and moves are not")
     void unknownWords() {
         assertTrue(NpcDialogs.unknownWords("wave, 250ms, hurt").isEmpty());

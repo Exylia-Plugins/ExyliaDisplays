@@ -81,6 +81,28 @@ items:
       - " {letters_black}▎ {letters}never performs."
       - ""
 
+  playback:
+    slot: 46
+    material: JUKEBOX
+    name: "{primary}&lPLAYBACK"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}Paused, it plays nothing on its own:"
+      - " {letters_black}▎ {letters}no idle, greeting or click animation."
+      - " {letters_black}▎ {letters}Clicks and their actions still work."
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}State {letters_black}» %npc_motion%"
+      - " {letters_black}▎ {letters}Performing now {letters_black}» %npc_performing%"
+      - ""
+      - "{warning}➥ Left-click {letters_black}» {letters}pause or resume"
+      - "{warning}➥ Right-click {letters_black}» {letters}stop what it plays"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_playback_toggle"
+      - "right: exyliadisplays:npc_stop"
+
   back:
     slot: 49
     sound: "minecraft:item.bundle.remove_one|1.0|0.5"

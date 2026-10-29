@@ -81,6 +81,28 @@ items:
       - " {letters_black}▎ {letters}asla gösteri yapmaz."
       - ""
 
+  playback:
+    slot: 46
+    material: JUKEBOX
+    name: "{primary}&lOYNATMA"
+    lore:
+      - ""
+      - "{secondary}Bilgi:"
+      - " {letters_black}▎ {letters}Duraklatılınca kendi kendine bir şey oynatmaz:"
+      - " {letters_black}▎ {letters}idle, selamlama ya da tıklama animasyonu yok."
+      - " {letters_black}▎ {letters}Tıklamalar ve eylemleri çalışmaya devam eder."
+      - ""
+      - "{secondary}Durum:"
+      - " {letters_black}▎ {letters}Durum {letters_black}» %npc_motion%"
+      - " {letters_black}▎ {letters}Şu an gösteride {letters_black}» %npc_performing%"
+      - ""
+      - "{warning}➥ Sol tık {letters_black}» {letters}duraklat ya da devam ettir"
+      - "{warning}➥ Sağ tık {letters_black}» {letters}oynattığını durdur"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_playback_toggle"
+      - "right: exyliadisplays:npc_stop"
+
   back:
     slot: 49
     sound: "minecraft:item.bundle.remove_one|1.0|0.5"

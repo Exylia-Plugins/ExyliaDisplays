@@ -91,6 +91,8 @@ public record StoredNpc(
         @Comment("Each is vanilla moves (wave, 'swing, 250ms, hurt') or one performance, a whole-body animation:")
         @Comment("anim:<file> (plugins/ExyliaDisplays/animations), emote:<id> (ExyliaEmotes) or keys:<frames>.")
         @Comment("perform-range is how close a player has to be to see one; a sitting NPC never performs.")
+        @Comment("idle-continuous: true loops an idle performance for as long as anyone is near (write it as a loop).")
+        @Comment("idle-group: NPCs with the same group keep their idles in step; /npcadmin group plays one on all.")
         @Comment("/npc <name> animation <trigger> <text> sets one; /npc <name> play <animation> tries it.")
         NpcAnimations animations) {
 
@@ -567,13 +569,37 @@ public record StoredNpc(
         NpcAnimations a = animations;
         String t = text == null ? "" : text.trim();
         NpcAnimations edited = switch (trigger == null ? "" : trigger.trim().toLowerCase(Locale.ROOT)) {
-            case "left-click", "left" -> new NpcAnimations(t, a.rightClick(), a.idle(), a.idleEvery(), a.greet(), a.greetRange(), a.greetCooldown(), a.performRange());
-            case "right-click", "right" -> new NpcAnimations(a.leftClick(), t, a.idle(), a.idleEvery(), a.greet(), a.greetRange(), a.greetCooldown(), a.performRange());
-            case "idle" -> new NpcAnimations(a.leftClick(), a.rightClick(), t, a.idleEvery(), a.greet(), a.greetRange(), a.greetCooldown(), a.performRange());
-            case "greet" -> new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), a.idleEvery(), t, a.greetRange(), a.greetCooldown(), a.performRange());
+            case "left-click", "left" -> new NpcAnimations(t, a.rightClick(), a.idle(), a.idleEvery(), a.greet(), a.greetRange(), a.greetCooldown(), a.performRange(), a.idleContinuous(), a.idleGroup());
+            case "right-click", "right" -> new NpcAnimations(a.leftClick(), t, a.idle(), a.idleEvery(), a.greet(), a.greetRange(), a.greetCooldown(), a.performRange(), a.idleContinuous(), a.idleGroup());
+            case "idle" -> new NpcAnimations(a.leftClick(), a.rightClick(), t, a.idleEvery(), a.greet(), a.greetRange(), a.greetCooldown(), a.performRange(), a.idleContinuous(), a.idleGroup());
+            case "greet" -> new NpcAnimations(a.leftClick(), a.rightClick(), a.idle(), a.idleEvery(), t, a.greetRange(), a.greetCooldown(), a.performRange(), a.idleContinuous(), a.idleGroup());
             default -> null;
         };
         return edited == null ? null : withAnimations(edited);
+    }
+
+    /** What a group key may be: the characters of an NPC name. */
+    private static final Pattern GROUP = Pattern.compile("[a-z0-9_-]{1,32}");
+
+    /**
+     * A group key as a command or a window writes it, read: lowercase, or empty for
+     * {@code none} or nothing.
+     *
+     * @return the key, or {@code null} when it has characters a key cannot have
+     */
+    public static String group(String written) {
+        String key = written == null ? "" : written.trim().toLowerCase(Locale.ROOT);
+        if (key.isEmpty() || key.equals("none")) return "";
+        return GROUP.matcher(key).matches() ? key : null;
+    }
+
+    /** The group it idles in step with, and that {@code /npcadmin group} reaches; empty for none. */
+    public String group() {
+        return animations.idleGroup();
+    }
+
+    public StoredNpc withGroup(String key) {
+        return withAnimations(animations.withIdleGroup(key));
     }
 
     public StoredNpc withLabelLines(List<String> lines) {

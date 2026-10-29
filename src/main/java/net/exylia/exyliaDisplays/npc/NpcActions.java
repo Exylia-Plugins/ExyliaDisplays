@@ -75,6 +75,19 @@ public final class NpcActions {
         performance("perform_pick", NpcDialogs::pickPerformance);
         // The same as /npc <name> play, said the same way; the picker stays open.
         performance("perform_try", (player, name, value) -> new NpcCommand().play(player, name, value));
+        // Pause or resume, from the hub or the performance picker, which each come back.
+        hub("pause_toggle", (player, name) -> {
+            NpcCommand.paused(player, name, !NpcModule.get().renderer().isPaused(name));
+            NpcViews.openHub(player, name);
+        });
+        hub("playback_toggle", (player, name) -> {
+            NpcCommand.paused(player, name, !NpcModule.get().renderer().isPaused(name));
+            NpcViews.openPerformances(player, name);
+        });
+        hub("stop", (player, name) -> {
+            new NpcCommand().stop(player, name);
+            NpcViews.openPerformances(player, name);
+        });
         hub("visibility", NpcDialogs::visibility);
         hub("location", NpcDialogs::location);
         hub("move_here", (player, name) -> {

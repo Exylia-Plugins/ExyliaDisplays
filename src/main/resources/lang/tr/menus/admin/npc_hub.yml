@@ -115,15 +115,20 @@ items:
       - " {letters_black}▎ {letters}Selamlama {letters_black}» %anim_greet% {letters_black}· {info}%anim_greet_range% {letters}blok"
       - " {letters_black}▎ {letters}Oturma {letters_black}» %sitting%"
       - " {letters_black}▎ {letters}Gösteri menzili {letters_black}» {info}%anim_perform_range% {letters}blok"
+      - " {letters_black}▎ {letters}Döngülü idle {letters_black}» %anim_idle_continuous%"
+      - " {letters_black}▎ {letters}Grup {letters_black}» %group%"
+      - " {letters_black}▎ {letters}Durum {letters_black}» %npc_motion%"
       - ""
       - "{warning}➥ Sol tık {letters_black}» {letters}tıklamanın oynattığı"
-      - "{warning}➥ Sağ tık {letters_black}» {letters}kendi kendine ve selamlama"
+      - "{warning}➥ Sağ tık {letters_black}» {letters}idle, selamlama ve grup"
       - "{warning}➥ Shift-sol tık {letters_black}» {letters}gösteri seç"
+      - "{warning}➥ Shift-sağ tık {letters_black}» {letters}duraklat ya da devam ettir"
       - ""
     actions:
       - "left: exyliadisplays:npc_animations"
       - "right: exyliadisplays:npc_animations_auto"
       - "shift_left: exyliadisplays:npc_open_performances"
+      - "shift_right: exyliadisplays:npc_pause_toggle"
 
   interactions:
     slot: 23

@@ -81,6 +81,28 @@ items:
       - " {letters_black}▎ {letters}nunca faz performances."
       - ""
 
+  playback:
+    slot: 46
+    material: JUKEBOX
+    name: "{primary}&lREPRODUÇÃO"
+    lore:
+      - ""
+      - "{secondary}Informações:"
+      - " {letters_black}▎ {letters}Pausado, não toca nada sozinho:"
+      - " {letters_black}▎ {letters}nem idle, nem saudação, nem animação de clique."
+      - " {letters_black}▎ {letters}Cliques e suas ações continuam funcionando."
+      - ""
+      - "{secondary}Status:"
+      - " {letters_black}▎ {letters}Estado {letters_black}» %npc_motion%"
+      - " {letters_black}▎ {letters}Em performance {letters_black}» %npc_performing%"
+      - ""
+      - "{warning}➥ Clique esquerdo {letters_black}» {letters}pausar ou retomar"
+      - "{warning}➥ Clique direito {letters_black}» {letters}parar o que toca"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_playback_toggle"
+      - "right: exyliadisplays:npc_stop"
+
   back:
     slot: 49
     sound: "minecraft:item.bundle.remove_one|1.0|0.5"

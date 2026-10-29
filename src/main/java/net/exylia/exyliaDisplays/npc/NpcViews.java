@@ -121,6 +121,10 @@ public final class NpcViews {
                 : NpcModule.get().renderer().viewers(name));
         // Live while the screen is open: an edit from a window or a command changes it.
         context.put("npc_undo", (Supplier<Object>) () -> NpcModule.get() == null ? 0 : NpcModule.get().store().undoable(name));
+        // Paused from another screen or a command, and a performance that starts and ends on its own.
+        context.put("npc_motion", (Supplier<Object>) () -> motion(name));
+        context.put("npc_performing", (Supplier<Object>) () -> NpcModule.get() != null
+                && NpcModule.get().renderer().isPerforming(name) ? NpcsMessages.get().states().yes() : NpcsMessages.get().states().no());
         return context;
     }
 
@@ -163,7 +167,16 @@ public final class NpcViews {
                 .put("anim_greet", animation(npc.animations().greet()))
                 .put("anim_greet_range", number(npc.animations().greetRange()))
                 .put("anim_greet_cooldown", seconds(npc.animations().greetCooldown()))
-                .put("anim_perform_range", number(npc.animations().performRange()));
+                .put("anim_perform_range", number(npc.animations().performRange()))
+                .put("anim_idle_continuous", npc.animations().idleContinuous() ? states.yes() : states.no())
+                .put("group", npc.group().isBlank() ? states.nothing() : "{info}" + Values.inert(npc.group()))
+                .put("motion", motion(name));
+    }
+
+    /** Whether it acts on its own or was paused, in the words of messages/npcs.yml. */
+    static String motion(String name) {
+        NpcsMessages.Playback words = NpcsMessages.get().playback();
+        return NpcModule.get() != null && NpcModule.get().renderer().isPaused(name) ? words.statePaused() : words.stateAuto();
     }
 
     /** What a trigger plays, or the word for nothing; frames written in place are too long for a lore line. */

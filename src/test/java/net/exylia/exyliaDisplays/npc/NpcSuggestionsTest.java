@@ -6,7 +6,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -40,5 +42,21 @@ class NpcSuggestionsTest {
         assertEquals("[MESSAGE] {letters}Hello", typed("/npc guide action set 1 ").get(0));
         assertTrue(typed("/npc guide action add ").containsAll(List.of("right:", "[SOUND]", "console:")));
         assertEquals(List.of("[MESSAGE]"), typed("/npc guide action add [ME"));
+        assertTrue(typed("/npc guide animation ").containsAll(List.of("idle-continuous", "idle-group")));
+        assertEquals(List.of("none"), typed("/npc guide group "));
+    }
+
+    @Test
+    @DisplayName("groups are read from every NPC's idle-group, without case, members sorted")
+    void groups() {
+        StoredNpc solo = new StoredNpc();
+        Map<String, StoredNpc> all = new LinkedHashMap<>();
+        all.put("right", solo.withGroup("stage"));
+        all.put("left", solo.withAnimations(solo.animations().withIdleGroup("Stage")));
+        all.put("guide", solo);
+        all.put("bard", solo.withGroup("choir"));
+        Map<String, List<String>> groups = NpcAdminCommand.groups(all);
+        assertEquals(List.of("choir", "stage"), List.copyOf(groups.keySet()));
+        assertEquals(List.of("left", "right"), groups.get("stage"));
     }
 }

@@ -81,6 +81,28 @@ items:
       - " {letters_black}▎ {letters}никогда не выступает."
       - ""
 
+  playback:
+    slot: 46
+    material: JUKEBOX
+    name: "{primary}&lВОСПРОИЗВЕДЕНИЕ"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}На паузе он ничего не играет сам:"
+      - " {letters_black}▎ {letters}ни idle, ни приветствия, ни анимаций по клику."
+      - " {letters_black}▎ {letters}Клики и их действия работают."
+      - ""
+      - "{secondary}Статус:"
+      - " {letters_black}▎ {letters}Состояние {letters_black}» %npc_motion%"
+      - " {letters_black}▎ {letters}Выступает сейчас {letters_black}» %npc_performing%"
+      - ""
+      - "{warning}➥ ЛКМ {letters_black}» {letters}пауза или продолжить"
+      - "{warning}➥ ПКМ {letters_black}» {letters}остановить то, что играет"
+      - ""
+    actions:
+      - "left: exyliadisplays:npc_playback_toggle"
+      - "right: exyliadisplays:npc_stop"
+
   back:
     slot: 49
     sound: "minecraft:item.bundle.remove_one|1.0|0.5"

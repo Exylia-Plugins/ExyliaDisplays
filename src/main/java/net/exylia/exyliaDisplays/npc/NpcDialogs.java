@@ -79,6 +79,8 @@ public final class NpcDialogs {
     private static final FormKey<String> GREET_COOLDOWN = FormKey.text("greet_cooldown");
     private static final FormKey<BigDecimal> PERFORM_RANGE = FormKey.decimal("perform_range");
     private static final FormKey<String> TRIGGER = FormKey.text("trigger");
+    private static final FormKey<Boolean> IDLE_CONTINUOUS = FormKey.flag("idle_continuous");
+    private static final FormKey<String> GROUP = FormKey.text("group");
 
     private NpcDialogs() {
         throw new AssertionError("No instances.");
@@ -320,6 +322,11 @@ public final class NpcDialogs {
         EditorForm form = form(player, words.autoTitle());
         animationBox(form, IDLE, words.idleLabel(), now.idle());
         form.field(IDLE_EVERY, time(IDLE_EVERY, words.idleEveryLabel(), now.idleEvery()));
+        NpcsMessages.Playback playback = messages().playback();
+        form.flag(IDLE_CONTINUOUS, playback.continuousLabel(), now.idleContinuous())
+                .field(GROUP, FormField.text(GROUP, playback.groupLabel()).defaultValue(now.idleGroup()).optional()
+                        .validate(group -> StoredNpc.group(group) != null, "a-z, 0-9, - _"))
+                .hint(playback.continuousHint());
         animationBox(form, GREET, words.greetLabel(), now.greet()).hint(hint)
                 .decimal(GREET_RANGE, words.greetRangeLabel(), BigDecimal.valueOf(now.greetRange()))
                 .field(GREET_COOLDOWN, time(GREET_COOLDOWN, words.greetCooldownLabel(), now.greetCooldown()))
@@ -338,7 +345,8 @@ public final class NpcDialogs {
                         java.time.Duration.ofMillis(Math.max(0, cooldown(values.getOr(IDLE_EVERY, "0")))), greet,
                         Math.max(0, values.getDecimal(GREET_RANGE).doubleValue()),
                         java.time.Duration.ofMillis(Math.max(0, cooldown(values.getOr(GREET_COOLDOWN, "0")))),
-                        Math.max(0, values.getDecimal(PERFORM_RANGE).doubleValue())));
+                        Math.max(0, values.getDecimal(PERFORM_RANGE).doubleValue()),
+                        values.getBoolean(IDLE_CONTINUOUS), java.util.Objects.requireNonNullElse(StoredNpc.group(values.getOr(GROUP, "")), "")));
             }, back);
         });
     }

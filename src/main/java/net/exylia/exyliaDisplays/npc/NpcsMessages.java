@@ -103,7 +103,7 @@ public record NpcsMessages(
         String nearEmpty,
         @Comment("/npc <name> info. Placeholders: %name%, %status%, %world%, %x%, %y%, %z%, %skin%, %pose%, %scale%,")
         @Comment("%glow%, %look%, %look_range%, %view_distance%, %permission%, %label%, %link%, %actions%,")
-        @Comment("%use_permission%, %cooldown%, %equipment%.")
+        @Comment("%use_permission%, %cooldown%, %equipment%, %motion%, %group%, %anim_idle_continuous%.")
         List<String> info,
         @Comment("A setting changed with /npc <name> <setting>. Placeholders: %name%, %property%, %value%.")
         String propertySet,
@@ -119,7 +119,10 @@ public record NpcsMessages(
         Adjust adjust,
 
         @Comment("Animations: /npc <name> animation|play, and their windows.")
-        Animations animations) {
+        Animations animations,
+
+        @Comment("Pause, stop and groups: /npc <name> pause|resume|stop|group, /npcadmin group|animations.")
+        Playback playback) {
 
     public NpcsMessages {
         if (help == null) help = List.of();
@@ -128,6 +131,7 @@ public record NpcsMessages(
         if (dialogs == null) dialogs = new Dialogs();
         if (adjust == null) adjust = new Adjust();
         if (animations == null) animations = new Animations();
+        if (playback == null) playback = new Playback();
     }
 
     private static final String OK = "[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% ";
@@ -186,6 +190,8 @@ public record NpcsMessages(
                         " <click:run_command:'/npcadmin near'>{warning}/npcadmin near [radius]</click> {letters_black}» {letters}the ones around you",
                         " <click:suggest_command:'/npcadmin import '>{warning}/npcadmin import <plugin> [replace]</click> {letters_black}» {letters}Citizens, FancyNpcs",
                         " <click:run_command:'/npcadmin reload'>{warning}/npcadmin reload</click> {letters_black}» {letters}read npcs.yml again",
+                        " <click:run_command:'/npcadmin group list'>{warning}/npcadmin group list|play|stop|pause|resume</click> {letters_black}» {letters}NPCs moving as one",
+                        " <click:run_command:'/npcadmin animations'>{warning}/npcadmin animations [file]</click> {letters_black}» {letters}the clips anim: plays",
                         "",
                         " {secondary}Edit one {letters_black}» {warning}/npc <name> {letters_black}opens its editor",
                         " {warning}info {letters_black}· {warning}tp {letters_black}· {warning}movehere {letters_black}· {warning}move <x> <y> <z> [world] {letters_black}· {warning}center",
@@ -203,9 +209,11 @@ public record NpcsMessages(
                         " {warning}animation <left-click|right-click|idle|greet> [animation] {letters_black}» {letters}wave, nod, bow... {muted}(none clears)",
                         " {warning}animation idle-every|greet-cooldown <time> {letters_black}· {warning}animation greet-range <blocks>",
                         " {warning}animation perform-range <blocks> {letters_black}» {letters}who is shown a performance",
-                        " {warning}play <animation> {letters_black}» {letters}try one now {letters_black}· {warning}sit <on|off>",
+                        " {warning}animation idle-continuous <on|off> {letters_black}» {letters}loop the idle while anyone is near",
+                        " {warning}group <key|none> {letters_black}» {letters}idle in step with its group {muted}(same as animation idle-group)",
+                        " {warning}play <animation> {letters_black}» {letters}try one now {letters_black}· {warning}stop {letters_black}· {warning}pause {letters_black}· {warning}resume {letters_black}· {warning}sit <on|off>",
                         " {secondary}Performances {letters_black}» {letters}a whole-body animation instead of moves:",
-                        " {info}anim:<file> {letters_black}· {info}emote:<id> {muted}(ExyliaEmotes) {letters_black}· {info}keys:<frames>",
+                        " {info}anim:<clip> {muted}(Blockbench) {letters_black}· {info}emote:<id> {muted}(ExyliaEmotes) {letters_black}· {info}keys:<frames>",
                         ""),
                 "%prefix% {letters}NPCs {letters_black}({info}%count%{letters_black})",
                 " <click:run_command:'/npc %name%'><hover:show_text:'{letters}Click to edit'>{highlight}%name%</hover></click> {letters_black}» {letters}%world% {info}%x% %y% %z% {letters_black}· %skin% {letters_black}· %status%",
@@ -226,6 +234,7 @@ public record NpcsMessages(
                         " {letters_black}▎ {letters}Wears {letters_black}» %equipment%",
                         " {letters_black}▎ {letters}Label {letters_black}» %label% {letters_black}· {letters}Hologram %link%",
                         " {letters_black}▎ {letters}On click {letters_black}» %actions% {letters_black}· %use_permission% {letters_black}· {info}%cooldown%s ⌚",
+                        " {letters_black}▎ {letters}Animations {letters_black}» %motion% {letters_black}· {letters}Group %group% {letters_black}· {letters}Looping idle %anim_idle_continuous%",
                         ""),
                 OK + "{highlight}%name% {letters_black}» {letters}%property% {letters_black}» {info}%value%",
                 NO + "{highlight}%value% {error}does not fit {highlight}%property%{error}. {letters_black}Use: {info}%expected%",
@@ -235,7 +244,8 @@ public record NpcsMessages(
                 new Dialogs(),
 
                 new Adjust(),
-                new Animations());
+                new Animations(),
+                new Playback());
     }
 
     /**
@@ -526,6 +536,87 @@ public record NpcsMessages(
                     "{primary}&lPERFORMANCE {letters_black}» {highlight}%performance%",
                     "Play it",
                     "A sitting NPC never performs. It replaces what that trigger played.");
+        }
+    }
+
+    /**
+     * Pausing and stopping an NPC, groups of NPCs, and the animation files.
+     */
+    public record Playback(
+            @Comment("/npc <name> pause and resume. Placeholder: %name%.")
+            String paused,
+            String resumed,
+            @Comment("/npc <name> stop. Placeholder: %name%.")
+            String stopped,
+            String nothingPlaying,
+            @Comment("Whether it acts on its own, in menus and /npc <name> info.")
+            String stateAuto,
+            String statePaused,
+            @Comment("In the idle window.")
+            String continuousLabel,
+            String groupLabel,
+            String continuousHint,
+            @Comment("/npcadmin group list. Placeholders: %count%; per line %group%, %count%, %members%.")
+            String groupsHeader,
+            String groupLine,
+            String groupsEmpty,
+            @Comment("A group no NPC is in. Placeholder: %group%.")
+            String groupNotFound,
+            @Comment("/npcadmin group play. Placeholders: %group%, %animation%, %started%, %count%, %skipped%.")
+            String groupPlayed,
+            @Comment("/npcadmin group stop. Placeholders: %group%, %stopped%, %count%.")
+            String groupStopped,
+            @Comment("/npcadmin group pause and resume. Placeholders: %group%, %count%.")
+            String groupPaused,
+            String groupResumed,
+            @Comment("/npcadmin animations. Placeholders: %count%; per file %file%, %count%.")
+            String filesHeader,
+            String fileLine,
+            @Comment("After the list of files.")
+            String filesFooter,
+            String filesEmpty,
+            @Comment("/npcadmin animations <file>. Placeholders: %file%, %count%.")
+            String fileHeader,
+            @Comment("Placeholder: %file%.")
+            String fileNotFound,
+            @Comment("A file that offers no clip.")
+            String fileEmpty,
+            @Comment("One clip. Placeholders: %clip%, %loop%, %length%.")
+            String clipLine,
+            String clipLoops,
+            String clipOnce) {
+
+        public Playback() {
+            this("%prefix% {warning}{highlight}%name% {warning}is paused: no idle, greeting or click animation until you resume it.",
+                    OK + "{highlight}%name% {success}moves on its own again.",
+                    OK + "{letters}Stopped what {highlight}%name% {letters}was playing.",
+                    NO + "{highlight}%name% {error}is not playing anything.",
+                    "{success}Auto",
+                    "{warning}Paused",
+                    "Loop the idle while anyone is near",
+                    "Group (NPCs in one idle in step)",
+                    "A looping idle replays without pause; a click or a greeting plays over it and it comes back. Group: a-z, 0-9, - and _; empty for none.",
+                    "%prefix% {letters}Groups {letters_black}({info}%count%{letters_black})",
+                    " {highlight}%group% {letters_black}» <hover:show_text:'{letters}%members%'>{info}%count% {letters}NPCs</hover> "
+                            + "<click:suggest_command:'/npcadmin group play %group% '>{success}[▶ PLAY]</click> "
+                            + "<click:run_command:'/npcadmin group stop %group%'>{error}[■ STOP]</click>",
+                    "%prefix% {letters}No NPC is in a group yet. {warning}<click:suggest_command:'/npc '>[/npc <name> group <key>]</click>",
+                    NO + "{error}No NPC is in the group {highlight}%group%{error}.",
+                    OK + "{highlight}%group% {letters_black}» {info}%animation% {letters}started on {success}%started%{letters_black}/{info}%count% {letters}NPCs. "
+                            + "{letters_black}(%skipped% skipped: busy, hidden or nobody near)",
+                    OK + "{highlight}%group% {letters_black}» {letters}stopped {info}%stopped%{letters_black}/{info}%count% {letters}NPCs.",
+                    "%prefix% {highlight}%group% {letters_black}» {warning}%count% NPCs paused.",
+                    OK + "{highlight}%group% {letters_black}» {success}%count% NPCs move on their own again.",
+                    "%prefix% {letters}Animation files {letters_black}({info}%count%{letters_black}) {muted}plugins/ExyliaDisplays/animations",
+                    " <click:run_command:'/npcadmin animations %file%'><hover:show_text:'{letters}Click for its clips'>{highlight}%file%</hover></click> {letters_black}» {info}%count% {letters}clip(s)",
+                    " {letters_black}Open a {info}.bbmodel {letters_black}in Blockbench, add clips under Animate and save: no export needed.",
+                    "%prefix% {letters}No animation files yet. Drop {highlight}.bbmodel {letters}or {highlight}.json {letters}files in {highlight}plugins/ExyliaDisplays/animations{letters}.",
+                    "%prefix% {highlight}%file% {letters_black}({info}%count% {letters}clip(s){letters_black})",
+                    NO + "{error}There is no animation file {highlight}%file%{error}.",
+                    "   {letters_black}▎ {muted}No clips read; the console says why.",
+                    "   {letters_black}▎ <click:copy_to_clipboard:'anim:%clip%'><hover:show_text:'{letters}Click to copy {info}anim:%clip%'>{info}%clip%</hover></click> {letters_black}» %loop% {letters_black}· {info}%length% ⌚",
+                    "{success}Loops",
+                    "{muted}Once");
         }
     }
 

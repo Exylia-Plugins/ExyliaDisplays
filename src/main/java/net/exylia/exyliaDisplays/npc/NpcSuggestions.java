@@ -124,10 +124,14 @@ public final class NpcSuggestions implements Completion {
             case "animation" -> {
                 if (index == 0) {
                     values.addAll(StoredNpc.TRIGGERS);
-                    values.addAll(List.of("idle-every", "greet-range", "greet-cooldown", "perform-range"));
+                    values.addAll(List.of("idle-every", "greet-range", "greet-cooldown", "perform-range",
+                            "idle-continuous", "idle-group"));
                 } else {
                     values.addAll(animation(npc.animations(), args.get(0).toLowerCase(Locale.ROOT)));
                 }
+            }
+            case "group" -> {
+                if (index == 0) values.addAll(groups(npc.group()));
             }
             case "play" -> {
                 NpcAnimations a = npc.animations();
@@ -152,8 +156,23 @@ public final class NpcSuggestions implements Completion {
             case "greet-cooldown" -> List.of(seconds(a.greetCooldown()));
             case "greet-range" -> List.of(number(a.greetRange()));
             case "perform-range" -> List.of(number(a.performRange()));
+            case "idle-continuous" -> List.of(a.idleContinuous() ? "on" : "off", a.idleContinuous() ? "off" : "on");
+            case "idle-group" -> groups(a.idleGroup());
             default -> List.of();
         };
+    }
+
+    /** Its group first, then every group another NPC is in, then {@code none}. */
+    private static List<String> groups(String current) {
+        List<String> values = new ArrayList<>();
+        if (!current.isBlank()) values.add(current);
+        NpcModule module = NpcModule.get();
+        if (module != null) {
+            NpcAdminCommand.groups(module.store().all()).keySet().stream()
+                    .filter(group -> !group.equals(current)).forEach(values::add);
+        }
+        values.add("none");
+        return values;
     }
 
     private static List<String> presets(String current) {
