@@ -63,8 +63,8 @@ public final class HologramActions {
         row("row_delete", (player, name) -> HologramDialogs.delete(player, name, () -> HologramViews.openList(player)));
         simple("open_list", (player, name) -> HologramViews.openList(player));
 
-        actions.registerSync(PREFIX + "settings", Permissions.ADMIN, (ctx, args) -> {
-            ConfigMenus.of(plugin.getPlugin()).permission(Permissions.ADMIN).back(HologramViews::openList).open(ctx.player());
+        actions.registerSync(PREFIX + "settings", Permissions.HOLOGRAMS, (ctx, args) -> {
+            ConfigMenus.of(plugin.getPlugin()).permission(Permissions.HOLOGRAMS).back(HologramViews::openList).open(ctx.player());
             return ActionResult.success();
         });
 

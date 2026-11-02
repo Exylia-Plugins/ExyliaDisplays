@@ -51,8 +51,8 @@ public final class NpcActions {
             return ActionResult.success();
         });
 
-        actions.registerSync(PREFIX + "settings", Permissions.ADMIN, (ctx, args) -> {
-            ConfigMenus.of(plugin.getPlugin()).permission(Permissions.ADMIN).back(NpcViews::openList).open(ctx.player());
+        actions.registerSync(PREFIX + "settings", Permissions.NPCS, (ctx, args) -> {
+            ConfigMenus.of(plugin.getPlugin()).permission(Permissions.NPCS).back(NpcViews::openList).open(ctx.player());
             return ActionResult.success();
         });
 
