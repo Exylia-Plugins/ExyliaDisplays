@@ -100,3 +100,18 @@ items:
       - " {letters_black}▎ {highlight}npcs.yml{letters}, and saving that"
       - " {letters_black}▎ {letters}file applies it at once."
       - ""
+
+  settings:
+    slot: 53
+    material: "COMPARATOR"
+    name: "{primary}&lSETTINGS"
+    lore:
+      - ""
+      - "{secondary}Information:"
+      - " {letters_black}▎ {letters}Change this plugin's settings"
+      - " {letters_black}▎ {letters}without editing its {highlight}files{letters}."
+      - ""
+      - "{warning}➥ Click {letters_black}» {letters}Open settings"
+      - ""
+    actions:
+      - "exyliadisplays:npc_settings"

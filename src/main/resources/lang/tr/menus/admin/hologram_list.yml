@@ -99,3 +99,18 @@ items:
       - " {letters_black}▎ {highlight}holograms.yml {letters}içinde; o dosyayı"
       - " {letters_black}▎ {letters}kaydetmek hemen uygular."
       - ""
+
+  settings:
+    slot: 53
+    material: "COMPARATOR"
+    name: "{primary}&lAYARLAR"
+    lore:
+      - ""
+      - "{secondary}Bilgi:"
+      - " {letters_black}▎ {letters}Eklentinin ayarlarını {highlight}dosyalarını"
+      - " {letters_black}▎ {letters}düzenlemeden değiştir."
+      - ""
+      - "{warning}➥ Tıkla {letters_black}» {letters}Ayarları aç"
+      - ""
+    actions:
+      - "exyliadisplays:holo_settings"

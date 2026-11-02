@@ -6,6 +6,7 @@ import net.exylia.exyliaDisplays.common.store.Place;
 import net.exylia.lib.action.ActionContext;
 import net.exylia.lib.action.ActionResult;
 import net.exylia.lib.action.PluginActions;
+import net.exylia.lib.config.ConfigMenus;
 import net.exylia.lib.text.Values;
 import net.exylia.lib.ui.UiKeys;
 import net.exylia.lib.util.teleport.Teleports;
@@ -47,6 +48,11 @@ public final class NpcActions {
         row("row_delete", (player, name) -> NpcDialogs.delete(player, name, () -> NpcViews.openList(player)));
         actions.registerSync(PREFIX + "open_list", Permissions.NPCS, (ctx, args) -> {
             NpcViews.openList(ctx.player());
+            return ActionResult.success();
+        });
+
+        actions.registerSync(PREFIX + "settings", Permissions.ADMIN, (ctx, args) -> {
+            ConfigMenus.of(plugin.getPlugin()).permission(Permissions.ADMIN).back(NpcViews::openList).open(ctx.player());
             return ActionResult.success();
         });
 

@@ -99,3 +99,18 @@ items:
       - " {letters_black}▎ {highlight}holograms.yml{letters}, et enregistrer ce"
       - " {letters_black}▎ {letters}fichier l'applique aussitôt."
       - ""
+
+  settings:
+    slot: 53
+    material: "COMPARATOR"
+    name: "{primary}&lPARAMÈTRES"
+    lore:
+      - ""
+      - "{secondary}Information :"
+      - " {letters_black}▎ {letters}Modifie les paramètres du plugin"
+      - " {letters_black}▎ {letters}sans éditer ses {highlight}fichiers{letters}."
+      - ""
+      - "{warning}➥ Clic {letters_black}» {letters}Ouvrir les paramètres"
+      - ""
+    actions:
+      - "exyliadisplays:holo_settings"

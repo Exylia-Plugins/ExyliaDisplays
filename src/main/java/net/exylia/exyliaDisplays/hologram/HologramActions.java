@@ -11,6 +11,7 @@ import net.exylia.exyliaDisplays.npc.NpcModule;
 import net.exylia.lib.action.ActionContext;
 import net.exylia.lib.action.ActionResult;
 import net.exylia.lib.action.PluginActions;
+import net.exylia.lib.config.ConfigMenus;
 import net.exylia.lib.text.Values;
 import net.exylia.lib.ui.UiKeys;
 import net.exylia.lib.util.teleport.Teleports;
@@ -61,6 +62,11 @@ public final class HologramActions {
         row("row_teleport", HologramActions::teleport);
         row("row_delete", (player, name) -> HologramDialogs.delete(player, name, () -> HologramViews.openList(player)));
         simple("open_list", (player, name) -> HologramViews.openList(player));
+
+        actions.registerSync(PREFIX + "settings", Permissions.ADMIN, (ctx, args) -> {
+            ConfigMenus.of(plugin.getPlugin()).permission(Permissions.ADMIN).back(HologramViews::openList).open(ctx.player());
+            return ActionResult.success();
+        });
 
         // The hub.
         hub("toggle", (player, name) -> {

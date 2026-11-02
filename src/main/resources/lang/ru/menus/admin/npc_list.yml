@@ -100,3 +100,18 @@ items:
       - " {letters_black}▎ {highlight}npcs.yml{letters}, и сохранение"
       - " {letters_black}▎ {letters}файла применяет его сразу."
       - ""
+
+  settings:
+    slot: 53
+    material: "COMPARATOR"
+    name: "{primary}&lНАСТРОЙКИ"
+    lore:
+      - ""
+      - "{secondary}Информация:"
+      - " {letters_black}▎ {letters}Меняй настройки плагина"
+      - " {letters_black}▎ {letters}без правки его {highlight}файлов{letters}."
+      - ""
+      - "{warning}➥ Нажми {letters_black}» {letters}Открыть настройки"
+      - ""
+    actions:
+      - "exyliadisplays:npc_settings"
