@@ -20,7 +20,6 @@ items:
       - ""
       - "{secondary}Information:"
       - " {letters_black}▎ {letters}Label {letters_black}» %npc_preview%"
-      - " {letters_black}▎ {letters}Skin {letters_black}» %skin%"
       - ""
       - "{secondary}Status:"
       - " {letters_black}▎ {letters}State {letters_black}» %status%"

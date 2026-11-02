@@ -146,6 +146,11 @@ public final class HologramRenderer implements Listener {
         waiting.clear();
     }
 
+    /** How many players see a hologram right now; none while it is hidden. */
+    public int viewers(String name) {
+        return Holograms.get(plugin, name).map(Hologram::viewerCount).orElse(0);
+    }
+
     /** Whether a hologram is waiting for its world to load. */
     public boolean isWaiting(String name) {
         return waiting.containsKey(name);

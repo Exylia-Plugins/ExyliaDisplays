@@ -20,7 +20,6 @@ items:
       - ""
       - "{secondary}Bilgi:"
       - " {letters_black}▎ {letters}Etiket {letters_black}» %npc_preview%"
-      - " {letters_black}▎ {letters}Skin {letters_black}» %skin%"
       - ""
       - "{secondary}Durum:"
       - " {letters_black}▎ {letters}Durum {letters_black}» %status%"

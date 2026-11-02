@@ -92,6 +92,9 @@ public final class HologramViews {
         context.put("holo_distance", distanceScale(look.distanceScale()));
         context.put("holo_pages", hologram.pageCount());
         context.put("holo_page_interval", hologram.pageInterval());
+        // Changes while the screen is open, so it is read every time the screen redraws.
+        context.put("holo_viewers", (java.util.function.Supplier<Object>) () -> HologramModule.get() == null ? 0
+                : HologramModule.get().renderer().viewers(name));
         // Live while the screen is open: an edit from a window or a command changes them.
         context.put("holo_undo", (java.util.function.Supplier<Object>) () -> HologramModule.get() == null ? 0 : HologramModule.get().store().undoable(name));
         context.put("holo_templates", (java.util.function.Supplier<Object>) () -> HologramModule.get() == null ? 0 : HologramModule.get().templates().names().size());
