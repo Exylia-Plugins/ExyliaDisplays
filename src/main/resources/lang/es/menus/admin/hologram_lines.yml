@@ -14,9 +14,7 @@ filler:
     material: LIGHT_GRAY_STAINED_GLASS_PANE
     name: "{muted}No hay más líneas"
     lore:
-      - ""
-      - " {letters_black}▎ {letters}Añade texto, un ítem, un bloque o una cabeza abajo."
-      - ""
+      - "{letters_black}Añade texto, un ítem, un bloque o una cabeza abajo."
     hide_tooltip: false
 
 pagination:
@@ -24,22 +22,23 @@ pagination:
 
   item_template:
     material: "%line_icon%"
-    name: "{secondary}&lLÍNEA %line_number%"
+    name: "{letters}Línea {letters_black}▸ <gradient:{primary}:{secondary_light}>#%line_number%</gradient>"
     lore:
+      - "{letters_black}Línea del holograma"
       - ""
-      - "{secondary}Dice:"
-      - " {letters_black}▎ {letters}%line_text%"
+      - "{primary}✎ Dice"
+      - " {letters}%line_text%"
       - ""
-      - "{secondary}Etiquetas:"
-      - " {letters_black}▎ {info}%line_tags%%line_style%"
+      - "{primary}✦ Etiquetas"
+      - " {info}%line_tags%%line_style%"
       - ""
-      - "{warning}➥ Clic izquierdo {letters_black}» {letters}editar texto"
-      - "{warning}➥ Clic derecho {letters_black}» {letters}estilo, movimiento, visibilidad"
-      - "{warning}➥ Shift + clic izquierdo {letters_black}» {letters}subir"
-      - "{warning}➥ Shift + clic derecho {letters_black}» {letters}bajar"
-      - "{warning}➥ F {letters_black}» {letters}duplicar"
-      - "{error}➥ Q {letters_black}» {letters}quitar"
-      - ""
+      - "{primary}» Clic izquierdo {letters_black}· {letters}editar texto"
+      - "{primary}» Clic derecho {letters_black}· {letters}estilo, movimiento, visibilidad"
+      - "{primary}» Shift + clic izquierdo {letters_black}· {letters}subir"
+      - "{primary}» Shift + clic derecho {letters_black}· {letters}bajar"
+      - "{primary}» F {letters_black}· {letters}duplicar"
+      - "{error}» Q {letters_black}· {letters}quitar"
+      - "{letters_black}Se te pedirá confirmación."
     actions:
       - "left: exyliadisplays:holo_line_text"
       - "right: exyliadisplays:holo_line_style"
@@ -53,22 +52,18 @@ pagination:
       slot: 48
       sound: "minecraft:item.book.page_turn|1.0|1.0"
       material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
-      name: '{error}&l← PÁGINA ANTERIOR'
+      name: "{letters}Página {letters_black}▸ <gradient:{error}:{error_light}>← Anterior</gradient>"
       lore:
-        - ""
-        - " {letters_black}▎ {letters}Página {info}%current_page%{letters_black}/{info}%total_pages%"
-        - ""
+        - "  {letters_black}· {letters}Página{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
       actions:
         - 'previous_page'
     next:
       slot: 50
       sound: "minecraft:item.book.page_turn|1.0|1.0"
       material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
-      name: '{success}&lPÁGINA SIGUIENTE →'
+      name: "{letters}Página {letters_black}▸ <gradient:{success}:{success_light}>Siguiente →</gradient>"
       lore:
-        - ""
-        - " {letters_black}▎ {letters}Página {info}%current_page%{letters_black}/{info}%total_pages%"
-        - ""
+        - "  {letters_black}· {letters}Página{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
       actions:
         - 'next_page'
 
@@ -76,79 +71,85 @@ items:
   add-text:
     slot: 45
     material: OAK_SIGN
-    name: "{primary}&lAÑADIR TEXTO"
+    name: "{letters}Líneas {letters_black}▸ <gradient:{success}:{success_light}>Añadir texto</gradient>"
     lore:
+      - "{letters_black}Nueva línea"
       - ""
-      - " {letters_black}▎ {letters}Una línea nueva al final."
+      - "{success}✎ Información"
+      - " {letters}Una línea nueva al final."
       - ""
-      - "{warning}➥ Clic para escribirla"
-      - ""
+      - "{success}» Clic para escribirla"
     actions:
       - "exyliadisplays:holo_add_line"
 
   add-item:
     slot: 46
     material: ITEM_FRAME
-    name: "{primary}&lAÑADIR ÍTEM"
+    name: "{letters}Líneas {letters_black}▸ <gradient:{success}:{success_light}>Añadir ítem</gradient>"
     lore:
+      - "{letters_black}Nueva línea"
       - ""
-      - " {letters_black}▎ {letters}Un ítem flotante, mirando al jugador."
+      - "{success}✎ Información"
+      - " {letters}Un ítem flotante,"
+      - " {letters}mirando al jugador."
       - ""
-      - "{warning}➥ Clic para elegirlo"
-      - ""
+      - "{success}» Clic para elegirlo"
     actions:
       - "exyliadisplays:holo_add_item"
 
   add-block:
     slot: 47
     material: GRASS_BLOCK
-    name: "{primary}&lAÑADIR BLOQUE"
+    name: "{letters}Líneas {letters_black}▸ <gradient:{success}:{success_light}>Añadir bloque</gradient>"
     lore:
+      - "{letters_black}Nueva línea"
       - ""
-      - " {letters_black}▎ {letters}Un bloque flotante; dale {highlight}giro"
-      - " {letters_black}▎ {letters}desde su estilo para que gire."
+      - "{success}✎ Información"
+      - " {letters}Un bloque flotante; dale {highlight}giro"
+      - " {letters}desde su estilo para que gire."
       - ""
-      - "{warning}➥ Clic para elegirlo"
-      - ""
+      - "{success}» Clic para elegirlo"
     actions:
       - "exyliadisplays:holo_add_block"
 
   add-head:
     slot: 51
     material: PLAYER_HEAD
-    name: "{primary}&lAÑADIR CABEZA"
+    name: "{letters}Líneas {letters_black}▸ <gradient:{success}:{success_light}>Añadir cabeza</gradient>"
     lore:
+      - "{letters_black}Nueva línea"
       - ""
-      - " {letters_black}▎ {letters}La cabeza de un jugador, por nombre,"
-      - " {letters_black}▎ {letters}UUID, textura o URL de skin. Hazla"
-      - " {letters_black}▎ {letters}pequeña o grande con su {highlight}tamaño{letters}."
+      - "{success}✎ Información"
+      - " {letters}La cabeza de un jugador,"
+      - " {letters}por nombre, UUID, textura o"
+      - " {letters}URL de skin. Hazla pequeña"
+      - " {letters}o grande con su {highlight}tamaño{letters}."
       - ""
-      - "{warning}➥ Clic para elegirla"
-      - ""
+      - "{success}» Clic para elegirla"
     actions:
       - "exyliadisplays:holo_add_head"
 
   pages:
     slot: 52
     material: BOOK
-    name: "{primary}&lPÁGINA {letters_black}[{info}%holo_page%{letters_black}/{info}%holo_pages%{letters_black}]"
+    name: "{letters}Líneas {letters_black}▸ <gradient:{primary}:{secondary_light}>Página</gradient> {letters_black}[{info}%holo_page%{letters_black}/{info}%holo_pages%{letters_black}]"
     lore:
+      - "{letters_black}Páginas del holograma"
       - ""
-      - "{secondary}Información:"
-      - " {letters_black}▎ {letters}Cada jugador ve una página a la"
-      - " {letters_black}▎ {letters}vez; un clic {highlight}[PAGE] next {letters}la pasa."
+      - "{primary}✎ Información"
+      - " {letters}Cada jugador ve una página a la"
+      - " {letters}vez; un clic {highlight}[PAGE] next {letters}la pasa."
       - ""
-      - "{secondary}Estado:"
-      - " {letters_black}▎ {letters}Editando {letters_black}» {info}página %holo_page%"
-      - " {letters_black}▎ {letters}Pasa cada {letters_black}» {info}%holo_page_interval% ticks ⌚"
+      - "{primary}✦ Estado"
+      - "  {letters_black}· {info}{icon:paper} {letters}Editando{letters_black}: {info}página %holo_page%"
+      - "  {letters_black}· {info}{icon:clock} {letters}Pasa cada{letters_black}: {info}%holo_page_interval% ticks"
       - ""
-      - "{warning}➥ Clic izquierdo {letters_black}» {letters}página siguiente"
-      - "{warning}➥ Clic derecho {letters_black}» {letters}página anterior"
-      - "{warning}➥ Shift + clic izquierdo {letters_black}» {letters}añadir una página"
-      - "{warning}➥ Shift + clic derecho {letters_black}» {letters}acciones de clic de esta página"
-      - "{error}➥ Q {letters_black}» {letters}quitar esta página"
+      - "{primary}» Clic izquierdo {letters_black}· {letters}página siguiente"
+      - "{primary}» Clic derecho {letters_black}· {letters}página anterior"
+      - "{primary}» Shift + clic izquierdo {letters_black}· {letters}añadir una página"
+      - "{primary}» Shift + clic derecho {letters_black}· {letters}acciones de clic de esta página"
+      - "{error}» Q {letters_black}· {letters}quitar esta página"
       - "{letters_black}Se te pedirá confirmación."
-      - ""
     actions:
       - "left: exyliadisplays:holo_page_next"
       - "right: exyliadisplays:holo_page_previous"
@@ -160,28 +161,25 @@ items:
     slot: 49
     sound: "minecraft:item.bundle.remove_one|1.0|0.5"
     material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
-    name: '{error}&lVOLVER'
+    name: "{letters}Volver {letters_black}▸ <gradient:{error}:{error_light}>Holograma</gradient>"
     lore:
-      - ""
-      - " {letters_black}▎ {letters}Vuelve al holograma."
-      - ""
-      - "{warning}➥ Clic para volver"
-      - ""
+      - "{error}» Clic para volver"
     actions:
       - "exyliadisplays:holo_open_hub"
 
   all-lines:
     slot: 53
     material: WRITABLE_BOOK
-    name: "{primary}&lEDITAR TODO A LA VEZ"
+    name: "{letters}Líneas {letters_black}▸ <gradient:{primary}:{secondary_light}>Editar todo a la vez</gradient>"
     lore:
+      - "{letters_black}Acción del holograma"
       - ""
-      - "{secondary}Información:"
-      - " {letters_black}▎ {letters}Todas las líneas en una caja, una"
-      - " {letters_black}▎ {letters}por fila: lo más rápido para escribir"
-      - " {letters_black}▎ {letters}un holograma entero, etiquetas incluidas."
+      - "{primary}✎ Información"
+      - " {letters}Todas las líneas en una caja,"
+      - " {letters}una por fila: lo más rápido"
+      - " {letters}para escribir un holograma"
+      - " {letters}entero, etiquetas incluidas."
       - ""
-      - "{warning}➥ Clic para abrir"
-      - ""
+      - "{primary}» Clic para abrir"
     actions:
       - "exyliadisplays:holo_all_lines"

@@ -14,9 +14,7 @@ filler:
     material: LIGHT_GRAY_STAINED_GLASS_PANE
     name: "{muted}Больше нет строк"
     lore:
-      - ""
-      - " {letters_black}▎ {letters}Добавь текст, предмет, блок или голову ниже."
-      - ""
+      - "{letters_black}Добавь текст, предмет, блок или голову ниже."
     hide_tooltip: false
 
 pagination:
@@ -24,22 +22,23 @@ pagination:
 
   item_template:
     material: "%line_icon%"
-    name: "{secondary}&lСТРОКА %line_number%"
+    name: "{letters}Строка {letters_black}▸ <gradient:{primary}:{secondary_light}>#%line_number%</gradient>"
     lore:
+      - "{letters_black}Строка голограммы"
       - ""
-      - "{secondary}Текст:"
-      - " {letters_black}▎ {letters}%line_text%"
+      - "{primary}✎ Текст"
+      - " {letters}%line_text%"
       - ""
-      - "{secondary}Теги:"
-      - " {letters_black}▎ {info}%line_tags%%line_style%"
+      - "{primary}✦ Теги"
+      - " {info}%line_tags%%line_style%"
       - ""
-      - "{warning}➥ ЛКМ {letters_black}» {letters}изменить текст"
-      - "{warning}➥ ПКМ {letters_black}» {letters}стиль, движение, видимость"
-      - "{warning}➥ Shift+ЛКМ {letters_black}» {letters}выше"
-      - "{warning}➥ Shift+ПКМ {letters_black}» {letters}ниже"
-      - "{warning}➥ F {letters_black}» {letters}дублировать"
-      - "{error}➥ Q {letters_black}» {letters}убрать"
-      - ""
+      - "{primary}» ЛКМ {letters_black}· {letters}изменить текст"
+      - "{primary}» ПКМ {letters_black}· {letters}стиль, движение, видимость"
+      - "{primary}» Shift+ЛКМ {letters_black}· {letters}выше"
+      - "{primary}» Shift+ПКМ {letters_black}· {letters}ниже"
+      - "{primary}» F {letters_black}· {letters}дублировать"
+      - "{error}» Q {letters_black}· {letters}убрать"
+      - "{letters_black}Потребуется подтверждение."
     actions:
       - "left: exyliadisplays:holo_line_text"
       - "right: exyliadisplays:holo_line_style"
@@ -53,22 +52,18 @@ pagination:
       slot: 48
       sound: "minecraft:item.book.page_turn|1.0|1.0"
       material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
-      name: '{error}&l← ПРЕД. СТРАНИЦА'
+      name: "{letters}Страница {letters_black}▸ <gradient:{error}:{error_light}>← Предыдущая</gradient>"
       lore:
-        - ""
-        - " {letters_black}▎ {letters}Страница {info}%current_page%{letters_black}/{info}%total_pages%"
-        - ""
+        - "  {letters_black}· {letters}Страница{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
       actions:
         - 'previous_page'
     next:
       slot: 50
       sound: "minecraft:item.book.page_turn|1.0|1.0"
       material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
-      name: '{success}&lСЛЕД. СТРАНИЦА →'
+      name: "{letters}Страница {letters_black}▸ <gradient:{success}:{success_light}>Следующая →</gradient>"
       lore:
-        - ""
-        - " {letters_black}▎ {letters}Страница {info}%current_page%{letters_black}/{info}%total_pages%"
-        - ""
+        - "  {letters_black}· {letters}Страница{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
       actions:
         - 'next_page'
 
@@ -76,79 +71,83 @@ items:
   add-text:
     slot: 45
     material: OAK_SIGN
-    name: "{primary}&lДОБАВИТЬ ТЕКСТ"
+    name: "{letters}Строки {letters_black}▸ <gradient:{success}:{success_light}>Добавить текст</gradient>"
     lore:
+      - "{letters_black}Новая строка"
       - ""
-      - " {letters_black}▎ {letters}Новая строка в самом низу."
+      - "{success}✎ Информация"
+      - " {letters}Новая строка в самом низу."
       - ""
-      - "{warning}➥ Нажми, чтобы написать"
-      - ""
+      - "{success}» Нажми, чтобы написать"
     actions:
       - "exyliadisplays:holo_add_line"
 
   add-item:
     slot: 46
     material: ITEM_FRAME
-    name: "{primary}&lДОБАВИТЬ ПРЕДМЕТ"
+    name: "{letters}Строки {letters_black}▸ <gradient:{success}:{success_light}>Добавить предмет</gradient>"
     lore:
+      - "{letters_black}Новая строка"
       - ""
-      - " {letters_black}▎ {letters}Парящий предмет, лицом к игроку."
+      - "{success}✎ Информация"
+      - " {letters}Парящий предмет, лицом к игроку."
       - ""
-      - "{warning}➥ Нажми, чтобы выбрать"
-      - ""
+      - "{success}» Нажми, чтобы выбрать"
     actions:
       - "exyliadisplays:holo_add_item"
 
   add-block:
     slot: 47
     material: GRASS_BLOCK
-    name: "{primary}&lДОБАВИТЬ БЛОК"
+    name: "{letters}Строки {letters_black}▸ <gradient:{success}:{success_light}>Добавить блок</gradient>"
     lore:
+      - "{letters_black}Новая строка"
       - ""
-      - " {letters_black}▎ {letters}Парящий блок; включи {highlight}вращение"
-      - " {letters_black}▎ {letters}в его стиле, чтобы он крутился."
+      - "{success}✎ Информация"
+      - " {letters}Парящий блок; включи {highlight}вращение {letters}в"
+      - " {letters}его стиле, чтобы он крутился."
       - ""
-      - "{warning}➥ Нажми, чтобы выбрать"
-      - ""
+      - "{success}» Нажми, чтобы выбрать"
     actions:
       - "exyliadisplays:holo_add_block"
 
   add-head:
     slot: 51
     material: PLAYER_HEAD
-    name: "{primary}&lДОБАВИТЬ ГОЛОВУ"
+    name: "{letters}Строки {letters_black}▸ <gradient:{success}:{success_light}>Добавить голову</gradient>"
     lore:
+      - "{letters_black}Новая строка"
       - ""
-      - " {letters_black}▎ {letters}Голова игрока — по нику, UUID,"
-      - " {letters_black}▎ {letters}текстуре или URL скина. Меняй"
-      - " {letters_black}▎ {letters}её величину через {highlight}размер{letters}."
+      - "{success}✎ Информация"
+      - " {letters}Голова игрока — по нику, UUID,"
+      - " {letters}текстуре или URL скина. Меняй"
+      - " {letters}её величину через {highlight}размер{letters}."
       - ""
-      - "{warning}➥ Нажми, чтобы выбрать"
-      - ""
+      - "{success}» Нажми, чтобы выбрать"
     actions:
       - "exyliadisplays:holo_add_head"
 
   pages:
     slot: 52
     material: BOOK
-    name: "{primary}&lСТРАНИЦА {letters_black}[{info}%holo_page%{letters_black}/{info}%holo_pages%{letters_black}]"
+    name: "{letters}Строки {letters_black}▸ <gradient:{primary}:{secondary_light}>Страница</gradient> {letters_black}[{info}%holo_page%{letters_black}/{info}%holo_pages%{letters_black}]"
     lore:
+      - "{letters_black}Страницы голограммы"
       - ""
-      - "{secondary}Информация:"
-      - " {letters_black}▎ {letters}Каждый игрок видит одну страницу"
-      - " {letters_black}▎ {letters}за раз; клик {highlight}[PAGE] next {letters}листает."
+      - "{primary}✎ Информация"
+      - " {letters}Каждый игрок видит одну страницу"
+      - " {letters}за раз; клик {highlight}[PAGE] next {letters}листает."
       - ""
-      - "{secondary}Статус:"
-      - " {letters_black}▎ {letters}Редактируется {letters_black}» {info}стр. %holo_page%"
-      - " {letters_black}▎ {letters}Листает каждые {letters_black}» {info}%holo_page_interval% тиков ⌚"
+      - "{primary}✦ Статус"
+      - "  {letters_black}· {info}{icon:paper} {letters}Редактируется{letters_black}: {info}стр. %holo_page%"
+      - "  {letters_black}· {info}{icon:clock} {letters}Листает каждые{letters_black}: {info}%holo_page_interval% тиков"
       - ""
-      - "{warning}➥ ЛКМ {letters_black}» {letters}следующая страница"
-      - "{warning}➥ ПКМ {letters_black}» {letters}предыдущая страница"
-      - "{warning}➥ Shift+ЛКМ {letters_black}» {letters}добавить страницу"
-      - "{warning}➥ Shift+ПКМ {letters_black}» {letters}действия клика этой страницы"
-      - "{error}➥ Q {letters_black}» {letters}убрать эту страницу"
+      - "{primary}» ЛКМ {letters_black}· {letters}следующая страница"
+      - "{primary}» ПКМ {letters_black}· {letters}предыдущая страница"
+      - "{primary}» Shift+ЛКМ {letters_black}· {letters}добавить страницу"
+      - "{primary}» Shift+ПКМ {letters_black}· {letters}действия клика этой страницы"
+      - "{error}» Q {letters_black}· {letters}убрать эту страницу"
       - "{letters_black}Потребуется подтверждение."
-      - ""
     actions:
       - "left: exyliadisplays:holo_page_next"
       - "right: exyliadisplays:holo_page_previous"
@@ -160,28 +159,25 @@ items:
     slot: 49
     sound: "minecraft:item.bundle.remove_one|1.0|0.5"
     material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
-    name: '{error}&lНАЗАД'
+    name: "{letters}Назад {letters_black}▸ <gradient:{error}:{error_light}>Голограмма</gradient>"
     lore:
-      - ""
-      - " {letters_black}▎ {letters}Возврат к голограмме."
-      - ""
-      - "{warning}➥ Нажми, чтобы вернуться"
-      - ""
+      - "{error}» Нажми, чтобы вернуться"
     actions:
       - "exyliadisplays:holo_open_hub"
 
   all-lines:
     slot: 53
     material: WRITABLE_BOOK
-    name: "{primary}&lИЗМЕНИТЬ ВСЁ СРАЗУ"
+    name: "{letters}Строки {letters_black}▸ <gradient:{primary}:{secondary_light}>Изменить всё сразу</gradient>"
     lore:
+      - "{letters_black}Действие голограммы"
       - ""
-      - "{secondary}Информация:"
-      - " {letters_black}▎ {letters}Все строки в одном окне, по одной"
-      - " {letters_black}▎ {letters}в ряд: самый быстрый способ написать"
-      - " {letters_black}▎ {letters}всю голограмму, вместе с тегами."
+      - "{primary}✎ Информация"
+      - " {letters}Все строки в одном окне, по"
+      - " {letters}одной в ряд: самый быстрый"
+      - " {letters}способ написать всю"
+      - " {letters}голограмму, вместе с тегами."
       - ""
-      - "{warning}➥ Нажми, чтобы открыть"
-      - ""
+      - "{primary}» Нажми, чтобы открыть"
     actions:
       - "exyliadisplays:holo_all_lines"

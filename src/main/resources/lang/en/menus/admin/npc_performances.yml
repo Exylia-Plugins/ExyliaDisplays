@@ -15,10 +15,8 @@ filler:
     material: LIGHT_GRAY_STAINED_GLASS_PANE
     name: "{muted}No more performances"
     lore:
-      - ""
-      - " {letters_black}▎ {letters}Install {highlight}ExyliaEmotes{letters}, or drop animation"
-      - " {letters_black}▎ {letters}files in {highlight}plugins/ExyliaDisplays/animations{letters}."
-      - ""
+      - "{letters_black}Install {highlight}ExyliaEmotes{letters_black}, or drop animation"
+      - "{letters_black}files in {highlight}plugins/ExyliaDisplays/animations{letters_black}."
     hide_tooltip: false
 
 pagination:
@@ -26,16 +24,16 @@ pagination:
 
   item_template:
     material: "%perf_icon%"
-    name: "%perf_name%"
+    name: "{letters}Performance {letters_black}▸ %perf_name%"
     lore:
+      - "{letters_black}NPC performance"
       - ""
-      - "{secondary}Information:"
-      - " {letters_black}▎ {letters}Kind {letters_black}» %perf_kind%"
-      - " {letters_black}▎ {letters}Written {letters_black}» {info}%perf_value%"
+      - "{info}✦ Information"
+      - "  {letters_black}· {info}{icon:tag} {letters}Kind{letters_black}: %perf_kind%"
+      - "  {letters_black}· {info}{icon:quill} {letters}Written{letters_black}: {info}%perf_value%"
       - ""
-      - "{warning}➥ Left-click {letters_black}» {letters}put it on a trigger"
-      - "{warning}➥ Right-click {letters_black}» {letters}try it now"
-      - ""
+      - "{info}» Left-click {letters_black}· {letters}put it on a trigger"
+      - "{info}» Right-click {letters_black}· {letters}try it now"
     actions:
       - "left: exyliadisplays:npc_perform_pick"
       - "right: exyliadisplays:npc_perform_try"
@@ -45,22 +43,18 @@ pagination:
       slot: 48
       sound: "minecraft:item.book.page_turn|1.0|1.0"
       material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
-      name: '{error}&l← PREVIOUS PAGE'
+      name: "{letters}Page {letters_black}▸ <gradient:{error}:{error_light}>← Previous</gradient>"
       lore:
-        - ""
-        - " {letters_black}▎ {letters}Page {info}%current_page%{letters_black}/{info}%total_pages%"
-        - ""
+        - "  {letters_black}· {letters}Page{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
       actions:
         - 'previous_page'
     next:
       slot: 50
       sound: "minecraft:item.book.page_turn|1.0|1.0"
       material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
-      name: '{success}&lNEXT PAGE →'
+      name: "{letters}Page {letters_black}▸ <gradient:{success}:{success_light}>Next →</gradient>"
       lore:
-        - ""
-        - " {letters_black}▎ {letters}Page {info}%current_page%{letters_black}/{info}%total_pages%"
-        - ""
+        - "  {letters_black}· {letters}Page{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
       actions:
         - 'next_page'
 
@@ -68,37 +62,39 @@ items:
   info:
     slot: 45
     material: BOOK
-    name: "{primary}&lPERFORMANCES"
+    name: "<gradient:{primary}:{secondary_light}>Performances</gradient>"
     lore:
+      - "{letters_black}Overview"
       - ""
-      - "{secondary}Information:"
-      - " {letters_black}▎ {letters}Available {letters_black}» {info}%perf_count%"
+      - "{primary}✦ Information"
+      - "  {letters_black}· {info}{icon:iron} {letters}Available{letters_black}: {info}%perf_count%"
       - ""
-      - "{secondary}Tip:"
-      - " {letters_black}▎ {letters}A performance is a whole-body"
-      - " {letters_black}▎ {letters}animation. It plays for players within"
-      - " {letters_black}▎ {info}%anim_perform_range% {letters}blocks; a sitting NPC"
-      - " {letters_black}▎ {letters}never performs."
-      - ""
+      - "{primary}✎ Tip"
+      - " {letters}A performance is a"
+      - " {letters}whole-body animation. It"
+      - " {letters}plays for players within"
+      - " {info}%anim_perform_range% {letters}blocks;"
+      - " {letters}a sitting NPC never performs."
 
   playback:
     slot: 46
     material: JUKEBOX
-    name: "{primary}&lPLAYBACK"
+    name: "{letters}Performances {letters_black}▸ <gradient:{primary}:{secondary_light}>Playback</gradient>"
     lore:
+      - "{letters_black}NPC setting"
       - ""
-      - "{secondary}Information:"
-      - " {letters_black}▎ {letters}Paused, it plays nothing on its own:"
-      - " {letters_black}▎ {letters}no idle, greeting or click animation."
-      - " {letters_black}▎ {letters}Clicks and their actions still work."
+      - "{primary}✎ Information"
+      - " {letters}Paused, it plays nothing on"
+      - " {letters}its own: no idle, greeting or"
+      - " {letters}click animation. Clicks and"
+      - " {letters}their actions still work."
       - ""
-      - "{secondary}Status:"
-      - " {letters_black}▎ {letters}State {letters_black}» %npc_motion%"
-      - " {letters_black}▎ {letters}Performing now {letters_black}» %npc_performing%"
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:redstone} {letters}State{letters_black}: %npc_motion%"
+      - "  {letters_black}· {info}{icon:note} {letters}Performing now{letters_black}: %npc_performing%"
       - ""
-      - "{warning}➥ Left-click {letters_black}» {letters}pause or resume"
-      - "{warning}➥ Right-click {letters_black}» {letters}stop what it plays"
-      - ""
+      - "{primary}» Left-click {letters_black}· {letters}pause or resume"
+      - "{primary}» Right-click {letters_black}· {letters}stop what it plays"
     actions:
       - "left: exyliadisplays:npc_playback_toggle"
       - "right: exyliadisplays:npc_stop"
@@ -107,12 +103,8 @@ items:
     slot: 49
     sound: "minecraft:item.bundle.remove_one|1.0|0.5"
     material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
-    name: '{error}&lBACK'
+    name: "{letters}Back {letters_black}▸ <gradient:{error}:{error_light}>NPC</gradient>"
     lore:
-      - ""
-      - " {letters_black}▎ {letters}Returns to the NPC."
-      - ""
-      - "{warning}➥ Click to go back"
-      - ""
+      - "{error}» Click to go back"
     actions:
       - "exyliadisplays:npc_open_hub"

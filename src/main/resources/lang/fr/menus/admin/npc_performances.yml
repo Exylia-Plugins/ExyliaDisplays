@@ -16,10 +16,8 @@ filler:
     material: LIGHT_GRAY_STAINED_GLASS_PANE
     name: "{muted}Plus aucune performance"
     lore:
-      - ""
-      - " {letters_black}▎ {letters}Installe {highlight}ExyliaEmotes{letters}, ou dépose des fichiers"
-      - " {letters_black}▎ {letters}d'animation dans {highlight}plugins/ExyliaDisplays/animations{letters}."
-      - ""
+      - "{letters_black}Installe {highlight}ExyliaEmotes{letters_black}, ou dépose des fichiers"
+      - "{letters_black}d'animation dans {highlight}plugins/ExyliaDisplays/animations{letters_black}."
     hide_tooltip: false
 
 pagination:
@@ -27,16 +25,16 @@ pagination:
 
   item_template:
     material: "%perf_icon%"
-    name: "%perf_name%"
+    name: "{letters}Performance {letters_black}▸ %perf_name%"
     lore:
+      - "{letters_black}Performance du PNJ"
       - ""
-      - "{secondary}Information :"
-      - " {letters_black}▎ {letters}Type {letters_black}» %perf_kind%"
-      - " {letters_black}▎ {letters}Écrit {letters_black}» {info}%perf_value%"
+      - "{info}✦ Information"
+      - "  {letters_black}· {info}{icon:tag} {letters}Type{letters_black}: %perf_kind%"
+      - "  {letters_black}· {info}{icon:quill} {letters}Écrit{letters_black}: {info}%perf_value%"
       - ""
-      - "{warning}➥ Clic gauche {letters_black}» {letters}l'assigner à un déclencheur"
-      - "{warning}➥ Clic droit {letters_black}» {letters}l'essayer maintenant"
-      - ""
+      - "{info}» Clic gauche {letters_black}· {letters}l'assigner à un déclencheur"
+      - "{info}» Clic droit {letters_black}· {letters}l'essayer maintenant"
     actions:
       - "left: exyliadisplays:npc_perform_pick"
       - "right: exyliadisplays:npc_perform_try"
@@ -46,22 +44,18 @@ pagination:
       slot: 48
       sound: "minecraft:item.book.page_turn|1.0|1.0"
       material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
-      name: '{error}&l← PAGE PRÉCÉDENTE'
+      name: "{letters}Page {letters_black}▸ <gradient:{error}:{error_light}>← Précédente</gradient>"
       lore:
-        - ""
-        - " {letters_black}▎ {letters}Page {info}%current_page%{letters_black}/{info}%total_pages%"
-        - ""
+        - "  {letters_black}· {letters}Page{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
       actions:
         - 'previous_page'
     next:
       slot: 50
       sound: "minecraft:item.book.page_turn|1.0|1.0"
       material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
-      name: '{success}&lPAGE SUIVANTE →'
+      name: "{letters}Page {letters_black}▸ <gradient:{success}:{success_light}>Suivante →</gradient>"
       lore:
-        - ""
-        - " {letters_black}▎ {letters}Page {info}%current_page%{letters_black}/{info}%total_pages%"
-        - ""
+        - "  {letters_black}· {letters}Page{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
       actions:
         - 'next_page'
 
@@ -69,37 +63,40 @@ items:
   info:
     slot: 45
     material: BOOK
-    name: "{primary}&lPERFORMANCES"
+    name: "<gradient:{primary}:{secondary_light}>Performances</gradient>"
     lore:
+      - "{letters_black}Aperçu"
       - ""
-      - "{secondary}Information :"
-      - " {letters_black}▎ {letters}Disponibles {letters_black}» {info}%perf_count%"
+      - "{primary}✦ Information"
+      - "  {letters_black}· {info}{icon:iron} {letters}Disponibles{letters_black}: {info}%perf_count%"
       - ""
-      - "{secondary}Astuce :"
-      - " {letters_black}▎ {letters}Une performance est une animation"
-      - " {letters_black}▎ {letters}du corps entier, jouée pour les joueurs à"
-      - " {letters_black}▎ {info}%anim_perform_range% {letters}blocs ou moins ; un PNJ"
-      - " {letters_black}▎ {letters}assis ne joue jamais."
-      - ""
+      - "{primary}✎ Astuce"
+      - " {letters}Une performance est une"
+      - " {letters}animation du corps entier,"
+      - " {letters}jouée pour les joueurs à"
+      - " {info}%anim_perform_range%"
+      - " {letters}blocs ou moins ; un PNJ"
+      - " {letters}assis ne joue jamais."
 
   playback:
     slot: 46
     material: JUKEBOX
-    name: "{primary}&lLECTURE"
+    name: "{letters}Performances {letters_black}▸ <gradient:{primary}:{secondary_light}>Lecture</gradient>"
     lore:
+      - "{letters_black}Réglage du PNJ"
       - ""
-      - "{secondary}Information :"
-      - " {letters_black}▎ {letters}En pause, il ne joue rien tout seul :"
-      - " {letters_black}▎ {letters}ni idle, ni accueil, ni animation de clic."
-      - " {letters_black}▎ {letters}Les clics et leurs actions fonctionnent."
+      - "{primary}✎ Information"
+      - " {letters}En pause, il ne joue rien tout"
+      - " {letters}seul : ni idle, ni accueil, ni"
+      - " {letters}animation de clic. Les clics et"
+      - " {letters}leurs actions fonctionnent."
       - ""
-      - "{secondary}Statut :"
-      - " {letters_black}▎ {letters}État {letters_black}» %npc_motion%"
-      - " {letters_black}▎ {letters}En performance {letters_black}» %npc_performing%"
+      - "{primary}✦ Statut"
+      - "  {letters_black}· {info}{icon:redstone} {letters}État{letters_black}: %npc_motion%"
+      - "  {letters_black}· {info}{icon:note} {letters}En performance{letters_black}: %npc_performing%"
       - ""
-      - "{warning}➥ Clic gauche {letters_black}» {letters}pause ou reprise"
-      - "{warning}➥ Clic droit {letters_black}» {letters}arrêter ce qu'il joue"
-      - ""
+      - "{primary}» Clic gauche {letters_black}· {letters}pause ou reprise"
+      - "{primary}» Clic droit {letters_black}· {letters}arrêter ce qu'il joue"
     actions:
       - "left: exyliadisplays:npc_playback_toggle"
       - "right: exyliadisplays:npc_stop"
@@ -108,12 +105,8 @@ items:
     slot: 49
     sound: "minecraft:item.bundle.remove_one|1.0|0.5"
     material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
-    name: '{error}&lRETOUR'
+    name: "{letters}Retour {letters_black}▸ <gradient:{error}:{error_light}>PNJ</gradient>"
     lore:
-      - ""
-      - " {letters_black}▎ {letters}Revient au PNJ."
-      - ""
-      - "{warning}➥ Clique pour revenir"
-      - ""
+      - "{error}» Clique pour revenir"
     actions:
       - "exyliadisplays:npc_open_hub"

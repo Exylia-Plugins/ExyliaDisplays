@@ -14,9 +14,7 @@ filler:
     material: LIGHT_GRAY_STAINED_GLASS_PANE
     name: "{muted}No more lines"
     lore:
-      - ""
-      - " {letters_black}▎ {letters}Add text, an item, a block or a head below."
-      - ""
+      - "{letters_black}Add text, an item, a block or a head below."
     hide_tooltip: false
 
 pagination:
@@ -24,22 +22,23 @@ pagination:
 
   item_template:
     material: "%line_icon%"
-    name: "{secondary}&lLINE %line_number%"
+    name: "{letters}Line {letters_black}▸ <gradient:{primary}:{secondary_light}>#%line_number%</gradient>"
     lore:
+      - "{letters_black}Hologram line"
       - ""
-      - "{secondary}Reads:"
-      - " {letters_black}▎ {letters}%line_text%"
+      - "{primary}✎ Reads"
+      - " {letters}%line_text%"
       - ""
-      - "{secondary}Tags:"
-      - " {letters_black}▎ {info}%line_tags%%line_style%"
+      - "{primary}✦ Tags"
+      - " {info}%line_tags%%line_style%"
       - ""
-      - "{warning}➥ Left-click {letters_black}» {letters}edit text"
-      - "{warning}➥ Right-click {letters_black}» {letters}style, motion, visibility"
-      - "{warning}➥ Shift-left-click {letters_black}» {letters}move up"
-      - "{warning}➥ Shift-right-click {letters_black}» {letters}move down"
-      - "{warning}➥ F {letters_black}» {letters}duplicate"
-      - "{error}➥ Q {letters_black}» {letters}remove"
-      - ""
+      - "{primary}» Left-click {letters_black}· {letters}edit text"
+      - "{primary}» Right-click {letters_black}· {letters}style, motion, visibility"
+      - "{primary}» Shift-left-click {letters_black}· {letters}move up"
+      - "{primary}» Shift-right-click {letters_black}· {letters}move down"
+      - "{primary}» F {letters_black}· {letters}duplicate"
+      - "{error}» Q {letters_black}· {letters}remove"
+      - "{letters_black}You will be asked to confirm."
     actions:
       - "left: exyliadisplays:holo_line_text"
       - "right: exyliadisplays:holo_line_style"
@@ -53,22 +52,18 @@ pagination:
       slot: 48
       sound: "minecraft:item.book.page_turn|1.0|1.0"
       material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
-      name: '{error}&l← PREVIOUS PAGE'
+      name: "{letters}Page {letters_black}▸ <gradient:{error}:{error_light}>← Previous</gradient>"
       lore:
-        - ""
-        - " {letters_black}▎ {letters}Page {info}%current_page%{letters_black}/{info}%total_pages%"
-        - ""
+        - "  {letters_black}· {letters}Page{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
       actions:
         - 'previous_page'
     next:
       slot: 50
       sound: "minecraft:item.book.page_turn|1.0|1.0"
       material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
-      name: '{success}&lNEXT PAGE →'
+      name: "{letters}Page {letters_black}▸ <gradient:{success}:{success_light}>Next →</gradient>"
       lore:
-        - ""
-        - " {letters_black}▎ {letters}Page {info}%current_page%{letters_black}/{info}%total_pages%"
-        - ""
+        - "  {letters_black}· {letters}Page{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
       actions:
         - 'next_page'
 
@@ -76,79 +71,84 @@ items:
   add-text:
     slot: 45
     material: OAK_SIGN
-    name: "{primary}&lADD TEXT"
+    name: "{letters}Lines {letters_black}▸ <gradient:{success}:{success_light}>Add text</gradient>"
     lore:
+      - "{letters_black}New line"
       - ""
-      - " {letters_black}▎ {letters}A new line at the bottom."
+      - "{success}✎ Information"
+      - " {letters}A new line at the bottom."
       - ""
-      - "{warning}➥ Click to write it"
-      - ""
+      - "{success}» Click to write it"
     actions:
       - "exyliadisplays:holo_add_line"
 
   add-item:
     slot: 46
     material: ITEM_FRAME
-    name: "{primary}&lADD ITEM"
+    name: "{letters}Lines {letters_black}▸ <gradient:{success}:{success_light}>Add item</gradient>"
     lore:
+      - "{letters_black}New line"
       - ""
-      - " {letters_black}▎ {letters}A floating item, facing the player."
+      - "{success}✎ Information"
+      - " {letters}A floating item, facing the player."
       - ""
-      - "{warning}➥ Click to pick it"
-      - ""
+      - "{success}» Click to pick it"
     actions:
       - "exyliadisplays:holo_add_item"
 
   add-block:
     slot: 47
     material: GRASS_BLOCK
-    name: "{primary}&lADD BLOCK"
+    name: "{letters}Lines {letters_black}▸ <gradient:{success}:{success_light}>Add block</gradient>"
     lore:
+      - "{letters_black}New line"
       - ""
-      - " {letters_black}▎ {letters}A floating block; give it {highlight}spin"
-      - " {letters_black}▎ {letters}from its style to turn it."
+      - "{success}✎ Information"
+      - " {letters}A floating block; give it {highlight}spin"
+      - " {letters}from its style to turn it."
       - ""
-      - "{warning}➥ Click to pick it"
-      - ""
+      - "{success}» Click to pick it"
     actions:
       - "exyliadisplays:holo_add_block"
 
   add-head:
     slot: 51
     material: PLAYER_HEAD
-    name: "{primary}&lADD HEAD"
+    name: "{letters}Lines {letters_black}▸ <gradient:{success}:{success_light}>Add head</gradient>"
     lore:
+      - "{letters_black}New line"
       - ""
-      - " {letters_black}▎ {letters}A player head, by name, UUID,"
-      - " {letters_black}▎ {letters}texture or skin URL. Make it"
-      - " {letters_black}▎ {letters}small or large with its {highlight}size{letters}."
+      - "{success}✎ Information"
+      - " {letters}A player head, by name, UUID,"
+      - " {letters}texture or skin URL. Make it"
+      - " {letters}small or large with its {highlight}size{letters}."
       - ""
-      - "{warning}➥ Click to pick it"
-      - ""
+      - "{success}» Click to pick it"
     actions:
       - "exyliadisplays:holo_add_head"
 
   pages:
     slot: 52
     material: BOOK
-    name: "{primary}&lPAGE {letters_black}[{info}%holo_page%{letters_black}/{info}%holo_pages%{letters_black}]"
+    name: "{letters}Lines {letters_black}▸ <gradient:{primary}:{secondary_light}>Page</gradient> {letters_black}[{info}%holo_page%{letters_black}/{info}%holo_pages%{letters_black}]"
     lore:
+      - "{letters_black}Hologram pages"
       - ""
-      - "{secondary}Information:"
-      - " {letters_black}▎ {letters}Each player sees one page at a"
-      - " {letters_black}▎ {letters}time; a {highlight}[PAGE] next {letters}click turns it."
+      - "{primary}✎ Information"
+      - " {letters}Each player sees one"
+      - " {letters}page at a time; a {highlight}[PAGE]"
+      - " {highlight}next {letters}click turns it."
       - ""
-      - "{secondary}Status:"
-      - " {letters_black}▎ {letters}Editing {letters_black}» {info}page %holo_page%"
-      - " {letters_black}▎ {letters}Turns every {letters_black}» {info}%holo_page_interval% ticks ⌚"
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:paper} {letters}Editing{letters_black}: {info}page %holo_page%"
+      - "  {letters_black}· {info}{icon:clock} {letters}Turns every{letters_black}: {info}%holo_page_interval% ticks"
       - ""
-      - "{warning}➥ Left-click {letters_black}» {letters}next page"
-      - "{warning}➥ Right-click {letters_black}» {letters}previous page"
-      - "{warning}➥ Shift-left-click {letters_black}» {letters}add a page"
-      - "{warning}➥ Shift-right-click {letters_black}» {letters}this page's click actions"
-      - "{error}➥ Q {letters_black}» {letters}remove this page"
+      - "{primary}» Left-click {letters_black}· {letters}next page"
+      - "{primary}» Right-click {letters_black}· {letters}previous page"
+      - "{primary}» Shift-left-click {letters_black}· {letters}add a page"
+      - "{primary}» Shift-right-click {letters_black}· {letters}this page's click actions"
+      - "{error}» Q {letters_black}· {letters}remove this page"
       - "{letters_black}You will be asked to confirm."
-      - ""
     actions:
       - "left: exyliadisplays:holo_page_next"
       - "right: exyliadisplays:holo_page_previous"
@@ -160,28 +160,24 @@ items:
     slot: 49
     sound: "minecraft:item.bundle.remove_one|1.0|0.5"
     material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
-    name: '{error}&lBACK'
+    name: "{letters}Back {letters_black}▸ <gradient:{error}:{error_light}>Hologram</gradient>"
     lore:
-      - ""
-      - " {letters_black}▎ {letters}Returns to the hologram."
-      - ""
-      - "{warning}➥ Click to go back"
-      - ""
+      - "{error}» Click to go back"
     actions:
       - "exyliadisplays:holo_open_hub"
 
   all-lines:
     slot: 53
     material: WRITABLE_BOOK
-    name: "{primary}&lEDIT ALL AT ONCE"
+    name: "{letters}Lines {letters_black}▸ <gradient:{primary}:{secondary_light}>Edit all at once</gradient>"
     lore:
+      - "{letters_black}Hologram action"
       - ""
-      - "{secondary}Information:"
-      - " {letters_black}▎ {letters}Every line in one box, one per"
-      - " {letters_black}▎ {letters}row: the fastest way to write a"
-      - " {letters_black}▎ {letters}whole hologram, tags included."
+      - "{primary}✎ Information"
+      - " {letters}Every line in one box, one per"
+      - " {letters}row: the fastest way to write a"
+      - " {letters}whole hologram, tags included."
       - ""
-      - "{warning}➥ Click to open"
-      - ""
+      - "{primary}» Click to open"
     actions:
       - "exyliadisplays:holo_all_lines"

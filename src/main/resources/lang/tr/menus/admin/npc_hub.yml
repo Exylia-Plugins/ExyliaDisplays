@@ -15,19 +15,19 @@ items:
   header:
     slot: 4
     material: "%npc_icon%"
-    name: "{primary}&l%npc_name%"
+    name: "<gradient:{primary}:{secondary_light}>%npc_name%</gradient>"
     lore:
+      - "{letters_black}NPC durumu"
       - ""
-      - "{secondary}Bilgi:"
-      - " {letters_black}▎ {letters}Etiket {letters_black}» %npc_preview%"
+      - "{primary}✦ Bilgi"
+      - "  {letters_black}· {info}{icon:sign} {letters}Etiket{letters_black}: %npc_preview%"
       - ""
-      - "{secondary}Durum:"
-      - " {letters_black}▎ {letters}Durum {letters_black}» %status%"
-      - " {letters_black}▎ {letters}Şu an gören {letters_black}» {info}%npc_viewers% {letters}oyuncu"
+      - "{primary}✦ Durum"
+      - "  {letters_black}· {info}{icon:redstone} {letters}Durum{letters_black}: %status%"
+      - "  {letters_black}· {info}{icon:eye} {letters}Şu an gören{letters_black}: {info}%npc_viewers% {letters}oyuncu"
       - ""
-      - "{warning}➥ Sol tık {letters_black}» {letters}göster ya da gizle"
-      - "{warning}➥ Sağ tık {letters_black}» {letters}yeniden adlandır"
-      - ""
+      - "{primary}» Sol tık {letters_black}· {letters}göster ya da gizle"
+      - "{primary}» Sağ tık {letters_black}· {letters}yeniden adlandır"
     actions:
       - "left: exyliadisplays:npc_toggle"
       - "right: exyliadisplays:npc_rename"
@@ -35,21 +35,21 @@ items:
   appearance:
     slot: 19
     material: ARMOR_STAND
-    name: "{primary}&lGÖRÜNÜM"
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Görünüm</gradient>"
     lore:
+      - "{letters_black}NPC ayarı"
       - ""
-      - "{secondary}Bilgi:"
-      - " {letters_black}▎ {letters}Skin'i, pozu, boyutu ve dış hattı."
+      - "{primary}✎ Bilgi"
+      - " {letters}Skin'i, pozu, boyutu ve dış hattı."
       - ""
-      - "{secondary}Durum:"
-      - " {letters_black}▎ {letters}Skin {letters_black}» %skin%"
-      - " {letters_black}▎ {letters}Poz {letters_black}» {info}%pose%"
-      - " {letters_black}▎ {letters}Ölçek {letters_black}» {info}%scale%"
-      - " {letters_black}▎ {letters}Parıltı {letters_black}» %glow%"
+      - "{primary}✦ Durum"
+      - "  {letters_black}· {info}{icon:tag} {letters}Skin{letters_black}: %skin%"
+      - "  {letters_black}· {info}{icon:tag} {letters}Poz{letters_black}: {info}%pose%"
+      - "  {letters_black}· {info}{icon:iron} {letters}Ölçek{letters_black}: {info}%scale%"
+      - "  {letters_black}· {info}{icon:glint} {letters}Parıltı{letters_black}: %glow%"
       - ""
-      - "{warning}➥ Sol tık {letters_black}» {letters}skin"
-      - "{warning}➥ Sağ tık {letters_black}» {letters}poz, boyut, dış hat ve oturma"
-      - ""
+      - "{primary}» Sol tık {letters_black}· {letters}skin"
+      - "{primary}» Sağ tık {letters_black}· {letters}poz, boyut, dış hat ve oturma"
     actions:
       - "left: exyliadisplays:npc_appearance"
       - "right: exyliadisplays:npc_appearance_body"
@@ -57,40 +57,41 @@ items:
   equipment:
     slot: 20
     material: DIAMOND_CHESTPLATE
-    name: "{primary}&lEKİPMAN"
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Ekipman</gradient>"
     lore:
+      - "{letters_black}NPC ayarı"
       - ""
-      - "{secondary}Bilgi:"
-      - " {letters_black}▎ {letters}Giydiği ve tuttuğu her şey,"
-      - " {letters_black}▎ {letters}doğrudan {highlight}elindeki eşyadan{letters} alınır."
+      - "{primary}✎ Bilgi"
+      - " {letters}Giydiği ve tuttuğu her şey,"
+      - " {letters}doğrudan {highlight}elindeki eşyadan{letters} alınır."
       - ""
-      - "{secondary}Durum:"
-      - " {letters_black}▎ {letters}Giydikleri {letters_black}» %equipment%"
+      - "{primary}✦ Durum"
+      - "  {letters_black}· {info}{icon:armor} {letters}Giydikleri{letters_black}: %equipment%"
       - ""
-      - "{warning}➥ Açmak için tıkla"
-      - ""
+      - "{primary}» Açmak için tıkla"
     actions:
       - "exyliadisplays:npc_open_equipment"
 
   label:
     slot: 21
     material: NAME_TAG
-    name: "{primary}&lETİKET"
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Etiket</gradient>"
     lore:
+      - "{letters_black}NPC ayarı"
       - ""
-      - "{secondary}Bilgi:"
-      - " {letters_black}▎ {letters}Başının üstündeki satırlar; tüm"
-      - " {letters_black}▎ {letters}desteklenen {highlight}hologram etiketleriyle{letters}, ya da onu"
-      - " {letters_black}▎ {letters}takip eden bütün bir hologramla."
+      - "{primary}✎ Bilgi"
+      - " {letters}Başının üstündeki satırlar;"
+      - " {letters}tüm desteklenen {highlight}hologram"
+      - " {highlight}etiketleriyle{letters}, ya da onu takip"
+      - " {letters}eden bütün bir hologramla."
       - ""
-      - "{secondary}Durum:"
-      - " {letters_black}▎ {letters}Etiket {letters_black}» %label%"
-      - " {letters_black}▎ {letters}Boşluk {letters_black}» {info}%npc_height% {letters}blok"
-      - " {letters_black}▎ {letters}Hologram {letters_black}» %link%"
+      - "{primary}✦ Durum"
+      - "  {letters_black}· {info}{icon:sign} {letters}Etiket{letters_black}: %label%"
+      - "  {letters_black}· {info}{icon:iron} {letters}Boşluk{letters_black}: {info}%npc_height% {letters}blok"
+      - "  {letters_black}· {letters}Hologram{letters_black}: %link%"
       - ""
-      - "{warning}➥ Sol tık {letters_black}» {letters}etiketi düzenle"
-      - "{warning}➥ Sağ tık {letters_black}» {letters}hologram bağla"
-      - ""
+      - "{primary}» Sol tık {letters_black}· {letters}etiketi düzenle"
+      - "{primary}» Sağ tık {letters_black}· {letters}hologram bağla"
     actions:
       - "left: exyliadisplays:npc_label"
       - "right: exyliadisplays:npc_link"
@@ -98,31 +99,33 @@ items:
   animations:
     slot: 22
     material: FEATHER
-    name: "{primary}&lANİMASYONLAR"
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Animasyonlar</gradient>"
     lore:
+      - "{letters_black}NPC ayarı"
       - ""
-      - "{secondary}Bilgi:"
-      - " {letters_black}▎ {letters}Oynattığı hareketler: {highlight}el sallama{letters}, {highlight}baş sallama{letters},"
-      - " {letters_black}▎ {highlight}reverans{letters}... ya da tüm vücut {highlight}gösterisi{letters};"
-      - " {letters_black}▎ {letters}tıklayınca, kendi kendine ya da"
-      - " {letters_black}▎ {letters}yaklaşan bir oyuncuyu selamlarken."
+      - "{primary}✎ Bilgi"
+      - " {letters}Oynattığı hareketler: {highlight}el"
+      - " {highlight}sallama{letters}, {highlight}baş sallama{letters},"
+      - " {highlight}reverans{letters}... ya da tüm vücut"
+      - " {highlight}gösterisi{letters}; tıklayınca, kendi"
+      - " {letters}kendine ya da yaklaşan bir"
+      - " {letters}oyuncuyu selamlarken."
       - ""
-      - "{secondary}Durum:"
-      - " {letters_black}▎ {letters}Sol tık {letters_black}» %anim_left%"
-      - " {letters_black}▎ {letters}Sağ tık {letters_black}» %anim_right%"
-      - " {letters_black}▎ {letters}Kendi kendine {letters_black}» %anim_idle% {letters_black}· {info}%anim_idle_every% ⌚"
-      - " {letters_black}▎ {letters}Selamlama {letters_black}» %anim_greet% {letters_black}· {info}%anim_greet_range% {letters}blok"
-      - " {letters_black}▎ {letters}Oturma {letters_black}» %sitting%"
-      - " {letters_black}▎ {letters}Gösteri menzili {letters_black}» {info}%anim_perform_range% {letters}blok"
-      - " {letters_black}▎ {letters}Döngülü idle {letters_black}» %anim_idle_continuous%"
-      - " {letters_black}▎ {letters}Grup {letters_black}» %group%"
-      - " {letters_black}▎ {letters}Durum {letters_black}» %npc_motion%"
+      - "{primary}✦ Durum"
+      - "  {letters_black}· {letters}Sol tık{letters_black}: %anim_left%"
+      - "  {letters_black}· {letters}Sağ tık{letters_black}: %anim_right%"
+      - "  {letters_black}· {info}{icon:note} {letters}Kendi kendine{letters_black}: %anim_idle% {letters_black}· {info}%anim_idle_every% ⌚"
+      - "  {letters_black}· {info}{icon:note} {letters}Selamlama{letters_black}: %anim_greet% {letters_black}· {info}%anim_greet_range% {letters}blok"
+      - "  {letters_black}· {info}{icon:check} {letters}Oturma{letters_black}: %sitting%"
+      - "  {letters_black}· {info}{icon:compass} {letters}Gösteri menzili{letters_black}: {info}%anim_perform_range% {letters}blok"
+      - "  {letters_black}· {info}{icon:note} {letters}Döngülü idle{letters_black}: %anim_idle_continuous%"
+      - "  {letters_black}· {info}{icon:tag} {letters}Grup{letters_black}: %group%"
+      - "  {letters_black}· {info}{icon:redstone} {letters}Durum{letters_black}: %npc_motion%"
       - ""
-      - "{warning}➥ Sol tık {letters_black}» {letters}tıklamanın oynattığı"
-      - "{warning}➥ Sağ tık {letters_black}» {letters}idle, selamlama ve grup"
-      - "{warning}➥ Shift-sol tık {letters_black}» {letters}gösteri seç"
-      - "{warning}➥ Shift-sağ tık {letters_black}» {letters}duraklat ya da devam ettir"
-      - ""
+      - "{primary}» Sol tık {letters_black}· {letters}tıklamanın oynattığı"
+      - "{primary}» Sağ tık {letters_black}· {letters}idle, selamlama ve grup"
+      - "{primary}» Shift-sol tık {letters_black}· {letters}gösteri seç"
+      - "{primary}» Shift-sağ tık {letters_black}· {letters}duraklat ya da devam ettir"
     actions:
       - "left: exyliadisplays:npc_animations"
       - "right: exyliadisplays:npc_animations_auto"
@@ -132,23 +135,24 @@ items:
   interactions:
     slot: 23
     material: LEVER
-    name: "{primary}&lETKİLEŞİMLER"
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Etkileşimler</gradient>"
     lore:
+      - "{letters_black}NPC ayarı"
       - ""
-      - "{secondary}Bilgi:"
-      - " {letters_black}▎ {letters}Tıklamanın işlevi: sunucuya gönder,"
-      - " {letters_black}▎ {letters}komut çalıştır, balonda {highlight}konuş{letters},"
-      - " {letters_black}▎ {letters}salla; {highlight}sol {letters}ve {highlight}sağ {letters}ayrı ayrı."
+      - "{primary}✎ Bilgi"
+      - " {letters}Tıklamanın işlevi: sunucuya"
+      - " {letters}gönder, komut çalıştır,"
+      - " {letters}balonda {highlight}konuş{letters}, salla; {highlight}sol"
+      - " {letters}ve {highlight}sağ {letters}ayrı ayrı."
       - ""
-      - "{secondary}Durum:"
-      - " {letters_black}▎ {letters}Tıklayınca {letters_black}» %actions%"
-      - " {letters_black}▎ {letters}Kullanabilen {letters_black}» %use_permission%"
-      - " {letters_black}▎ {letters}Bekleme süresi {letters_black}» {info}%cooldown%s ⌚"
-      - " {letters_black}▎ {letters}Tıklayana döner {letters_black}» %face_clicker%"
+      - "{primary}✦ Durum"
+      - "  {letters_black}· {info}{icon:book} {letters}Tıklayınca{letters_black}: %actions%"
+      - "  {letters_black}· {info}{icon:tag} {letters}Kullanabilen{letters_black}: %use_permission%"
+      - "  {letters_black}· {info}{icon:clock} {letters}Bekleme süresi{letters_black}: {info}%cooldown%s"
+      - "  {letters_black}· {info}{icon:check} {letters}Tıklayana döner{letters_black}: %face_clicker%"
       - ""
-      - "{warning}➥ Sol tık {letters_black}» {letters}tıklamanın işlevi"
-      - "{warning}➥ Sağ tık {letters_black}» {letters}kim ve ne sıklıkla kullanabilir"
-      - ""
+      - "{primary}» Sol tık {letters_black}· {letters}tıklamanın işlevi"
+      - "{primary}» Sağ tık {letters_black}· {letters}kim ve ne sıklıkla kullanabilir"
     actions:
       - "left: exyliadisplays:npc_interactions"
       - "right: exyliadisplays:npc_interactions_rules"
@@ -156,40 +160,40 @@ items:
   visibility:
     slot: 24
     material: ENDER_EYE
-    name: "{primary}&lGÖRÜNÜRLÜK"
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Görünürlük</gradient>"
     lore:
+      - "{letters_black}NPC ayarı"
       - ""
-      - "{secondary}Bilgi:"
-      - " {letters_black}▎ {letters}Başının nereye döndüğü, kimin"
-      - " {letters_black}▎ {letters}ve ne kadar uzaktan gördüğü."
+      - "{primary}✎ Bilgi"
+      - " {letters}Başının nereye döndüğü, kimin"
+      - " {letters}ve ne kadar uzaktan gördüğü."
       - ""
-      - "{secondary}Durum:"
-      - " {letters_black}▎ {letters}Bakış {letters_black}» {info}%look%"
-      - " {letters_black}▎ {letters}Dönüş menzili {letters_black}» {info}%look_range% {letters}blok"
-      - " {letters_black}▎ {letters}Görenler {letters_black}» %permission%"
-      - " {letters_black}▎ {letters}Mesafe {letters_black}» {info}%view_distance% {letters}blok"
+      - "{primary}✦ Durum"
+      - "  {letters_black}· {info}{icon:eye} {letters}Bakış{letters_black}: {info}%look%"
+      - "  {letters_black}· {info}{icon:compass} {letters}Dönüş menzili{letters_black}: {info}%look_range% {letters}blok"
+      - "  {letters_black}· {info}{icon:key} {letters}Görenler{letters_black}: %permission%"
+      - "  {letters_black}· {info}{icon:compass} {letters}Mesafe{letters_black}: {info}%view_distance% {letters}blok"
       - ""
-      - "{warning}➥ Düzenlemek için tıkla"
-      - ""
+      - "{primary}» Düzenlemek için tıkla"
     actions:
       - "exyliadisplays:npc_visibility"
 
   location:
     slot: 25
     material: COMPASS
-    name: "{primary}&lKONUM"
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Konum</gradient>"
     lore:
+      - "{letters_black}NPC ayarı"
       - ""
-      - "{secondary}Durum:"
-      - " {letters_black}▎ {letters}Dünya {letters_black}» {info}%world%"
-      - " {letters_black}▎ {letters}Konum {letters_black}» {info}%xyz%"
-      - " {letters_black}▎ {letters}Yön {letters_black}» {info}%yaw%° {letters_black}· {info}%pitch%°"
+      - "{primary}✦ Durum"
+      - "  {letters_black}· {info}{icon:map} {letters}Dünya{letters_black}: {info}%world%"
+      - "  {letters_black}· {info}{icon:compass} {letters}Konum{letters_black}: {info}%xyz%"
+      - "  {letters_black}· {info}{icon:compass} {letters}Yön{letters_black}: {info}%yaw%° {letters_black}· {info}%pitch%°"
       - ""
-      - "{warning}➥ Sol tık {letters_black}» {letters}tam konum ve dönüş"
-      - "{warning}➥ Sağ tık {letters_black}» {letters}buraya taşı"
-      - "{warning}➥ Shift-sol tık {letters_black}» {letters}bloğunun ortasına al"
-      - "{warning}➥ Shift-sağ tık {letters_black}» {letters}bana dönsün"
-      - ""
+      - "{primary}» Sol tık {letters_black}· {letters}tam konum ve dönüş"
+      - "{primary}» Sağ tık {letters_black}· {letters}buraya taşı"
+      - "{primary}» Shift-sol tık {letters_black}· {letters}bloğunun ortasına al"
+      - "{primary}» Shift-sağ tık {letters_black}· {letters}bana dönsün"
     actions:
       - "left: exyliadisplays:npc_location"
       - "right: exyliadisplays:npc_move_here"
@@ -199,49 +203,52 @@ items:
   teleport:
     slot: 36
     material: ENDER_PEARL
-    name: "{primary}&lIŞINLAN"
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Işınlan</gradient>"
     lore:
+      - "{letters_black}NPC eylemi"
       - ""
-      - " {letters_black}▎ {letters}Ona dönük şekilde yanına git."
+      - "{primary}✎ Bilgi"
+      - " {letters}Ona dönük şekilde yanına git."
       - ""
-      - "{warning}➥ Işınlanmak için tıkla"
-      - ""
+      - "{primary}» Işınlanmak için tıkla"
     actions:
       - "exyliadisplays:npc_teleport"
 
   clone:
     slot: 37
     material: PAPER
-    name: "{primary}&lKOPYALA"
+    name: "{letters}NPC {letters_black}▸ <gradient:{success}:{success_light}>Kopyala</gradient>"
     lore:
+      - "{letters_black}NPC eylemi"
       - ""
-      - " {letters_black}▎ {letters}Yeni bir adla, aynı yerde"
-      - " {letters_black}▎ {letters}bir kopya."
+      - "{success}✎ Bilgi"
+      - " {letters}Yeni bir adla, aynı"
+      - " {letters}yerde bir kopya."
       - ""
-      - "{warning}➥ Kopyalamak için tıkla"
-      - ""
+      - "{success}» Kopyalamak için tıkla"
     actions:
       - "exyliadisplays:npc_clone"
 
   adjust:
     slot: 38
     material: SPYGLASS
-    name: "{primary}&lİNCE AYAR"
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>İnce ayar</gradient>"
     lore:
+      - "{letters_black}NPC eylemi"
       - ""
-      - "{secondary}Bilgi:"
-      - " {letters_black}▎ {letters}Ona bakarken onu"
-      - " {letters_black}▎ {highlight}fare tekerleğiyle {letters}taşı, döndür, ölçekle."
+      - "{primary}✎ Bilgi"
+      - " {letters}Ona bakarken onu"
+      - " {highlight}fare tekerleğiyle"
+      - " {letters}taşı, döndür, ölçekle."
       - ""
-      - "{secondary}Kontroller:"
-      - " {letters_black}▎ {letters}Kaydır {letters_black}» {info}değeri değiştir"
-      - " {letters_black}▎ {letters}Eğil + kaydır {letters_black}» {info}adım boyutu"
-      - " {letters_black}▎ {letters}F {letters_black}» {info}sonraki eksen"
-      - " {letters_black}▎ {letters}Eğil + tık {letters_black}» {info}hizala"
-      - " {letters_black}▎ {letters}Tık {letters_black}» {info}kaydet"
+      - "{primary}✦ Kontroller"
+      - "  {letters_black}· {letters}Kaydır{letters_black}: {info}değeri değiştir"
+      - "  {letters_black}· {letters}Eğil + kaydır{letters_black}: {info}adım boyutu"
+      - "  {letters_black}· {letters}F{letters_black}: {info}sonraki eksen"
+      - "  {letters_black}· {letters}Eğil + tık{letters_black}: {info}hizala"
+      - "  {letters_black}· {letters}Tık{letters_black}: {info}kaydet"
       - ""
-      - "{warning}➥ Başlamak için tıkla"
-      - ""
+      - "{primary}» Başlamak için tıkla"
     actions:
       - "exyliadisplays:npc_adjust"
 
@@ -249,44 +256,42 @@ items:
     slot: 40
     sound: "minecraft:item.bundle.remove_one|1.0|0.5"
     material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
-    name: '{error}&lGERİ'
+    name: "{letters}Geri {letters_black}▸ <gradient:{error}:{error_light}>NPC'ler</gradient>"
     lore:
-      - ""
-      - " {letters_black}▎ {letters}Tüm NPC'lere döner."
-      - ""
-      - "{warning}➥ Geri dönmek için tıkla"
-      - ""
+      - "{error}» Geri dönmek için tıkla"
     actions:
       - "exyliadisplays:npc_open_list"
 
   undo:
     slot: 42
     material: CLOCK
-    name: "{primary}&lGERİ AL"
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Geri al</gradient>"
     lore:
+      - "{letters_black}NPC eylemi"
       - ""
-      - "{secondary}Bilgi:"
-      - " {letters_black}▎ {letters}Son değişikliği geri alır; burada,"
-      - " {letters_black}▎ {letters}komutla ya da dosyada yapılmış olsun."
+      - "{primary}✎ Bilgi"
+      - " {letters}Son değişikliği geri alır;"
+      - " {letters}burada, komutla ya da"
+      - " {letters}dosyada yapılmış olsun."
       - ""
-      - "{secondary}Durum:"
-      - " {letters_black}▎ {letters}Geri alınabilir {letters_black}» {info}%npc_undo%"
+      - "{primary}✦ Durum"
+      - "  {letters_black}· {info}{icon:iron} {letters}Geri alınabilir{letters_black}: {info}%npc_undo%"
       - ""
-      - "{warning}➥ Geri almak için tıkla"
-      - ""
+      - "{primary}» Geri almak için tıkla"
     actions:
       - "exyliadisplays:npc_undo"
 
   delete:
     slot: 44
     material: BARRIER
-    name: "{error}&lSİL"
+    name: "{letters}NPC {letters_black}▸ <gradient:{error}:{error_light}>Sil</gradient>"
     lore:
+      - "{letters_black}Tehlikeli bölge"
       - ""
-      - " {letters_black}▎ {letters}Kalıcı olarak siler."
-      - " {letters_black}Onaylaman istenecek."
+      - "{error}✎ Bilgi"
+      - " {letters}Kalıcı olarak siler."
       - ""
-      - "{error}➥ Silmek için tıkla"
-      - ""
+      - "{error}» Silmek için tıkla"
+      - "{letters_black}Onaylaman istenecek."
     actions:
       - "exyliadisplays:npc_delete"

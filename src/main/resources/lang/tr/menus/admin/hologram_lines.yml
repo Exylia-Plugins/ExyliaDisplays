@@ -14,9 +14,7 @@ filler:
     material: LIGHT_GRAY_STAINED_GLASS_PANE
     name: "{muted}Başka satır yok"
     lore:
-      - ""
-      - " {letters_black}▎ {letters}Aşağıdan metin, eşya, blok ya da kafa ekle."
-      - ""
+      - "{letters_black}Aşağıdan metin, eşya, blok ya da kafa ekle."
     hide_tooltip: false
 
 pagination:
@@ -24,22 +22,23 @@ pagination:
 
   item_template:
     material: "%line_icon%"
-    name: "{secondary}&lSATIR %line_number%"
+    name: "{letters}Satır {letters_black}▸ <gradient:{primary}:{secondary_light}>#%line_number%</gradient>"
     lore:
+      - "{letters_black}Hologram satırı"
       - ""
-      - "{secondary}Metin:"
-      - " {letters_black}▎ {letters}%line_text%"
+      - "{primary}✎ Metin"
+      - " {letters}%line_text%"
       - ""
-      - "{secondary}Etiketler:"
-      - " {letters_black}▎ {info}%line_tags%%line_style%"
+      - "{primary}✦ Etiketler"
+      - " {info}%line_tags%%line_style%"
       - ""
-      - "{warning}➥ Sol tık {letters_black}» {letters}metni düzenle"
-      - "{warning}➥ Sağ tık {letters_black}» {letters}stil, hareket, görünürlük"
-      - "{warning}➥ Shift-sol tık {letters_black}» {letters}yukarı taşı"
-      - "{warning}➥ Shift-sağ tık {letters_black}» {letters}aşağı taşı"
-      - "{warning}➥ F {letters_black}» {letters}kopyala"
-      - "{error}➥ Q {letters_black}» {letters}kaldır"
-      - ""
+      - "{primary}» Sol tık {letters_black}· {letters}metni düzenle"
+      - "{primary}» Sağ tık {letters_black}· {letters}stil, hareket, görünürlük"
+      - "{primary}» Shift-sol tık {letters_black}· {letters}yukarı taşı"
+      - "{primary}» Shift-sağ tık {letters_black}· {letters}aşağı taşı"
+      - "{primary}» F {letters_black}· {letters}kopyala"
+      - "{error}» Q {letters_black}· {letters}kaldır"
+      - "{letters_black}Onaylaman istenecek."
     actions:
       - "left: exyliadisplays:holo_line_text"
       - "right: exyliadisplays:holo_line_style"
@@ -53,22 +52,18 @@ pagination:
       slot: 48
       sound: "minecraft:item.book.page_turn|1.0|1.0"
       material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
-      name: '{error}&l← ÖNCEKİ SAYFA'
+      name: "{letters}Sayfa {letters_black}▸ <gradient:{error}:{error_light}>← Önceki</gradient>"
       lore:
-        - ""
-        - " {letters_black}▎ {letters}Sayfa {info}%current_page%{letters_black}/{info}%total_pages%"
-        - ""
+        - "  {letters_black}· {letters}Sayfa{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
       actions:
         - 'previous_page'
     next:
       slot: 50
       sound: "minecraft:item.book.page_turn|1.0|1.0"
       material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
-      name: '{success}&lSONRAKİ SAYFA →'
+      name: "{letters}Sayfa {letters_black}▸ <gradient:{success}:{success_light}>Sonraki →</gradient>"
       lore:
-        - ""
-        - " {letters_black}▎ {letters}Sayfa {info}%current_page%{letters_black}/{info}%total_pages%"
-        - ""
+        - "  {letters_black}· {letters}Sayfa{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
       actions:
         - 'next_page'
 
@@ -76,79 +71,84 @@ items:
   add-text:
     slot: 45
     material: OAK_SIGN
-    name: "{primary}&lMETİN EKLE"
+    name: "{letters}Satırlar {letters_black}▸ <gradient:{success}:{success_light}>Metin ekle</gradient>"
     lore:
+      - "{letters_black}Yeni satır"
       - ""
-      - " {letters_black}▎ {letters}En alta yeni bir satır."
+      - "{success}✎ Bilgi"
+      - " {letters}En alta yeni bir satır."
       - ""
-      - "{warning}➥ Yazmak için tıkla"
-      - ""
+      - "{success}» Yazmak için tıkla"
     actions:
       - "exyliadisplays:holo_add_line"
 
   add-item:
     slot: 46
     material: ITEM_FRAME
-    name: "{primary}&lEŞYA EKLE"
+    name: "{letters}Satırlar {letters_black}▸ <gradient:{success}:{success_light}>Eşya ekle</gradient>"
     lore:
+      - "{letters_black}Yeni satır"
       - ""
-      - " {letters_black}▎ {letters}Oyuncuya dönük, yüzen bir eşya."
+      - "{success}✎ Bilgi"
+      - " {letters}Oyuncuya dönük, yüzen bir eşya."
       - ""
-      - "{warning}➥ Seçmek için tıkla"
-      - ""
+      - "{success}» Seçmek için tıkla"
     actions:
       - "exyliadisplays:holo_add_item"
 
   add-block:
     slot: 47
     material: GRASS_BLOCK
-    name: "{primary}&lBLOK EKLE"
+    name: "{letters}Satırlar {letters_black}▸ <gradient:{success}:{success_light}>Blok ekle</gradient>"
     lore:
+      - "{letters_black}Yeni satır"
       - ""
-      - " {letters_black}▎ {letters}Yüzen bir blok; döndürmek için {highlight}dönüş"
-      - " {letters_black}▎ {letters}değerini stilinden ver."
+      - "{success}✎ Bilgi"
+      - " {letters}Yüzen bir blok; döndürmek için"
+      - " {highlight}dönüş {letters}değerini stilinden ver."
       - ""
-      - "{warning}➥ Seçmek için tıkla"
-      - ""
+      - "{success}» Seçmek için tıkla"
     actions:
       - "exyliadisplays:holo_add_block"
 
   add-head:
     slot: 51
     material: PLAYER_HEAD
-    name: "{primary}&lKAFA EKLE"
+    name: "{letters}Satırlar {letters_black}▸ <gradient:{success}:{success_light}>Kafa ekle</gradient>"
     lore:
+      - "{letters_black}Yeni satır"
       - ""
-      - " {letters_black}▎ {letters}Ad, UUID, doku ya da skin URL'si ile"
-      - " {letters_black}▎ {letters}bir oyuncu kafası. {highlight}Boyutu {letters}ile"
-      - " {letters_black}▎ {letters}küçük ya da büyük yap."
+      - "{success}✎ Bilgi"
+      - " {letters}Ad, UUID, doku ya da skin URL'si"
+      - " {letters}ile bir oyuncu kafası. {highlight}Boyutu"
+      - " {letters}ile küçük ya da büyük yap."
       - ""
-      - "{warning}➥ Seçmek için tıkla"
-      - ""
+      - "{success}» Seçmek için tıkla"
     actions:
       - "exyliadisplays:holo_add_head"
 
   pages:
     slot: 52
     material: BOOK
-    name: "{primary}&lSAYFA {letters_black}[{info}%holo_page%{letters_black}/{info}%holo_pages%{letters_black}]"
+    name: "{letters}Satırlar {letters_black}▸ <gradient:{primary}:{secondary_light}>Sayfa</gradient> {letters_black}[{info}%holo_page%{letters_black}/{info}%holo_pages%{letters_black}]"
     lore:
+      - "{letters_black}Hologram sayfaları"
       - ""
-      - "{secondary}Bilgi:"
-      - " {letters_black}▎ {letters}Her oyuncu aynı anda bir sayfa"
-      - " {letters_black}▎ {letters}görür; {highlight}[PAGE] next {letters}tıklaması çevirir."
+      - "{primary}✎ Bilgi"
+      - " {letters}Her oyuncu aynı anda"
+      - " {letters}bir sayfa görür; {highlight}[PAGE]"
+      - " {highlight}next {letters}tıklaması çevirir."
       - ""
-      - "{secondary}Durum:"
-      - " {letters_black}▎ {letters}Düzenlenen {letters_black}» {info}sayfa %holo_page%"
-      - " {letters_black}▎ {letters}Çevirme aralığı {letters_black}» {info}%holo_page_interval% tick ⌚"
+      - "{primary}✦ Durum"
+      - "  {letters_black}· {info}{icon:paper} {letters}Düzenlenen{letters_black}: {info}sayfa %holo_page%"
+      - "  {letters_black}· {info}{icon:clock} {letters}Çevirme aralığı{letters_black}: {info}%holo_page_interval% tick"
       - ""
-      - "{warning}➥ Sol tık {letters_black}» {letters}sonraki sayfa"
-      - "{warning}➥ Sağ tık {letters_black}» {letters}önceki sayfa"
-      - "{warning}➥ Shift-sol tık {letters_black}» {letters}sayfa ekle"
-      - "{warning}➥ Shift-sağ tık {letters_black}» {letters}bu sayfanın tıklama eylemleri"
-      - "{error}➥ Q {letters_black}» {letters}bu sayfayı kaldır"
+      - "{primary}» Sol tık {letters_black}· {letters}sonraki sayfa"
+      - "{primary}» Sağ tık {letters_black}· {letters}önceki sayfa"
+      - "{primary}» Shift-sol tık {letters_black}· {letters}sayfa ekle"
+      - "{primary}» Shift-sağ tık {letters_black}· {letters}bu sayfanın tıklama eylemleri"
+      - "{error}» Q {letters_black}· {letters}bu sayfayı kaldır"
       - "{letters_black}Onaylaman istenecek."
-      - ""
     actions:
       - "left: exyliadisplays:holo_page_next"
       - "right: exyliadisplays:holo_page_previous"
@@ -160,28 +160,25 @@ items:
     slot: 49
     sound: "minecraft:item.bundle.remove_one|1.0|0.5"
     material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
-    name: '{error}&lGERİ'
+    name: "{letters}Geri {letters_black}▸ <gradient:{error}:{error_light}>Hologram</gradient>"
     lore:
-      - ""
-      - " {letters_black}▎ {letters}Hologramına döner."
-      - ""
-      - "{warning}➥ Geri dönmek için tıkla"
-      - ""
+      - "{error}» Geri dönmek için tıkla"
     actions:
       - "exyliadisplays:holo_open_hub"
 
   all-lines:
     slot: 53
     material: WRITABLE_BOOK
-    name: "{primary}&lHEPSİNİ BİRDEN DÜZENLE"
+    name: "{letters}Satırlar {letters_black}▸ <gradient:{primary}:{secondary_light}>Hepsini birden düzenle</gradient>"
     lore:
+      - "{letters_black}Hologram eylemi"
       - ""
-      - "{secondary}Bilgi:"
-      - " {letters_black}▎ {letters}Tüm satırlar tek kutuda, her biri"
-      - " {letters_black}▎ {letters}bir sırada: etiketler dahil bütün bir"
-      - " {letters_black}▎ {letters}hologramı yazmanın en hızlı yolu."
+      - "{primary}✎ Bilgi"
+      - " {letters}Tüm satırlar tek kutuda, her"
+      - " {letters}biri bir sırada: etiketler"
+      - " {letters}dahil bütün bir hologramı"
+      - " {letters}yazmanın en hızlı yolu."
       - ""
-      - "{warning}➥ Açmak için tıkla"
-      - ""
+      - "{primary}» Açmak için tıkla"
     actions:
       - "exyliadisplays:holo_all_lines"

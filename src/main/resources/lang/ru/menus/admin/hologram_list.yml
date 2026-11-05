@@ -14,9 +14,7 @@ filler:
     material: LIGHT_GRAY_STAINED_GLASS_PANE
     name: "{muted}Больше нет голограмм"
     lore:
-      - ""
-      - " {letters_black}▎ {letters}Создай, чтобы она появилась здесь."
-      - ""
+      - "{letters_black}Создай, чтобы она появилась здесь."
     hide_tooltip: false
 
 pagination:
@@ -24,22 +22,23 @@ pagination:
 
   item_template:
     material: "%holo_icon%"
-    name: "{primary}&l%holo_name%"
+    name: "{letters}Голограмма {letters_black}▸ <gradient:{primary}:{secondary_light}>%holo_name%</gradient>"
     lore:
+      - "{letters_black}Голограмма"
       - ""
-      - "{secondary}Информация:"
-      - " {letters_black}▎ {letters}Текст {letters_black}» %holo_preview%"
-      - " {letters_black}▎ {letters}Мир {letters_black}» {info}%holo_world%"
-      - " {letters_black}▎ {letters}Позиция {letters_black}» {info}%holo_xyz%"
-      - " {letters_black}▎ {letters}Строки {letters_black}» {info}%holo_lines%"
+      - "{primary}✦ Информация"
+      - "  {letters_black}· {info}{icon:sign} {letters}Текст{letters_black}: %holo_preview%"
+      - "  {letters_black}· {info}{icon:map} {letters}Мир{letters_black}: {info}%holo_world%"
+      - "  {letters_black}· {info}{icon:compass} {letters}Позиция{letters_black}: {info}%holo_xyz%"
+      - "  {letters_black}· {info}{icon:book} {letters}Строки{letters_black}: {info}%holo_lines%"
       - ""
-      - "{secondary}Статус:"
-      - " {letters_black}▎ {letters}Статус {letters_black}» %holo_status%"
+      - "{primary}✦ Статус"
+      - "  {letters_black}· {info}{icon:redstone} {letters}Статус{letters_black}: %holo_status%"
       - ""
-      - "{warning}➥ ЛКМ {letters_black}» {letters}изменить"
-      - "{warning}➥ Shift+ЛКМ {letters_black}» {letters}телепорт"
-      - "{error}➥ ПКМ {letters_black}» {letters}удалить"
-      - ""
+      - "{primary}» ЛКМ {letters_black}· {letters}изменить"
+      - "{primary}» Shift+ЛКМ {letters_black}· {letters}телепорт"
+      - "{error}» ПКМ {letters_black}· {letters}удалить"
+      - "{letters_black}Потребуется подтверждение."
     actions:
       - "left: exyliadisplays:holo_edit"
       - "shift_left: exyliadisplays:holo_row_teleport"
@@ -50,22 +49,18 @@ pagination:
       slot: 48
       sound: "minecraft:item.book.page_turn|1.0|1.0"
       material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
-      name: '{error}&l← ПРЕД. СТРАНИЦА'
+      name: "{letters}Страница {letters_black}▸ <gradient:{error}:{error_light}>← Предыдущая</gradient>"
       lore:
-        - ""
-        - " {letters_black}▎ {letters}Страница {info}%current_page%{letters_black}/{info}%total_pages%"
-        - ""
+        - "  {letters_black}· {letters}Страница{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
       actions:
         - 'previous_page'
     next:
       slot: 50
       sound: "minecraft:item.book.page_turn|1.0|1.0"
       material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
-      name: '{success}&lСЛЕД. СТРАНИЦА →'
+      name: "{letters}Страница {letters_black}▸ <gradient:{success}:{success_light}>Следующая →</gradient>"
       lore:
-        - ""
-        - " {letters_black}▎ {letters}Страница {info}%current_page%{letters_black}/{info}%total_pages%"
-        - ""
+        - "  {letters_black}· {letters}Страница{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
       actions:
         - 'next_page'
 
@@ -73,44 +68,44 @@ items:
   create:
     slot: 45
     material: NETHER_STAR
-    name: "{primary}&lСОЗДАТЬ ГОЛОГРАММУ"
+    name: "{letters}Голограммы {letters_black}▸ <gradient:{success}:{success_light}>Создать голограмму</gradient>"
     lore:
+      - "{letters_black}Новая голограмма"
       - ""
-      - "{secondary}Информация:"
-      - " {letters_black}▎ {letters}Новая голограмма там, где ты,"
-      - " {letters_black}▎ {letters}из {highlight}готового шаблона{letters}."
+      - "{success}✎ Информация"
+      - " {letters}Новая голограмма там, где"
+      - " {letters}ты, из {highlight}готового шаблона{letters}."
       - ""
-      - "{warning}➥ Нажми, чтобы создать"
-      - ""
+      - "{success}» Нажми, чтобы создать"
     actions:
       - "exyliadisplays:holo_create"
 
   info:
     slot: 49
     material: BOOK
-    name: "{primary}&lГОЛОГРАММЫ"
+    name: "<gradient:{primary}:{secondary_light}>Голограммы</gradient>"
     lore:
+      - "{letters_black}Обзор"
       - ""
-      - "{secondary}Информация:"
-      - " {letters_black}▎ {letters}Голограммы {letters_black}» {info}%holo_count%"
+      - "{primary}✦ Информация"
+      - "  {letters_black}· {info}{icon:iron} {letters}Голограммы{letters_black}: {info}%holo_count%"
       - ""
-      - "{secondary}Совет:"
-      - " {letters_black}▎ {letters}Всё это есть и в файле"
-      - " {letters_black}▎ {highlight}holograms.yml{letters}, и сохранение"
-      - " {letters_black}▎ {letters}файла применяет его сразу."
-      - ""
+      - "{primary}✎ Совет"
+      - " {letters}Всё это есть и в файле"
+      - " {highlight}holograms.yml{letters}, и сохранение"
+      - " {letters}файла применяет его сразу."
 
   settings:
     slot: 53
     material: "COMPARATOR"
-    name: "{primary}&lНАСТРОЙКИ"
+    name: "{letters}Displays {letters_black}▸ <gradient:{primary}:{secondary_light}>Настройки</gradient>"
     lore:
+      - "{letters_black}Настройки плагина"
       - ""
-      - "{secondary}Информация:"
-      - " {letters_black}▎ {letters}Меняй настройки плагина"
-      - " {letters_black}▎ {letters}без правки его {highlight}файлов{letters}."
+      - "{primary}✎ Информация"
+      - " {letters}Меняй настройки плагина"
+      - " {letters}без правки его {highlight}файлов{letters}."
       - ""
-      - "{warning}➥ Нажми {letters_black}» {letters}Открыть настройки"
-      - ""
+      - "{primary}» Нажми {letters_black}· {letters}Открыть настройки"
     actions:
       - "exyliadisplays:holo_settings"

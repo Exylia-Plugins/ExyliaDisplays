@@ -14,9 +14,7 @@ filler:
     material: LIGHT_GRAY_STAINED_GLASS_PANE
     name: "{muted}Não há mais hologramas"
     lore:
-      - ""
-      - " {letters_black}▎ {letters}Crie um para vê-lo listado aqui."
-      - ""
+      - "{letters_black}Crie um para vê-lo listado aqui."
     hide_tooltip: false
 
 pagination:
@@ -24,22 +22,23 @@ pagination:
 
   item_template:
     material: "%holo_icon%"
-    name: "{primary}&l%holo_name%"
+    name: "{letters}Holograma {letters_black}▸ <gradient:{primary}:{secondary_light}>%holo_name%</gradient>"
     lore:
+      - "{letters_black}Holograma"
       - ""
-      - "{secondary}Informações:"
-      - " {letters_black}▎ {letters}Texto {letters_black}» %holo_preview%"
-      - " {letters_black}▎ {letters}Mundo {letters_black}» {info}%holo_world%"
-      - " {letters_black}▎ {letters}Posição {letters_black}» {info}%holo_xyz%"
-      - " {letters_black}▎ {letters}Linhas {letters_black}» {info}%holo_lines%"
+      - "{primary}✦ Informações"
+      - "  {letters_black}· {info}{icon:sign} {letters}Texto{letters_black}: %holo_preview%"
+      - "  {letters_black}· {info}{icon:map} {letters}Mundo{letters_black}: {info}%holo_world%"
+      - "  {letters_black}· {info}{icon:compass} {letters}Posição{letters_black}: {info}%holo_xyz%"
+      - "  {letters_black}· {info}{icon:book} {letters}Linhas{letters_black}: {info}%holo_lines%"
       - ""
-      - "{secondary}Status:"
-      - " {letters_black}▎ {letters}Estado {letters_black}» %holo_status%"
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:redstone} {letters}Estado{letters_black}: %holo_status%"
       - ""
-      - "{warning}➥ Clique esquerdo {letters_black}» {letters}editar"
-      - "{warning}➥ Shift + clique esquerdo {letters_black}» {letters}teleportar"
-      - "{error}➥ Clique direito {letters_black}» {letters}excluir"
-      - ""
+      - "{primary}» Clique esquerdo {letters_black}· {letters}editar"
+      - "{primary}» Shift + clique esquerdo {letters_black}· {letters}teleportar"
+      - "{error}» Clique direito {letters_black}· {letters}excluir"
+      - "{letters_black}Você precisará confirmar."
     actions:
       - "left: exyliadisplays:holo_edit"
       - "shift_left: exyliadisplays:holo_row_teleport"
@@ -50,22 +49,18 @@ pagination:
       slot: 48
       sound: "minecraft:item.book.page_turn|1.0|1.0"
       material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
-      name: '{error}&l← PÁGINA ANTERIOR'
+      name: "{letters}Página {letters_black}▸ <gradient:{error}:{error_light}>← Anterior</gradient>"
       lore:
-        - ""
-        - " {letters_black}▎ {letters}Página {info}%current_page%{letters_black}/{info}%total_pages%"
-        - ""
+        - "  {letters_black}· {letters}Página{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
       actions:
         - 'previous_page'
     next:
       slot: 50
       sound: "minecraft:item.book.page_turn|1.0|1.0"
       material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
-      name: '{success}&lPRÓXIMA PÁGINA →'
+      name: "{letters}Página {letters_black}▸ <gradient:{success}:{success_light}>Próxima →</gradient>"
       lore:
-        - ""
-        - " {letters_black}▎ {letters}Página {info}%current_page%{letters_black}/{info}%total_pages%"
-        - ""
+        - "  {letters_black}· {letters}Página{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
       actions:
         - 'next_page'
 
@@ -73,44 +68,44 @@ items:
   create:
     slot: 45
     material: NETHER_STAR
-    name: "{primary}&lCRIAR HOLOGRAMA"
+    name: "{letters}Hologramas {letters_black}▸ <gradient:{success}:{success_light}>Criar holograma</gradient>"
     lore:
+      - "{letters_black}Novo holograma"
       - ""
-      - "{secondary}Informações:"
-      - " {letters_black}▎ {letters}Um novo holograma onde você está,"
-      - " {letters_black}▎ {letters}a partir de um {highlight}modelo pronto{letters}."
+      - "{success}✎ Informações"
+      - " {letters}Um novo holograma onde você está,"
+      - " {letters}a partir de um {highlight}modelo pronto{letters}."
       - ""
-      - "{warning}➥ Clique para criar"
-      - ""
+      - "{success}» Clique para criar"
     actions:
       - "exyliadisplays:holo_create"
 
   info:
     slot: 49
     material: BOOK
-    name: "{primary}&lHOLOGRAMAS"
+    name: "<gradient:{primary}:{secondary_light}>Hologramas</gradient>"
     lore:
+      - "{letters_black}Visão geral"
       - ""
-      - "{secondary}Informações:"
-      - " {letters_black}▎ {letters}Hologramas {letters_black}» {info}%holo_count%"
+      - "{primary}✦ Informações"
+      - "  {letters_black}· {info}{icon:iron} {letters}Hologramas{letters_black}: {info}%holo_count%"
       - ""
-      - "{secondary}Dica:"
-      - " {letters_black}▎ {letters}Tudo aqui também está em"
-      - " {letters_black}▎ {highlight}holograms.yml{letters}, e salvar esse"
-      - " {letters_black}▎ {letters}arquivo aplica na hora."
-      - ""
+      - "{primary}✎ Dica"
+      - " {letters}Tudo aqui também está em"
+      - " {highlight}holograms.yml{letters}, e salvar esse"
+      - " {letters}arquivo aplica na hora."
 
   settings:
     slot: 53
     material: "COMPARATOR"
-    name: "{primary}&lCONFIGURAÇÕES"
+    name: "{letters}Displays {letters_black}▸ <gradient:{primary}:{secondary_light}>Configurações</gradient>"
     lore:
+      - "{letters_black}Ajustes do plugin"
       - ""
-      - "{secondary}Informação:"
-      - " {letters_black}▎ {letters}Altera as configurações do plugin"
-      - " {letters_black}▎ {letters}sem editar seus {highlight}arquivos{letters}."
+      - "{primary}✎ Informação"
+      - " {letters}Altera as configurações do"
+      - " {letters}plugin sem editar seus {highlight}arquivos{letters}."
       - ""
-      - "{warning}➥ Clique {letters_black}» {letters}Abrir configurações"
-      - ""
+      - "{primary}» Clique {letters_black}· {letters}Abrir configurações"
     actions:
       - "exyliadisplays:holo_settings"

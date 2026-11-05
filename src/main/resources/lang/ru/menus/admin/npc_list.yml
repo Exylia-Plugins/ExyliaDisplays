@@ -14,9 +14,7 @@ filler:
     material: LIGHT_GRAY_STAINED_GLASS_PANE
     name: "{muted}Больше нет NPC"
     lore:
-      - ""
-      - " {letters_black}▎ {letters}Создай, чтобы он появился здесь."
-      - ""
+      - "{letters_black}Создай, чтобы он появился здесь."
     hide_tooltip: false
 
 pagination:
@@ -24,23 +22,24 @@ pagination:
 
   item_template:
     material: "%npc_icon%"
-    name: "{primary}&l%npc_name%"
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>%npc_name%</gradient>"
     lore:
+      - "{letters_black}NPC"
       - ""
-      - "{secondary}Информация:"
-      - " {letters_black}▎ {letters}Подпись {letters_black}» %npc_preview%"
-      - " {letters_black}▎ {letters}Скин {letters_black}» %npc_skin%"
-      - " {letters_black}▎ {letters}Мир {letters_black}» {info}%npc_world%"
-      - " {letters_black}▎ {letters}Позиция {letters_black}» {info}%npc_xyz%"
-      - " {letters_black}▎ {letters}По клику {letters_black}» %npc_actions%"
+      - "{primary}✦ Информация"
+      - "  {letters_black}· {info}{icon:sign} {letters}Подпись{letters_black}: %npc_preview%"
+      - "  {letters_black}· {info}{icon:tag} {letters}Скин{letters_black}: %npc_skin%"
+      - "  {letters_black}· {info}{icon:map} {letters}Мир{letters_black}: {info}%npc_world%"
+      - "  {letters_black}· {info}{icon:compass} {letters}Позиция{letters_black}: {info}%npc_xyz%"
+      - "  {letters_black}· {info}{icon:book} {letters}По клику{letters_black}: %npc_actions%"
       - ""
-      - "{secondary}Статус:"
-      - " {letters_black}▎ {letters}Статус {letters_black}» %npc_status%"
+      - "{primary}✦ Статус"
+      - "  {letters_black}· {info}{icon:redstone} {letters}Статус{letters_black}: %npc_status%"
       - ""
-      - "{warning}➥ ЛКМ {letters_black}» {letters}изменить"
-      - "{warning}➥ Shift+ЛКМ {letters_black}» {letters}телепорт"
-      - "{error}➥ ПКМ {letters_black}» {letters}удалить"
-      - ""
+      - "{primary}» ЛКМ {letters_black}· {letters}изменить"
+      - "{primary}» Shift+ЛКМ {letters_black}· {letters}телепорт"
+      - "{error}» ПКМ {letters_black}· {letters}удалить"
+      - "{letters_black}Потребуется подтверждение."
     actions:
       - "left: exyliadisplays:npc_edit"
       - "shift_left: exyliadisplays:npc_row_teleport"
@@ -51,22 +50,18 @@ pagination:
       slot: 48
       sound: "minecraft:item.book.page_turn|1.0|1.0"
       material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
-      name: '{error}&l← ПРЕД. СТРАНИЦА'
+      name: "{letters}Страница {letters_black}▸ <gradient:{error}:{error_light}>← Предыдущая</gradient>"
       lore:
-        - ""
-        - " {letters_black}▎ {letters}Страница {info}%current_page%{letters_black}/{info}%total_pages%"
-        - ""
+        - "  {letters_black}· {letters}Страница{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
       actions:
         - 'previous_page'
     next:
       slot: 50
       sound: "minecraft:item.book.page_turn|1.0|1.0"
       material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
-      name: '{success}&lСЛЕД. СТРАНИЦА →'
+      name: "{letters}Страница {letters_black}▸ <gradient:{success}:{success_light}>Следующая →</gradient>"
       lore:
-        - ""
-        - " {letters_black}▎ {letters}Страница {info}%current_page%{letters_black}/{info}%total_pages%"
-        - ""
+        - "  {letters_black}· {letters}Страница{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
       actions:
         - 'next_page'
 
@@ -74,44 +69,44 @@ items:
   create:
     slot: 45
     material: NETHER_STAR
-    name: "{primary}&lСОЗДАТЬ NPC"
+    name: "{letters}NPC {letters_black}▸ <gradient:{success}:{success_light}>Создать NPC</gradient>"
     lore:
+      - "{letters_black}Новый NPC"
       - ""
-      - "{secondary}Информация:"
-      - " {letters_black}▎ {letters}Новый NPC там, где ты,"
-      - " {letters_black}▎ {letters}из {highlight}шаблона {letters}и со скином."
+      - "{success}✎ Информация"
+      - " {letters}Новый NPC там, где ты,"
+      - " {letters}из {highlight}шаблона {letters}и со скином."
       - ""
-      - "{warning}➥ Нажми, чтобы создать"
-      - ""
+      - "{success}» Нажми, чтобы создать"
     actions:
       - "exyliadisplays:npc_create"
 
   info:
     slot: 49
     material: BOOK
-    name: "{primary}&lNPC"
+    name: "<gradient:{primary}:{secondary_light}>NPC</gradient>"
     lore:
+      - "{letters_black}Обзор"
       - ""
-      - "{secondary}Информация:"
-      - " {letters_black}▎ {letters}NPC {letters_black}» {info}%npc_count%"
+      - "{primary}✦ Информация"
+      - "  {letters_black}· {info}{icon:iron} {letters}NPC{letters_black}: {info}%npc_count%"
       - ""
-      - "{secondary}Совет:"
-      - " {letters_black}▎ {letters}Всё это есть и в файле"
-      - " {letters_black}▎ {highlight}npcs.yml{letters}, и сохранение"
-      - " {letters_black}▎ {letters}файла применяет его сразу."
-      - ""
+      - "{primary}✎ Совет"
+      - " {letters}Всё это есть и в файле"
+      - " {highlight}npcs.yml{letters}, и сохранение"
+      - " {letters}файла применяет его сразу."
 
   settings:
     slot: 53
     material: "COMPARATOR"
-    name: "{primary}&lНАСТРОЙКИ"
+    name: "{letters}Displays {letters_black}▸ <gradient:{primary}:{secondary_light}>Настройки</gradient>"
     lore:
+      - "{letters_black}Настройки плагина"
       - ""
-      - "{secondary}Информация:"
-      - " {letters_black}▎ {letters}Меняй настройки плагина"
-      - " {letters_black}▎ {letters}без правки его {highlight}файлов{letters}."
+      - "{primary}✎ Информация"
+      - " {letters}Меняй настройки плагина"
+      - " {letters}без правки его {highlight}файлов{letters}."
       - ""
-      - "{warning}➥ Нажми {letters_black}» {letters}Открыть настройки"
-      - ""
+      - "{primary}» Нажми {letters_black}· {letters}Открыть настройки"
     actions:
       - "exyliadisplays:npc_settings"
