@@ -3,7 +3,7 @@
 # One hologram: its state, and a card for each part of it.
 
 title: "{primary}&lHOLOGRAM {letters_black}» {highlight}%holo_name%"
-size: 45
+size: 36
 type: SIMPLE
 
 filler:
@@ -26,14 +26,14 @@ items:
       - "  {letters_black}· {info}{icon:redstone} {letters}State{letters_black}: %status%"
       - "  {letters_black}· {info}{icon:eye} {letters}Seen by now{letters_black}: {info}%holo_viewers% {letters}players"
       - ""
-      - "{primary}» Left-click {letters_black}· {letters}show or hide"
-      - "{primary}» Right-click {letters_black}· {letters}rename"
+      - "{primary}{icon:click} Left-click {letters_black}· {letters}show or hide"
+      - "{primary}{icon:right_click} Right-click {letters_black}· {letters}rename"
     actions:
       - "left: exyliadisplays:holo_toggle"
       - "right: exyliadisplays:holo_rename"
 
   lines:
-    slot: 19
+    slot: 11
     material: WRITABLE_BOOK
     name: "{letters}Hologram {letters_black}▸ <gradient:{primary}:{secondary_light}>Lines</gradient>"
     lore:
@@ -46,12 +46,12 @@ items:
       - "{primary}✦ Status"
       - "  {letters_black}· {info}{icon:book} {letters}Lines{letters_black}: {info}%lines%"
       - ""
-      - "{primary}» Click to edit"
+      - "{primary}{icon:click} Click to edit"
     actions:
       - "exyliadisplays:holo_open_lines"
 
   appearance:
-    slot: 20
+    slot: 12
     material: GLOW_INK_SAC
     name: "{letters}Hologram {letters_black}▸ <gradient:{primary}:{secondary_light}>Appearance</gradient>"
     lore:
@@ -66,14 +66,14 @@ items:
       - "  {letters_black}· {info}{icon:iron} {letters}Spacing{letters_black}: {info}%holo_spacing%"
       - "  {letters_black}· {info}{icon:redstone} {letters}Shadow{letters_black}: %holo_shadow%"
       - ""
-      - "{primary}» Left-click {letters_black}· {letters}shape and size"
-      - "{primary}» Right-click {letters_black}· {letters}colour and light"
+      - "{primary}{icon:click} Left-click {letters_black}· {letters}shape and size"
+      - "{primary}{icon:right_click} Right-click {letters_black}· {letters}colour and light"
     actions:
       - "left: exyliadisplays:holo_appearance"
       - "right: exyliadisplays:holo_appearance_light"
 
   distance:
-    slot: 21
+    slot: 14
     material: TARGET
     name: "{letters}Hologram {letters_black}▸ <gradient:{primary}:{secondary_light}>Size by distance</gradient>"
     lore:
@@ -87,12 +87,12 @@ items:
       - "{primary}✦ Status"
       - "  {letters_black}· {info}{icon:iron} {letters}Grows{letters_black}: %holo_distance%"
       - ""
-      - "{primary}» Click to edit"
+      - "{primary}{icon:click} Click to edit"
     actions:
       - "exyliadisplays:holo_distance_scale"
 
   visibility:
-    slot: 22
+    slot: 15
     material: ENDER_EYE
     name: "{letters}Hologram {letters_black}▸ <gradient:{primary}:{secondary_light}>Visibility</gradient>"
     lore:
@@ -109,14 +109,14 @@ items:
       - "  {letters_black}· {info}{icon:clock} {letters}Refresh{letters_black}: {info}%holo_interval% {letters}ticks"
       - "  {letters_black}· {info}{icon:eye} {letters}Players{letters_black}: %visibility%"
       - ""
-      - "{primary}» Left-click {letters_black}· {letters}edit"
-      - "{primary}» Right-click {letters_black}· {letters}everyone or only chosen players"
+      - "{primary}{icon:click} Left-click {letters_black}· {letters}edit"
+      - "{primary}{icon:right_click} Right-click {letters_black}· {letters}everyone or only chosen players"
     actions:
       - "left: exyliadisplays:holo_visibility"
       - "right: exyliadisplays:holo_visibility_mode"
 
   click:
-    slot: 23
+    slot: 21
     material: LEVER
     name: "{letters}Hologram {letters_black}▸ <gradient:{primary}:{secondary_light}>Click actions</gradient>"
     lore:
@@ -133,9 +133,9 @@ items:
       - "  {letters_black}· {info}{icon:iron} {letters}Buttons{letters_black}: %holo_buttons%"
       - "  {letters_black}· {info}{icon:iron} {letters}Grows to{letters_black}: {info}%holo_hover%x"
       - ""
-      - "{primary}» Left-click {letters_black}· {letters}actions"
-      - "{primary}» Right-click {letters_black}· {letters}look and sound"
-      - "{primary}» Shift-click {letters_black}· {letters}buttons"
+      - "{primary}{icon:click} Left-click {letters_black}· {letters}actions"
+      - "{primary}{icon:right_click} Right-click {letters_black}· {letters}look and sound"
+      - "{primary}{icon:click} Shift-click {letters_black}· {letters}buttons"
     actions:
       - "left: exyliadisplays:holo_click"
       - "right: exyliadisplays:holo_click_look"
@@ -143,7 +143,7 @@ items:
       - "shift_right: exyliadisplays:holo_buttons"
 
   location:
-    slot: 24
+    slot: 22
     material: COMPASS
     name: "{letters}Hologram {letters_black}▸ <gradient:{primary}:{secondary_light}>Location</gradient>"
     lore:
@@ -154,10 +154,10 @@ items:
       - "  {letters_black}· {info}{icon:compass} {letters}Position{letters_black}: {info}%xyz%"
       - "  {letters_black}· {info}{icon:compass} {letters}Facing{letters_black}: {info}%facing%"
       - ""
-      - "{primary}» Left-click {letters_black}· {letters}exact position and rotation"
-      - "{primary}» Right-click {letters_black}· {letters}move here"
-      - "{primary}» Shift-left-click {letters_black}· {letters}centre on its block"
-      - "{primary}» Shift-right-click {letters_black}· {letters}turn to face me"
+      - "{primary}{icon:click} Left-click {letters_black}· {letters}exact position and rotation"
+      - "{primary}{icon:right_click} Right-click {letters_black}· {letters}move here"
+      - "{primary}{icon:click} Shift-left-click {letters_black}· {letters}centre on its block"
+      - "{primary}{icon:right_click} Shift-right-click {letters_black}· {letters}turn to face me"
     actions:
       - "left: exyliadisplays:holo_location"
       - "right: exyliadisplays:holo_move_here"
@@ -165,7 +165,7 @@ items:
       - "shift_right: exyliadisplays:holo_face"
 
   attach:
-    slot: 25
+    slot: 23
     material: LEAD
     name: "{letters}Hologram {letters_black}▸ <gradient:{primary}:{secondary_light}>Attached to</gradient>"
     lore:
@@ -179,14 +179,14 @@ items:
       - "  {letters_black}· {info}{icon:tag} {letters}Rides{letters_black}: %attached%"
       - "  {letters_black}· {info}{icon:iron} {letters}Height{letters_black}: {info}%attach_offset%"
       - ""
-      - "{primary}» Left-click {letters_black}· {letters}choose what it rides"
-      - "{primary}» Right-click {letters_black}· {letters}back to its location"
+      - "{primary}{icon:click} Left-click {letters_black}· {letters}choose what it rides"
+      - "{primary}{icon:right_click} Right-click {letters_black}· {letters}back to its location"
     actions:
       - "left: exyliadisplays:holo_attach"
       - "right: exyliadisplays:holo_detach"
 
   teleport:
-    slot: 36
+    slot: 27
     material: ENDER_PEARL
     name: "{letters}Hologram {letters_black}▸ <gradient:{primary}:{secondary_light}>Teleport</gradient>"
     lore:
@@ -195,12 +195,12 @@ items:
       - "{primary}✎ Information"
       - " {letters}Go to it, facing it."
       - ""
-      - "{primary}» Click to teleport"
+      - "{primary}{icon:click} Click to teleport"
     actions:
       - "exyliadisplays:holo_teleport"
 
   clone:
-    slot: 37
+    slot: 28
     material: PAPER
     name: "{letters}Hologram {letters_black}▸ <gradient:{success}:{success_light}>Duplicate</gradient>"
     lore:
@@ -210,12 +210,12 @@ items:
       - " {letters}A copy under a new name,"
       - " {letters}in the same place."
       - ""
-      - "{success}» Click to duplicate"
+      - "{success}{icon:click} Click to duplicate"
     actions:
       - "exyliadisplays:holo_clone"
 
   adjust:
-    slot: 38
+    slot: 29
     material: SPYGLASS
     name: "{letters}Hologram {letters_black}▸ <gradient:{primary}:{secondary_light}>Fine adjust</gradient>"
     lore:
@@ -232,22 +232,22 @@ items:
       - "  {letters_black}· {letters}Sneak + click{letters_black}: {info}snap"
       - "  {letters_black}· {letters}Click{letters_black}: {info}save"
       - ""
-      - "{primary}» Click to start"
+      - "{primary}{icon:click} Click to start"
     actions:
       - "exyliadisplays:holo_adjust"
 
   back:
-    slot: 40
+    slot: 31
     sound: "minecraft:item.bundle.remove_one|1.0|0.5"
     material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
     name: "{letters}Back {letters_black}▸ <gradient:{error}:{error_light}>Holograms</gradient>"
     lore:
-      - "{error}» Click to go back"
+      - "{error}{icon:click} Click to go back"
     actions:
       - "exyliadisplays:holo_open_list"
 
   templates:
-    slot: 41
+    slot: 32
     material: PAINTING
     name: "{letters}Hologram {letters_black}▸ <gradient:{primary}:{secondary_light}>Templates</gradient>"
     lore:
@@ -260,14 +260,14 @@ items:
       - "{primary}✦ Status"
       - "  {letters_black}· {info}{icon:book} {letters}Saved templates{letters_black}: {info}%holo_templates%"
       - ""
-      - "{primary}» Left-click {letters_black}· {letters}save this look"
-      - "{primary}» Right-click {letters_black}· {letters}apply a template"
+      - "{primary}{icon:click} Left-click {letters_black}· {letters}save this look"
+      - "{primary}{icon:right_click} Right-click {letters_black}· {letters}apply a template"
     actions:
       - "left: exyliadisplays:holo_template_save"
       - "right: exyliadisplays:holo_template_apply"
 
   undo:
-    slot: 42
+    slot: 33
     material: CLOCK
     name: "{letters}Hologram {letters_black}▸ <gradient:{primary}:{secondary_light}>Undo</gradient>"
     lore:
@@ -280,12 +280,12 @@ items:
       - "{primary}✦ Status"
       - "  {letters_black}· {info}{icon:iron} {letters}Changes to undo{letters_black}: {info}%holo_undo%"
       - ""
-      - "{primary}» Click to undo"
+      - "{primary}{icon:click} Click to undo"
     actions:
       - "exyliadisplays:holo_undo"
 
   delete:
-    slot: 44
+    slot: 35
     material: BARRIER
     name: "{letters}Hologram {letters_black}▸ <gradient:{error}:{error_light}>Delete</gradient>"
     lore:
@@ -294,7 +294,7 @@ items:
       - "{error}✎ Information"
       - " {letters}Removes it for good."
       - ""
-      - "{error}» Click to delete"
+      - "{error}{icon:click} Click to delete"
       - "{letters_black}You will be asked to confirm."
     actions:
       - "exyliadisplays:holo_delete"

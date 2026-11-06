@@ -16,6 +16,15 @@ filler:
     lore:
       - "{letters_black}Crea uno para verlo aquí."
     hide_tooltip: false
+  custom:
+    page_first:
+      slots: '48'
+      material: GRAY_DYE
+      name: "{muted}← Primera página"
+    page_last:
+      slots: '50'
+      material: GRAY_DYE
+      name: "{muted}Última página →"
 
 pagination:
   slots: '0-35'
@@ -36,9 +45,9 @@ pagination:
       - "{primary}✦ Estado"
       - "  {letters_black}· {info}{icon:redstone} {letters}Estado{letters_black}: %npc_status%"
       - ""
-      - "{primary}» Clic izquierdo {letters_black}· {letters}editar"
-      - "{primary}» Shift + clic izquierdo {letters_black}· {letters}teletransportarse"
-      - "{error}» Clic derecho {letters_black}· {letters}eliminar"
+      - "{primary}{icon:click} Clic izquierdo {letters_black}· {letters}editar"
+      - "{primary}{icon:click} Shift + clic izquierdo {letters_black}· {letters}teletransportarse"
+      - "{error}{icon:right_click} Clic derecho {letters_black}· {letters}eliminar"
       - "{letters_black}Se te pedirá confirmación."
     actions:
       - "left: exyliadisplays:npc_edit"
@@ -77,7 +86,7 @@ items:
       - " {letters}Un NPC nuevo donde estás, desde"
       - " {letters}un {highlight}punto de partida {letters}y una skin."
       - ""
-      - "{success}» Clic para crear"
+      - "{success}{icon:click} Clic para crear"
     actions:
       - "exyliadisplays:npc_create"
 
@@ -107,6 +116,6 @@ items:
       - " {letters}Cambia los ajustes del plugin"
       - " {letters}sin editar sus {highlight}archivos{letters}."
       - ""
-      - "{primary}» Clic {letters_black}· {letters}Abrir ajustes"
+      - "{primary}{icon:click} Clic {letters_black}· {letters}Abrir ajustes"
     actions:
       - "exyliadisplays:npc_settings"

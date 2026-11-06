@@ -16,6 +16,15 @@ filler:
     lore:
       - "{letters_black}Adicione texto, item, bloco ou cabeça abaixo."
     hide_tooltip: false
+  custom:
+    page_first:
+      slots: '48'
+      material: GRAY_DYE
+      name: "{muted}← Primeira página"
+    page_last:
+      slots: '50'
+      material: GRAY_DYE
+      name: "{muted}Última página →"
 
 pagination:
   slots: '0-35'
@@ -32,12 +41,12 @@ pagination:
       - "{primary}✦ Tags"
       - " {info}%line_tags%%line_style%"
       - ""
-      - "{primary}» Clique esquerdo {letters_black}· {letters}editar texto"
-      - "{primary}» Clique direito {letters_black}· {letters}estilo, movimento, visibilidade"
-      - "{primary}» Shift + clique esquerdo {letters_black}· {letters}subir"
-      - "{primary}» Shift + clique direito {letters_black}· {letters}descer"
-      - "{primary}» F {letters_black}· {letters}duplicar"
-      - "{error}» Q {letters_black}· {letters}remover"
+      - "{primary}{icon:click} Clique esquerdo {letters_black}· {letters}editar texto"
+      - "{primary}{icon:right_click} Clique direito {letters_black}· {letters}estilo, movimento, visibilidade"
+      - "{primary}{icon:click} Shift + clique esquerdo {letters_black}· {letters}subir"
+      - "{primary}{icon:right_click} Shift + clique direito {letters_black}· {letters}descer"
+      - "{primary}{icon:click} F {letters_black}· {letters}duplicar"
+      - "{error}{icon:click} Q {letters_black}· {letters}remover"
       - "{letters_black}Você precisará confirmar."
     actions:
       - "left: exyliadisplays:holo_line_text"
@@ -78,7 +87,7 @@ items:
       - "{success}✎ Informações"
       - " {letters}Uma nova linha no final."
       - ""
-      - "{success}» Clique para escrever"
+      - "{success}{icon:click} Clique para escrever"
     actions:
       - "exyliadisplays:holo_add_line"
 
@@ -93,7 +102,7 @@ items:
       - " {letters}Um item flutuante,"
       - " {letters}virado para o jogador."
       - ""
-      - "{success}» Clique para escolher"
+      - "{success}{icon:click} Clique para escolher"
     actions:
       - "exyliadisplays:holo_add_item"
 
@@ -108,7 +117,7 @@ items:
       - " {letters}Um bloco flutuante; dê {highlight}giro"
       - " {letters}no estilo dele para girá-lo."
       - ""
-      - "{success}» Clique para escolher"
+      - "{success}{icon:click} Clique para escolher"
     actions:
       - "exyliadisplays:holo_add_block"
 
@@ -125,7 +134,7 @@ items:
       - " {letters}de skin. Deixe-a pequena"
       - " {letters}ou grande com o {highlight}tamanho{letters}."
       - ""
-      - "{success}» Clique para escolher"
+      - "{success}{icon:click} Clique para escolher"
     actions:
       - "exyliadisplays:holo_add_head"
 
@@ -144,11 +153,11 @@ items:
       - "  {letters_black}· {info}{icon:paper} {letters}Editando{letters_black}: {info}página %holo_page%"
       - "  {letters_black}· {info}{icon:clock} {letters}Vira a cada{letters_black}: {info}%holo_page_interval% ticks"
       - ""
-      - "{primary}» Clique esquerdo {letters_black}· {letters}próxima página"
-      - "{primary}» Clique direito {letters_black}· {letters}página anterior"
-      - "{primary}» Shift + clique esquerdo {letters_black}· {letters}adicionar página"
-      - "{primary}» Shift + clique direito {letters_black}· {letters}ações de clique da página"
-      - "{error}» Q {letters_black}· {letters}remover esta página"
+      - "{primary}{icon:click} Clique esquerdo {letters_black}· {letters}próxima página"
+      - "{primary}{icon:right_click} Clique direito {letters_black}· {letters}página anterior"
+      - "{primary}{icon:click} Shift + clique esquerdo {letters_black}· {letters}adicionar página"
+      - "{primary}{icon:right_click} Shift + clique direito {letters_black}· {letters}ações de clique da página"
+      - "{error}{icon:click} Q {letters_black}· {letters}remover esta página"
       - "{letters_black}Será pedida uma confirmação."
     actions:
       - "left: exyliadisplays:holo_page_next"
@@ -163,7 +172,7 @@ items:
     material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
     name: "{letters}Voltar {letters_black}▸ <gradient:{error}:{error_light}>Holograma</gradient>"
     lore:
-      - "{error}» Clique para voltar"
+      - "{error}{icon:click} Clique para voltar"
     actions:
       - "exyliadisplays:holo_open_hub"
 
@@ -179,6 +188,6 @@ items:
       - " {letters}por linha: o jeito mais rápido de"
       - " {letters}escrever um holograma, com tags."
       - ""
-      - "{primary}» Clique para abrir"
+      - "{primary}{icon:click} Clique para abrir"
     actions:
       - "exyliadisplays:holo_all_lines"

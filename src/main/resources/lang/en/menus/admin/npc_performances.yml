@@ -18,6 +18,15 @@ filler:
       - "{letters_black}Install {highlight}ExyliaEmotes{letters_black}, or drop animation"
       - "{letters_black}files in {highlight}plugins/ExyliaDisplays/animations{letters_black}."
     hide_tooltip: false
+  custom:
+    page_first:
+      slots: '48'
+      material: GRAY_DYE
+      name: "{muted}← First page"
+    page_last:
+      slots: '50'
+      material: GRAY_DYE
+      name: "{muted}Last page →"
 
 pagination:
   slots: '0-35'
@@ -32,8 +41,8 @@ pagination:
       - "  {letters_black}· {info}{icon:tag} {letters}Kind{letters_black}: %perf_kind%"
       - "  {letters_black}· {info}{icon:quill} {letters}Written{letters_black}: {info}%perf_value%"
       - ""
-      - "{info}» Left-click {letters_black}· {letters}put it on a trigger"
-      - "{info}» Right-click {letters_black}· {letters}try it now"
+      - "{info}{icon:click} Left-click {letters_black}· {letters}put it on a trigger"
+      - "{info}{icon:right_click} Right-click {letters_black}· {letters}try it now"
     actions:
       - "left: exyliadisplays:npc_perform_pick"
       - "right: exyliadisplays:npc_perform_try"
@@ -93,8 +102,8 @@ items:
       - "  {letters_black}· {info}{icon:redstone} {letters}State{letters_black}: %npc_motion%"
       - "  {letters_black}· {info}{icon:note} {letters}Performing now{letters_black}: %npc_performing%"
       - ""
-      - "{primary}» Left-click {letters_black}· {letters}pause or resume"
-      - "{primary}» Right-click {letters_black}· {letters}stop what it plays"
+      - "{primary}{icon:click} Left-click {letters_black}· {letters}pause or resume"
+      - "{primary}{icon:right_click} Right-click {letters_black}· {letters}stop what it plays"
     actions:
       - "left: exyliadisplays:npc_playback_toggle"
       - "right: exyliadisplays:npc_stop"
@@ -105,6 +114,6 @@ items:
     material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
     name: "{letters}Back {letters_black}▸ <gradient:{error}:{error_light}>NPC</gradient>"
     lore:
-      - "{error}» Click to go back"
+      - "{error}{icon:click} Click to go back"
     actions:
       - "exyliadisplays:npc_open_hub"

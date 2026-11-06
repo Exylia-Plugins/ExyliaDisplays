@@ -3,7 +3,7 @@
 # One NPC: its state, and a card for each part of it.
 
 title: "{primary}&lNPC {letters_black}» {highlight}%npc_name%"
-size: 45
+size: 36
 type: SIMPLE
 
 filler:
@@ -26,14 +26,14 @@ items:
       - "  {letters_black}· {info}{icon:redstone} {letters}State{letters_black}: %status%"
       - "  {letters_black}· {info}{icon:eye} {letters}Seen by now{letters_black}: {info}%npc_viewers% {letters}players"
       - ""
-      - "{primary}» Left-click {letters_black}· {letters}show or hide"
-      - "{primary}» Right-click {letters_black}· {letters}rename"
+      - "{primary}{icon:click} Left-click {letters_black}· {letters}show or hide"
+      - "{primary}{icon:right_click} Right-click {letters_black}· {letters}rename"
     actions:
       - "left: exyliadisplays:npc_toggle"
       - "right: exyliadisplays:npc_rename"
 
   appearance:
-    slot: 19
+    slot: 11
     material: ARMOR_STAND
     name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Appearance</gradient>"
     lore:
@@ -48,14 +48,14 @@ items:
       - "  {letters_black}· {info}{icon:iron} {letters}Scale{letters_black}: {info}%scale%"
       - "  {letters_black}· {info}{icon:glint} {letters}Glow{letters_black}: %glow%"
       - ""
-      - "{primary}» Left-click {letters_black}· {letters}skin"
-      - "{primary}» Right-click {letters_black}· {letters}pose, size, outline and sitting"
+      - "{primary}{icon:click} Left-click {letters_black}· {letters}skin"
+      - "{primary}{icon:right_click} Right-click {letters_black}· {letters}pose, size, outline and sitting"
     actions:
       - "left: exyliadisplays:npc_appearance"
       - "right: exyliadisplays:npc_appearance_body"
 
   equipment:
-    slot: 20
+    slot: 12
     material: DIAMOND_CHESTPLATE
     name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Equipment</gradient>"
     lore:
@@ -68,12 +68,12 @@ items:
       - "{primary}✦ Status"
       - "  {letters_black}· {info}{icon:armor} {letters}Wears{letters_black}: %equipment%"
       - ""
-      - "{primary}» Click to open"
+      - "{primary}{icon:click} Click to open"
     actions:
       - "exyliadisplays:npc_open_equipment"
 
   label:
-    slot: 21
+    slot: 14
     material: NAME_TAG
     name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Label</gradient>"
     lore:
@@ -87,16 +87,16 @@ items:
       - "{primary}✦ Status"
       - "  {letters_black}· {info}{icon:sign} {letters}Label{letters_black}: %label%"
       - "  {letters_black}· {info}{icon:iron} {letters}Gap{letters_black}: {info}%npc_height% {letters}blocks"
-      - "  {letters_black}· {letters}Hologram{letters_black}: %link%"
+      - "  {letters_black}· {info}{icon:book} {letters}Hologram{letters_black}: %link%"
       - ""
-      - "{primary}» Left-click {letters_black}· {letters}edit the label"
-      - "{primary}» Right-click {letters_black}· {letters}link a hologram"
+      - "{primary}{icon:click} Left-click {letters_black}· {letters}edit the label"
+      - "{primary}{icon:right_click} Right-click {letters_black}· {letters}link a hologram"
     actions:
       - "left: exyliadisplays:npc_label"
       - "right: exyliadisplays:npc_link"
 
   animations:
-    slot: 22
+    slot: 15
     material: FEATHER
     name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Animations</gradient>"
     lore:
@@ -110,9 +110,9 @@ items:
       - " {letters}a player who walks up."
       - ""
       - "{primary}✦ Status"
-      - "  {letters_black}· {letters}Left-click{letters_black}: %anim_left%"
-      - "  {letters_black}· {letters}Right-click{letters_black}: %anim_right%"
-      - "  {letters_black}· {info}{icon:note} {letters}On its own{letters_black}: %anim_idle% {letters_black}· {info}%anim_idle_every% ⌚"
+      - "  {letters_black}· {info}{icon:click} {letters}Left-click{letters_black}: %anim_left%"
+      - "  {letters_black}· {info}{icon:right_click} {letters}Right-click{letters_black}: %anim_right%"
+      - "  {letters_black}· {info}{icon:note} {letters}On its own{letters_black}: %anim_idle% {letters_black}· {info}%anim_idle_every%"
       - "  {letters_black}· {info}{icon:note} {letters}Greet{letters_black}: %anim_greet% {letters_black}· {info}%anim_greet_range% {letters}blocks"
       - "  {letters_black}· {info}{icon:check} {letters}Sitting{letters_black}: %sitting%"
       - "  {letters_black}· {info}{icon:compass} {letters}Performances within{letters_black}: {info}%anim_perform_range% {letters}blocks"
@@ -120,10 +120,10 @@ items:
       - "  {letters_black}· {info}{icon:tag} {letters}Group{letters_black}: %group%"
       - "  {letters_black}· {info}{icon:redstone} {letters}State{letters_black}: %npc_motion%"
       - ""
-      - "{primary}» Left-click {letters_black}· {letters}what a click plays"
-      - "{primary}» Right-click {letters_black}· {letters}idle, greeting and group"
-      - "{primary}» Shift-left-click {letters_black}· {letters}pick a performance"
-      - "{primary}» Shift-right-click {letters_black}· {letters}pause or resume"
+      - "{primary}{icon:click} Left-click {letters_black}· {letters}what a click plays"
+      - "{primary}{icon:right_click} Right-click {letters_black}· {letters}idle, greeting and group"
+      - "{primary}{icon:click} Shift-left-click {letters_black}· {letters}pick a performance"
+      - "{primary}{icon:right_click} Shift-right-click {letters_black}· {letters}pause or resume"
     actions:
       - "left: exyliadisplays:npc_animations"
       - "right: exyliadisplays:npc_animations_auto"
@@ -131,7 +131,7 @@ items:
       - "shift_right: exyliadisplays:npc_pause_toggle"
 
   interactions:
-    slot: 23
+    slot: 21
     material: LEVER
     name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Interactions</gradient>"
     lore:
@@ -149,14 +149,14 @@ items:
       - "  {letters_black}· {info}{icon:clock} {letters}Cooldown{letters_black}: {info}%cooldown%s"
       - "  {letters_black}· {info}{icon:check} {letters}Turns to clicker{letters_black}: %face_clicker%"
       - ""
-      - "{primary}» Left-click {letters_black}· {letters}what a click does"
-      - "{primary}» Right-click {letters_black}· {letters}who may use it, and how often"
+      - "{primary}{icon:click} Left-click {letters_black}· {letters}what a click does"
+      - "{primary}{icon:right_click} Right-click {letters_black}· {letters}who may use it, and how often"
     actions:
       - "left: exyliadisplays:npc_interactions"
       - "right: exyliadisplays:npc_interactions_rules"
 
   visibility:
-    slot: 24
+    slot: 22
     material: ENDER_EYE
     name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Visibility</gradient>"
     lore:
@@ -172,12 +172,12 @@ items:
       - "  {letters_black}· {info}{icon:key} {letters}Seen by{letters_black}: %permission%"
       - "  {letters_black}· {info}{icon:compass} {letters}Distance{letters_black}: {info}%view_distance% {letters}blocks"
       - ""
-      - "{primary}» Click to edit"
+      - "{primary}{icon:click} Click to edit"
     actions:
       - "exyliadisplays:npc_visibility"
 
   location:
-    slot: 25
+    slot: 23
     material: COMPASS
     name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Location</gradient>"
     lore:
@@ -188,10 +188,10 @@ items:
       - "  {letters_black}· {info}{icon:compass} {letters}Position{letters_black}: {info}%xyz%"
       - "  {letters_black}· {info}{icon:compass} {letters}Facing{letters_black}: {info}%yaw%° {letters_black}· {info}%pitch%°"
       - ""
-      - "{primary}» Left-click {letters_black}· {letters}exact position and rotation"
-      - "{primary}» Right-click {letters_black}· {letters}move here"
-      - "{primary}» Shift-left-click {letters_black}· {letters}centre on its block"
-      - "{primary}» Shift-right-click {letters_black}· {letters}turn to face me"
+      - "{primary}{icon:click} Left-click {letters_black}· {letters}exact position and rotation"
+      - "{primary}{icon:right_click} Right-click {letters_black}· {letters}move here"
+      - "{primary}{icon:click} Shift-left-click {letters_black}· {letters}centre on its block"
+      - "{primary}{icon:right_click} Shift-right-click {letters_black}· {letters}turn to face me"
     actions:
       - "left: exyliadisplays:npc_location"
       - "right: exyliadisplays:npc_move_here"
@@ -199,7 +199,7 @@ items:
       - "shift_right: exyliadisplays:npc_face_me"
 
   teleport:
-    slot: 36
+    slot: 27
     material: ENDER_PEARL
     name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Teleport</gradient>"
     lore:
@@ -208,12 +208,12 @@ items:
       - "{primary}✎ Information"
       - " {letters}Go to it, facing it."
       - ""
-      - "{primary}» Click to teleport"
+      - "{primary}{icon:click} Click to teleport"
     actions:
       - "exyliadisplays:npc_teleport"
 
   clone:
-    slot: 37
+    slot: 28
     material: PAPER
     name: "{letters}NPC {letters_black}▸ <gradient:{success}:{success_light}>Duplicate</gradient>"
     lore:
@@ -223,12 +223,12 @@ items:
       - " {letters}A copy under a new name,"
       - " {letters}in the same place."
       - ""
-      - "{success}» Click to duplicate"
+      - "{success}{icon:click} Click to duplicate"
     actions:
       - "exyliadisplays:npc_clone"
 
   adjust:
-    slot: 38
+    slot: 29
     material: SPYGLASS
     name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Fine adjust</gradient>"
     lore:
@@ -245,22 +245,22 @@ items:
       - "  {letters_black}· {letters}Sneak + click{letters_black}: {info}snap"
       - "  {letters_black}· {letters}Click{letters_black}: {info}save"
       - ""
-      - "{primary}» Click to start"
+      - "{primary}{icon:click} Click to start"
     actions:
       - "exyliadisplays:npc_adjust"
 
   back:
-    slot: 40
+    slot: 31
     sound: "minecraft:item.bundle.remove_one|1.0|0.5"
     material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
     name: "{letters}Back {letters_black}▸ <gradient:{error}:{error_light}>NPCs</gradient>"
     lore:
-      - "{error}» Click to go back"
+      - "{error}{icon:click} Click to go back"
     actions:
       - "exyliadisplays:npc_open_list"
 
   undo:
-    slot: 42
+    slot: 33
     material: CLOCK
     name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Undo</gradient>"
     lore:
@@ -273,12 +273,12 @@ items:
       - "{primary}✦ Status"
       - "  {letters_black}· {info}{icon:iron} {letters}Changes to undo{letters_black}: {info}%npc_undo%"
       - ""
-      - "{primary}» Click to undo"
+      - "{primary}{icon:click} Click to undo"
     actions:
       - "exyliadisplays:npc_undo"
 
   delete:
-    slot: 44
+    slot: 35
     material: BARRIER
     name: "{letters}NPC {letters_black}▸ <gradient:{error}:{error_light}>Delete</gradient>"
     lore:
@@ -287,7 +287,7 @@ items:
       - "{error}✎ Information"
       - " {letters}Removes it for good."
       - ""
-      - "{error}» Click to delete"
+      - "{error}{icon:click} Click to delete"
       - "{letters_black}You will be asked to confirm."
     actions:
       - "exyliadisplays:npc_delete"

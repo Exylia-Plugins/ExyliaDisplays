@@ -16,6 +16,15 @@ filler:
     lore:
       - "{letters_black}Create one to see it listed here."
     hide_tooltip: false
+  custom:
+    page_first:
+      slots: '48'
+      material: GRAY_DYE
+      name: "{muted}← First page"
+    page_last:
+      slots: '50'
+      material: GRAY_DYE
+      name: "{muted}Last page →"
 
 pagination:
   slots: '0-35'
@@ -35,9 +44,9 @@ pagination:
       - "{primary}✦ Status"
       - "  {letters_black}· {info}{icon:redstone} {letters}State{letters_black}: %holo_status%"
       - ""
-      - "{primary}» Left-click {letters_black}· {letters}edit"
-      - "{primary}» Shift-left-click {letters_black}· {letters}teleport"
-      - "{error}» Right-click {letters_black}· {letters}delete"
+      - "{primary}{icon:click} Left-click {letters_black}· {letters}edit"
+      - "{primary}{icon:click} Shift-left-click {letters_black}· {letters}teleport"
+      - "{error}{icon:right_click} Right-click {letters_black}· {letters}delete"
       - "{letters_black}You will be asked to confirm."
     actions:
       - "left: exyliadisplays:holo_edit"
@@ -76,7 +85,7 @@ items:
       - " {letters}A new hologram where you stand,"
       - " {letters}from a {highlight}ready-made start{letters}."
       - ""
-      - "{success}» Click to create"
+      - "{success}{icon:click} Click to create"
     actions:
       - "exyliadisplays:holo_create"
 
@@ -106,6 +115,6 @@ items:
       - " {letters}Change this plugin's settings"
       - " {letters}without editing its {highlight}files{letters}."
       - ""
-      - "{primary}» Click {letters_black}· {letters}Open settings"
+      - "{primary}{icon:click} Click {letters_black}· {letters}Open settings"
     actions:
       - "exyliadisplays:holo_settings"

@@ -16,6 +16,15 @@ filler:
     lore:
       - "{letters_black}Crie um para vê-lo listado aqui."
     hide_tooltip: false
+  custom:
+    page_first:
+      slots: '48'
+      material: GRAY_DYE
+      name: "{muted}← Primeira página"
+    page_last:
+      slots: '50'
+      material: GRAY_DYE
+      name: "{muted}Última página →"
 
 pagination:
   slots: '0-35'
@@ -35,9 +44,9 @@ pagination:
       - "{primary}✦ Status"
       - "  {letters_black}· {info}{icon:redstone} {letters}Estado{letters_black}: %holo_status%"
       - ""
-      - "{primary}» Clique esquerdo {letters_black}· {letters}editar"
-      - "{primary}» Shift + clique esquerdo {letters_black}· {letters}teleportar"
-      - "{error}» Clique direito {letters_black}· {letters}excluir"
+      - "{primary}{icon:click} Clique esquerdo {letters_black}· {letters}editar"
+      - "{primary}{icon:click} Shift + clique esquerdo {letters_black}· {letters}teleportar"
+      - "{error}{icon:right_click} Clique direito {letters_black}· {letters}excluir"
       - "{letters_black}Você precisará confirmar."
     actions:
       - "left: exyliadisplays:holo_edit"
@@ -76,7 +85,7 @@ items:
       - " {letters}Um novo holograma onde você está,"
       - " {letters}a partir de um {highlight}modelo pronto{letters}."
       - ""
-      - "{success}» Clique para criar"
+      - "{success}{icon:click} Clique para criar"
     actions:
       - "exyliadisplays:holo_create"
 
@@ -106,6 +115,6 @@ items:
       - " {letters}Altera as configurações do"
       - " {letters}plugin sem editar seus {highlight}arquivos{letters}."
       - ""
-      - "{primary}» Clique {letters_black}· {letters}Abrir configurações"
+      - "{primary}{icon:click} Clique {letters_black}· {letters}Abrir configurações"
     actions:
       - "exyliadisplays:holo_settings"

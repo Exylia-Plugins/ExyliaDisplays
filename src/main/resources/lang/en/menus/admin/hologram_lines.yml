@@ -16,6 +16,15 @@ filler:
     lore:
       - "{letters_black}Add text, an item, a block or a head below."
     hide_tooltip: false
+  custom:
+    page_first:
+      slots: '48'
+      material: GRAY_DYE
+      name: "{muted}← First page"
+    page_last:
+      slots: '50'
+      material: GRAY_DYE
+      name: "{muted}Last page →"
 
 pagination:
   slots: '0-35'
@@ -32,12 +41,12 @@ pagination:
       - "{primary}✦ Tags"
       - " {info}%line_tags%%line_style%"
       - ""
-      - "{primary}» Left-click {letters_black}· {letters}edit text"
-      - "{primary}» Right-click {letters_black}· {letters}style, motion, visibility"
-      - "{primary}» Shift-left-click {letters_black}· {letters}move up"
-      - "{primary}» Shift-right-click {letters_black}· {letters}move down"
-      - "{primary}» F {letters_black}· {letters}duplicate"
-      - "{error}» Q {letters_black}· {letters}remove"
+      - "{primary}{icon:click} Left-click {letters_black}· {letters}edit text"
+      - "{primary}{icon:right_click} Right-click {letters_black}· {letters}style, motion, visibility"
+      - "{primary}{icon:click} Shift-left-click {letters_black}· {letters}move up"
+      - "{primary}{icon:right_click} Shift-right-click {letters_black}· {letters}move down"
+      - "{primary}{icon:click} F {letters_black}· {letters}duplicate"
+      - "{error}{icon:click} Q {letters_black}· {letters}remove"
       - "{letters_black}You will be asked to confirm."
     actions:
       - "left: exyliadisplays:holo_line_text"
@@ -78,7 +87,7 @@ items:
       - "{success}✎ Information"
       - " {letters}A new line at the bottom."
       - ""
-      - "{success}» Click to write it"
+      - "{success}{icon:click} Click to write it"
     actions:
       - "exyliadisplays:holo_add_line"
 
@@ -92,7 +101,7 @@ items:
       - "{success}✎ Information"
       - " {letters}A floating item, facing the player."
       - ""
-      - "{success}» Click to pick it"
+      - "{success}{icon:click} Click to pick it"
     actions:
       - "exyliadisplays:holo_add_item"
 
@@ -107,7 +116,7 @@ items:
       - " {letters}A floating block; give it {highlight}spin"
       - " {letters}from its style to turn it."
       - ""
-      - "{success}» Click to pick it"
+      - "{success}{icon:click} Click to pick it"
     actions:
       - "exyliadisplays:holo_add_block"
 
@@ -123,7 +132,7 @@ items:
       - " {letters}texture or skin URL. Make it"
       - " {letters}small or large with its {highlight}size{letters}."
       - ""
-      - "{success}» Click to pick it"
+      - "{success}{icon:click} Click to pick it"
     actions:
       - "exyliadisplays:holo_add_head"
 
@@ -143,11 +152,11 @@ items:
       - "  {letters_black}· {info}{icon:paper} {letters}Editing{letters_black}: {info}page %holo_page%"
       - "  {letters_black}· {info}{icon:clock} {letters}Turns every{letters_black}: {info}%holo_page_interval% ticks"
       - ""
-      - "{primary}» Left-click {letters_black}· {letters}next page"
-      - "{primary}» Right-click {letters_black}· {letters}previous page"
-      - "{primary}» Shift-left-click {letters_black}· {letters}add a page"
-      - "{primary}» Shift-right-click {letters_black}· {letters}this page's click actions"
-      - "{error}» Q {letters_black}· {letters}remove this page"
+      - "{primary}{icon:click} Left-click {letters_black}· {letters}next page"
+      - "{primary}{icon:right_click} Right-click {letters_black}· {letters}previous page"
+      - "{primary}{icon:click} Shift-left-click {letters_black}· {letters}add a page"
+      - "{primary}{icon:right_click} Shift-right-click {letters_black}· {letters}this page's click actions"
+      - "{error}{icon:click} Q {letters_black}· {letters}remove this page"
       - "{letters_black}You will be asked to confirm."
     actions:
       - "left: exyliadisplays:holo_page_next"
@@ -162,7 +171,7 @@ items:
     material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
     name: "{letters}Back {letters_black}▸ <gradient:{error}:{error_light}>Hologram</gradient>"
     lore:
-      - "{error}» Click to go back"
+      - "{error}{icon:click} Click to go back"
     actions:
       - "exyliadisplays:holo_open_hub"
 
@@ -178,6 +187,6 @@ items:
       - " {letters}row: the fastest way to write a"
       - " {letters}whole hologram, tags included."
       - ""
-      - "{primary}» Click to open"
+      - "{primary}{icon:click} Click to open"
     actions:
       - "exyliadisplays:holo_all_lines"

@@ -16,6 +16,15 @@ filler:
     lore:
       - "{letters_black}Crées-en un pour le voir ici."
     hide_tooltip: false
+  custom:
+    page_first:
+      slots: '48'
+      material: GRAY_DYE
+      name: "{muted}← Première page"
+    page_last:
+      slots: '50'
+      material: GRAY_DYE
+      name: "{muted}Dernière page →"
 
 pagination:
   slots: '0-35'
@@ -36,9 +45,9 @@ pagination:
       - "{primary}✦ Statut"
       - "  {letters_black}· {info}{icon:redstone} {letters}État{letters_black}: %npc_status%"
       - ""
-      - "{primary}» Clic gauche {letters_black}· {letters}modifier"
-      - "{primary}» Shift-clic gauche {letters_black}· {letters}se téléporter"
-      - "{error}» Clic droit {letters_black}· {letters}supprimer"
+      - "{primary}{icon:click} Clic gauche {letters_black}· {letters}modifier"
+      - "{primary}{icon:click} Shift-clic gauche {letters_black}· {letters}se téléporter"
+      - "{error}{icon:right_click} Clic droit {letters_black}· {letters}supprimer"
       - "{letters_black}Une confirmation te sera demandée."
     actions:
       - "left: exyliadisplays:npc_edit"
@@ -78,7 +87,7 @@ items:
       - " {letters}es, à partir d'un {highlight}modèle"
       - " {highlight}de départ {letters}et d'un skin."
       - ""
-      - "{success}» Clique pour créer"
+      - "{success}{icon:click} Clique pour créer"
     actions:
       - "exyliadisplays:npc_create"
 
@@ -108,6 +117,6 @@ items:
       - " {letters}Modifie les paramètres du plugin"
       - " {letters}sans éditer ses {highlight}fichiers{letters}."
       - ""
-      - "{primary}» Clic {letters_black}· {letters}Ouvrir les paramètres"
+      - "{primary}{icon:click} Clic {letters_black}· {letters}Ouvrir les paramètres"
     actions:
       - "exyliadisplays:npc_settings"

@@ -16,6 +16,15 @@ filler:
     lore:
       - "{letters_black}Создай, чтобы она появилась здесь."
     hide_tooltip: false
+  custom:
+    page_first:
+      slots: '48'
+      material: GRAY_DYE
+      name: "{muted}← Первая страница"
+    page_last:
+      slots: '50'
+      material: GRAY_DYE
+      name: "{muted}Последняя страница →"
 
 pagination:
   slots: '0-35'
@@ -35,9 +44,9 @@ pagination:
       - "{primary}✦ Статус"
       - "  {letters_black}· {info}{icon:redstone} {letters}Статус{letters_black}: %holo_status%"
       - ""
-      - "{primary}» ЛКМ {letters_black}· {letters}изменить"
-      - "{primary}» Shift+ЛКМ {letters_black}· {letters}телепорт"
-      - "{error}» ПКМ {letters_black}· {letters}удалить"
+      - "{primary}{icon:click} ЛКМ {letters_black}· {letters}изменить"
+      - "{primary}{icon:click} Shift+ЛКМ {letters_black}· {letters}телепорт"
+      - "{error}{icon:right_click} ПКМ {letters_black}· {letters}удалить"
       - "{letters_black}Потребуется подтверждение."
     actions:
       - "left: exyliadisplays:holo_edit"
@@ -76,7 +85,7 @@ items:
       - " {letters}Новая голограмма там, где"
       - " {letters}ты, из {highlight}готового шаблона{letters}."
       - ""
-      - "{success}» Нажми, чтобы создать"
+      - "{success}{icon:click} Нажми, чтобы создать"
     actions:
       - "exyliadisplays:holo_create"
 
@@ -106,6 +115,6 @@ items:
       - " {letters}Меняй настройки плагина"
       - " {letters}без правки его {highlight}файлов{letters}."
       - ""
-      - "{primary}» Нажми {letters_black}· {letters}Открыть настройки"
+      - "{primary}{icon:click} Нажми {letters_black}· {letters}Открыть настройки"
     actions:
       - "exyliadisplays:holo_settings"

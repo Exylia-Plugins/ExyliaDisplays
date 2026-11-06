@@ -16,6 +16,15 @@ filler:
     lore:
       - "{letters_black}Добавь текст, предмет, блок или голову ниже."
     hide_tooltip: false
+  custom:
+    page_first:
+      slots: '48'
+      material: GRAY_DYE
+      name: "{muted}← Первая страница"
+    page_last:
+      slots: '50'
+      material: GRAY_DYE
+      name: "{muted}Последняя страница →"
 
 pagination:
   slots: '0-35'
@@ -32,12 +41,12 @@ pagination:
       - "{primary}✦ Теги"
       - " {info}%line_tags%%line_style%"
       - ""
-      - "{primary}» ЛКМ {letters_black}· {letters}изменить текст"
-      - "{primary}» ПКМ {letters_black}· {letters}стиль, движение, видимость"
-      - "{primary}» Shift+ЛКМ {letters_black}· {letters}выше"
-      - "{primary}» Shift+ПКМ {letters_black}· {letters}ниже"
-      - "{primary}» F {letters_black}· {letters}дублировать"
-      - "{error}» Q {letters_black}· {letters}убрать"
+      - "{primary}{icon:click} ЛКМ {letters_black}· {letters}изменить текст"
+      - "{primary}{icon:right_click} ПКМ {letters_black}· {letters}стиль, движение, видимость"
+      - "{primary}{icon:click} Shift+ЛКМ {letters_black}· {letters}выше"
+      - "{primary}{icon:right_click} Shift+ПКМ {letters_black}· {letters}ниже"
+      - "{primary}{icon:click} F {letters_black}· {letters}дублировать"
+      - "{error}{icon:click} Q {letters_black}· {letters}убрать"
       - "{letters_black}Потребуется подтверждение."
     actions:
       - "left: exyliadisplays:holo_line_text"
@@ -78,7 +87,7 @@ items:
       - "{success}✎ Информация"
       - " {letters}Новая строка в самом низу."
       - ""
-      - "{success}» Нажми, чтобы написать"
+      - "{success}{icon:click} Нажми, чтобы написать"
     actions:
       - "exyliadisplays:holo_add_line"
 
@@ -92,7 +101,7 @@ items:
       - "{success}✎ Информация"
       - " {letters}Парящий предмет, лицом к игроку."
       - ""
-      - "{success}» Нажми, чтобы выбрать"
+      - "{success}{icon:click} Нажми, чтобы выбрать"
     actions:
       - "exyliadisplays:holo_add_item"
 
@@ -107,7 +116,7 @@ items:
       - " {letters}Парящий блок; включи {highlight}вращение {letters}в"
       - " {letters}его стиле, чтобы он крутился."
       - ""
-      - "{success}» Нажми, чтобы выбрать"
+      - "{success}{icon:click} Нажми, чтобы выбрать"
     actions:
       - "exyliadisplays:holo_add_block"
 
@@ -123,7 +132,7 @@ items:
       - " {letters}текстуре или URL скина. Меняй"
       - " {letters}её величину через {highlight}размер{letters}."
       - ""
-      - "{success}» Нажми, чтобы выбрать"
+      - "{success}{icon:click} Нажми, чтобы выбрать"
     actions:
       - "exyliadisplays:holo_add_head"
 
@@ -142,11 +151,11 @@ items:
       - "  {letters_black}· {info}{icon:paper} {letters}Редактируется{letters_black}: {info}стр. %holo_page%"
       - "  {letters_black}· {info}{icon:clock} {letters}Листает каждые{letters_black}: {info}%holo_page_interval% тиков"
       - ""
-      - "{primary}» ЛКМ {letters_black}· {letters}следующая страница"
-      - "{primary}» ПКМ {letters_black}· {letters}предыдущая страница"
-      - "{primary}» Shift+ЛКМ {letters_black}· {letters}добавить страницу"
-      - "{primary}» Shift+ПКМ {letters_black}· {letters}действия клика этой страницы"
-      - "{error}» Q {letters_black}· {letters}убрать эту страницу"
+      - "{primary}{icon:click} ЛКМ {letters_black}· {letters}следующая страница"
+      - "{primary}{icon:right_click} ПКМ {letters_black}· {letters}предыдущая страница"
+      - "{primary}{icon:click} Shift+ЛКМ {letters_black}· {letters}добавить страницу"
+      - "{primary}{icon:right_click} Shift+ПКМ {letters_black}· {letters}действия клика этой страницы"
+      - "{error}{icon:click} Q {letters_black}· {letters}убрать эту страницу"
       - "{letters_black}Потребуется подтверждение."
     actions:
       - "left: exyliadisplays:holo_page_next"
@@ -161,7 +170,7 @@ items:
     material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
     name: "{letters}Назад {letters_black}▸ <gradient:{error}:{error_light}>Голограмма</gradient>"
     lore:
-      - "{error}» Нажми, чтобы вернуться"
+      - "{error}{icon:click} Нажми, чтобы вернуться"
     actions:
       - "exyliadisplays:holo_open_hub"
 
@@ -178,6 +187,6 @@ items:
       - " {letters}способ написать всю"
       - " {letters}голограмму, вместе с тегами."
       - ""
-      - "{primary}» Нажми, чтобы открыть"
+      - "{primary}{icon:click} Нажми, чтобы открыть"
     actions:
       - "exyliadisplays:holo_all_lines"
