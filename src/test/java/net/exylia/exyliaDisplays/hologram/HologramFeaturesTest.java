@@ -120,4 +120,15 @@ class HologramFeaturesTest {
         assertEquals("{letters}Open now||{letters}Rewards doubled", LineStyle.joinFrames("{letters}Open now\n{letters}Rewards doubled\n\n"));
         assertEquals("Hi", LineStyle.joinFrames("Hi"));
     }
+
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("a line's tags leave out its model, however long that is")
+    void tagsLeaveOutTheModel() {
+        org.junit.jupiter.api.Assertions.assertEquals("<spin:90>", HologramViews.tags(
+                net.exylia.lib.hologram.HologramLine.parse("<item:bytes:rO0AB+/=><spin:90>")));
+        org.junit.jupiter.api.Assertions.assertEquals("<spin:90>", HologramViews.tags(
+                net.exylia.lib.hologram.HologramLine.parse("<head:%player_name%><spin:90>")));
+        org.junit.jupiter.api.Assertions.assertEquals("", HologramViews.tags(
+                net.exylia.lib.hologram.HologramLine.parse("Hello")));
+    }
 }

@@ -52,6 +52,8 @@ public record HologramsMessages(
         String lineNotFound,
         @Comment("Placeholders: %name%, %count%.")
         String linesSaved,
+        @Comment("A page whose lines do not fit the window that edits them whole.")
+        String linesTooLong,
         @Comment("Told after a change made from a window. Placeholder: %name%.")
         String saved,
         @Comment("An item or block line needs a placeable block. Placeholder: %material%.")
@@ -138,6 +140,7 @@ public record HologramsMessages(
                 "[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Line {highlight}%line% {success}moved to {highlight}%to%{success}.",
                 "[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}There is no line {highlight}%line%{error}; it has {highlight}%count%{error}.",
                 "[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Saved {highlight}%count% {success}lines on {highlight}%name%{success}.",
+                "[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}This page is too long for one window. Edit its lines one by one.",
                 "[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Saved {highlight}%name%{success}.",
                 "[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {highlight}%material% {error}is not a block.",
                 "[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Reloaded {highlight}%count% {success}holograms. {letters_black}(%issues% issues)",
@@ -541,7 +544,7 @@ public record HologramsMessages(
                     "{primary}&lBLOCK LINE",
                     "{primary}&lHEAD LINE",
                     "Head",
-                    "A player's name or UUID, a base64 texture, or a textures.minecraft.net URL.",
+                    "A player's name or UUID, a base64 texture, a textures.minecraft.net URL, or a placeholder: each viewer sees their own.",
                     "Turn pages every (ticks, 0 = never)",
                     "Each player moves to the next page on their own after this long.",
                     "{error}Remove page {highlight}%page% {error}and its lines?",

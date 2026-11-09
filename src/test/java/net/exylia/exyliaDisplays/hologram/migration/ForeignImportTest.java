@@ -224,7 +224,7 @@ class ForeignImportTest {
         StoredHologram rules = ForeignImport.decent(holograms.toFile()).holograms().get("Rules");
         assertEquals(List.of("<head:Notch>", "Rules"), rules.lines());
         assertEquals(2, rules.pageCount());
-        assertEquals(List.of("<item:PLAYER_HEAD><size:0.5>", "No griefing"), rules.pageView(1).lines());
+        assertEquals(List.of("<head:%player_name%><size:0.5>", "No griefing"), rules.pageView(1).lines());
         assertEquals(List.of("left: [PAGE] previous", "right: [PAGE] 1", "right: [MESSAGE] &aBack to the start"),
                 rules.pages().get(0).click());
         assertEquals("<head:abc><size:0.5>", ForeignImport.decentLine("#SMALLHEAD: PLAYER_HEAD (abc)"));

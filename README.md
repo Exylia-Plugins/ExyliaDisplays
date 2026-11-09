@@ -14,7 +14,7 @@ Built on [ExyliaLib](https://github.com/DiGround-s/ExyliaLib): everything is pac
 | **Looks at each of you** | In `each-viewer` mode, every player sees the NPC turn its head toward them, not toward someone else |
 | **Labels that are holograms** | An NPC's name is a hologram with every line tag (size, shine, typewriter, per-player lines), and clicking it does what clicking the NPC does. Link any hologram to an NPC and it follows the NPC wherever you move it |
 | **Per-line size** | `<size:2.2>` makes one hologram line bigger, and the lines above move up to make room |
-| **Models in the stack** | `<item:DIAMOND>`, `<block:BEACON>` and `<head:Notch>` lines between text lines, with glow outlines |
+| **Models in the stack** | `<item:DIAMOND>`, `<block:BEACON>` and `<head:Notch>` lines between text lines, with glow outlines; an item added from the menu keeps its enchantments, dye and custom model |
 | **Pages per player** | A hologram can have several pages and every player reads their own: a `[PAGE] next` click turns it for them alone, or each player's page turns on its own every `page-interval` |
 | **Motion** | `<spin>`, `<sway>`, `<bob>`, `<pulse>`, each with its own period: the client interpolates between keyframes, so the server sends two packets a second, not twenty |
 | **Colour that moves** | `<shine>` sweeps a band of light across a title; `<flow>` makes a gradient's colours run along it; `<rainbow>` runs a soft rainbow through it |
@@ -121,7 +121,7 @@ lines:
 | `<background:#66000000>` | the line's own background, `#AARRGGBB` |
 | `<shadow:false>` | shadow off (or `<shadow>` on) for this line |
 | `<item:DIAMOND>` / `<block:BEACON>` | a floating item or block instead of text |
-| `<head:Notch>` | a player head: a name, a UUID, a base64 texture or a `textures.minecraft.net` URL. `<size:0.5>` makes it small, `<size:2>` large |
+| `<head:Notch>` | a player head: a name, a UUID, a base64 texture or a `textures.minecraft.net` URL. `<size:0.5>` makes it small, `<size:2>` large. A placeholder is read per viewer: `<head:%player_name%>` shows each player their own head |
 | `<glow>` / `<glow:#8a51c4>` | glow outline on an item or block line |
 | `<gap:0.3>` | extra blocks above the line; negative pulls the lines above closer |
 | `<align:left>` / `center` / `right` | the line's own alignment |

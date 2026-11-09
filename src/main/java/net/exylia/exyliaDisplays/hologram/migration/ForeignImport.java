@@ -345,16 +345,17 @@ public final class ForeignImport {
     /**
      * A {@code #HEAD:} or {@code #SMALLHEAD:} line (an armour stand's small head, half a full one):
      * {@code PLAYER_HEAD (owner, texture or URL)} becomes {@code <head:owner>}, any other item is worn
-     * as it is. A head drawn per viewer ({@code {player}}, a placeholder) or from HeadDatabase has
+     * as it is. {@code {player}} and placeholders are read per viewer; a head from HeadDatabase has
      * nothing to carry over and stays a plain head.
      */
     static String decentHead(String content, boolean small) {
         int open = content.indexOf('(');
         int close = content.lastIndexOf(')');
-        String owner = open > 0 && close > open ? content.substring(open + 1, close).trim() : "";
+        String owner = open > 0 && close > open
+                ? content.substring(open + 1, close).trim().replace("{player}", "%player_name%") : "";
         String material = material(itemOnly(content));
         boolean head = (material.contains("HEAD") || material.contains("SKULL")) && !owner.isEmpty()
-                && !owner.contains("{") && !owner.contains("%") && !owner.toUpperCase(Locale.ROOT).startsWith("HEADDATABASE_");
+                && !owner.contains("{") && !owner.toUpperCase(Locale.ROOT).startsWith("HEADDATABASE_");
         HologramLine.Builder line = HologramLine.builder();
         if (head) line.head(owner);
         else line.item(material);

@@ -7,6 +7,7 @@ import net.exylia.lib.hologram.HologramConfig;
 import net.exylia.lib.hologram.HologramLine;
 import net.exylia.lib.text.Values;
 import net.exylia.lib.ui.UiEntry;
+import net.exylia.lib.item.Source;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -199,7 +200,7 @@ public final class HologramViews {
         List<String> lines = hologram.pageView(shown).lines();
         for (int i = 0; i < lines.size(); i++) {
             HologramLine line = HologramLine.parse(lines.get(i));
-            String tags = line.raw().substring(0, line.raw().length() - line.text().length());
+            String tags = tags(line);
             rows.add(UiEntry.of(i)
                     .with("line_number", i + 1)
                     .with("line_icon", lineIcon(line))
@@ -217,7 +218,7 @@ public final class HologramViews {
     /** How a line reads in a lore: its text, or what model it is. */
     public static String lineText(HologramLine line) {
         HologramsMessages.States states = HologramsMessages.get().states();
-        if (line.item() != null) return Values.of("material", line.item()).apply(states.itemLine());
+        if (line.item() != null) return Values.of("material", itemName(line.item())).apply(states.itemLine());
         if (line.block() != null) return Values.of("material", line.block()).apply(states.blockLine());
         if (line.head() != null) return Values.of().putText("head", shortHead(line.head())).apply(states.headLine());
         return line.text().isBlank() ? states.emptyLine() : line.text();
@@ -228,10 +229,30 @@ public final class HologramViews {
         return head.length() > 24 ? head.substring(0, 21) + "..." : head;
     }
 
-    private static String lineIcon(HologramLine line) {
+    /** A plain material as written; a stored or resource-pack item by what it is, not by its bytes. */
+    private static String itemName(String item) {
+        return isPlain(item) ? item : Source.of(item).label();
+    }
+
+    private static boolean isPlain(String item) {
+        return Source.of(item) instanceof Source.OfMaterial material && !material.isCustom();
+    }
+
+    /** A line's style tags: what it draws is already told apart, and a stored item would fill the lore. */
+    static String tags(HologramLine line) {
+        return line.toBuilder().item(null).block(null).head(null).text("").build().raw();
+    }
+
+    /** What a line's model is drawn as in a menu, or null when it has none that can be drawn. */
+    private static String model(HologramLine line) {
         if (line.head() != null) return "PLAYER_HEAD";
         String model = line.item() != null ? line.item() : line.block();
-        if (model != null && Material.matchMaterial(model) != null) return model;
+        return model != null && (!isPlain(model) || Material.matchMaterial(model) != null) ? model : null;
+    }
+
+    private static String lineIcon(HologramLine line) {
+        String model = model(line);
+        if (model != null) return model;
         if (line.text().isBlank()) return "LIGHT_GRAY_STAINED_GLASS_PANE";
         if (line.typewriter() != null || line.spin() != null || line.bob() != null
                 || line.pulse() != null || line.shine() != null || line.flow() != null || line.sway() != null
@@ -249,9 +270,8 @@ public final class HologramViews {
     static String icon(StoredHologram hologram) {
         for (String raw : hologram.lines()) {
             HologramLine line = HologramLine.parse(raw);
-            if (line.head() != null) return "PLAYER_HEAD";
-            String model = line.item() != null ? line.item() : line.block();
-            if (model != null && Material.matchMaterial(model) != null) return model;
+            String model = model(line);
+            if (model != null) return model;
         }
         return "OAK_HANGING_SIGN";
     }

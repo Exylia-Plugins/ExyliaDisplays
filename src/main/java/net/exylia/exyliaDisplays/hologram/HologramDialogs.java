@@ -12,6 +12,9 @@ import net.exylia.lib.hologram.HologramLine;
 import net.exylia.lib.input.FormField;
 import net.exylia.lib.input.FormKey;
 import net.exylia.lib.input.FormValues;
+import net.exylia.lib.input.IconInput;
+import net.exylia.lib.item.Items;
+import net.exylia.lib.item.Source;
 import net.exylia.lib.text.Text;
 import net.exylia.lib.text.Values;
 import net.exylia.lib.util.editor.EditorForm;
@@ -53,6 +56,10 @@ public final class HologramDialogs {
     private static final FormKey<String> BACKGROUND = FormKey.text("background");
     private static final FormKey<String> PERMISSION = FormKey.text("permission");
     private static final FormKey<String> HEAD = FormKey.text("head");
+    /** The longest stored item or head: several must still fit the box that edits a page whole. */
+    private static final int MAX_MODEL = 16_000;
+    /** What a window's text box holds; a longer value would be cut, and the lines with it. */
+    private static final int MAX_BOX = 32_767;
     private static final FormKey<Long> PAGE_INTERVAL = FormKey.integer("page_interval");
     private static final FormKey<String> BILLBOARD = FormKey.text("billboard");
     private static final FormKey<String> ALIGNMENT = FormKey.text("alignment");
@@ -212,8 +219,14 @@ public final class HologramDialogs {
         Optional<StoredHologram> hologram = HologramModule.get().store().get(name).map(h -> h.pageView(page));
         if (hologram.isEmpty()) return;
         Runnable back = () -> HologramViews.openLines(player, name, page);
+        String written = String.join("\n", hologram.get().lines());
+        if (written.length() > MAX_BOX) {
+            plugin().getMessages().send(player, HologramsMessages.get().linesTooLong(), Values.of());
+            back.run();
+            return;
+        }
         EditorForm form = form(player, words().allLinesTitle())
-                .text(TEXT, words().allLinesLabel(), String.join("\n", hologram.get().lines()), 12)
+                .text(TEXT, words().allLinesLabel(), written, 12)
                 // It lists tags as examples: parsed, <rainbow> and <shine> would colour the rest of the note.
                 .hint(Text.escape(words().allLinesHint()));
         answer(player, form.ask(values -> values.getOr(TEXT, "")), back, text -> {
@@ -228,38 +241,59 @@ public final class HologramDialogs {
         });
     }
 
-    /** A floating item or block added at the bottom, picked from ExyliaLib's icon picker. */
+    /**
+     * A floating item or block added at the bottom, picked from ExyliaLib's icon picker. An item stays
+     * as it is (enchantments, dye, custom model); a block display can only draw a material.
+     */
     public static void addModel(Player player, String name, int page, boolean block) {
         Runnable back = () -> HologramViews.openLines(player, name, page);
-        plugin().getInputs().answered(player,
-                plugin().getInputs().icon(player, block ? words().blockTitle() : words().itemTitle()).open(),
-                picked -> {
-                    Material material = Material.matchMaterial(picked);
-                    if (material == null || (block ? !material.isBlock() : !material.isItem())) {
-                        plugin().getMessages().send(player, HologramsMessages.get().notABlock(),
-                                Values.of().putText("material", picked));
-                        back.run();
-                        return;
-                    }
+        IconInput picker = plugin().getInputs().icon(player, block ? words().blockTitle() : words().itemTitle())
+                .maxLength(MAX_MODEL);
+        if (block) picker.ways(IconInput.Way.MATERIAL, IconInput.Way.INSERT);
+        plugin().getInputs().answered(player, picker.open(), picked -> {
                     HologramLine.Builder line = HologramLine.builder();
-                    String raw = (block ? line.block(material.name()) : line.item(material.name())).build().raw();
+                    if (block) {
+                        Material material = Items.icon(picked).getType();
+                        if (!material.isBlock()) {
+                            plugin().getMessages().send(player, HologramsMessages.get().notABlock(),
+                                    Values.of().putText("material", Source.of(picked).label()));
+                            back.run();
+                            return;
+                        }
+                        line.block(material.name());
+                    } else {
+                        line.item(picked);
+                    }
+                    String raw = line.build().raw();
                     save(player, name, current -> current.onPage(page, view -> view.addLine(raw)), back);
                 },
                 back);
     }
 
-    /** A player head added at the bottom: a player's name, a UUID, a texture or a skin URL. */
+    /** A player head added at the bottom: found in the head catalogue, or written by hand. */
     public static void addHead(Player player, String name, int page) {
         Runnable back = () -> HologramViews.openLines(player, name, page);
-        EditorForm form = form(player, words().headTitle())
-                .field(HEAD, FormField.text(HEAD, words().headLabel())
-                        .defaultValue(player.getName())
-                        .validate(value -> !value.isBlank(), words().headHint()))
-                .hint(words().headHint());
-        answer(player, form.ask(values -> values.getOr(HEAD, "").trim()), back, head -> {
+        Consumer<String> add = head -> {
             String raw = HologramLine.builder().head(head).build().raw();
             save(player, name, current -> current.onPage(page, view -> view.addLine(raw)), back);
-        });
+        };
+        plugin().getInputs().answered(player,
+                plugin().getInputs().choice(player, words().headTitle(), List.of(IconInput.Way.BROWSE, IconInput.Way.HEAD))
+                        .label(IconInput.Way::label).key(Enum::name).icon(IconInput.Way::icon).open(),
+                way -> {
+                    if (way == IconInput.Way.BROWSE) {
+                        plugin().getInputs().answered(player, plugin().getInputs().icon(player, words().headTitle())
+                                .ways(IconInput.Way.BROWSE).maxLength(MAX_MODEL).open(), add, back);
+                        return;
+                    }
+                    EditorForm form = form(player, words().headTitle())
+                            .field(HEAD, FormField.text(HEAD, words().headLabel())
+                                    .defaultValue(player.getName())
+                                    .validate(value -> !value.isBlank(), words().headHint()))
+                            .hint(words().headHint());
+                    answer(player, form.ask(values -> values.getOr(HEAD, "").trim()), back, add);
+                },
+                back);
     }
 
     /** Everything about one line but its text, a themed window at a time: see {@link LineStyle}. */
