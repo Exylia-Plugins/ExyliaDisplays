@@ -1,6 +1,10 @@
 package net.exylia.exyliaDisplays.hologram;
 
 import net.exylia.exyliaDisplays.common.store.Position;
+import net.exylia.exyliaDisplays.leaderboard.BoardLayout;
+import net.exylia.exyliaDisplays.leaderboard.BoardSection;
+import net.exylia.exyliaDisplays.leaderboard.LeaderboardModule;
+import net.exylia.exyliaDisplays.leaderboard.LeaderboardsMessages;
 import net.exylia.lib.config.Comment;
 import net.exylia.lib.config.Time;
 import net.exylia.lib.hologram.HologramConfig;
@@ -44,13 +48,16 @@ public record StoredHologram(
         @Comment("Start a line with tags to style it alone, e.g. '<size:2><shine>{accent}&lTHE ARENA':")
         @Comment("  look: <size:2> <opacity:160> <background:#66000000> <shadow:false> <gap:0.3>")
         @Comment("  layout: <align:left> <width:120> <billboard:fixed> <seethrough> <brightness:15> <autoscale> <autoscale:4,24,3>")
-        @Comment("  models: <item:DIAMOND> <block:BEACON> <glow> <glow:#8a51c4>")
+        @Comment("  models: <item:DIAMOND> <block:BEACON> <entity:ALLAY> <image:logo.png,width=24> <glow> <glow:#8a51c4>")
         @Comment("  movement: <spin> <sway:15,period=4> <bob:0.08,period=3> <pulse:0.06,period=2>")
         @Comment("  colour: <shine> <shine:highlight,speed=10,pause=2.5,width=3> <flow> <rainbow:6>")
-        @Comment("  text: <typewriter> <scramble:20> <marquee:24,speed=6> <fade:3> <blink:1>")
+        @Comment("  text: <typewriter> <scramble:20> <marquee:24,speed=6> <fade:3> <blink:1> <slide:left>")
+        @Comment("  time, anywhere in the text: {countdown:2026-12-01 18:00|{success}Open now!} {date:HH:mm}")
         @Comment("  frames: <frames:2>{letters}First||{letters}Second (each shown 2 seconds)")
         @Comment("  click: <button:join> runs click.buttons.join when this line is clicked")
+        @Comment("  hover: <hover:\"{success}▶ Click to join\"> is shown instead while a player looks at it")
         @Comment("  who sees it: <range:8> <perm:vip.rank> <perm:!vip.rank> <if:\"%player_level% >= 10\">")
+        @Comment("               <region:spawn> <region:!pvp> <world:world_nether>")
         @Comment("  heads: <head:Notch> <head:<uuid, base64 texture or textures.minecraft.net url>>")
         List<String> lines,
 
@@ -86,12 +93,21 @@ public record StoredHologram(
 
         @Comment("An entity it rides, by UUID: a player is ridden again whenever they join, a mob as")
         @Comment("long as it lives. Empty to stand at its location. /holo <name> attach sets it.")
-        Attachment attach) {
+        Attachment attach,
+
+        @Comment("Turns it into a leaderboard: its lines are written from this, one page for each stat and")
+        @Comment("period, with buttons between them. Stats come from leaderboards.yml.")
+        BoardSection leaderboard,
+
+        @Comment("Who sees it at all, checked for each player: a placeholder condition such as")
+        @Comment("'%player_level% >= 10', a permission ('!node' for those without it), WorldGuard regions")
+        @Comment("and worlds ('!pvp' to leave one out). Empty for everyone in range.")
+        HologramConfig.View view) {
 
     public StoredHologram() {
         this(true, new Position(), List.of(), List.of(), 0, "", 48.0, false,
                 new HologramConfig.Properties(), new HologramConfig.Refresh(), new HologramConfig.Click(),
-                new Visibility(), new Attachment());
+                new Visibility(), new Attachment(), new BoardSection(), new HologramConfig.View());
     }
 
     public StoredHologram {
@@ -122,6 +138,12 @@ public record StoredHologram(
         if (attach == null) {
             attach = new Attachment();
         }
+        if (leaderboard == null) {
+            leaderboard = new BoardSection();
+        }
+        if (view == null) {
+            view = new HologramConfig.View();
+        }
     }
 
     /** A new hologram at a place, with its first lines. */
@@ -146,30 +168,56 @@ public record StoredHologram(
 
     /** {@link #toConfig()}, raised: how high above its mount an attached hologram rides. */
     public HologramConfig toConfig(double offsetY) {
+        if (leaderboard.enabled()) {
+            return board().toConfig(offsetY);
+        }
         boolean personal = perPlayer || allPages().stream().flatMap(List::stream)
                 .anyMatch(line -> PLACEHOLDER.matcher(line).find());
         return new HologramConfig(enabled, HologramConfig.Kind.TEXT, lines, "", "", personal,
-                viewDistance, 0, offsetY, 0, appearance, refresh, click, pages, pageInterval);
+                viewDistance, 0, offsetY, 0, appearance, refresh, click, pages, pageInterval, view);
+    }
+
+    /**
+     * The hologram a leaderboard draws: its lines and pages written from the leaderboard
+     * section, its own buttons kept beside the board's, and refreshed even if auto-update is
+     * off, since a board's places move on their own. With leaderboards switched off it says so.
+     */
+    public StoredHologram board() {
+        LeaderboardModule boards = LeaderboardModule.get();
+        if (boards == null) {
+            return withLeaderboard(leaderboard.withEnabled(false))
+                    .withLines(List.of(LeaderboardsMessages.get().moduleOff())).withPages(List.of());
+        }
+        BoardLayout layout = BoardLayout.of(leaderboard, boards::statName, LeaderboardModule::spanName);
+        java.util.Map<String, List<String>> buttons = new java.util.LinkedHashMap<>(click.buttons());
+        buttons.putAll(layout.buttons());
+        List<HologramConfig.Page> rest = layout.pages().stream().skip(1)
+                .map(page -> new HologramConfig.Page(page, List.of())).toList();
+        return withLeaderboard(leaderboard.withEnabled(false))
+                .withLines(layout.pages().isEmpty() ? List.of() : layout.pages().get(0))
+                .withPages(rest)
+                .withRefresh(new HologramConfig.Refresh(Math.max(20, refresh.updateInterval()), true))
+                .withClick(click.withButtons(buttons));
     }
 
     public StoredHologram withEnabled(boolean value) {
-        return new StoredHologram(value, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach);
+        return new StoredHologram(value, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view);
     }
 
     public StoredHologram withLocation(Position value) {
-        return new StoredHologram(enabled, value, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach);
+        return new StoredHologram(enabled, value, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view);
     }
 
     public StoredHologram withLines(List<String> value) {
-        return new StoredHologram(enabled, location, value, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach);
+        return new StoredHologram(enabled, location, value, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view);
     }
 
     public StoredHologram withPermission(String value) {
-        return new StoredHologram(enabled, location, lines, pages, pageInterval, value, viewDistance, perPlayer, appearance, refresh, click, visibility, attach);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, value, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view);
     }
 
     public StoredHologram withViewDistance(double value) {
-        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, value, perPlayer, appearance, refresh, click, visibility, attach);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, value, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view);
     }
 
     /**
@@ -187,35 +235,43 @@ public record StoredHologram(
     }
 
     public StoredHologram withPerPlayer(boolean value) {
-        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, value, appearance, refresh, click, visibility, attach);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, value, appearance, refresh, click, visibility, attach, leaderboard, view);
     }
 
     public StoredHologram withAppearance(HologramConfig.Properties value) {
-        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, value, refresh, click, visibility, attach);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, value, refresh, click, visibility, attach, leaderboard, view);
     }
 
     public StoredHologram withRefresh(HologramConfig.Refresh value) {
-        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, value, click, visibility, attach);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, value, click, visibility, attach, leaderboard, view);
     }
 
     public StoredHologram withClick(HologramConfig.Click value) {
-        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, value, visibility, attach);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, value, visibility, attach, leaderboard, view);
     }
 
     public StoredHologram withVisibility(Visibility value) {
-        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, value, attach);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, value, attach, leaderboard, view);
     }
 
     public StoredHologram withAttach(Attachment value) {
-        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, value);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, value, leaderboard, view);
     }
 
     public StoredHologram withPages(List<HologramConfig.Page> value) {
-        return new StoredHologram(enabled, location, lines, value, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach);
+        return new StoredHologram(enabled, location, lines, value, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view);
+    }
+
+    public StoredHologram withView(HologramConfig.View value) {
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, value);
+    }
+
+    public StoredHologram withLeaderboard(BoardSection value) {
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, value, view);
     }
 
     public StoredHologram withPageInterval(long value) {
-        return new StoredHologram(enabled, location, lines, pages, value, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach);
+        return new StoredHologram(enabled, location, lines, pages, value, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view);
     }
 
     // ------------------------------------------------------------------
@@ -284,12 +340,13 @@ public record StoredHologram(
 
     /**
      * A click section with other commands, width, cooldown and hover growth, keeping its button
-     * look, sound, buttons and reach: the four-argument constructor would reset them.
+     * look, sound, buttons, reach, permission and messages: the shorter constructors reset them.
      */
     public static HologramConfig.Click clickWith(HologramConfig.Click click, List<String> commands, double width,
                                                  long cooldown, double hoverScale) {
         return new HologramConfig.Click(commands, width, cooldown, hoverScale, click.style(), click.color(),
-                click.hoverColor(), click.sound(), click.buttons(), click.range());
+                click.hoverColor(), click.sound(), click.buttons(), click.range(), click.permission(),
+                click.deniedMessage(), click.cooldownMessage(), click.buttonPermissions());
     }
 
     // ------------------------------------------------------------------

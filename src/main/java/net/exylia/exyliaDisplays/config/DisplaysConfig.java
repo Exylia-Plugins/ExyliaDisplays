@@ -53,6 +53,7 @@ public record DisplaysConfig(
     private static Map<String, Boolean> defaultModules() {
         Map<String, Boolean> modules = new LinkedHashMap<>();
         modules.put("holograms", true);
+        modules.put("leaderboards", true);
         modules.put("npcs", true);
         return modules;
     }

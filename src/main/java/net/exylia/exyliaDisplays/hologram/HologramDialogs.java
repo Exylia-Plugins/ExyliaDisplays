@@ -365,7 +365,12 @@ public final class HologramDialogs {
                 .integer(INTERVAL, words.intervalLabel(), hologram.refresh().updateInterval())
                 .flag(AUTO_UPDATE, words.autoUpdateLabel(), hologram.refresh().autoUpdate())
                 .integer(PAGE_INTERVAL, words.pageIntervalLabel(), hologram.pageInterval())
-                .hint(words.pageIntervalHint());
+                .hint(words.pageIntervalHint())
+                .text(VIEW_CONDITION, words.viewConditionLabel(), hologram.view().condition())
+                .hint(words.viewConditionHint())
+                .text(VIEW_REGIONS, words.viewRegionsLabel(), String.join("\n", hologram.view().regions()), 3)
+                .text(VIEW_WORLDS, words.viewWorldsLabel(), String.join("\n", hologram.view().worlds()), 3)
+                .hint(words.viewPlacesHint());
         audienceFields(form, hologram.visibility());
         answer(player, form.ask(values -> values), back, values -> save(player, name, current -> audience(current, values)
                 .withViewDistance(positive(values.getDecimal(VIEW_DISTANCE), current.viewDistance()))
@@ -373,7 +378,82 @@ public final class HologramDialogs {
                 .withPerPlayer(values.getBoolean(PER_PLAYER))
                 .withRefresh(new HologramConfig.Refresh(Math.max(1, values.getLong(INTERVAL)),
                         values.getBoolean(AUTO_UPDATE)))
-                .withPageInterval(Math.max(0, values.getLong(PAGE_INTERVAL))), back));
+                .withPageInterval(Math.max(0, values.getLong(PAGE_INTERVAL)))
+                .withView(new HologramConfig.View(values.getOr(VIEW_CONDITION, ""), current.view().permission(),
+                        rows(values.getOr(VIEW_REGIONS, "")), rows(values.getOr(VIEW_WORLDS, "")))), back));
+    }
+
+    private static final FormKey<String> VIEW_CONDITION = FormKey.text("view_condition");
+    private static final FormKey<String> VIEW_REGIONS = FormKey.text("view_regions");
+    private static final FormKey<String> VIEW_WORLDS = FormKey.text("view_worlds");
+    private static final FormKey<String> CLICK_PERMISSION = FormKey.text("click_permission");
+    private static final FormKey<String> CLICK_DENIED = FormKey.text("click_denied");
+    private static final FormKey<String> CLICK_WAIT = FormKey.text("click_wait");
+    private static final FormKey<Boolean> BOARD_ON = FormKey.flag("board_on");
+    private static final FormKey<String> BOARD_STATS = FormKey.text("board_stats");
+    private static final FormKey<String> BOARD_SPANS = FormKey.text("board_spans");
+    private static final FormKey<Long> BOARD_ROWS = FormKey.integer("board_rows");
+    private static final FormKey<String> BOARD_ROW = FormKey.text("board_row");
+    private static final FormKey<String> BOARD_YOU = FormKey.text("board_you");
+
+    /** Whether it is a leaderboard, of what and over which periods. */
+    public static void leaderboard(Player player, String name) {
+        StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
+        if (hologram == null) return;
+        net.exylia.exyliaDisplays.leaderboard.LeaderboardModule boards = net.exylia.exyliaDisplays.leaderboard.LeaderboardModule.get();
+        net.exylia.exyliaDisplays.leaderboard.LeaderboardsMessages words = net.exylia.exyliaDisplays.leaderboard.LeaderboardsMessages.get();
+        if (boards == null) {
+            ExyliaDisplays.getInstance().getMessages().send(player, words.moduleOff(), Values.of());
+            return;
+        }
+        Runnable back = () -> HologramViews.openHub(player, name);
+        net.exylia.exyliaDisplays.leaderboard.BoardSection board = hologram.leaderboard();
+        EditorForm form = form(player, words.dialogTitle())
+                .flag(BOARD_ON, words.enabledLabel(), board.enabled())
+                .text(BOARD_STATS, words.statsLabel(), String.join("\n", board.stats().isEmpty() && !boards.statIds().isEmpty()
+                        ? List.of(boards.statIds().get(0)) : board.stats()), 4)
+                .hint(Values.of().putText("stats", String.join(", ", boards.statIds())).apply(words.statsHint()))
+                .text(BOARD_SPANS, words.spansLabel(), String.join("\n", board.spans()), 5)
+                .hint(words.spansHint())
+                .integer(BOARD_ROWS, words.rowsLabel(), board.rows())
+                .text(BOARD_ROW, words.rowLabel(), board.row())
+                .hint(words.rowHint())
+                .text(BOARD_YOU, words.youLabel(), board.you())
+                .hint(words.youHint());
+        answer(player, form.ask(values -> values), back, values -> {
+            List<String> stats = rows(values.getOr(BOARD_STATS, "")).stream()
+                    .map(id -> id.toLowerCase(java.util.Locale.ROOT)).distinct().toList();
+            List<String> unknown = boards.unknown(stats);
+            if (!unknown.isEmpty()) {
+                ExyliaDisplays.getInstance().getMessages().send(player, words.unknownStat(),
+                        Values.of().putText("stat", String.join(", ", unknown)));
+                back.run();
+                return;
+            }
+            List<String> spans = new ArrayList<>();
+            for (String written : rows(values.getOr(BOARD_SPANS, ""))) {
+                java.util.Optional<net.exylia.lib.leaderboard.Span> span = net.exylia.exyliaDisplays.leaderboard.LeaderboardModule.span(written);
+                if (span.isEmpty()) {
+                    ExyliaDisplays.getInstance().getMessages().send(player, words.unknownSpan(), Values.of().putText("span", written));
+                    back.run();
+                    return;
+                }
+                String id = net.exylia.exyliaDisplays.leaderboard.LeaderboardModule.spanId(span.get());
+                if (!spans.contains(id)) spans.add(id);
+            }
+            boolean on = values.getBoolean(BOARD_ON) && !stats.isEmpty();
+            StoredHologram saved = HologramModule.get().store().edit(name, current -> current.withLeaderboard(current.leaderboard()
+                    .withEnabled(on)
+                    .withStats(stats)
+                    .withSpans(spans)
+                    .withRows((int) Math.clamp(values.getLong(BOARD_ROWS), 1, net.exylia.exyliaDisplays.leaderboard.BoardSection.MAX_ROWS))
+                    .withRow(values.getOr(BOARD_ROW, current.leaderboard().row()))
+                    .withYou(values.getOr(BOARD_YOU, "")))).orElse(null);
+            if (saved != null && on && !board.enabled()) {
+                HologramCommand.boardTurnedOn(player, name, saved.leaderboard());
+            }
+            back.run();
+        });
     }
 
     /** The mode, and a switch that empties the list it reads, which the hint names. */
@@ -437,12 +517,18 @@ public final class HologramDialogs {
                 .decimal(WIDTH, words.widthLabel(), BigDecimal.valueOf(click.width()))
                 .integer(COOLDOWN, words.cooldownLabel(), click.cooldown())
                 .decimal(HOVER, words.hoverLabel(), BigDecimal.valueOf(click.hoverScale()))
-                .hint(words.hoverHint());
+                .hint(words.hoverHint())
+                .text(CLICK_PERMISSION, words.clickPermissionLabel(), click.permission())
+                .text(CLICK_DENIED, words.clickDeniedLabel(), click.deniedMessage())
+                .text(CLICK_WAIT, words.clickWaitLabel(), click.cooldownMessage())
+                .hint(words.clickMessagesHint());
         answer(player, form.ask(values -> values), back, values -> save(player, name, current -> current.withClick(
                 StoredHologram.clickWith(current.click(), rows(values.getOr(COMMANDS, "")),
                         positive(values.getDecimal(WIDTH), click.width()),
                         Math.max(0, values.getLong(COOLDOWN)),
-                        positive(values.getDecimal(HOVER), 1))), back));
+                        positive(values.getDecimal(HOVER), 1))
+                        .withPermission(values.getOr(CLICK_PERMISSION, "").trim(), values.getOr(CLICK_DENIED, ""))
+                        .withCooldownMessage(values.getOr(CLICK_WAIT, ""))), back));
     }
 
     /** The palette names a button panel can take, as the click section writes them. */

@@ -103,7 +103,7 @@ class EntryStoreUndoTest {
         EntryStore<HologramFile, StoredHologram> store = store();
         store.create("shop", reading("a"));
         Path file = folder.resolve("holograms.yml");
-        Files.writeString(file, Files.readString(file).replace("- a", "- edited"));
+        Files.writeString(file, Files.readString(file).replaceAll("(?m)^(\\s*)- a$", "$1- edited"));
         store.reload();
         assertEquals(reading("edited"), store.get("shop").orElseThrow());
         assertEquals(reading("a"), store.undo("shop").orElseThrow());

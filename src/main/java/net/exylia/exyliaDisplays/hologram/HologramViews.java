@@ -93,6 +93,9 @@ public final class HologramViews {
         context.put("holo_distance", distanceScale(look.distanceScale()));
         context.put("holo_pages", hologram.pageCount());
         context.put("holo_page_interval", hologram.pageInterval());
+        context.put("holo_board", board(hologram));
+        context.put("holo_board_rows", hologram.leaderboard().rows());
+        context.put("holo_board_glow", hologram.leaderboard().enabled() ? "true" : "false");
         // Changes while the screen is open, so it is read every time the screen redraws.
         context.put("holo_viewers", (java.util.function.Supplier<Object>) () -> HologramModule.get() == null ? 0
                 : HologramModule.get().renderer().viewers(name));
@@ -100,6 +103,20 @@ public final class HologramViews {
         context.put("holo_undo", (java.util.function.Supplier<Object>) () -> HologramModule.get() == null ? 0 : HologramModule.get().store().undoable(name));
         context.put("holo_templates", (java.util.function.Supplier<Object>) () -> HologramModule.get() == null ? 0 : HologramModule.get().templates().names().size());
         return context;
+    }
+
+    /** What the leaderboard card says it ranks, or that it is off. */
+    static String board(StoredHologram hologram) {
+        net.exylia.exyliaDisplays.leaderboard.LeaderboardsMessages words = net.exylia.exyliaDisplays.leaderboard.LeaderboardsMessages.get();
+        net.exylia.exyliaDisplays.leaderboard.LeaderboardModule boards = net.exylia.exyliaDisplays.leaderboard.LeaderboardModule.get();
+        if (boards == null) return words.moduleOff();
+        net.exylia.exyliaDisplays.leaderboard.BoardSection board = hologram.leaderboard();
+        if (!board.enabled()) return words.off();
+        return Values.of()
+                .putText("stats", String.join(", ", board.stats().stream().map(boards::statName).toList()))
+                .putText("spans", String.join(", ", board.spans().stream()
+                        .map(net.exylia.exyliaDisplays.leaderboard.LeaderboardModule::spanName).toList()))
+                .apply(words.on());
     }
 
     /** The values a message about one hologram may name. */

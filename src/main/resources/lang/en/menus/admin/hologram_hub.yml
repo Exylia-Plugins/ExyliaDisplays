@@ -116,7 +116,7 @@ items:
       - "right: exyliadisplays:holo_visibility_mode"
 
   click:
-    slot: 21
+    slot: 20
     material: LEVER
     name: "{letters}Hologram {letters_black}▸ <gradient:{primary}:{secondary_light}>Click actions</gradient>"
     lore:
@@ -143,7 +143,7 @@ items:
       - "shift_right: exyliadisplays:holo_buttons"
 
   location:
-    slot: 22
+    slot: 21
     material: COMPASS
     name: "{letters}Hologram {letters_black}▸ <gradient:{primary}:{secondary_light}>Location</gradient>"
     lore:
@@ -184,6 +184,31 @@ items:
     actions:
       - "left: exyliadisplays:holo_attach"
       - "right: exyliadisplays:holo_detach"
+
+  leaderboard:
+    slot: 24
+    material: GOLDEN_HELMET
+    glow: "%holo_board_glow%"
+    name: "{letters}Hologram {letters_black}▸ <gradient:{highlight}:{warning_light}>Leaderboard</gradient>"
+    lore:
+      - "{letters_black}Hologram setting"
+      - ""
+      - "{highlight}✎ Information"
+      - " {letters}Turns it into a {highlight}top list {letters}that"
+      - " {letters}keeps its own values: kills,"
+      - " {letters}play time, money and more."
+      - ""
+      - "{highlight}✦ Status"
+      - "  {letters_black}· {highlight}{icon:star} {letters}Ranks{letters_black}: %holo_board%"
+      - "  {letters_black}· {highlight}{icon:book} {letters}Places{letters_black}: {highlight}%holo_board_rows%"
+      - ""
+      - "{highlight}{icon:click} Left-click {letters_black}· {letters}stats, periods and rows"
+      - "{letters_black}Each stat and period is a page."
+      - "{highlight}{icon:right_click} Right-click {letters_black}· {letters}turn on or off"
+      - "{letters_black}Its own lines are kept for later."
+    actions:
+      - "left: exyliadisplays:holo_leaderboard"
+      - "right: exyliadisplays:holo_leaderboard_toggle"
 
   teleport:
     slot: 27

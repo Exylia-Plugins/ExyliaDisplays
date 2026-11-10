@@ -1,6 +1,6 @@
 # ExyliaDisplays
 
-Free, open-source **holograms and NPCs** for Paper and Folia, with one interaction system shared by both. Holograms can have lines of different sizes, spinning blocks, shine and typewriter effects, and lines only some players see. NPCs can greet each player in their own speech bubble, show every viewer their own skin, and send players to another server. Edit everything **in game through native dialog windows**, **with commands**, or **by hand in YAML**, and all three stay in sync.
+Free, open-source **holograms, leaderboards and NPCs** for Paper and Folia, with one interaction system shared by all of them. Holograms can have lines of different sizes, spinning blocks and mobs, shine and typewriter effects, countdowns, text that changes while you look at it, and lines only some players see. Leaderboards keep their own values (kills, play time, money, any placeholder), by day, week, month, year and all time, with no stats plugin behind them. NPCs can greet each player in their own speech bubble, show every viewer their own skin, and send players to another server. Edit everything **in game through native dialog windows**, **with commands**, or **by hand in YAML**, and all three stay in sync.
 
 Built on [ExyliaLib](https://github.com/DiGround-s/ExyliaLib): everything is packets. Nothing is a real entity, nothing is saved in chunks, and nothing ticks on the server.
 
@@ -26,6 +26,12 @@ Built on [ExyliaLib](https://github.com/DiGround-s/ExyliaLib): everything is pac
 | **Lines for some players** | `<range:8>`, `<perm:vip>`, `<if:"%player_level% >= 10">`: the stack re-lays itself out for each viewer |
 | **Three ways to edit** | Screens and dialogs, `/holo` and `/npc` commands, or `holograms.yml` and `npcs.yml`, which are applied as soon as you save them |
 | **Imports** | DecentHolograms, HolographicDisplays, FancyHolograms, Citizens and FancyNpcs, pages and heads included. Their files are read and never changed. Import NPCs before holograms so a FancyHolograms hologram linked to an NPC stays linked |
+| **Leaderboards that keep themselves** | Turn any hologram into a top list of kills, play time, a balance, any statistic or any placeholder. The plugin keeps the values itself, offline players included (it reads every player who ever joined the first time), for all time, today, this week, this month and this year, in your time zone and from your reset hour. Each viewer sees their own place, rows can show faces (1.21.9+), and buttons turn the stat and the period. On a network sharing one database, statistics from every server add up |
+| **Time in a line** | `{countdown:2026-12-01 18:00\|{success}Open now!}` counts down to a moment and `{date:HH:mm}` tells the time, in any zone, refreshed every second on their own |
+| **Text that answers a look** | `<hover:"{success}▶ Click to join">` changes a line while a player aims at it, even on a hologram nobody can click |
+| **Mobs and pictures in the stack** | `<entity:ALLAY>` floats a mob that turns, bobs and glows, and `<image:logo.png>` draws a PNG as coloured pixels; neither is a real entity |
+| **Where you stand** | `<region:spawn>`, `<region:!pvp>` and `<world:world_nether>` on a line, and a hologram-wide `view` with a placeholder condition, a permission, regions and worlds |
+| **Who may click** | A click permission (per button too), and the messages a refused or too-early click gets |
 | **Modular** | Turn holograms or NPCs off in `config.yml`. New modules plug into the same core |
 
 ## Requirements
@@ -143,6 +149,12 @@ lines:
 | `<typewriter>` / `<typewriter:40>` | typed in, in characters a second |
 | `<scramble>` / `<scramble:30>` | random glyphs settle into it from the left |
 | `<button:join>` | clicking this line runs `click.buttons.join` instead of the hologram's click actions |
+| `<hover:"{success}▶ Join">` | shown instead while a player looks at the hologram (or at this button) |
+| `<entity:ALLAY>` | a floating mob instead of text; takes `<size>`, `<spin>`, `<sway>`, `<bob>` and `<glow>` |
+| `<image:logo.png>` / `<image:logo.png,width=24>` | a picture from `plugins/ExyliaDisplays/images/`, drawn in coloured pixels |
+| `<slide>` / `<slide:left,time=0.4>` | glides in from that side (`up`, `down`, `left`, `right`) when a player first sees it |
+| `<region:spawn>` / `<region:!pvp>` | only for players in (or out of) that WorldGuard region; `world:region` names its world |
+| `<world:world_nether>` / `<world:!world>` | only for players in (or out of) that world |
 | `<range:8>` | only within 8 blocks |
 | `<perm:node>` / `<perm:!node>` | only with (or without) a permission |
 | `<if:"%placeholder% >= 10">` | only while the comparison holds |
@@ -200,6 +212,8 @@ holograms:
 
 A `<button:...>` line is drawn as a button, its own background sized to its label (a column of buttons shares one width), that lights up while aimed at and presses when clicked. A hologram without button lines that is clickable as a whole gets one slim panel fitted to its lines instead; `style: NONE` keeps only the hover growth. Left-clicks, and right-clicks holding an item, work from as far as `range` (default 8 blocks); a right-click with an empty hand only from as close as the game lets a hand reach an entity (3 blocks in survival), because the client sends nothing further away. In the hologram's editor, **SIZE BY DISTANCE** edits the curve, and **CLICK ACTIONS** edits the actions (left-click), the look and sound (right-click) and the buttons (shift-click).
 
+Two tokens work anywhere in a line's text: `{countdown:2026-12-01 18:00}` (also `yyyy-MM-dd HH:mm:ss` and `yyyy-MM-dd`, an optional zone after a space, and the text after `|` once it has passed) and `{date:dd MMM · HH:mm}` (a Java date pattern). A line holding one is redrawn every second.
+
 Anything else at the start of a line, such as `<gradient:...>`, stays as text. Colours use ExyliaLib's palette tokens (`{primary}`, `{highlight}`...) as well as `&` codes, hex and MiniMessage.
 
 ## Pages
@@ -228,6 +242,82 @@ holograms:
 `[PAGE] next`, `[PAGE] previous`, `[PAGE] first`, `[PAGE] last` and `[PAGE] 2` turn the page of
 the player who clicked. In game, the book on the lines screen moves between pages (left and right
 click), adds one (shift-left), edits that page's click actions (shift-right) or removes it (Q).
+
+## Leaderboards
+
+Any hologram can become a leaderboard: right-click **LEADERBOARD** on its screen, or run
+`/holo <name> leaderboard on`. Its own lines are kept for when it is turned off again.
+
+```yaml
+holograms:
+  top:
+    leaderboard:
+      enabled: true
+      stats: [kills, playtime]          # ids from leaderboards.yml
+      spans: [weekly, all-time]         # all-time, daily, weekly, monthly, yearly
+      rows: 10
+      header: ['<size:1.6><shine:highlight>{highlight}&lTOP %stat%', '%resets%']
+      row: '{highlight}%rank%. {letters}%name% {letters_black}· {info}%value%'   # <head:%name%> adds their face on 1.21.9+
+      empty-row: '{muted}%rank%. ---'
+      you: '{success}You {letters_black}· {highlight}#%rank% {letters_black}· {info}%value%'
+```
+
+- **Every stat and period is a page.** A `◀ Kills ▶` button turns to the next stat (left-click) or the
+  previous one (right-click), and a `◀ This week ▶` button does the same with the period, for the
+  player who clicked alone.
+- **Each viewer sees their own place** under the others, or `you-unranked` while they hold none.
+- **What can be ranked** lives in `leaderboards.yml`:
+
+  ```yaml
+  time-zone: 'Europe/Madrid'   # empty for the server's
+  day-starts-at: 0             # the hour a day starts
+  week-starts-on: MONDAY
+  sample-every: 1m             # how often online players are read
+  sort-every: 30s              # how often the boards are sorted again
+  stats:
+    kills: {name: Kills, source: 'statistic:PLAYER_KILLS'}
+    diamonds: {name: Diamonds mined, source: 'statistic:MINE_BLOCK:DIAMOND_ORE'}
+    zombies: {name: Zombies slain, source: 'statistic:KILL_ENTITY:ZOMBIE'}
+    playtime: {name: Play time, source: playtime, format: duration}
+    money: {name: Balance, source: balance, format: money}
+    level: {name: Level, source: 'placeholder:%player_level%'}
+  ```
+
+  Statistics, play time and balances count every player who ever joined, read once in the background
+  the first time a stat is tracked; a placeholder counts players as they join. Periods count what was
+  gained since the period began. `format` is empty (`12,345`), `compact` (`1.2K`), `money`, `duration` or a
+  pattern such as `#,##0.#`.
+- **The same values anywhere**: `%exyliadisplays_lb_<stat>:<period>:<place>:name%` (also `value` and
+  `taken`), `%exyliadisplays_lb_<stat>:<period>:me:rank%` and `:me:value%`, and
+  `%exyliadisplays_lb_<stat>:<period>:resets%`. An NPC whose skin is `%exyliadisplays_lb_kills:weekly:1:name%`
+  wears this week's best killer.
+- `/holoadmin leaderboard reset <stat> [period]` starts a board over on every server.
+- `/holo <name> leaderboard flatten` keeps the board as plain lines you can edit one by one; the places
+  still read the board.
+
+## Who sees it, and who may click
+
+A hologram's `view` hides the whole hologram, clicks included, from players who do not pass it.
+In game it is part of the **VISIBILITY** window.
+
+```yaml
+holograms:
+  vip-lounge:
+    view:
+      condition: '%player_level% >= 10'
+      permission: ''              # '!node' for players without it
+      regions: [spawn, '!pvp']    # in spawn and not in pvp; world:region names one world's
+      worlds: [world]
+    click:
+      permission: 'lounge.enter'
+      denied-message: '%prefix% {error}Members only.'
+      cooldown: 3s
+      cooldown-message: '%prefix% {warning}Wait {highlight}%time%{warning}.'
+      button-permissions: {spectate: 'lounge.watch'}
+```
+
+A refused click runs nothing, plays no sound and shows no press. Both are set from the
+**CLICK ACTIONS** window too.
 
 ## NPC animations
 
@@ -319,8 +409,8 @@ Without it, `emote:` values are refused with a message saying so.
 | Command | Permission | |
 | --- | --- | --- |
 | `/displays help\|modules\|reload\|editor` | `exyliadisplays.admin` | The plugin as a whole; `editor` opens holograms and NPCs in the browser (see below) |
-| `/holoadmin` (`/hologramadmin`) | `exyliadisplays.holograms` | Every hologram, on a screen, plus what is not about one hologram: `editor`, `create <name> [text] [--template <t>]`, `list`, `near`, `templates`, `templates delete <t>`, `import`, `reload`, `help` |
-| `/holo <name> [setting] ...` (`/hologram`) | `exyliadisplays.holograms` | One hologram: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `adjust` (see below), `rename`, `clone`, `enable`, `disable`, `delete`, `undo` (takes back its last change, up to 10); templates with `savetemplate <t>` and `applytemplate <t>`; lines with `addline`, `setline`, `insertline`, `removeline`, `moveline`, `lines`, and one tag of one line with `line <n> <tag> [value]`; pages with `page add`, `page remove <n>`, `page <n>` (turns it for you), `pageinterval <ticks>`, and any line command on another page as `page <n> addline\|setline\|insertline\|removeline\|moveline\|line ...`; the look with `billboard`, `alignment`, `scale`, `shadow`, `seethrough`, `linewidth`, `spacing`, `opacity`, `background`, `brightness`; who sees it with `viewdistance`, `permission`, `perplayer`, `refresh`, `autoupdate`; which players see it with `visibility all\|manual`, `show\|hide <player\|@a>`, `viewers [clear]`; what it rides with `attach <player\|uuid\|nearest>`, `detach`, `attachoffset <blocks>`; size by distance with `distancescale <on\|off\|start end min max>`; clicks with `click add\|remove\|clear\|width\|cooldown\|hover`, the button look with `click style <button\|none>`, `click color\|hovercolor <colour>`, `click sound [sound]`, and buttons with `button <button> <action>` and `button <button> remove`; presets with `line <n> preset <preset>` |
+| `/holoadmin` (`/hologramadmin`) | `exyliadisplays.holograms` | Every hologram, on a screen, plus what is not about one hologram: `editor`, `create <name> [text] [--template <t>]`, `leaderboard reset <stat> [period]`, `list`, `near`, `templates`, `templates delete <t>`, `import`, `reload`, `help` |
+| `/holo <name> [setting] ...` (`/hologram`) | `exyliadisplays.holograms` | One hologram: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `adjust` (see below), `rename`, `clone`, `enable`, `disable`, `delete`, `undo` (takes back its last change, up to 10); templates with `savetemplate <t>` and `applytemplate <t>`; lines with `addline`, `setline`, `insertline`, `removeline`, `moveline`, `lines`, and one tag of one line with `line <n> <tag> [value]`; pages with `page add`, `page remove <n>`, `page <n>` (turns it for you), `pageinterval <ticks>`, and any line command on another page as `page <n> addline\|setline\|insertline\|removeline\|moveline\|line ...`; the look with `billboard`, `alignment`, `scale`, `shadow`, `seethrough`, `linewidth`, `spacing`, `opacity`, `background`, `brightness`; who sees it with `viewdistance`, `permission`, `perplayer`, `refresh`, `autoupdate`; which players see it with `visibility all\|manual`, `show\|hide <player\|@a>`, `viewers [clear]`; what it rides with `attach <player\|uuid\|nearest>`, `detach`, `attachoffset <blocks>`; size by distance with `distancescale <on\|off\|start end min max>`; clicks with `click add\|remove\|clear\|width\|cooldown\|hover`, the button look with `click style <button\|none>`, `click color\|hovercolor <colour>`, `click sound [sound]`, and buttons with `button <button> <action>` and `button <button> remove`; presets with `line <n> preset <preset>`; leaderboards with `leaderboard` (its window), `leaderboard on\|off\|flatten`, `leaderboard stats <kills,deaths>`, `leaderboard spans <weekly,all-time>` and `leaderboard rows <n>` |
 | `/npcadmin` (`/npcsadmin`) | `exyliadisplays.npcs` | Every NPC, on a screen, plus what is not about one NPC: `create <name> [skin]`, `list`, `near`, `import`, `reload`, `help` |
 | `/npc <name> [setting] ...` (`/npcs`) | `exyliadisplays.npcs` | One NPC: its editor with no setting, or any setting by command. `info`, `tp`, `movehere`, `move`, `center`, `rotate <yaw> [pitch]`, `face`, `adjust` (see below), `rename`, `clone`, `enable`, `disable`, `delete`, `undo` (takes back its last change, up to 10); the look with `skin`, `texture <value> [signature]`, `pose`, `scale`, `glow`, `equip <slot\|clear> [item]`, `equipment`; `look <mode> [range]`, `viewdistance`, `permission`; the label with `label set\|add\|remove\|clear\|height`, or a whole hologram with `link`, `unlink`; clicks with `action add\|set\|remove\|clear\|list` and `action permission\|cooldown\|denymessage\|cooldownmessage\|faceclicker`; animations with `animation <left-click\|right-click\|idle\|greet> [animation]`, `animation idle-every\|greet-cooldown <time>`, `animation greet-range\|perform-range <blocks>`, `play <animation>` (to everyone watching; a performance to everyone within its perform-range) and `sit <on\|off>` |
 
@@ -394,7 +484,8 @@ The server never opens a port and never applies anything on its own: only that c
 
   `/holo <name> show` and `hide` work in both modes: in `all` they take a player off or put them on `hidden-from`, in `manual` they put them on or take them off `shown-to`; `@a` means every player online. Only the exceptions are written, as UUIDs, so a renamed player keeps their place. An attached hologram rides its player whenever they are online (joining, respawning and changing worlds included) and a saved mob whenever its chunk is loaded, and is hidden while they are away. A mob that is not saved with its chunk is ridden until it is gone or the server restarts, without being written down.
 
-- **`lang/<code>/messages.yml`**, **`messages/holograms.yml`**, **`messages/npcs.yml`** and **`menus/`** contain every message and screen, in English, Spanish, Russian, Turkish, French and Brazilian Portuguese. The language follows ExyliaLib's.
+- **`leaderboards.yml`** holds what leaderboards rank by and when their periods start over (see [Leaderboards](#leaderboards)).
+- **`lang/<code>/messages.yml`**, **`messages/holograms.yml`**, **`messages/leaderboards.yml`**, **`messages/npcs.yml`** and **`menus/`** contain every message and screen, in English, Spanish, Russian, Turkish, French and Brazilian Portuguese. The language follows ExyliaLib's.
 
 ## Building
 

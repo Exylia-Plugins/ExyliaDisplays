@@ -117,7 +117,7 @@ items:
       - "right: exyliadisplays:holo_visibility_mode"
 
   click:
-    slot: 21
+    slot: 20
     material: LEVER
     name: "{letters}Holograma {letters_black}▸ <gradient:{primary}:{secondary_light}>Acciones al clic</gradient>"
     lore:
@@ -145,7 +145,7 @@ items:
       - "shift_right: exyliadisplays:holo_buttons"
 
   location:
-    slot: 22
+    slot: 21
     material: COMPASS
     name: "{letters}Holograma {letters_black}▸ <gradient:{primary}:{secondary_light}>Ubicación</gradient>"
     lore:
@@ -186,6 +186,31 @@ items:
     actions:
       - "left: exyliadisplays:holo_attach"
       - "right: exyliadisplays:holo_detach"
+
+  leaderboard:
+    slot: 24
+    material: GOLDEN_HELMET
+    glow: "%holo_board_glow%"
+    name: "{letters}Holograma {letters_black}▸ <gradient:{highlight}:{warning_light}>Ranking</gradient>"
+    lore:
+      - "{letters_black}Ajuste del holograma"
+      - ""
+      - "{highlight}✎ Información"
+      - " {letters}Lo convierte en una {highlight}lista de tops {letters}que"
+      - " {letters}guarda sus propios valores: bajas,"
+      - " {letters}tiempo jugado, dinero y más."
+      - ""
+      - "{highlight}✦ Estado"
+      - "  {letters_black}· {highlight}{icon:star} {letters}Puestos{letters_black}: %holo_board%"
+      - "  {letters_black}· {highlight}{icon:book} {letters}Lugares{letters_black}: {highlight}%holo_board_rows%"
+      - ""
+      - "{highlight}{icon:click} Clic izquierdo {letters_black}· {letters}estadísticas, períodos y filas"
+      - "{letters_black}Cada estadística y período es una página."
+      - "{highlight}{icon:right_click} Clic derecho {letters_black}· {letters}activar o desactivar"
+      - "{letters_black}Sus propias líneas se guardan para después."
+    actions:
+      - "left: exyliadisplays:holo_leaderboard"
+      - "right: exyliadisplays:holo_leaderboard_toggle"
 
   teleport:
     slot: 27

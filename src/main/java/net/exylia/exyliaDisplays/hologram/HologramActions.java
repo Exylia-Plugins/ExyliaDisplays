@@ -87,6 +87,17 @@ public final class HologramActions {
         hub("template_save", HologramDialogs::saveTemplate);
         hub("template_apply", HologramDialogs::applyTemplate);
         hub("visibility", HologramDialogs::visibility);
+        hub("leaderboard", HologramDialogs::leaderboard);
+        hub("leaderboard_toggle", (player, name) -> {
+            StoredHologram before = HologramModule.get().store().get(name).orElse(null);
+            if (before == null) return;
+            if (before.leaderboard().enabled()) {
+                new HologramCommand().leaderboardOff(player, name);
+            } else {
+                new HologramCommand().leaderboardOn(player, name);
+            }
+            HologramViews.openHub(player, name);
+        });
         hub("click", HologramDialogs::click);
         hub("click_look", HologramDialogs::clickLook);
         hub("buttons", HologramDialogs::buttons);

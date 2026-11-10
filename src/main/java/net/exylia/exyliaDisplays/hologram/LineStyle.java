@@ -177,6 +177,12 @@ final class LineStyle {
             number(Screen.TEXT, "marquee_speed", Dialogs::marqueeSpeedLabel, null, HologramLine::marqueeSpeed,
                     HologramLine.Builder::marqueeSpeed, 0)
                     .only(TEXT_LINE.and(line -> line.marquee() != null)),
+            choice(Screen.TEXT, "slide", Dialogs::slideLabel, Dialogs::slideHint,
+                    (words, line) -> List.of(new FormField.Option(OFF, words.slideOff()),
+                            new FormField.Option("up", words.slideUp()), new FormField.Option("down", words.slideDown()),
+                            new FormField.Option("left", words.slideLeft()), new FormField.Option("right", words.slideRight())),
+                    line -> line.slide() == null ? OFF : line.slide().isEmpty() ? "up" : line.slide(),
+                    (line, key) -> line.slide(OFF.equals(key) ? null : key)),
             number(Screen.TEXT, "fade", Dialogs::fadeLabel, null, HologramLine::fade, HologramLine.Builder::fade, 0)
                     .only(TEXT_LINE),
             number(Screen.TEXT, "blink", Dialogs::blinkLabel, null, HologramLine::blink, HologramLine.Builder::blink, 0)
@@ -191,6 +197,13 @@ final class LineStyle {
                     HologramLine::permission, HologramLine.Builder::permission),
             text(Screen.REACH, "condition", Dialogs::conditionLabel, Dialogs::conditionHint,
                     HologramLine::condition, HologramLine.Builder::condition),
+            text(Screen.REACH, "region", Dialogs::regionLabel, Dialogs::regionHint,
+                    HologramLine::region, (line, region) -> line.region(region.isEmpty() ? null : region)),
+            text(Screen.REACH, "world", Dialogs::lineWorldLabel, null,
+                    HologramLine::world, (line, world) -> line.world(world.isEmpty() ? null : world)),
+            text(Screen.REACH, "hover", Dialogs::hoverTextLabel, Dialogs::hoverTextHint,
+                    HologramLine::hover, (line, hover) -> line.hover(hover.isEmpty() ? null : hover))
+                    .only(TEXT_LINE),
             text(Screen.REACH, "button", Dialogs::buttonLabel, Dialogs::buttonHint,
                     HologramLine::button, (line, button) -> line.button(button.isEmpty() ? null : button)));
 

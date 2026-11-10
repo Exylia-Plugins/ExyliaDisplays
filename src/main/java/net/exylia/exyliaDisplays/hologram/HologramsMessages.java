@@ -464,7 +464,31 @@ public record HologramsMessages(
             String buttonsHint,
             String newButtonLabel,
             String newButtonHint,
-            String newButtonActionsLabel) {
+            String newButtonActionsLabel,
+            @Comment("Who sees it at all, in the visibility window.")
+            String viewConditionLabel,
+            String viewConditionHint,
+            String viewRegionsLabel,
+            String viewWorldsLabel,
+            String viewPlacesHint,
+            @Comment("Who may click it, in the click window.")
+            String clickPermissionLabel,
+            String clickDeniedLabel,
+            String clickWaitLabel,
+            String clickMessagesHint,
+            @Comment("The new line tags, in the line style windows.")
+            String regionLabel,
+            String regionHint,
+            String lineWorldLabel,
+            String hoverTextLabel,
+            String hoverTextHint,
+            String slideLabel,
+            String slideHint,
+            String slideOff,
+            String slideUp,
+            String slideDown,
+            String slideLeft,
+            String slideRight) {
 
         public Dialogs() {
             this("{primary}&lNEW HOLOGRAM",
@@ -626,7 +650,24 @@ public record HologramsMessages(
                     "One action per row, like the click actions. Empty a button to remove it.",
                     "New button name",
                     "Lowercase letters, numbers, - and _. A line tagged <button:name> runs it.",
-                    "New button actions");
+                    "New button actions",
+                    "Only while (placeholder condition)",
+                    "Such as %player_level% >= 10. Empty for always.",
+                    "Only in regions (one per line)",
+                    "Only in worlds (one per line)",
+                    "WorldGuard regions and worlds; !name leaves one out, world:region names its world. Empty for anywhere.",
+                    "Permission to click",
+                    "Told when they lack it",
+                    "Told while they wait (%time%)",
+                    "!node for players without it. Empty messages say nothing.",
+                    "Only in region",
+                    "A WorldGuard region; !name for outside it, world:name for one world's.",
+                    "Only in world (!name for elsewhere)",
+                    "Text while looked at",
+                    "Shown instead while a player aims at it (or at this button).",
+                    "Slide in",
+                    "Glides in from that side the first time a player sees it.",
+                    "Off", "From above", "From below", "From the left", "From the right");
         }
     }
 

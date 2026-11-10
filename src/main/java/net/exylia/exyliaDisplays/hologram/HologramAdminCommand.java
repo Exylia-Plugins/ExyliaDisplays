@@ -63,6 +63,40 @@ public final class HologramAdminCommand {
         WebEditor.open(sender, ExyliaDisplays.getInstance().getPlugin());
     }
 
+    /**
+     * Starts a board over on every server: one period, or every value when none is named (all
+     * time then comes back from the source as players are read again).
+     */
+    @Subcommand("leaderboard reset")
+    public void leaderboardReset(CommandSender sender,
+                                 @SuggestWith(HologramCommand.BoardStats.class) String stat,
+                                 @Optional @SuggestWith(HologramCommand.BoardSpans.class) String span) {
+        net.exylia.exyliaDisplays.leaderboard.LeaderboardModule boards = net.exylia.exyliaDisplays.leaderboard.LeaderboardModule.get();
+        net.exylia.exyliaDisplays.leaderboard.LeaderboardsMessages words = net.exylia.exyliaDisplays.leaderboard.LeaderboardsMessages.get();
+        if (boards == null) {
+            send(sender, words.moduleOff(), Values.of());
+            return;
+        }
+        String id = stat.toLowerCase(Locale.ROOT);
+        if (!boards.unknown(List.of(id)).isEmpty()) {
+            send(sender, words.unknownStat(), Values.of().putText("stat", stat));
+            return;
+        }
+        if (span == null || span.isBlank()) {
+            boards.boards().reset(id);
+            send(sender, words.reset(), Values.of().putText("stat", boards.statName(id)).putText("span", "*"));
+            return;
+        }
+        java.util.Optional<net.exylia.lib.leaderboard.Span> period = net.exylia.exyliaDisplays.leaderboard.LeaderboardModule.span(span);
+        if (period.isEmpty()) {
+            send(sender, words.unknownSpan(), Values.of().putText("span", span));
+            return;
+        }
+        boards.boards().reset(id, period.get());
+        send(sender, words.reset(), Values.of().putText("stat", boards.statName(id))
+                .putText("span", net.exylia.exyliaDisplays.leaderboard.LeaderboardModule.spanName(span)));
+    }
+
     @Subcommand("list")
     public void list(CommandSender sender) {
         if (sender instanceof Player player) {

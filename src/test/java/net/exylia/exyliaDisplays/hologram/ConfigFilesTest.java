@@ -139,6 +139,7 @@ class ConfigFilesTest {
     void messages() throws IOException {
         assertTranslated("messages", DisplaysMessages.class);
         assertTranslated("messages/holograms", HologramsMessages.class);
+        assertTranslated("messages/leaderboards", net.exylia.exyliaDisplays.leaderboard.LeaderboardsMessages.class);
     }
 
     private <T extends Record> void assertTranslated(String name, Class<T> type) throws IOException {

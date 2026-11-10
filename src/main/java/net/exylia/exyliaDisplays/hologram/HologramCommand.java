@@ -4,6 +4,8 @@ import net.exylia.exyliaDisplays.ExyliaDisplays;
 import net.exylia.exyliaDisplays.Permissions;
 import net.exylia.exyliaDisplays.common.Completion;
 import net.exylia.exyliaDisplays.common.store.Position;
+import net.exylia.exyliaDisplays.leaderboard.BoardSection;
+import net.exylia.exyliaDisplays.leaderboard.LeaderboardModule;
 import net.exylia.lib.hologram.HologramConfig;
 import net.exylia.lib.hologram.HologramLine;
 import net.exylia.lib.hologram.Holograms;
@@ -44,14 +46,14 @@ public final class HologramCommand {
     static final List<String> TAGS = List.of("text", "preset", "size", "head", "opacity", "background", "shadow",
             "glow", "gap", "align", "width", "billboard", "seethrough", "brightness", "autoscale", "spin", "sway", "bob",
             "pulse", "shine", "flow", "rainbow", "typewriter", "scramble", "marquee", "fade", "blink", "frames", "range",
-            "permission", "condition", "button");
+            "permission", "condition", "button", "hover", "region", "world", "slide", "entity", "image");
     /**
      * The tags set by reading them as a line writes them, options included, so
      * {@code line 2 sway 20,period=6} is {@code <sway:20,period=6>} and {@code on} is the bare tag.
      */
     private static final java.util.Set<String> WRITTEN = java.util.Set.of("gap", "align", "width", "billboard",
             "seethrough", "brightness", "autoscale", "sway", "bob", "pulse", "shine", "rainbow", "scramble", "marquee",
-            "fade", "blink", "frames", "button");
+            "fade", "blink", "frames", "button", "hover", "region", "world", "slide", "entity", "image");
     private static final Pattern PALETTE = Pattern.compile("\\{[a-z_]+}");
     private static final Pattern COLOUR = Pattern.compile("#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})");
 
@@ -457,6 +459,12 @@ public final class HologramCommand {
             case "blink" -> line.blink(null);
             case "frames" -> line.frames(null);
             case "button" -> line.button(null);
+            case "hover" -> line.hover(null);
+            case "region" -> line.region(null);
+            case "world" -> line.world(null);
+            case "slide" -> line.slide(null);
+            case "entity" -> line.entity(null);
+            case "image" -> line.image(null);
             default -> throw new IllegalArgumentException(key);
         }
         return line.build().raw();
@@ -640,6 +648,134 @@ public final class HologramCommand {
     public void permission(CommandSender sender, @SuggestWith(Names.class) String name, @Optional @SuggestWith(HologramSuggestions.class) String permission) {
         String value = permission == null ? "" : permission.trim();
         property(sender, name, "permission", value.isEmpty() ? "-" : value, current -> current.withPermission(value));
+    }
+
+    // ------------------------------------------------------------------
+    // Leaderboard
+    // ------------------------------------------------------------------
+
+    /** Opens the leaderboard window. */
+    @Subcommand("<name> leaderboard")
+    public void leaderboard(Player player, @SuggestWith(Names.class) String name) {
+        if (exists(player, name)) HologramDialogs.leaderboard(player, name);
+    }
+
+    @Subcommand("<name> leaderboard on")
+    public void leaderboardOn(CommandSender sender, @SuggestWith(Names.class) String name) {
+        LeaderboardModule boards = LeaderboardModule.get();
+        if (boards == null) {
+            send(sender, net.exylia.exyliaDisplays.leaderboard.LeaderboardsMessages.get().moduleOff(), Values.of());
+            return;
+        }
+        StoredHologram saved = edited(sender, name, current -> {
+            BoardSection board = current.leaderboard();
+            if (board.stats().isEmpty() && !boards.statIds().isEmpty()) {
+                board = board.withStats(List.of(boards.statIds().get(0)));
+            }
+            return current.withLeaderboard(board.withEnabled(true));
+        }, null, Values.of());
+        if (saved != null) boardTurnedOn(sender, name, saved.leaderboard());
+    }
+
+    @Subcommand("<name> leaderboard off")
+    public void leaderboardOff(CommandSender sender, @SuggestWith(Names.class) String name) {
+        edited(sender, name, current -> current.withLeaderboard(current.leaderboard().withEnabled(false)),
+                net.exylia.exyliaDisplays.leaderboard.LeaderboardsMessages.get().turnedOff(), Values.of());
+    }
+
+    /** Keeps the board as plain lines: the places still read the board, but every line can be edited. */
+    @Subcommand("<name> leaderboard flatten")
+    public void leaderboardFlatten(CommandSender sender, @SuggestWith(Names.class) String name) {
+        StoredHologram hologram = HologramModule.get().store().get(name).orElse(null);
+        if (hologram == null || !hologram.leaderboard().enabled() || LeaderboardModule.get() == null) {
+            leaderboardOn(sender, name);
+            return;
+        }
+        edited(sender, name, StoredHologram::board,
+                net.exylia.exyliaDisplays.leaderboard.LeaderboardsMessages.get().flattened(), Values.of());
+    }
+
+    /** The stats it turns through, by id, separated by commas: {@code kills,deaths}. */
+    @Subcommand("<name> leaderboard stats")
+    public void leaderboardStats(CommandSender sender, @SuggestWith(Names.class) String name,
+                                 @SuggestWith(BoardStats.class) String stats) {
+        List<String> ids = words(stats);
+        LeaderboardModule boards = LeaderboardModule.get();
+        List<String> unknown = boards == null ? List.of() : boards.unknown(ids);
+        if (ids.isEmpty() || !unknown.isEmpty()) {
+            send(sender, net.exylia.exyliaDisplays.leaderboard.LeaderboardsMessages.get().unknownStat(),
+                    Values.of().putText("stat", unknown.isEmpty() ? stats : String.join(", ", unknown)));
+            return;
+        }
+        property(sender, name, "leaderboard stats", String.join(", ", ids),
+                current -> current.withLeaderboard(current.leaderboard().withStats(ids)));
+    }
+
+    /** The periods it turns through: {@code all-time,weekly}. */
+    @Subcommand("<name> leaderboard spans")
+    public void leaderboardSpans(CommandSender sender, @SuggestWith(Names.class) String name,
+                                 @SuggestWith(BoardSpans.class) String spans) {
+        List<String> ids = new ArrayList<>();
+        for (String word : words(spans)) {
+            java.util.Optional<net.exylia.lib.leaderboard.Span> span = LeaderboardModule.span(word);
+            if (span.isEmpty()) {
+                send(sender, net.exylia.exyliaDisplays.leaderboard.LeaderboardsMessages.get().unknownSpan(),
+                        Values.of().putText("span", word));
+                return;
+            }
+            ids.add(LeaderboardModule.spanId(span.get()));
+        }
+        if (ids.isEmpty()) {
+            send(sender, net.exylia.exyliaDisplays.leaderboard.LeaderboardsMessages.get().unknownSpan(),
+                    Values.of().putText("span", spans));
+            return;
+        }
+        property(sender, name, "leaderboard spans", String.join(", ", ids),
+                current -> current.withLeaderboard(current.leaderboard().withSpans(ids)));
+    }
+
+    @Subcommand("<name> leaderboard rows")
+    public void leaderboardRows(CommandSender sender, @SuggestWith(Names.class) String name, int rows) {
+        if (rows < 1 || rows > BoardSection.MAX_ROWS) {
+            invalid(sender, "leaderboard rows", String.valueOf(rows), "1 - " + BoardSection.MAX_ROWS);
+            return;
+        }
+        property(sender, name, "leaderboard rows", String.valueOf(rows),
+                current -> current.withLeaderboard(current.leaderboard().withRows(rows)));
+    }
+
+    static void boardTurnedOn(CommandSender sender, String name, BoardSection board) {
+        LeaderboardModule boards = LeaderboardModule.get();
+        send(sender, net.exylia.exyliaDisplays.leaderboard.LeaderboardsMessages.get().turnedOn(), Values.of()
+                .putText("name", name)
+                .putText("stats", String.join(", ", board.stats().stream()
+                        .map(id -> boards == null ? id : boards.statName(id)).toList()))
+                .putText("spans", String.join(", ", board.spans().stream().map(LeaderboardModule::spanName).toList())));
+    }
+
+    /** Ids written with commas or spaces between them. */
+    private static List<String> words(String written) {
+        if (written == null) return List.of();
+        return java.util.Arrays.stream(written.toLowerCase(Locale.ROOT).split("[,\\s]+"))
+                .map(String::trim).filter(word -> !word.isEmpty()).distinct().toList();
+    }
+
+    /** The stats leaderboards.yml defines. */
+    public static final class BoardStats implements Completion {
+
+        @Override
+        public Collection<String> suggest(List<String> words, Player player) {
+            return LeaderboardModule.get() == null ? List.of() : LeaderboardModule.get().statIds();
+        }
+    }
+
+    /** The periods a board can show. */
+    public static final class BoardSpans implements Completion {
+
+        @Override
+        public Collection<String> suggest(List<String> words, Player player) {
+            return List.of("all-time", "daily", "weekly", "monthly", "yearly", "all-time,weekly", "daily,weekly,monthly");
+        }
     }
 
     @Subcommand("<name> perplayer")
