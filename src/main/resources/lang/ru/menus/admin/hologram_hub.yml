@@ -155,7 +155,7 @@ items:
       - "  {letters_black}· {info}{icon:compass} {letters}Направление{letters_black}: {info}%facing%"
       - ""
       - "{primary}{icon:click} ЛКМ {letters_black}· {letters}точная позиция и поворот"
-      - "{primary}{icon:right_click} ПКМ {letters_black}· {letters}переместить сюда"
+      - "{primary}{icon:right_click} ПКМ {letters_black}· {letters}переместить · встань там и sneak-клик"
       - "{primary}{icon:click} Shift+ЛКМ {letters_black}· {letters}по центру блока"
       - "{primary}{icon:right_click} Shift+ПКМ {letters_black}· {letters}повернуть ко мне"
     actions:

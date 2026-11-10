@@ -156,7 +156,7 @@ items:
       - "  {letters_black}· {info}{icon:compass} {letters}Yön{letters_black}: {info}%facing%"
       - ""
       - "{primary}{icon:click} Sol tık {letters_black}· {letters}tam konum ve dönüş"
-      - "{primary}{icon:right_click} Sağ tık {letters_black}· {letters}buraya taşı"
+      - "{primary}{icon:right_click} Sağ tık {letters_black}· {letters}taşı · oraya git, sneak-tık"
       - "{primary}{icon:click} Shift-sol tık {letters_black}· {letters}bloğunun ortasına al"
       - "{primary}{icon:right_click} Shift-sağ tık {letters_black}· {letters}bana dönsün"
     actions:

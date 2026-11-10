@@ -191,7 +191,7 @@ items:
       - "  {letters_black}· {info}{icon:compass} {letters}Orientación{letters_black}: {info}%yaw%° {letters_black}· {info}%pitch%°"
       - ""
       - "{primary}{icon:click} Clic izquierdo {letters_black}· {letters}posición y giro exactos"
-      - "{primary}{icon:right_click} Clic derecho {letters_black}· {letters}mover aquí"
+      - "{primary}{icon:right_click} Clic derecho {letters_black}· {letters}moverlo · ve allí y sneak-clic"
       - "{primary}{icon:click} Shift + clic izquierdo {letters_black}· {letters}centrar en su bloque"
       - "{primary}{icon:right_click} Shift + clic derecho {letters_black}· {letters}que me mire"
     actions:

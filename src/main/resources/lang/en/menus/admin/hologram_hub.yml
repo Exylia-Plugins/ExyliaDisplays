@@ -155,7 +155,7 @@ items:
       - "  {letters_black}· {info}{icon:compass} {letters}Facing{letters_black}: {info}%facing%"
       - ""
       - "{primary}{icon:click} Left-click {letters_black}· {letters}exact position and rotation"
-      - "{primary}{icon:right_click} Right-click {letters_black}· {letters}move here"
+      - "{primary}{icon:right_click} Right-click {letters_black}· {letters}move it · walk there, sneak-click"
       - "{primary}{icon:click} Shift-left-click {letters_black}· {letters}centre on its block"
       - "{primary}{icon:right_click} Shift-right-click {letters_black}· {letters}turn to face me"
     actions:

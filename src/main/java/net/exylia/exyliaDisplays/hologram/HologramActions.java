@@ -1,5 +1,6 @@
 package net.exylia.exyliaDisplays.hologram;
 
+import net.exylia.lib.util.wizard.Wizards;
 import net.exylia.exyliaDisplays.ExyliaDisplays;
 import net.exylia.exyliaDisplays.Permissions;
 import net.exylia.exyliaDisplays.hologram.HologramsMessages;
@@ -104,10 +105,12 @@ public final class HologramActions {
         hub("distance_scale", HologramDialogs::distanceScale);
         hub("location", HologramDialogs::location);
         hub("move_here", (player, name) -> {
-            Position here = Position.facing(player.getLocation());
-            HologramModule.get().store().edit(name, current -> current.withLocation(here));
-            plugin.getMessages().send(player, HologramsMessages.get().moved(), Values.of().putText("name", name));
-            HologramViews.openHub(player, name);
+            Wizards.of(plugin.getPlugin()).setup(player, () -> HologramViews.openHub(player, name)).spawn("HOLOGRAM SPOT", name, where -> {
+                Position here = Position.facing(where);
+                HologramModule.get().store().edit(name, current -> current.withLocation(here));
+                plugin.getMessages().send(player, HologramsMessages.get().moved(), Values.of().putText("name", name));
+                HologramViews.openHub(player, name);
+            });
         });
         hub("centre", (player, name) -> {
             HologramModule.get().store().edit(name, current -> current.withLocation(current.location().centred()));

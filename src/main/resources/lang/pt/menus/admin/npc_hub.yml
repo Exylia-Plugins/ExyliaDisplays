@@ -189,7 +189,7 @@ items:
       - "  {letters_black}· {info}{icon:compass} {letters}Orientação{letters_black}: {info}%yaw%° {letters_black}· {info}%pitch%°"
       - ""
       - "{primary}{icon:click} Clique esquerdo {letters_black}· {letters}posição e rotação exatas"
-      - "{primary}{icon:right_click} Clique direito {letters_black}· {letters}mover para cá"
+      - "{primary}{icon:right_click} Clique direito {letters_black}· {letters}movê-lo · vá lá e sneak-clique"
       - "{primary}{icon:click} Shift + clique esquerdo {letters_black}· {letters}centralizar no bloco"
       - "{primary}{icon:right_click} Shift + clique direito {letters_black}· {letters}virar para mim"
     actions:

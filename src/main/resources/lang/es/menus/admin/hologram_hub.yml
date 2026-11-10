@@ -157,7 +157,7 @@ items:
       - "  {letters_black}· {info}{icon:compass} {letters}Orientación{letters_black}: {info}%facing%"
       - ""
       - "{primary}{icon:click} Clic izquierdo {letters_black}· {letters}posición y rotación exactas"
-      - "{primary}{icon:right_click} Clic derecho {letters_black}· {letters}mover aquí"
+      - "{primary}{icon:right_click} Clic derecho {letters_black}· {letters}moverlo · ve allí y sneak-clic"
       - "{primary}{icon:click} Shift + clic izquierdo {letters_black}· {letters}centrar en su bloque"
       - "{primary}{icon:right_click} Shift + clic derecho {letters_black}· {letters}girar hacia mí"
     actions:

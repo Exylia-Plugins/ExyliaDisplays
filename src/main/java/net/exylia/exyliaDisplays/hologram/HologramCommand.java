@@ -1,5 +1,6 @@
 package net.exylia.exyliaDisplays.hologram;
 
+import net.exylia.lib.util.wizard.Wizards;
 import net.exylia.exyliaDisplays.ExyliaDisplays;
 import net.exylia.exyliaDisplays.Permissions;
 import net.exylia.exyliaDisplays.common.Completion;
@@ -176,8 +177,10 @@ public final class HologramCommand {
 
     @Subcommand("<name> movehere")
     public void moveHere(Player player, @SuggestWith(Names.class) String name) {
-        Position here = Position.facing(player.getLocation());
-        edited(player, name, current -> current.withLocation(here), messages().moved(), Values.of());
+        Wizards.of(ExyliaDisplays.getInstance().getPlugin()).setup(player).spawn("HOLOGRAM SPOT", name, where -> {
+            Position here = Position.facing(where);
+            edited(player, name, current -> current.withLocation(here), messages().moved(), Values.of());
+        });
     }
 
     @Subcommand("<name> move")

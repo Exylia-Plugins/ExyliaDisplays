@@ -1,5 +1,6 @@
 package net.exylia.exyliaDisplays.npc;
 
+import net.exylia.lib.util.wizard.Wizards;
 import net.exylia.exyliaDisplays.ExyliaDisplays;
 import net.exylia.exyliaDisplays.Permissions;
 import net.exylia.exyliaDisplays.common.store.Place;
@@ -97,10 +98,11 @@ public final class NpcActions {
         hub("visibility", NpcDialogs::visibility);
         hub("location", NpcDialogs::location);
         hub("move_here", (player, name) -> {
-            Location here = player.getLocation();
-            NpcModule.get().store().edit(name, current -> current.withLocation(Place.of(here)));
-            plugin.getMessages().send(player, NpcsMessages.get().moved(), Values.of().putText("name", name));
-            NpcViews.openHub(player, name);
+            Wizards.of(plugin.getPlugin()).setup(player, () -> NpcViews.openHub(player, name)).spawn("NPC SPOT", name, here -> {
+                NpcModule.get().store().edit(name, current -> current.withLocation(Place.of(here)));
+                plugin.getMessages().send(player, NpcsMessages.get().moved(), Values.of().putText("name", name));
+                NpcViews.openHub(player, name);
+            });
         });
         hub("centre", (player, name) -> {
             NpcModule.get().store().edit(name, current -> current.withLocation(current.location().centred()))

@@ -1,5 +1,6 @@
 package net.exylia.exyliaDisplays.npc;
 
+import net.exylia.lib.util.wizard.Wizards;
 import net.exylia.exyliaDisplays.ExyliaDisplays;
 import net.exylia.exyliaDisplays.Permissions;
 import net.exylia.exyliaDisplays.common.Completion;
@@ -133,8 +134,10 @@ public final class NpcCommand {
 
     @Subcommand("<name> movehere")
     public void moveHere(Player player, @SuggestWith(Names.class) String name) {
-        Place here = Place.of(player.getLocation());
-        edited(player, name, current -> current.withLocation(here), messages().moved(), Values.of());
+        Wizards.of(ExyliaDisplays.getInstance().getPlugin()).setup(player).spawn("NPC SPOT", name, where -> {
+            Place here = Place.of(where);
+            edited(player, name, current -> current.withLocation(here), messages().moved(), Values.of());
+        });
     }
 
     /** Moves it without turning it; the world stays the same unless one is given. */
