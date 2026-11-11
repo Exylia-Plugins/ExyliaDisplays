@@ -145,7 +145,7 @@ public final class ExyliaDisplays {
     }
 
     /**
-     * What {@code /displays reload} does: every file, then every module, then the screens.
+     * What {@code /displaysadmin reload} does: every file, then every module, then the screens.
      *
      * <p>Menus are also a library-reload step: their items hold the parsed palette, so a recolour
      * through {@code /exylialib reload} would otherwise leave them on the old one.

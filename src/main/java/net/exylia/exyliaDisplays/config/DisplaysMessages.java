@@ -10,14 +10,14 @@ import java.util.List;
  * {@code lang/<code>/messages/<module>.yml}.
  *
  * @param prefix   substituted into every %prefix%
- * @param reloaded after /displays reload
- * @param help     /displays help
- * @param module   one line per module in /displays modules
+ * @param reloaded after /displaysadmin reload
+ * @param help     /displaysadmin help
+ * @param module   one line per module in /displaysadmin modules
  * @param on       a module that runs
  * @param off      a module switched off
- * @param demoSeeded      after /displays demo seed: what was built and how to frame it
- * @param demoCleared     after /displays demo clear
- * @param demoNone        /displays demo clear with nothing to remove
+ * @param demoSeeded      after /displaysadmin demo seed: what was built and how to frame it
+ * @param demoCleared     after /displaysadmin demo clear
+ * @param demoNone        /displaysadmin demo clear with nothing to remove
  * @param demoModules     the demo asked for while a module it builds on is off
  * @param demoInvalidSkin a skin given to the demo that is no account name
  */
@@ -58,10 +58,10 @@ public record DisplaysMessages(
                         "",
                         " <click:run_command:'/holoadmin'>{warning}/holoadmin</click> {letters_black}» {letters}holograms, on a screen {letters_black}· <click:run_command:'/holoadmin help'>{info}[help]</click>",
                         " <click:run_command:'/npcadmin'>{warning}/npcadmin</click> {letters_black}» {letters}NPCs, on a screen {letters_black}· <click:run_command:'/npcadmin help'>{info}[help]</click>",
-                        " <click:run_command:'/displays modules'>{warning}/displays modules</click> {letters_black}» {letters}what is running",
-                        " <click:run_command:'/displays reload'>{warning}/displays reload</click> {letters_black}» {letters}read every file again",
-                        " <click:run_command:'/displays editor'>{warning}/displays editor</click> {letters_black}» {letters}holograms and NPCs in the browser",
-                        " <click:suggest_command:'/displays demo seed'>{warning}/displays demo seed</click> {letters_black}» {letters}a showcase around you {letters_black}· <click:run_command:'/displays demo clear'>{info}[clear]</click>",
+                        " <click:run_command:'/displaysadmin modules'>{warning}/displaysadmin modules</click> {letters_black}» {letters}what is running",
+                        " <click:run_command:'/displaysadmin reload'>{warning}/displaysadmin reload</click> {letters_black}» {letters}read every file again",
+                        " <click:run_command:'/displaysadmin editor'>{warning}/displaysadmin editor</click> {letters_black}» {letters}holograms and NPCs in the browser",
+                        " <click:suggest_command:'/displaysadmin demo seed'>{warning}/displaysadmin demo seed</click> {letters_black}» {letters}a showcase around you {letters_black}· <click:run_command:'/displaysadmin demo clear'>{info}[clear]</click>",
                         ""),
                 " {letters_black}▎ {letters}%module% {letters_black}» %status%",
                 "{success}Running",
@@ -77,7 +77,7 @@ public record DisplaysMessages(
                         "",
                         " <click:run_command:'/holo demo-welcome lines'>{warning}/holo demo-welcome lines</click> {letters_black}» {letters}the lines screen; click a line for its window",
                         " <click:run_command:'/npc demo-guide'>{warning}/npc demo-guide</click> {letters_black}» {letters}the NPC editor",
-                        " <click:run_command:'/displays demo clear'>{error}/displays demo clear</click> {letters_black}» {letters}remove it all",
+                        " <click:run_command:'/displaysadmin demo clear'>{error}/displaysadmin demo clear</click> {letters_black}» {letters}remove it all",
                         ""),
                 "[sound:ENTITY_EXPERIENCE_ORB_PICKUP|1.0|1.0]%prefix% {success}Removed {highlight}%holograms% {success}holograms and {highlight}%npcs% {success}NPCs of the demo.",
                 "[sound:ENTITY_VILLAGER_NO|1.0|1.0]%prefix% {error}There is no demo to remove.",

@@ -41,7 +41,7 @@ permissions:
     description: Create, edit, move and import NPCs with /npc and /npcadmin.
     default: op
   exyliadisplays.admin:
-    description: Every module, plus /displays reload and modules.
+    description: Every module, plus /displaysadmin reload and modules.
     default: op
     children:
       exyliadisplays.holograms: true

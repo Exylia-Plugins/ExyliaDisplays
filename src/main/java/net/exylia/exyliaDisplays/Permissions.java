@@ -3,7 +3,7 @@ package net.exylia.exyliaDisplays;
 /** The permission nodes this plugin checks, as plugin.yml declares them. */
 public final class Permissions {
 
-    /** Every module's editing, /displays reload and imports. */
+    /** Every module's editing, /displaysadmin reload and imports. */
     public static final String ADMIN = "exyliadisplays.admin";
 
     /** Create, edit, move and import holograms with /holo and /holoadmin. */

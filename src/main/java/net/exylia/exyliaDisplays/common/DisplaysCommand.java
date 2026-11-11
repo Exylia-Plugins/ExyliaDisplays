@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-/** {@code /displays}: the plugin as a whole — what runs, and reading every file again. */
-@Command({"displays", "exyliadisplays", "edisplays"})
+/** {@code /displaysadmin}: the plugin as a whole — what runs, and reading every file again. */
+@Command({"displaysadmin", "displays", "exyliadisplays", "edisplays"})
 @CommandPermission(Permissions.ADMIN)
 public final class DisplaysCommand {
 
