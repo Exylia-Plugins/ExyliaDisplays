@@ -5,9 +5,6 @@ import net.exylia.exyliaDisplays.npc.NpcsConfig;
 import net.exylia.lib.config.Comment;
 import net.exylia.lib.config.ConfigFile;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * {@code config.yml}: how the plugin behaves. What it shows lives in {@code holograms.yml},
  * {@code npcs.yml} and the other module files.
@@ -27,7 +24,7 @@ public record DisplaysConfig(
         boolean watchFiles,
 
         @Comment("Which parts of the plugin run. A module switched off costs nothing; restart to apply.")
-        Map<String, Boolean> modules,
+        ModulesConfig modules,
 
         @Comment("Holograms.")
         HologramsConfig holograms,
@@ -36,26 +33,18 @@ public record DisplaysConfig(
         NpcsConfig npcs) {
 
     public DisplaysConfig() {
-        this(false, true, defaultModules(), new HologramsConfig(), new NpcsConfig());
+        this(false, true, new ModulesConfig(), new HologramsConfig(), new NpcsConfig());
     }
 
     public DisplaysConfig {
-        if (modules == null) modules = Map.of();
+        if (modules == null) modules = new ModulesConfig();
         if (holograms == null) holograms = new HologramsConfig();
         if (npcs == null) npcs = new NpcsConfig();
     }
 
     /** Whether a module runs; one the file does not name does. */
     public boolean enabled(String module) {
-        return modules.getOrDefault(module, true);
-    }
-
-    private static Map<String, Boolean> defaultModules() {
-        Map<String, Boolean> modules = new LinkedHashMap<>();
-        modules.put("holograms", true);
-        modules.put("leaderboards", true);
-        modules.put("npcs", true);
-        return modules;
+        return modules.enabled(module);
     }
 
     private static ConfigFile<DisplaysConfig> file;

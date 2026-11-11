@@ -135,6 +135,16 @@ class ConfigFilesTest {
     }
 
     @Test
+    @DisplayName("a config.yml from before the modules record reads the same switches")
+    void oldModules() throws IOException {
+        Files.writeString(folder.resolve("config.yml"), "modules:\n  holograms: true\n  leaderboards: false\n  npcs: true\n");
+        DisplaysConfig config = Configs.define(plugin(), "config", DisplaysConfig.class).load().get();
+        assertTrue(config.enabled("holograms"));
+        assertTrue(!config.enabled("leaderboards"));
+        assertTrue(config.enabled("npcs"));
+    }
+
+    @Test
     @DisplayName("every message file generates, and its Spanish file has every key")
     void messages() throws IOException {
         assertTranslated("messages", DisplaysMessages.class);

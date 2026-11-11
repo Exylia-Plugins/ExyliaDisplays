@@ -31,7 +31,7 @@ public final class SettingsMenus {
     public static final String HUB = "menus/admin/settings";
 
     /** Every screen of the settings, for the menu loader. */
-    public static final List<String> MENUS = List.of(HUB, HUB + "_holograms", HUB + "_npcs",
+    public static final List<String> MENUS = List.of(HUB, HUB + "_modules", HUB + "_holograms", HUB + "_npcs",
             HUB + "_leaderboards");
 
     /** A page: the file it edits and the keys its hub card shows. */
@@ -45,6 +45,7 @@ public final class SettingsMenus {
 
     static {
         Supplier<ConfigFile<?>> config = DisplaysConfig::file;
+        PAGES.put("modules", new Page(config, "modules.holograms", "modules.leaderboards", "modules.npcs"));
         PAGES.put("holograms", new Page(config, "holograms.default-view-distance", "holograms.spawn-height"));
         PAGES.put("npcs", new Page(config, "npcs.default-view-distance", "npcs.default-look"));
         PAGES.put("leaderboards", new Page(() -> {

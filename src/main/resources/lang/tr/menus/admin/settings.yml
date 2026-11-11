@@ -31,6 +31,27 @@ items:
       - " {letters}ayarlar, modüllere göre. Gerisi"
       - " {letters}dosyalarda kalır."
 
+  modules:
+    slot: 11
+    material: REDSTONE_TORCH
+    name: "{letters}Ayarlar {letters_black}▸ <gradient:{primary}:{secondary_light}>Modüller</gradient>"
+    lore:
+      - "{letters_black}Ayar sayfası"
+      - ""
+      - "{primary}✎ Bilgi"
+      - " {letters}Eklentinin hangi parçaları çalışır."
+      - " {letters}Yeniden başlatınca uygulanır."
+      - ""
+      - "{primary}✦ Durum"
+      - "  {letters_black}· {info}{icon:redstone} {letters}Hologramlar{letters_black}: %modules_modules_holograms%"
+      - "  {letters_black}· {info}{icon:redstone} {letters}Sıralamalar{letters_black}: %modules_modules_leaderboards%"
+      - "  {letters_black}· {info}{icon:redstone} {letters}NPC'ler{letters_black}: %modules_modules_npcs%"
+      - ""
+      - "{primary}{icon:click} Açmak için tıkla"
+      - "{letters_black}Her modül, açıklamalı."
+    actions:
+      - "exyliadisplays:settings_page modules"
+
   holograms:
     slot: 12
     material: NAME_TAG
@@ -52,7 +73,7 @@ items:
       - "exyliadisplays:settings_page holograms"
 
   npcs:
-    slot: 13
+    slot: 14
     material: ARMOR_STAND
     name: "{letters}Ayarlar {letters_black}▸ <gradient:{primary}:{secondary_light}>NPC'ler</gradient>"
     lore:
@@ -72,7 +93,7 @@ items:
       - "exyliadisplays:settings_page npcs"
 
   leaderboards:
-    slot: 14
+    slot: 15
     material: LECTERN
     name: "{letters}Ayarlar {letters_black}▸ <gradient:{primary}:{secondary_light}>Sıralamalar</gradient>"
     lore:

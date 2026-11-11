@@ -15,6 +15,79 @@
   },
   "pages": [
     {
+      "id": "modules",
+      "title": "Modules",
+      "context": "Modules",
+      "icon": "REDSTONE_TORCH",
+      "module": false,
+      "comment": [
+        "Which parts of the plugin run. Changes apply after a restart."
+      ],
+      "about": [
+        "Switch a module off to stop it",
+        "loading. Applies on restart."
+      ],
+      "hub": {
+        "about": [
+          "Which parts of the plugin run.",
+          "Changes apply on restart."
+        ],
+        "stats": [
+          [
+            "redstone",
+            "Holograms",
+            "modules.holograms"
+          ],
+          [
+            "redstone",
+            "Boards",
+            "modules.leaderboards"
+          ],
+          [
+            "redstone",
+            "NPCs",
+            "modules.npcs"
+          ]
+        ],
+        "next": "Each module, explained."
+      },
+      "cards": [
+        [
+          "modules.holograms",
+          "Holograms",
+          "NAME_TAG",
+          "redstone",
+          "Module",
+          [
+            "Off: no holograms, commands or",
+            "menus. Needs a restart."
+          ]
+        ],
+        [
+          "modules.leaderboards",
+          "Leaderboards",
+          "LECTERN",
+          "redstone",
+          "Module",
+          [
+            "Off: boards stop updating and",
+            "show nothing. Needs a restart."
+          ]
+        ],
+        [
+          "modules.npcs",
+          "NPCs",
+          "ARMOR_STAND",
+          "redstone",
+          "Module",
+          [
+            "Off: no NPCs, commands or",
+            "menus. Needs a restart."
+          ]
+        ]
+      ]
+    },
+    {
       "id": "holograms",
       "title": "Holograms",
       "context": "Holograms",
