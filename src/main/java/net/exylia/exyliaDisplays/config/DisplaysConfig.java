@@ -64,6 +64,11 @@ public record DisplaysConfig(
         file = loaded;
     }
 
+    /** The loaded file, for the settings screens. */
+    public static ConfigFile<DisplaysConfig> file() {
+        return file;
+    }
+
     public static DisplaysConfig get() {
         return file == null ? new DisplaysConfig() : file.get();
     }

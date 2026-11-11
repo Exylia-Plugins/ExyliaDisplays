@@ -1,0 +1,269 @@
+{
+  "namespace": "exyliadisplays",
+  "menu": "menus/admin/settings",
+  "title": "DISPLAYS",
+  "back": {
+    "label": "Displays",
+    "action": "exyliadisplays:settings_back"
+  },
+  "hub": {
+    "about": [
+      "The settings worth changing in",
+      "game, grouped by module. The",
+      "rest stays in the files."
+    ]
+  },
+  "pages": [
+    {
+      "id": "holograms",
+      "title": "Holograms",
+      "context": "Holograms",
+      "icon": "NAME_TAG",
+      "module": false,
+      "comment": [
+        "The hologram settings an admin tunes. Everything else is in config.yml."
+      ],
+      "about": [
+        "Where new holograms stand and",
+        "how far they are seen."
+      ],
+      "hub": {
+        "about": [
+          "Height, view distance and the",
+          "radius of the near command."
+        ],
+        "stats": [
+          [
+            "compass",
+            "View",
+            "holograms.default-view-distance"
+          ],
+          [
+            "map",
+            "Height",
+            "holograms.spawn-height"
+          ]
+        ],
+        "next": "Each setting, explained."
+      },
+      "cards": [
+        [
+          "holograms.spawn-height",
+          "Spawn height",
+          "LADDER",
+          "map",
+          "Height",
+          [
+            "How far above your feet a new",
+            "hologram stands, in blocks."
+          ]
+        ],
+        [
+          "holograms.default-view-distance",
+          "View distance",
+          "SPYGLASS",
+          "compass",
+          "Distance",
+          [
+            "How far away a new hologram",
+            "is seen, in blocks."
+          ]
+        ],
+        [
+          "holograms.near-radius",
+          "Near radius",
+          "COMPASS",
+          "compass",
+          "Radius",
+          [
+            "The radius {highlight}/holoadmin near",
+            "{letters}uses when none is given."
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "npcs",
+      "title": "NPCs",
+      "context": "NPCs",
+      "icon": "ARMOR_STAND",
+      "module": false,
+      "comment": [
+        "The NPC settings an admin tunes. Everything else is in config.yml."
+      ],
+      "about": [
+        "How new NPCs look, face and",
+        "speak."
+      ],
+      "hub": {
+        "about": [
+          "View distance, where NPCs look",
+          "and how long they speak."
+        ],
+        "stats": [
+          [
+            "compass",
+            "View",
+            "npcs.default-view-distance"
+          ],
+          [
+            "book",
+            "Look",
+            "npcs.default-look"
+          ]
+        ],
+        "next": "Each setting, explained."
+      },
+      "cards": [
+        [
+          "npcs.default-view-distance",
+          "View distance",
+          "SPYGLASS",
+          "compass",
+          "Distance",
+          [
+            "How far away a new NPC is",
+            "seen, in blocks."
+          ]
+        ],
+        [
+          "npcs.default-look",
+          "Head turning",
+          "PLAYER_HEAD",
+          "book",
+          "Look",
+          [
+            "Where a new NPC turns its",
+            "head: fixed, nearest or",
+            "toward each viewer."
+          ]
+        ],
+        [
+          "npcs.face-creator",
+          "Face creator",
+          "ENDER_EYE",
+          "book",
+          "State",
+          [
+            "A new NPC faces you instead",
+            "of where you look."
+          ]
+        ],
+        [
+          "npcs.say-duration",
+          "Speech bubble",
+          "PAPER",
+          "clock",
+          "Time",
+          [
+            "How long a speech bubble",
+            "stays when its line names",
+            "no time."
+          ]
+        ],
+        [
+          "npcs.turn-back",
+          "Turn back",
+          "CLOCK",
+          "clock",
+          "Time",
+          [
+            "How long an NPC keeps facing",
+            "whoever clicked it."
+          ]
+        ],
+        [
+          "npcs.near-radius",
+          "Near radius",
+          "COMPASS",
+          "compass",
+          "Radius",
+          [
+            "The radius {highlight}/npcadmin near",
+            "{letters}uses when none is given."
+          ]
+        ],
+        [
+          "npcs.skin-refresh",
+          "Skin refresh",
+          "CAULDRON",
+          "clock",
+          "Time",
+          [
+            "How often a skin written as a",
+            "placeholder is read again."
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "leaderboards",
+      "title": "Leaderboards",
+      "context": "Leaderboards",
+      "icon": "LECTERN",
+      "module": false,
+      "comment": [
+        "When leaderboard periods start over. Everything else is in leaderboards.yml."
+      ],
+      "about": [
+        "When days and weeks start",
+        "over, and in which zone."
+      ],
+      "hub": {
+        "about": [
+          "The day, week and time zone",
+          "periods are counted in."
+        ],
+        "stats": [
+          [
+            "clock",
+            "Week",
+            "week-starts-on"
+          ],
+          [
+            "clock",
+            "Day",
+            "day-starts-at"
+          ]
+        ],
+        "next": "Each setting, explained."
+      },
+      "cards": [
+        [
+          "time-zone",
+          "Time zone",
+          "CLOCK",
+          "clock",
+          "Zone",
+          [
+            "The zone periods are counted",
+            "in, such as Europe/Madrid.",
+            "Empty is the server's own."
+          ]
+        ],
+        [
+          "day-starts-at",
+          "Day start",
+          "DAYLIGHT_DETECTOR",
+          "clock",
+          "Hour",
+          [
+            "The hour a day starts at, 0 to",
+            "23. At 5, 03:00 still counts",
+            "as yesterday."
+          ]
+        ],
+        [
+          "week-starts-on",
+          "Week start",
+          "WRITABLE_BOOK",
+          "clock",
+          "Day",
+          [
+            "The day a week starts on."
+          ]
+        ]
+      ]
+    }
+  ]
+}

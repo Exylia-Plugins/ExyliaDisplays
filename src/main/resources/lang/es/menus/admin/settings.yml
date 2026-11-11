@@ -1,0 +1,102 @@
+# DO NOT EDIT — REGENERATED ON EVERY STARTUP.
+#
+# Settings an admin tunes, one card per module. Everything else stays in the files.
+
+title: "{primary}&lDISPLAYS {letters_black}» {highlight}Ajustes"
+size: 27
+type: SIMPLE
+
+open_sounds:
+  - "minecraft:block.ender_chest.open|1.0|1.4"
+click_sounds:
+  - "minecraft:block.note_block.hat|1.0|1.0"
+close_sounds:
+  - "minecraft:block.barrel.close|1.0|0.7"
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+
+items:
+  header:
+    slot: 4
+    material: COMPARATOR
+    name: "<gradient:{primary}:{secondary_light}>Ajustes</gradient>"
+    lore:
+      - "{letters_black}Ajustes · Displays"
+      - ""
+      - "{primary}✎ Información"
+      - " {letters}Los ajustes que conviene"
+      - " {letters}cambiar en el juego, por módulo."
+      - " {letters}El resto queda en los archivos."
+
+  holograms:
+    slot: 12
+    material: NAME_TAG
+    name: "{letters}Ajustes {letters_black}▸ <gradient:{primary}:{secondary_light}>Hologramas</gradient>"
+    lore:
+      - "{letters_black}Página de ajustes"
+      - ""
+      - "{primary}✎ Información"
+      - " {letters}Altura, distancia de vista y"
+      - " {letters}radio del comando near."
+      - ""
+      - "{primary}✦ Estado"
+      - "  {letters_black}· {info}{icon:compass} {letters}Vista{letters_black}: %holograms_holograms_default_view_distance%"
+      - "  {letters_black}· {info}{icon:map} {letters}Altura{letters_black}: %holograms_holograms_spawn_height%"
+      - ""
+      - "{primary}{icon:click} Clic para abrir"
+      - "{letters_black}Cada ajuste, explicado."
+    actions:
+      - "exyliadisplays:settings_page holograms"
+
+  npcs:
+    slot: 13
+    material: ARMOR_STAND
+    name: "{letters}Ajustes {letters_black}▸ <gradient:{primary}:{secondary_light}>NPC</gradient>"
+    lore:
+      - "{letters_black}Página de ajustes"
+      - ""
+      - "{primary}✎ Información"
+      - " {letters}Distancia de vista, hacia dónde"
+      - " {letters}miran y cuánto tiempo hablan."
+      - ""
+      - "{primary}✦ Estado"
+      - "  {letters_black}· {info}{icon:compass} {letters}Vista{letters_black}: %npcs_npcs_default_view_distance%"
+      - "  {letters_black}· {info}{icon:book} {letters}Mirada{letters_black}: %npcs_npcs_default_look%"
+      - ""
+      - "{primary}{icon:click} Clic para abrir"
+      - "{letters_black}Cada ajuste, explicado."
+    actions:
+      - "exyliadisplays:settings_page npcs"
+
+  leaderboards:
+    slot: 14
+    material: LECTERN
+    name: "{letters}Ajustes {letters_black}▸ <gradient:{primary}:{secondary_light}>Clasificaciones</gradient>"
+    lore:
+      - "{letters_black}Página de ajustes"
+      - ""
+      - "{primary}✎ Información"
+      - " {letters}El día, la semana y la zona"
+      - " {letters}horaria de los periodos."
+      - ""
+      - "{primary}✦ Estado"
+      - "  {letters_black}· {info}{icon:clock} {letters}Semana{letters_black}: %leaderboards_week_starts_on%"
+      - "  {letters_black}· {info}{icon:clock} {letters}Día{letters_black}: %leaderboards_day_starts_at%"
+      - ""
+      - "{primary}{icon:click} Clic para abrir"
+      - "{letters_black}Cada ajuste, explicado."
+    actions:
+      - "exyliadisplays:settings_page leaderboards"
+
+  back:
+    slot: 22
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: "{letters}Volver {letters_black}▸ <gradient:{error}:{error_light}>Displays</gradient>"
+    lore:
+      - "{error}{icon:click} Clic para volver"
+    actions:
+      - "exyliadisplays:settings_back"

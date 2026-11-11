@@ -1,0 +1,176 @@
+# DO NOT EDIT — REGENERATED ON EVERY STARTUP.
+#
+# The NPC settings an admin tunes. Everything else is in config.yml.
+
+title: "{primary}&lSETTINGS {letters_black}» {highlight}NPCs"
+size: 27
+type: SIMPLE
+
+open_sounds:
+  - "minecraft:block.ender_chest.open|1.0|1.4"
+click_sounds:
+  - "minecraft:block.note_block.hat|1.0|1.0"
+close_sounds:
+  - "minecraft:block.barrel.close|1.0|0.7"
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+
+items:
+  header:
+    slot: 4
+    material: ARMOR_STAND
+    name: "<gradient:{primary}:{secondary_light}>NPCs</gradient>"
+    lore:
+      - "{letters_black}NPCs settings"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}How new NPCs look, face and"
+      - " {letters}speak."
+
+  npcs-default-view-distance:
+    slot: 10
+    material: SPYGLASS
+    name: "{letters}NPCs {letters_black}▸ <gradient:{primary}:{secondary_light}>View distance</gradient>"
+    lore:
+      - "{letters_black}NPCs setting"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}How far away a new NPC is"
+      - " {letters}seen, in blocks."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:compass} {letters}Distance{letters_black}: %npcs_npcs_default_view_distance%"
+      - "  {letters_black}· {info}{icon:book} {letters}Default{letters_black}: %npcs_npcs_default_view_distance_default%"
+      - ""
+      - "%npcs_npcs_default_view_distance_click%"
+    actions:
+      - "exyliadisplays:setting npcs npcs.default-view-distance"
+
+  npcs-default-look:
+    slot: 11
+    material: PLAYER_HEAD
+    name: "{letters}NPCs {letters_black}▸ <gradient:{primary}:{secondary_light}>Head turning</gradient>"
+    lore:
+      - "{letters_black}NPCs setting"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Where a new NPC turns its"
+      - " {letters}head: fixed, nearest or"
+      - " {letters}toward each viewer."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:book} {letters}Look{letters_black}: %npcs_npcs_default_look%"
+      - "  {letters_black}· {info}{icon:book} {letters}Default{letters_black}: %npcs_npcs_default_look_default%"
+      - ""
+      - "%npcs_npcs_default_look_click%"
+    actions:
+      - "exyliadisplays:setting npcs npcs.default-look"
+
+  npcs-face-creator:
+    slot: 12
+    material: ENDER_EYE
+    name: "{letters}NPCs {letters_black}▸ <gradient:{primary}:{secondary_light}>Face creator</gradient>"
+    lore:
+      - "{letters_black}NPCs setting"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}A new NPC faces you instead"
+      - " {letters}of where you look."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:book} {letters}State{letters_black}: %npcs_npcs_face_creator%"
+      - "  {letters_black}· {info}{icon:book} {letters}Default{letters_black}: %npcs_npcs_face_creator_default%"
+      - ""
+      - "%npcs_npcs_face_creator_click%"
+    actions:
+      - "exyliadisplays:setting npcs npcs.face-creator"
+
+  npcs-say-duration:
+    slot: 13
+    material: PAPER
+    name: "{letters}NPCs {letters_black}▸ <gradient:{primary}:{secondary_light}>Speech bubble</gradient>"
+    lore:
+      - "{letters_black}NPCs setting"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}How long a speech bubble"
+      - " {letters}stays when its line names"
+      - " {letters}no time."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:clock} {letters}Time{letters_black}: %npcs_npcs_say_duration%"
+      - "  {letters_black}· {info}{icon:book} {letters}Default{letters_black}: %npcs_npcs_say_duration_default%"
+      - ""
+      - "%npcs_npcs_say_duration_click%"
+    actions:
+      - "exyliadisplays:setting npcs npcs.say-duration"
+
+  npcs-turn-back:
+    slot: 14
+    material: CLOCK
+    name: "{letters}NPCs {letters_black}▸ <gradient:{primary}:{secondary_light}>Turn back</gradient>"
+    lore:
+      - "{letters_black}NPCs setting"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}How long an NPC keeps facing"
+      - " {letters}whoever clicked it."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:clock} {letters}Time{letters_black}: %npcs_npcs_turn_back%"
+      - "  {letters_black}· {info}{icon:book} {letters}Default{letters_black}: %npcs_npcs_turn_back_default%"
+      - ""
+      - "%npcs_npcs_turn_back_click%"
+    actions:
+      - "exyliadisplays:setting npcs npcs.turn-back"
+
+  npcs-near-radius:
+    slot: 15
+    material: COMPASS
+    name: "{letters}NPCs {letters_black}▸ <gradient:{primary}:{secondary_light}>Near radius</gradient>"
+    lore:
+      - "{letters_black}NPCs setting"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}The radius {highlight}/npcadmin near"
+      - " {letters}{letters}uses when none is given."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:compass} {letters}Radius{letters_black}: %npcs_npcs_near_radius%"
+      - "  {letters_black}· {info}{icon:book} {letters}Default{letters_black}: %npcs_npcs_near_radius_default%"
+      - ""
+      - "%npcs_npcs_near_radius_click%"
+    actions:
+      - "exyliadisplays:setting npcs npcs.near-radius"
+
+  npcs-skin-refresh:
+    slot: 16
+    material: CAULDRON
+    name: "{letters}NPCs {letters_black}▸ <gradient:{primary}:{secondary_light}>Skin refresh</gradient>"
+    lore:
+      - "{letters_black}NPCs setting"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}How often a skin written as a"
+      - " {letters}placeholder is read again."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:clock} {letters}Time{letters_black}: %npcs_npcs_skin_refresh%"
+      - "  {letters_black}· {info}{icon:book} {letters}Default{letters_black}: %npcs_npcs_skin_refresh_default%"
+      - ""
+      - "%npcs_npcs_skin_refresh_click%"
+    actions:
+      - "exyliadisplays:setting npcs npcs.skin-refresh"
+
+  back:
+    slot: 22
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: "{letters}Back {letters_black}▸ <gradient:{error}:{error_light}>Settings</gradient>"
+    lore:
+      - "{error}{icon:click} Click to go back"
+    actions:
+      - "exyliadisplays:settings_hub"

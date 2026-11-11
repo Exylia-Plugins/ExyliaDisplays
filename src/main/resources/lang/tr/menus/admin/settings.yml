@@ -1,0 +1,102 @@
+# DO NOT EDIT — REGENERATED ON EVERY STARTUP.
+#
+# Settings an admin tunes, one card per module. Everything else stays in the files.
+
+title: "{primary}&lDISPLAYS {letters_black}» {highlight}Ayarlar"
+size: 27
+type: SIMPLE
+
+open_sounds:
+  - "minecraft:block.ender_chest.open|1.0|1.4"
+click_sounds:
+  - "minecraft:block.note_block.hat|1.0|1.0"
+close_sounds:
+  - "minecraft:block.barrel.close|1.0|0.7"
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+
+items:
+  header:
+    slot: 4
+    material: COMPARATOR
+    name: "<gradient:{primary}:{secondary_light}>Ayarlar</gradient>"
+    lore:
+      - "{letters_black}Ayarlar · Displays"
+      - ""
+      - "{primary}✎ Bilgi"
+      - " {letters}Oyunda değiştirmeye değer"
+      - " {letters}ayarlar, modüllere göre. Gerisi"
+      - " {letters}dosyalarda kalır."
+
+  holograms:
+    slot: 12
+    material: NAME_TAG
+    name: "{letters}Ayarlar {letters_black}▸ <gradient:{primary}:{secondary_light}>Hologramlar</gradient>"
+    lore:
+      - "{letters_black}Ayar sayfası"
+      - ""
+      - "{primary}✎ Bilgi"
+      - " {letters}Yükseklik, görüş mesafesi ve"
+      - " {letters}near komutunun yarıçapı."
+      - ""
+      - "{primary}✦ Durum"
+      - "  {letters_black}· {info}{icon:compass} {letters}Görüş{letters_black}: %holograms_holograms_default_view_distance%"
+      - "  {letters_black}· {info}{icon:map} {letters}Yükseklik{letters_black}: %holograms_holograms_spawn_height%"
+      - ""
+      - "{primary}{icon:click} Açmak için tıkla"
+      - "{letters_black}Her ayar, açıklamalı."
+    actions:
+      - "exyliadisplays:settings_page holograms"
+
+  npcs:
+    slot: 13
+    material: ARMOR_STAND
+    name: "{letters}Ayarlar {letters_black}▸ <gradient:{primary}:{secondary_light}>NPC'ler</gradient>"
+    lore:
+      - "{letters_black}Ayar sayfası"
+      - ""
+      - "{primary}✎ Bilgi"
+      - " {letters}Görüş mesafesi, NPC'lerin"
+      - " {letters}bakışı ve konuşma süresi."
+      - ""
+      - "{primary}✦ Durum"
+      - "  {letters_black}· {info}{icon:compass} {letters}Görüş{letters_black}: %npcs_npcs_default_view_distance%"
+      - "  {letters_black}· {info}{icon:book} {letters}Bakış{letters_black}: %npcs_npcs_default_look%"
+      - ""
+      - "{primary}{icon:click} Açmak için tıkla"
+      - "{letters_black}Her ayar, açıklamalı."
+    actions:
+      - "exyliadisplays:settings_page npcs"
+
+  leaderboards:
+    slot: 14
+    material: LECTERN
+    name: "{letters}Ayarlar {letters_black}▸ <gradient:{primary}:{secondary_light}>Sıralamalar</gradient>"
+    lore:
+      - "{letters_black}Ayar sayfası"
+      - ""
+      - "{primary}✎ Bilgi"
+      - " {letters}Dönemlerin sayıldığı gün,"
+      - " {letters}hafta ve saat dilimi."
+      - ""
+      - "{primary}✦ Durum"
+      - "  {letters_black}· {info}{icon:clock} {letters}Hafta{letters_black}: %leaderboards_week_starts_on%"
+      - "  {letters_black}· {info}{icon:clock} {letters}Gün{letters_black}: %leaderboards_day_starts_at%"
+      - ""
+      - "{primary}{icon:click} Açmak için tıkla"
+      - "{letters_black}Her ayar, açıklamalı."
+    actions:
+      - "exyliadisplays:settings_page leaderboards"
+
+  back:
+    slot: 22
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: "{letters}Geri {letters_black}▸ <gradient:{error}:{error_light}>Displays</gradient>"
+    lore:
+      - "{error}{icon:click} Geri dönmek için tıkla"
+    actions:
+      - "exyliadisplays:settings_back"

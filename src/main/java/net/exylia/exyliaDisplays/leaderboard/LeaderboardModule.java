@@ -84,6 +84,11 @@ public final class LeaderboardModule implements DisplayModule {
         instance = null;
     }
 
+    /** The loaded {@code leaderboards.yml}, for the settings screens. */
+    public ConfigFile<LeaderboardsConfig> file() {
+        return file;
+    }
+
     public LeaderboardsConfig settings() {
         return file.get();
     }

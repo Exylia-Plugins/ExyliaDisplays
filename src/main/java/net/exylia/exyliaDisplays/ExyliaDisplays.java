@@ -2,6 +2,7 @@ package net.exylia.exyliaDisplays;
 
 import lombok.Getter;
 import net.exylia.exyliaDisplays.common.DisplayMenus;
+import net.exylia.exyliaDisplays.config.SettingsMenus;
 import net.exylia.exyliaDisplays.common.DisplaysCommand;
 import net.exylia.exyliaDisplays.config.DisplaysConfig;
 import net.exylia.exyliaDisplays.config.DisplaysMessages;
@@ -103,6 +104,8 @@ public final class ExyliaDisplays {
             }
         }
         // After the modules: compiling a menu resolves every action its buttons name.
+        SettingsMenus.register(actions);
+        menus.register(SettingsMenus.MENUS);
         menus.load();
         lamp.register(new DisplaysCommand());
 

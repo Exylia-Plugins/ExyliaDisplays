@@ -1,0 +1,99 @@
+# DO NOT EDIT — REGENERATED ON EVERY STARTUP.
+#
+# When leaderboard periods start over. Everything else is in leaderboards.yml.
+
+title: "{primary}&lCONFIGURAÇÕES {letters_black}» {highlight}Rankings"
+size: 27
+type: SIMPLE
+
+open_sounds:
+  - "minecraft:block.ender_chest.open|1.0|1.4"
+click_sounds:
+  - "minecraft:block.note_block.hat|1.0|1.0"
+close_sounds:
+  - "minecraft:block.barrel.close|1.0|0.7"
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+
+items:
+  header:
+    slot: 4
+    material: LECTERN
+    name: "<gradient:{primary}:{secondary_light}>Rankings</gradient>"
+    lore:
+      - "{letters_black}Configurações · Rankings"
+      - ""
+      - "{primary}✎ Informações"
+      - " {letters}Quando dias e semanas"
+      - " {letters}recomeçam, e em que fuso."
+
+  time-zone:
+    slot: 12
+    material: CLOCK
+    name: "{letters}Rankings {letters_black}▸ <gradient:{primary}:{secondary_light}>Fuso horário</gradient>"
+    lore:
+      - "{letters_black}Rankings · configuração"
+      - ""
+      - "{primary}✎ Informações"
+      - " {letters}O fuso dos períodos, como"
+      - " {letters}Europe/Madrid. Vazio é o do"
+      - " {letters}servidor."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:clock} {letters}Fuso{letters_black}: %leaderboards_time_zone%"
+      - "  {letters_black}· {info}{icon:book} {letters}Padrão{letters_black}: %leaderboards_time_zone_default%"
+      - ""
+      - "%leaderboards_time_zone_click%"
+    actions:
+      - "exyliadisplays:setting leaderboards time-zone"
+
+  day-starts-at:
+    slot: 13
+    material: DAYLIGHT_DETECTOR
+    name: "{letters}Rankings {letters_black}▸ <gradient:{primary}:{secondary_light}>Início do dia</gradient>"
+    lore:
+      - "{letters_black}Rankings · configuração"
+      - ""
+      - "{primary}✎ Informações"
+      - " {letters}A hora em que o dia começa, de"
+      - " {letters}0 a 23. Com 5, 03:00 ainda"
+      - " {letters}conta como ontem."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:clock} {letters}Hora{letters_black}: %leaderboards_day_starts_at%"
+      - "  {letters_black}· {info}{icon:book} {letters}Padrão{letters_black}: %leaderboards_day_starts_at_default%"
+      - ""
+      - "%leaderboards_day_starts_at_click%"
+    actions:
+      - "exyliadisplays:setting leaderboards day-starts-at"
+
+  week-starts-on:
+    slot: 14
+    material: WRITABLE_BOOK
+    name: "{letters}Rankings {letters_black}▸ <gradient:{primary}:{secondary_light}>Início da semana</gradient>"
+    lore:
+      - "{letters_black}Rankings · configuração"
+      - ""
+      - "{primary}✎ Informações"
+      - " {letters}O dia em que a semana começa."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:clock} {letters}Dia{letters_black}: %leaderboards_week_starts_on%"
+      - "  {letters_black}· {info}{icon:book} {letters}Padrão{letters_black}: %leaderboards_week_starts_on_default%"
+      - ""
+      - "%leaderboards_week_starts_on_click%"
+    actions:
+      - "exyliadisplays:setting leaderboards week-starts-on"
+
+  back:
+    slot: 22
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: "{letters}Voltar {letters_black}▸ <gradient:{error}:{error_light}>Configurações</gradient>"
+    lore:
+      - "{error}{icon:click} Clique para voltar"
+    actions:
+      - "exyliadisplays:settings_hub"

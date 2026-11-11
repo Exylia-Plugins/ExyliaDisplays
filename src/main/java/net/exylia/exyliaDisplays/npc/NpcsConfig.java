@@ -2,6 +2,7 @@ package net.exylia.exyliaDisplays.npc;
 
 import net.exylia.exyliaDisplays.config.DisplaysConfig;
 import net.exylia.lib.config.Comment;
+import net.exylia.lib.config.Menu;
 import net.exylia.lib.config.Sparse;
 import net.exylia.lib.npc.NpcAnimations;
 import net.exylia.lib.npc.NpcLook;
@@ -26,6 +27,7 @@ import java.util.Map;
  */
 public record NpcsConfig(
         @Comment("How far away new NPCs are seen, in blocks.")
+        @Menu.Range(min = 8, max = 256, step = 8)
         double defaultViewDistance,
 
         @Comment("Where a new NPC turns its head: fixed, nearest or each-viewer.")
@@ -41,6 +43,7 @@ public record NpcsConfig(
         Duration turnBack,
 
         @Comment("The radius /npcadmin near uses when none is given, in blocks.")
+        @Menu.Range(min = 1, max = 200, step = 5)
         double nearRadius,
 
         @Comment("How often a skin written as a placeholder (a leaderboard's top name) is read again. Reads 30s, 5m.")

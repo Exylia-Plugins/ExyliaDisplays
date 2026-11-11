@@ -1,6 +1,7 @@
 package net.exylia.exyliaDisplays.hologram;
 
 import net.exylia.lib.config.Comment;
+import net.exylia.lib.config.Menu;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,12 +18,15 @@ import java.util.Map;
  */
 public record HologramsConfig(
         @Comment("How far above your feet a hologram you create stands, in blocks.")
+        @Menu.Range(min = 0, max = 20, step = 0.5)
         double spawnHeight,
 
         @Comment("How far away new holograms are seen, in blocks.")
+        @Menu.Range(min = 8, max = 256, step = 8)
         double defaultViewDistance,
 
         @Comment("The radius /holoadmin near uses when none is given, in blocks.")
+        @Menu.Range(min = 1, max = 200, step = 5)
         double nearRadius,
 
         @Comment("What a hologram created from the menu can start from. Add your own:")

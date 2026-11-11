@@ -7,7 +7,7 @@ import net.exylia.exyliaDisplays.common.store.Place;
 import net.exylia.lib.action.ActionContext;
 import net.exylia.lib.action.ActionResult;
 import net.exylia.lib.action.PluginActions;
-import net.exylia.lib.config.ConfigMenus;
+import net.exylia.exyliaDisplays.config.SettingsMenus;
 import net.exylia.lib.text.Values;
 import net.exylia.lib.ui.UiKeys;
 import net.exylia.lib.util.teleport.Teleports;
@@ -52,8 +52,8 @@ public final class NpcActions {
             return ActionResult.success();
         });
 
-        actions.registerSync(PREFIX + "settings", Permissions.NPCS, (ctx, args) -> {
-            ConfigMenus.of(plugin.getPlugin()).permission(Permissions.NPCS).back(NpcViews::openList).open(ctx.player());
+        actions.registerSync(PREFIX + "settings", Permissions.ADMIN, (ctx, args) -> {
+            SettingsMenus.openHub(ctx.player(), NpcViews::openList);
             return ActionResult.success();
         });
 

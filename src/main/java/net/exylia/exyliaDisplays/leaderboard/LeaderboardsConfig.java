@@ -1,6 +1,7 @@
 package net.exylia.exyliaDisplays.leaderboard;
 
 import net.exylia.lib.config.Comment;
+import net.exylia.lib.config.Menu;
 
 import java.time.Duration;
 import java.util.LinkedHashMap;
@@ -25,9 +26,11 @@ public record LeaderboardsConfig(
         String timeZone,
 
         @Comment("The hour a day starts at, 0 to 23. At 5, 03:00 still counts as yesterday.")
+        @Menu.Range(min = 0, max = 23, step = 1)
         int dayStartsAt,
 
         @Comment("The day a week starts on: MONDAY, SUNDAY...")
+        @Menu.Choices({"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"})
         String weekStartsOn,
 
         @Comment("How often online players are read: 30s, 1m, 5m.")

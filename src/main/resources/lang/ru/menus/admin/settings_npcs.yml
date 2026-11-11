@@ -1,0 +1,176 @@
+# DO NOT EDIT — REGENERATED ON EVERY STARTUP.
+#
+# The NPC settings an admin tunes. Everything else is in config.yml.
+
+title: "{primary}&lНАСТРОЙКИ {letters_black}» {highlight}NPC"
+size: 27
+type: SIMPLE
+
+open_sounds:
+  - "minecraft:block.ender_chest.open|1.0|1.4"
+click_sounds:
+  - "minecraft:block.note_block.hat|1.0|1.0"
+close_sounds:
+  - "minecraft:block.barrel.close|1.0|0.7"
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+
+items:
+  header:
+    slot: 4
+    material: ARMOR_STAND
+    name: "<gradient:{primary}:{secondary_light}>NPC</gradient>"
+    lore:
+      - "{letters_black}Настройки · NPC"
+      - ""
+      - "{primary}✎ Информация"
+      - " {letters}Как новые NPC смотрят"
+      - " {letters}и говорят."
+
+  npcs-default-view-distance:
+    slot: 10
+    material: SPYGLASS
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Дальность видимости</gradient>"
+    lore:
+      - "{letters_black}NPC · настройка"
+      - ""
+      - "{primary}✎ Информация"
+      - " {letters}С какого расстояния виден"
+      - " {letters}новый NPC, в блоках."
+      - ""
+      - "{primary}✦ Статус"
+      - "  {letters_black}· {info}{icon:compass} {letters}Дальность{letters_black}: %npcs_npcs_default_view_distance%"
+      - "  {letters_black}· {info}{icon:book} {letters}По умолчанию{letters_black}: %npcs_npcs_default_view_distance_default%"
+      - ""
+      - "%npcs_npcs_default_view_distance_click%"
+    actions:
+      - "exyliadisplays:setting npcs npcs.default-view-distance"
+
+  npcs-default-look:
+    slot: 11
+    material: PLAYER_HEAD
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Поворот головы</gradient>"
+    lore:
+      - "{letters_black}NPC · настройка"
+      - ""
+      - "{primary}✎ Информация"
+      - " {letters}Куда новый NPC поворачивает"
+      - " {letters}голову: прямо, к ближайшему"
+      - " {letters}или к каждому игроку."
+      - ""
+      - "{primary}✦ Статус"
+      - "  {letters_black}· {info}{icon:book} {letters}Взгляд{letters_black}: %npcs_npcs_default_look%"
+      - "  {letters_black}· {info}{icon:book} {letters}По умолчанию{letters_black}: %npcs_npcs_default_look_default%"
+      - ""
+      - "%npcs_npcs_default_look_click%"
+    actions:
+      - "exyliadisplays:setting npcs npcs.default-look"
+
+  npcs-face-creator:
+    slot: 12
+    material: ENDER_EYE
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Смотреть на создателя</gradient>"
+    lore:
+      - "{letters_black}NPC · настройка"
+      - ""
+      - "{primary}✎ Информация"
+      - " {letters}Новый NPC смотрит на вас, а не"
+      - " {letters}туда, куда смотрите вы."
+      - ""
+      - "{primary}✦ Статус"
+      - "  {letters_black}· {info}{icon:book} {letters}Состояние{letters_black}: %npcs_npcs_face_creator%"
+      - "  {letters_black}· {info}{icon:book} {letters}По умолчанию{letters_black}: %npcs_npcs_face_creator_default%"
+      - ""
+      - "%npcs_npcs_face_creator_click%"
+    actions:
+      - "exyliadisplays:setting npcs npcs.face-creator"
+
+  npcs-say-duration:
+    slot: 13
+    material: PAPER
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Облачко речи</gradient>"
+    lore:
+      - "{letters_black}NPC · настройка"
+      - ""
+      - "{primary}✎ Информация"
+      - " {letters}Сколько держится облачко речи,"
+      - " {letters}если в строке не указано"
+      - " {letters}время."
+      - ""
+      - "{primary}✦ Статус"
+      - "  {letters_black}· {info}{icon:clock} {letters}Время{letters_black}: %npcs_npcs_say_duration%"
+      - "  {letters_black}· {info}{icon:book} {letters}По умолчанию{letters_black}: %npcs_npcs_say_duration_default%"
+      - ""
+      - "%npcs_npcs_say_duration_click%"
+    actions:
+      - "exyliadisplays:setting npcs npcs.say-duration"
+
+  npcs-turn-back:
+    slot: 14
+    material: CLOCK
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Возврат взгляда</gradient>"
+    lore:
+      - "{letters_black}NPC · настройка"
+      - ""
+      - "{primary}✎ Информация"
+      - " {letters}Как долго NPC смотрит на"
+      - " {letters}того, кто по нему кликнул."
+      - ""
+      - "{primary}✦ Статус"
+      - "  {letters_black}· {info}{icon:clock} {letters}Время{letters_black}: %npcs_npcs_turn_back%"
+      - "  {letters_black}· {info}{icon:book} {letters}По умолчанию{letters_black}: %npcs_npcs_turn_back_default%"
+      - ""
+      - "%npcs_npcs_turn_back_click%"
+    actions:
+      - "exyliadisplays:setting npcs npcs.turn-back"
+
+  npcs-near-radius:
+    slot: 15
+    material: COMPASS
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Радиус near</gradient>"
+    lore:
+      - "{letters_black}NPC · настройка"
+      - ""
+      - "{primary}✎ Информация"
+      - " {letters}Радиус для {highlight}/npcadmin near{letters},"
+      - " {letters}если он не указан."
+      - ""
+      - "{primary}✦ Статус"
+      - "  {letters_black}· {info}{icon:compass} {letters}Радиус{letters_black}: %npcs_npcs_near_radius%"
+      - "  {letters_black}· {info}{icon:book} {letters}По умолчанию{letters_black}: %npcs_npcs_near_radius_default%"
+      - ""
+      - "%npcs_npcs_near_radius_click%"
+    actions:
+      - "exyliadisplays:setting npcs npcs.near-radius"
+
+  npcs-skin-refresh:
+    slot: 16
+    material: CAULDRON
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Обновление скина</gradient>"
+    lore:
+      - "{letters_black}NPC · настройка"
+      - ""
+      - "{primary}✎ Информация"
+      - " {letters}Как часто заново читается"
+      - " {letters}скин, заданный плейсхолдером."
+      - ""
+      - "{primary}✦ Статус"
+      - "  {letters_black}· {info}{icon:clock} {letters}Время{letters_black}: %npcs_npcs_skin_refresh%"
+      - "  {letters_black}· {info}{icon:book} {letters}По умолчанию{letters_black}: %npcs_npcs_skin_refresh_default%"
+      - ""
+      - "%npcs_npcs_skin_refresh_click%"
+    actions:
+      - "exyliadisplays:setting npcs npcs.skin-refresh"
+
+  back:
+    slot: 22
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: "{letters}Назад {letters_black}▸ <gradient:{error}:{error_light}>Настройки</gradient>"
+    lore:
+      - "{error}{icon:click} Нажми, чтобы вернуться"
+    actions:
+      - "exyliadisplays:settings_hub"
