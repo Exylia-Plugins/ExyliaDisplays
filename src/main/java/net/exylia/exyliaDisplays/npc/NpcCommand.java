@@ -16,7 +16,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import net.exylia.lib.command.lamp.TokenArgument;
 import revxrsal.commands.annotation.Command;
+import revxrsal.commands.brigadier.annotations.BType;
 import revxrsal.commands.annotation.CommandPlaceholder;
 import revxrsal.commands.annotation.Optional;
 import revxrsal.commands.annotation.Single;
@@ -207,7 +209,7 @@ public final class NpcCommand {
      */
     @Subcommand("<name> skin")
     public void skin(CommandSender sender, @SuggestWith(Names.class) String name,
-                     @SuggestWith(NpcSuggestions.class) @Single String skin,
+                     @SuggestWith(NpcSuggestions.class) @BType(TokenArgument.class) String skin,
                      @SuggestWith(NpcSuggestions.class) @Optional @Single String fallback) {
         StoredNpc.Skin parsed = StoredNpc.Skin.parse(skin);
         String backup = fallback == null ? "" : fallback.trim();
