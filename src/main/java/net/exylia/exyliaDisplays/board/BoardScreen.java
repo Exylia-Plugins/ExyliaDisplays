@@ -51,13 +51,13 @@ final class BoardScreen {
         BoardsConfig.Stat stat = stats.get(page);
         String viewer = session.viewer().getName();
         List<Node> parts = new ArrayList<>();
-        parts.add(Node.text(fill.apply(stat.title(), session)).scale(1.3).height(16).id("title"));
+        parts.add(Node.text(fill.apply(stat.title(), session)).scale(1.3).height(16).textAlign(Node.Align.CENTER).id("title"));
         if (board.tabs()) {
             List<Node> tabs = new ArrayList<>();
             for (int i = 0; i < stats.size(); i++) {
                 int to = i;
                 boolean on = i == page;
-                tabs.add(Node.text((on ? "<white>" : "<#b48fd9>") + stats.get(i).tab()).scale(0.75).grow(1).height(14)
+                tabs.add(Node.text((on ? "<white>" : "<#b48fd9>") + stats.get(i).tab()).scale(0.75).grow(1).height(14).textAlign(Node.Align.CENTER)
                         .background(on ? ACCENT : BUTTON).hover(on ? ACCENT : EDGE).hoverOutline(ACCENT)
                         .outline(on ? ACCENT : EDGE, 1).id("tab-" + i)
                         .onClick(event -> {
@@ -105,7 +105,7 @@ final class BoardScreen {
 
     private static Node row(String rank, String name, String value, String background) {
         return Node.row(
-                Node.text(rank).width(20).textAlign(Node.Align.START),
+                Node.text(rank).width(20).textAlign(Node.Align.CENTER),
                 Node.text(name).grow(1).textAlign(Node.Align.START),
                 Node.text(value).width(70).textAlign(Node.Align.END)).height(ROW).padding(0, 4).background(background);
     }
