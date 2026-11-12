@@ -78,8 +78,8 @@ final class BoardScreen {
         }
         parts.add(Node.row(
                 arrow("◀", "prev", page - 1),
-                Node.text("<#8a7aa3>" + (page + 1) + " / " + stats.size()).scale(0.8).grow(1).height(16),
-                arrow("▶", "next", page + 1)).height(16));
+                Node.text("<#8a7aa3>" + (page + 1) + " / " + stats.size()).scale(0.8).grow(1).height(16).textAlign(Node.Align.CENTER),
+                arrow("▶", "next", page + 1)).height(16).align(Node.Align.CENTER));
         return Node.column(parts.toArray(Node[]::new)).gap(3).padding(8).background(PANEL).outline(EDGE, 1);
     }
 
@@ -91,7 +91,7 @@ final class BoardScreen {
     }
 
     private static Node arrow(String glyph, String id, int to) {
-        return Node.text("<#e7cfff>" + glyph).width(24).height(16).background(BUTTON).hover(EDGE)
+        return Node.text("<#e7cfff>" + glyph).width(24).height(16).textAlign(Node.Align.CENTER).background(BUTTON).hover(EDGE)
                 .outline(EDGE, 1).hoverOutline(ACCENT).id(id)
                 .onClick(event -> event.session().set("page", to));
     }
