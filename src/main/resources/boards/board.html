@@ -1,0 +1,32 @@
+<!-- The leaderboard panel. Edit this file and its look in board.css, then run /displaysadmin reload.
+     What Java fills in:
+       %title% %counter% %viewer% %you% %self%       the stat's title, "#11 - #20", the viewer, the label and their own value
+       tabs, self, has_prev, has_next                 true or false: show the tabs row, show the own row, which arrows work
+       list source="stats"   rows: index tab on       one row per stat
+       list source="places"  rows: rank name value mine   the places of the viewer's page
+       actions: tab <index>, prev, next               -->
+<screen>
+  <column class="board">
+    <text id="title" class="title">%title%</text>
+    <list class="tabs" source="stats" if="tabs">
+      <button class="tab" action="tab %index%" selected="%on%">%tab%</button>
+    </list>
+    <list class="places" source="places">
+      <row class="place p${rank} ${mine ? 'mine' : ''}">
+        <text class="rank">%rank%</text>
+        <text class="name">%name%</text>
+        <text class="value">%value%</text>
+      </row>
+    </list>
+    <row class="place mine you" if="self">
+      <text class="rank you-label">%you%</text>
+      <text class="name">%viewer%</text>
+      <text class="value self">%self%</text>
+    </row>
+    <row class="pager">
+      <button id="prev" class="arrow" action="prev" disabled="${!has_prev}">◀</button>
+      <text id="counter" class="counter">%counter%</text>
+      <button id="next" class="arrow" action="next" disabled="${!has_next}">▶</button>
+    </row>
+  </column>
+</screen>

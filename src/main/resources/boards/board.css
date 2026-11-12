@@ -1,0 +1,29 @@
+/* The look of board.html. Colours are plain hex: they do not follow colors.yml. */
+screen { align-items: stretch; justify-content: start; }
+.board { background: #0e0b16; outline: 1px #2b2140; padding: 8px; gap: 3px; flex-grow: 1; }
+.title { font-size: 13px; height: 16px; text-align: center; color: #e7cfff; }
+
+.tabs { flex-direction: row; gap: 2px; height: 14px; }
+.tab { flex-grow: 1; height: 14px; padding: 0; font-size: 7.5px; text-align: center; color: #b48fd9; background: #1c1629; outline: 1px #2b2140; }
+.tab:hover { background: #2b2140; outline: 1px #8a51c4; }
+.tab[selected] { color: #ffffff; background: #8a51c4; outline: 1px #8a51c4; }
+
+.places { gap: 1px; }
+.place { flex-direction: row; height: 12px; padding: 0 4px; gap: 0; }
+.places > .place:nth-child(odd) { background: #15111f; }
+.place.mine, .places > .place.mine:nth-child(odd) { background: #2a1d40; }
+.you { height: 13px; }
+.rank { width: 20px; text-align: center; color: #8a51c4; }
+.p1 .rank { color: #ffd56b; }
+.p2 .rank { color: #d6d6e6; }
+.p3 .rank { color: #e09a5c; }
+.you-label { color: #8a51c4; }
+.name { flex-grow: 1; text-align: left; color: #e7cfff; }
+.value { width: 70px; text-align: right; color: #b48fd9; }
+.self { color: #ffc58f; }
+
+.pager { height: 16px; gap: 0; align-items: center; }
+.arrow { width: 24px; height: 16px; padding: 0; text-align: center; color: #e7cfff; background: #1c1629; outline: 1px #2b2140; }
+.arrow:hover { background: #2b2140; outline: 1px #8a51c4; }
+.arrow[disabled], .arrow[disabled]:hover { color: #3d3352; background: #1c1629; outline: 1px #2b2140; }
+.counter { flex-grow: 1; height: 16px; font-size: 8px; text-align: center; color: #8a7aa3; }

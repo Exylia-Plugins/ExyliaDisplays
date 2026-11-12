@@ -4,6 +4,7 @@ import net.exylia.exyliaDisplays.common.store.Position;
 import net.exylia.lib.screen.Node;
 import net.exylia.lib.screen.Screen;
 import net.exylia.lib.screen.ScreenEvent;
+import net.exylia.lib.screen.ScreenMarkup;
 import net.exylia.lib.screen.ScreenSession;
 import net.exylia.lib.screen.internal.Layout;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -15,14 +16,14 @@ import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BoardScreenTest {
 
-    private static final BoardsConfig.Board BOARD = new BoardsConfig.Board(new Position(), 3, 5, true, 32, "You", List.of(
+    private static final BoardsConfig.Board BOARD = new BoardsConfig.Board(new Position(), 3, 5, true, 32, "You", "board.html", List.of(
             new BoardsConfig.Stat("TOP KILLS", "Kills", "k{n}", "{n}0", "7"),
             new BoardsConfig.Stat("TOP LEVEL", "Level", "l{n}", "{n}", "3")));
 
@@ -50,8 +51,14 @@ class BoardScreenTest {
     }
 
     private static List<Layout.Placed> lay(Session session) {
-        Node root = BoardScreen.render(BOARD, session, (text, s) -> text);
-        return Layout.lay(root, BoardScreen.WIDTH, BoardScreen.height(BOARD));
+        return lay(BOARD, session, (text, s) -> text);
+    }
+
+    private static List<Layout.Placed> lay(BoardsConfig.Board board, Session session, BiFunction<String, ScreenSession, String> fill) {
+        ScreenMarkup markup = BoardScreen.bind(ScreenMarkup.parse("board.html", BoardScreen.bundled("board.html"),
+                BoardScreen.bundled("board.css")), board, fill);
+        Screen screen = BoardScreen.screen(markup, board);
+        return Layout.lay(screen.render().apply(session), BoardScreen.WIDTH, BoardScreen.height(board));
     }
 
     private static Layout.Placed byId(List<Layout.Placed> placed, String id) {
@@ -73,7 +80,16 @@ class BoardScreenTest {
     }
 
     private static List<Layout.Placed> lay(BoardsConfig.Board board, Session session) {
-        return Layout.lay(BoardScreen.render(board, session, BoardScreenTest::fill), BoardScreen.WIDTH, BoardScreen.height(board));
+        return lay(board, session, BoardScreenTest::fill);
+    }
+
+    @Test
+    void theBundledTemplateReadsWithoutProblems() {
+        ScreenMarkup markup = BoardScreen.bind(ScreenMarkup.parse("board.html", BoardScreen.bundled("board.html"),
+                BoardScreen.bundled("board.css")), BOARD, (text, s) -> text);
+        assertEquals(List.of(), markup.problems());
+        lay(new Session("A")); // and renders
+        assertEquals(List.of(), markup.problems());
     }
 
     @Test
@@ -85,16 +101,18 @@ class BoardScreenTest {
         assertEquals("#1 - #5", text(byId(lay(BOARD, b), "counter")), "only the clicker's page turns");
         click(a, byId(lay(BOARD, a), "next"));
         assertEquals("#11 - #15", text(byId(lay(BOARD, a), "counter")));
-        assertNull(byId(lay(BOARD, a), "next").node().onClick(), "nobody past #12: no next page");
-        assertNull(byId(lay(BOARD, b), "prev").node().onClick(), "nothing before #1");
-        click(a, byId(lay(BOARD, a), "tab-1"));
+        click(a, byId(lay(BOARD, a), "next")); // disabled: nobody past #12
+        assertEquals("#11 - #15", text(byId(lay(BOARD, a), "counter")), "nobody past #12: no next page");
+        click(b, byId(lay(BOARD, b), "prev")); // disabled: nothing before #1
+        assertEquals("#1 - #5", text(byId(lay(BOARD, b), "counter")), "nothing before #1");
+        click(a, byId(lay(BOARD, a), "stats.1.0"));
         assertEquals("TOP LEVEL", text(byId(lay(BOARD, a), "title")));
         assertEquals("#1 - #5", text(byId(lay(BOARD, a), "counter")), "a new tab starts at the top");
     }
 
     @Test
     void withoutTabsTheArrowsWalkTheStats() {
-        BoardsConfig.Board plain = new BoardsConfig.Board(new Position(), 3, 5, false, 32, "You", BOARD.stats());
+        BoardsConfig.Board plain = new BoardsConfig.Board(new Position(), 3, 5, false, 32, "You", "board.html", BOARD.stats());
         Session a = new Session("A");
         click(a, byId(lay(plain, a), "next"));
         assertEquals("TOP LEVEL", text(byId(lay(plain, a), "title")));

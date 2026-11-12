@@ -45,6 +45,7 @@ public record BoardsConfig(Map<String, Board> boards) {
      * @param tabs     a tab per stat above the rows, besides the arrows below
      * @param range    blocks a player sees it from
      * @param you      the label of the viewer's own row
+     * @param template the markup file in {@code boards/} that draws it
      * @param stats    one page each, in order
      */
     public record Board(
@@ -60,12 +61,14 @@ public record BoardsConfig(Map<String, Board> boards) {
             double range,
             @Comment("The label of the viewer's own row at the bottom.")
             String you,
+            @Comment("The look: a file in plugins/ExyliaDisplays/boards/ (its .css sits beside it). /displaysadmin reload applies edits.")
+            String template,
             @Comment("One page each. In 'name' and 'value' {n} is the place: 1, 2, 3...")
             @Comment("'self' is the viewer's own value; empty hides their row.")
             List<Stat> stats) {
 
         public Board() {
-            this(new Position(), 3.0, 10, true, 32, "You", List.of(new Stat()));
+            this(new Position(), 3.0, 10, true, 32, "You", "board.html", List.of(new Stat()));
         }
 
         public Board {
@@ -74,6 +77,7 @@ public record BoardsConfig(Map<String, Board> boards) {
             rows = Math.max(1, Math.min(rows, 20));
             if (range <= 0) range = 32;
             if (you == null) you = "You";
+            if (template == null || template.isBlank() || template.contains("/") || template.contains("\\")) template = "board.html";
             stats = stats == null || stats.isEmpty() ? List.of(new Stat()) : List.copyOf(stats);
         }
     }
