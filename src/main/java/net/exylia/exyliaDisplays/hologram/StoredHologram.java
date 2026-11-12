@@ -36,6 +36,7 @@ import java.util.function.UnaryOperator;
  * @param click        what clicking it does
  * @param visibility   which players see it, on top of the permission
  * @param attach       the entity it rides, if any
+ * @param panel        whether its lines are laid out as one panel of even bars
  */
 public record StoredHologram(
         @Comment("Set to false to keep it in this file without showing it.")
@@ -102,12 +103,16 @@ public record StoredHologram(
         @Comment("Who sees it at all, checked for each player: a placeholder condition such as")
         @Comment("'%player_level% >= 10', a permission ('!node' for those without it), WorldGuard regions")
         @Comment("and worlds ('!pvp' to leave one out). Empty for everyone in range.")
-        HologramConfig.View view) {
+        HologramConfig.View view,
+
+        @Comment("Lay the text lines out as one panel: every line a bar of the same width, columns lined up")
+        @Comment("with <fill>. Off by default; see HologramPanel.")
+        HologramPanel panel) {
 
     public StoredHologram() {
         this(true, new Position(), List.of(), List.of(), 0, "", 48.0, false,
                 new HologramConfig.Properties(), new HologramConfig.Refresh(), new HologramConfig.Click(),
-                new Visibility(), new Attachment(), new BoardSection(), new HologramConfig.View());
+                new Visibility(), new Attachment(), new BoardSection(), new HologramConfig.View(), new HologramPanel());
     }
 
     public StoredHologram {
@@ -144,6 +149,9 @@ public record StoredHologram(
         if (view == null) {
             view = new HologramConfig.View();
         }
+        if (panel == null) {
+            panel = new HologramPanel();
+        }
     }
 
     /** A new hologram at a place, with its first lines. */
@@ -170,6 +178,11 @@ public record StoredHologram(
     public HologramConfig toConfig(double offsetY) {
         if (leaderboard.enabled()) {
             return board().toConfig(offsetY);
+        }
+        if (panel.enabled()) {
+            // Laid out here, so the file keeps the lines as written.
+            return withPageLines(allPages().stream().map(page -> panel.lay(page, appearance.alignment())).toList())
+                    .withPanel(new HologramPanel()).toConfig(offsetY);
         }
         boolean personal = perPlayer || allPages().stream().flatMap(List::stream)
                 .anyMatch(line -> PLACEHOLDER.matcher(line).find());
@@ -201,23 +214,23 @@ public record StoredHologram(
     }
 
     public StoredHologram withEnabled(boolean value) {
-        return new StoredHologram(value, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view);
+        return new StoredHologram(value, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view, panel);
     }
 
     public StoredHologram withLocation(Position value) {
-        return new StoredHologram(enabled, value, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view);
+        return new StoredHologram(enabled, value, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view, panel);
     }
 
     public StoredHologram withLines(List<String> value) {
-        return new StoredHologram(enabled, location, value, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view);
+        return new StoredHologram(enabled, location, value, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view, panel);
     }
 
     public StoredHologram withPermission(String value) {
-        return new StoredHologram(enabled, location, lines, pages, pageInterval, value, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, value, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view, panel);
     }
 
     public StoredHologram withViewDistance(double value) {
-        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, value, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, value, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view, panel);
     }
 
     /**
@@ -235,43 +248,47 @@ public record StoredHologram(
     }
 
     public StoredHologram withPerPlayer(boolean value) {
-        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, value, appearance, refresh, click, visibility, attach, leaderboard, view);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, value, appearance, refresh, click, visibility, attach, leaderboard, view, panel);
     }
 
     public StoredHologram withAppearance(HologramConfig.Properties value) {
-        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, value, refresh, click, visibility, attach, leaderboard, view);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, value, refresh, click, visibility, attach, leaderboard, view, panel);
     }
 
     public StoredHologram withRefresh(HologramConfig.Refresh value) {
-        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, value, click, visibility, attach, leaderboard, view);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, value, click, visibility, attach, leaderboard, view, panel);
     }
 
     public StoredHologram withClick(HologramConfig.Click value) {
-        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, value, visibility, attach, leaderboard, view);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, value, visibility, attach, leaderboard, view, panel);
     }
 
     public StoredHologram withVisibility(Visibility value) {
-        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, value, attach, leaderboard, view);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, value, attach, leaderboard, view, panel);
     }
 
     public StoredHologram withAttach(Attachment value) {
-        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, value, leaderboard, view);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, value, leaderboard, view, panel);
     }
 
     public StoredHologram withPages(List<HologramConfig.Page> value) {
-        return new StoredHologram(enabled, location, lines, value, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view);
+        return new StoredHologram(enabled, location, lines, value, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view, panel);
     }
 
     public StoredHologram withView(HologramConfig.View value) {
-        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, value);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, value, panel);
     }
 
     public StoredHologram withLeaderboard(BoardSection value) {
-        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, value, view);
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, value, view, panel);
+    }
+
+    public StoredHologram withPanel(HologramPanel value) {
+        return new StoredHologram(enabled, location, lines, pages, pageInterval, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view, value);
     }
 
     public StoredHologram withPageInterval(long value) {
-        return new StoredHologram(enabled, location, lines, pages, value, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view);
+        return new StoredHologram(enabled, location, lines, pages, value, permission, viewDistance, perPlayer, appearance, refresh, click, visibility, attach, leaderboard, view, panel);
     }
 
     // ------------------------------------------------------------------

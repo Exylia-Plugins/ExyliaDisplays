@@ -56,6 +56,7 @@ public final class HologramModule implements DisplayModule {
         HologramsMessages.install(Configs.define(core.getPlugin(), "messages/holograms", HologramsMessages.class)
                 .translated().load());
 
+        HologramPanel.register(core.getPlugin());
         renderer = new HologramRenderer(core.getPlugin(), core.getTasks(), adjust::preview);
         ConfigFile<HologramFile> file = Configs.define(core.getPlugin(), "holograms", HologramFile.class).load();
         store = new EntryStore<>(file, HologramFile::holograms, HologramFile::new, (name, hologram) -> {

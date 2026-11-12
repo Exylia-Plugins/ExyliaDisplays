@@ -104,7 +104,8 @@ public final class HologramRenderer implements Listener {
             }
             if (before.withPageLines(hologram.allPages()).equals(hologram)) {
                 // Swapped in place, so each viewer stays on the page they were reading.
-                live.get().pages(hologram.allPages());
+                // What is drawn, not what is written: a panel or a leaderboard rewrites its lines.
+                live.get().pages(hologram.toConfig(target(name, hologram) == null ? 0 : hologram.attach().offset()).allPages());
                 shown.put(name, hologram);
                 return;
             }
