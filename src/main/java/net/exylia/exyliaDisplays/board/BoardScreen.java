@@ -17,6 +17,8 @@ final class BoardScreen {
     /** Layout pixels across; the board's width in blocks scales them. */
     static final double WIDTH = 240;
     private static final double ROW = 12;
+    /** Pages of places the arrows go through at most. */
+    private static final int MAX_PAGES = 10;
     private static final String PANEL = "#0e0b16";
     private static final String EDGE = "#2b2140";
     private static final String STRIPE = "#15111f";
@@ -58,12 +60,19 @@ final class BoardScreen {
                 tabs.add(Node.text((on ? "<white>" : "<#b48fd9>") + stats.get(i).tab()).scale(0.75).grow(1).height(14)
                         .background(on ? ACCENT : BUTTON).hover(on ? ACCENT : EDGE).hoverOutline(ACCENT)
                         .outline(on ? ACCENT : EDGE, 1).id("tab-" + i)
-                        .onClick(event -> event.session().set("page", to)));
+                        .onClick(event -> {
+                            event.session().set("page", to);
+                            event.session().set("offset", 0);
+                        }));
             }
             parts.add(Node.row(tabs.toArray(Node[]::new)).gap(2).height(14));
         }
+        // With tabs the arrows walk the places, a page of rows at a time; without them they walk the stats.
+        int offset = board.tabs() ? Math.max(0, session.state("offset", 0)) : 0;
+        while (offset > 0 && !taken(stat, offset * board.rows() + 1, session, fill)) offset--;
+        int first = offset * board.rows() + 1;
         List<Node> places = new ArrayList<>();
-        for (int n = 1; n <= board.rows(); n++) {
+        for (int n = first; n < first + board.rows(); n++) {
             String name = fill.apply(stat.name().replace("{n}", String.valueOf(n)), session);
             String value = fill.apply(stat.value().replace("{n}", String.valueOf(n)), session);
             boolean mine = !viewer.isEmpty() && name.trim().equalsIgnoreCase(viewer);
@@ -76,10 +85,21 @@ final class BoardScreen {
             parts.add(row("<" + ACCENT + ">" + board.you(), "<#e7cfff>" + viewer,
                     "<#ffc58f>" + fill.apply(stat.self(), session), "#2a1d40").height(13));
         }
-        parts.add(Node.row(
-                arrow("◀", "prev", page - 1),
-                Node.text("<#8a7aa3>" + (page + 1) + " / " + stats.size()).scale(0.8).grow(1).height(16).textAlign(Node.Align.CENTER),
-                arrow("▶", "next", page + 1)).height(16).align(Node.Align.CENTER));
+        Node prev, next;
+        String counter;
+        if (board.tabs()) {
+            boolean more = offset + 1 < MAX_PAGES && taken(stat, first + board.rows(), session, fill);
+            prev = arrow("◀", "prev", "offset", offset - 1, offset > 0);
+            next = arrow("▶", "next", "offset", offset + 1, more);
+            counter = "#" + first + " - #" + (first + board.rows() - 1);
+        } else {
+            prev = arrow("◀", "prev", "page", page - 1, true);
+            next = arrow("▶", "next", "page", page + 1, true);
+            counter = (page + 1) + " / " + stats.size();
+        }
+        parts.add(Node.row(prev,
+                Node.text("<#8a7aa3>" + counter).scale(0.8).grow(1).height(16).textAlign(Node.Align.CENTER).id("counter"),
+                next).height(16).align(Node.Align.CENTER));
         return Node.column(parts.toArray(Node[]::new)).gap(3).padding(8).background(PANEL).outline(EDGE, 1);
     }
 
@@ -90,9 +110,15 @@ final class BoardScreen {
                 Node.text(value).width(70).textAlign(Node.Align.END)).height(ROW).padding(0, 4).background(background);
     }
 
-    private static Node arrow(String glyph, String id, int to) {
-        return Node.text("<#e7cfff>" + glyph).width(24).height(16).textAlign(Node.Align.CENTER).background(BUTTON).hover(EDGE)
-                .outline(EDGE, 1).hoverOutline(ACCENT).id(id)
-                .onClick(event -> event.session().set("page", to));
+    /** Whether place {@code n} has someone in it: the sources answer "-", blank or the raw placeholder past the end. */
+    static boolean taken(BoardsConfig.Stat stat, int n, ScreenSession session, BiFunction<String, ScreenSession, String> fill) {
+        String name = fill.apply(stat.name().replace("{n}", String.valueOf(n)), session).trim();
+        return !name.isEmpty() && !name.equals("-") && !name.contains("%");
+    }
+
+    private static Node arrow(String glyph, String id, String key, int to, boolean live) {
+        Node node = Node.text((live ? "<#e7cfff>" : "<#3d3352>") + glyph).width(24).height(16)
+                .textAlign(Node.Align.CENTER).background(BUTTON).outline(EDGE, 1).id(id);
+        return live ? node.hover(EDGE).hoverOutline(ACCENT).onClick(event -> event.session().set(key, to)) : node;
     }
 }

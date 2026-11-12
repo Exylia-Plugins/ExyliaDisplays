@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BoardScreenTest {
@@ -65,18 +66,42 @@ class BoardScreenTest {
         box.node().onClick().accept(new ScreenEvent(session, ScreenEvent.Kind.LEFT, 0, box.node().id()));
     }
 
+    /** Twelve players on every board: past them the source answers "-". */
+    private static String fill(String text, ScreenSession session) {
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile("^[kl](\\d+)$").matcher(text);
+        return m.matches() && Integer.parseInt(m.group(1)) > 12 ? "-" : text;
+    }
+
+    private static List<Layout.Placed> lay(BoardsConfig.Board board, Session session) {
+        return Layout.lay(BoardScreen.render(board, session, BoardScreenTest::fill), BoardScreen.WIDTH, BoardScreen.height(board));
+    }
+
     @Test
-    void arrowsAndTabsTurnOnlyTheirViewersPage() {
+    void withTabsTheArrowsWalkThePlacesAndStopAtTheLastPlayer() {
         Session a = new Session("A"), b = new Session("B");
-        click(a, byId(lay(a), "next"));
-        assertEquals("TOP LEVEL", text(byId(lay(a), "title")));
-        assertEquals("TOP KILLS", text(byId(lay(b), "title")));
-        click(a, byId(lay(a), "next")); // past the last page, back to the first
-        assertEquals("TOP KILLS", text(byId(lay(a), "title")));
-        click(b, byId(lay(b), "prev")); // before the first, the last
-        assertEquals("TOP LEVEL", text(byId(lay(b), "title")));
-        click(a, byId(lay(a), "tab-1"));
-        assertEquals("TOP LEVEL", text(byId(lay(a), "title")));
+        assertEquals("#1 - #5", text(byId(lay(BOARD, a), "counter")));
+        click(a, byId(lay(BOARD, a), "next"));
+        assertEquals("#6 - #10", text(byId(lay(BOARD, a), "counter")));
+        assertEquals("#1 - #5", text(byId(lay(BOARD, b), "counter")), "only the clicker's page turns");
+        click(a, byId(lay(BOARD, a), "next"));
+        assertEquals("#11 - #15", text(byId(lay(BOARD, a), "counter")));
+        assertNull(byId(lay(BOARD, a), "next").node().onClick(), "nobody past #12: no next page");
+        assertNull(byId(lay(BOARD, b), "prev").node().onClick(), "nothing before #1");
+        click(a, byId(lay(BOARD, a), "tab-1"));
+        assertEquals("TOP LEVEL", text(byId(lay(BOARD, a), "title")));
+        assertEquals("#1 - #5", text(byId(lay(BOARD, a), "counter")), "a new tab starts at the top");
+    }
+
+    @Test
+    void withoutTabsTheArrowsWalkTheStats() {
+        BoardsConfig.Board plain = new BoardsConfig.Board(new Position(), 3, 5, false, 32, "You", BOARD.stats());
+        Session a = new Session("A");
+        click(a, byId(lay(plain, a), "next"));
+        assertEquals("TOP LEVEL", text(byId(lay(plain, a), "title")));
+        click(a, byId(lay(plain, a), "next")); // past the last page, back to the first
+        assertEquals("TOP KILLS", text(byId(lay(plain, a), "title")));
+        click(a, byId(lay(plain, a), "prev")); // before the first, the last
+        assertEquals("TOP LEVEL", text(byId(lay(plain, a), "title")));
     }
 
     @Test
