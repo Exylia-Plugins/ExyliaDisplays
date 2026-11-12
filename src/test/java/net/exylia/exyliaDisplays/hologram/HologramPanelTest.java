@@ -8,6 +8,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HologramPanelTest {
@@ -49,5 +50,16 @@ class HologramPanelTest {
     void modelsAndAPanelThatIsOffAreUntouched() {
         assertEquals("<item:DIAMOND>", PANEL.lay("<item:DIAMOND>", "CENTER"));
         assertEquals(List.of("x"), new HologramPanel().lay(List.of("x"), "CENTER"));
+    }
+
+    @Test
+    void conditionsJoinedWithAndBecomeOneComparison() {
+        String laid = PANEL.lay("<if:\"%a% != - && %a% != %b%\">x", "LEFT");
+        assertTrue(laid.matches("<width:168><if:\"%exyliadisplays_all_[0-9a-z]+% == 1\">x +"), laid);
+        assertTrue(HologramPanel.holds("Steve != -"));
+        assertFalse(HologramPanel.holds("steve != Steve"));
+        assertTrue(HologramPanel.holds("10 >= 9.5"));
+        assertFalse(HologramPanel.holds("3 > 4"));
+        assertTrue(HologramPanel.holds("no comparison"));
     }
 }

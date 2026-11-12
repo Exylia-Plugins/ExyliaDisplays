@@ -37,6 +37,7 @@ public record HologramPanel(
         @Comment("Draw every text line as a bar of the same width, so the backgrounds form one panel.")
         @Comment("Put <fill> where the spaces go: '1. %name%<fill>%kills%' pins the kills to the right edge.")
         @Comment("A line without <fill> is centred (or follows its alignment). Item, block and head lines are left as they are.")
+        @Comment("Here <if:\"a && b\"> holds when every part does: '%top_1_name% != - && %top_1_name% != %player_name%'.")
         boolean enabled,
 
         @Comment("How wide every line is, in pixels at size 1. A letter is about 6, a bold one 7.")
@@ -52,9 +53,11 @@ public record HologramPanel(
     private record Fill(String body, double target, int index, int count) {
     }
 
-    /** Fill placeholders by id. Ids are handed out once per distinct fill, so editing a line only adds one. */
-    private static final Map<String, Fill> FILLS = new ConcurrentHashMap<>();
-    private static final Map<Fill, String> IDS = new ConcurrentHashMap<>();
+    /** What each placeholder this writes stands for, by id: a {@link Fill}, or a condition joined with {@code &&}. */
+    private static final Map<String, Object> BY_ID = new ConcurrentHashMap<>();
+    /** Ids are handed out once per distinct fill or condition, so editing a line only adds one. */
+    private static final Map<Object, String> IDS = new ConcurrentHashMap<>();
+    private static final String[] OPERATORS = {">=", "<=", "==", "!=", ">", "<"};
     private static final AtomicInteger NEXT = new AtomicInteger();
 
     public HologramPanel() {
@@ -69,8 +72,9 @@ public record HologramPanel(
     public static void register(Plugin plugin) {
         Placeholders.group(plugin, "exyliadisplays")
                 .verbatim()
-                .describe("Panel holograms: fill_<id>, the spaces that bring a line to the panel's width")
+                .describe("Panel holograms: fill_<id>, the spaces that bring a line to the panel's width; all_<id>, 1 when every part of an <if:\"a && b\"> holds")
                 .add("fill", HologramPanel::resolve)
+                .add("all", HologramPanel::all)
                 .register();
     }
 
@@ -92,6 +96,11 @@ public record HologramPanel(
         }
         String text = line.text();
         String tags = raw.substring(0, raw.length() - text.length());
+        if (line.condition() != null && line.condition().contains("&&")) {
+            // ExyliaLib reads one comparison: the parts are checked here, the line asks whether all held.
+            tags = tags.replace("<if:\"" + line.condition() + "\">",
+                    "<if:\"%exyliadisplays_all_" + id(line.condition()) + "% == 1\">");
+        }
         double size = line.size() == null || line.size() <= 0 ? 1 : line.size();
         double target = width / size;
         if (!text.contains(FILL)) {
@@ -123,23 +132,65 @@ public record HologramPanel(
         return out.toString();
     }
 
-    private static String id(Fill fill) {
-        return IDS.computeIfAbsent(fill, key -> {
+    private static String id(Object meaning) {
+        return IDS.computeIfAbsent(meaning, key -> {
             String id = Integer.toString(NEXT.getAndIncrement(), 36);
-            FILLS.put(id, key);
+            BY_ID.put(id, key);
             return id;
         });
     }
 
     private static Object resolve(Request request) {
-        Fill fill = FILLS.get(request.arg(0, ""));
-        if (fill == null) {
+        if (!(BY_ID.get(request.arg(0, "")) instanceof Fill fill)) {
             return "";
         }
         // ponytail: the line is resolved again for every fill in it, each refresh; memoise per
         // viewer and tick if panels with many placeholders ever show in timings.
         String filled = Placeholders.apply(fill.body(), request.viewer());
         return " ".repeat(shares(missing(filled, fill.target()), fill.count())[fill.index()]);
+    }
+
+    /** 1 when every comparison of an {@code a && b} condition holds for the viewer, else 0. */
+    private static Object all(Request request) {
+        if (!(BY_ID.get(request.arg(0, "")) instanceof String condition)) {
+            return 0;
+        }
+        for (String part : condition.split("&&")) {
+            if (!holds(Placeholders.apply(part, request.viewer()))) {
+                return 0;
+            }
+        }
+        return 1;
+    }
+
+    /**
+     * One comparison, its placeholders filled in: {@code ==} and {@code !=} compare text, the others
+     * numbers, as ExyliaLib's own {@code <if>} does. Anything it cannot read holds, like there.
+     */
+    static boolean holds(String resolved) {
+        for (String operator : OPERATORS) {
+            int at = resolved.indexOf(operator);
+            if (at < 0) {
+                continue;
+            }
+            String left = resolved.substring(0, at).trim();
+            String right = resolved.substring(at + operator.length()).trim();
+            if (operator.equals("==")) return left.equalsIgnoreCase(right);
+            if (operator.equals("!=")) return !left.equalsIgnoreCase(right);
+            try {
+                double a = Double.parseDouble(left);
+                double b = Double.parseDouble(right);
+                return switch (operator) {
+                    case ">=" -> a >= b;
+                    case "<=" -> a <= b;
+                    case ">" -> a > b;
+                    default -> a < b;
+                };
+            } catch (NumberFormatException e) {
+                return true;
+            }
+        }
+        return true;
     }
 
     /** How many spaces bring text to the target width; never negative. */
