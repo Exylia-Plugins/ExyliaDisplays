@@ -124,6 +124,31 @@ class ConfigFilesTest {
     }
 
     @Test
+    @DisplayName("a hologram's panel section is read from the file and kept when it is written back")
+    void panelSection() throws IOException {
+        Files.writeString(folder.resolve("holograms.yml"), """
+                holograms:
+                  top:
+                    location:
+                      world: lobby
+                      x: 0.5
+                      y: 100
+                      z: 0.5
+                    lines:
+                      - '1. %a%<fill>%b%'
+                    panel:
+                      enabled: true
+                      width: 180
+                """);
+        StoredHologram top = Configs.define(plugin(), "holograms", HologramFile.class).load().get()
+                .holograms().get("top");
+        assertEquals(new HologramPanel(true, 180), top.panel());
+        Configs.releaseAll();
+        assertEquals(new HologramPanel(true, 180), Configs.define(plugin(), "holograms", HologramFile.class).load().get()
+                .holograms().get("top").panel(), "the file as written back at load");
+    }
+
+    @Test
     @DisplayName("config.yml generates with every module and the hologram presets")
     void config() {
         DisplaysConfig config = Configs.define(plugin(), "config", DisplaysConfig.class).load().get();
