@@ -194,6 +194,7 @@ public final class LeaderboardModule implements DisplayModule {
             case "weekly", "week" -> Span.WEEKLY;
             case "monthly", "month" -> Span.MONTHLY;
             case "yearly", "year" -> Span.YEARLY;
+            case "season" -> Span.SEASON;
             default -> null;
         });
     }
@@ -212,6 +213,7 @@ public final class LeaderboardModule implements DisplayModule {
             case WEEKLY -> words.weekly();
             case MONTHLY -> words.monthly();
             case YEARLY -> words.yearly();
+            case SEASON -> id;
         }).orElse(id);
     }
 
