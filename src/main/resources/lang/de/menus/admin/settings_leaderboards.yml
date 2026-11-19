@@ -1,0 +1,99 @@
+# DO NOT EDIT — REGENERATED ON EVERY STARTUP.
+#
+# Wann Leaderboard-Zeiträume neu beginnen. Alles andere steht in leaderboards.yml.
+
+title: "{primary}&lSETTINGS {letters_black}» {highlight}Leaderboards"
+size: 27
+type: SIMPLE
+
+open_sounds:
+  - "minecraft:block.ender_chest.open|1.0|1.4"
+click_sounds:
+  - "minecraft:block.note_block.hat|1.0|1.0"
+close_sounds:
+  - "minecraft:block.barrel.close|1.0|0.7"
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+
+items:
+  header:
+    slot: 4
+    material: LECTERN
+    name: "<gradient:{primary}:{secondary_light}>Leaderboards</gradient>"
+    lore:
+      - "{letters_black}Leaderboard-Einstellungen"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Wann Tage und Wochen neu"
+      - " {letters}beginnen und in welcher Zone."
+
+  time-zone:
+    slot: 12
+    material: CLOCK
+    name: "{letters}Leaderboards {letters_black}▸ <gradient:{primary}:{secondary_light}>Zeitzone</gradient>"
+    lore:
+      - "{letters_black}Leaderboard-Einstellung"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Die Zone, in der Zeiträume"
+      - " {letters}gezählt werden, z. B. Europe/Madrid."
+      - " {letters}Leer = die des Servers."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:clock} {letters}Zone{letters_black}: %leaderboards_time_zone%"
+      - "  {letters_black}· {info}{icon:book} {letters}Standard{letters_black}: %leaderboards_time_zone_default%"
+      - ""
+      - "%leaderboards_time_zone_click%"
+    actions:
+      - "exyliadisplays:setting leaderboards time-zone"
+
+  day-starts-at:
+    slot: 13
+    material: DAYLIGHT_DETECTOR
+    name: "{letters}Leaderboards {letters_black}▸ <gradient:{primary}:{secondary_light}>Tagesbeginn</gradient>"
+    lore:
+      - "{letters_black}Leaderboard-Einstellung"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Die Stunde, ab der ein Tag"
+      - " {letters}beginnt (0 bis 23). Bei 5 zählt"
+      - " {letters}03:00 noch als gestern."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:clock} {letters}Stunde{letters_black}: %leaderboards_day_starts_at%"
+      - "  {letters_black}· {info}{icon:book} {letters}Standard{letters_black}: %leaderboards_day_starts_at_default%"
+      - ""
+      - "%leaderboards_day_starts_at_click%"
+    actions:
+      - "exyliadisplays:setting leaderboards day-starts-at"
+
+  week-starts-on:
+    slot: 14
+    material: WRITABLE_BOOK
+    name: "{letters}Leaderboards {letters_black}▸ <gradient:{primary}:{secondary_light}>Wochenbeginn</gradient>"
+    lore:
+      - "{letters_black}Leaderboard-Einstellung"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Der Tag, an dem eine Woche beginnt."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:clock} {letters}Tag{letters_black}: %leaderboards_week_starts_on%"
+      - "  {letters_black}· {info}{icon:book} {letters}Standard{letters_black}: %leaderboards_week_starts_on_default%"
+      - ""
+      - "%leaderboards_week_starts_on_click%"
+    actions:
+      - "exyliadisplays:setting leaderboards week-starts-on"
+
+  back:
+    slot: 22
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: "{letters}Back {letters_black}▸ <gradient:{error}:{error_light}>Settings</gradient>"
+    lore:
+      - "{error}{icon:click} Click to go back"
+    actions:
+      - "exyliadisplays:settings_hub"

@@ -1,0 +1,98 @@
+# DO NOT EDIT — REGENERATED ON EVERY STARTUP.
+#
+# Die Hologramm-Einstellungen, die ein Admin anpasst. Alles andere steht in der config.yml.
+
+title: "{primary}&lEINSTELLUNGEN {letters_black}» {highlight}Hologramme"
+size: 27
+type: SIMPLE
+
+open_sounds:
+  - "minecraft:block.ender_chest.open|1.0|1.4"
+click_sounds:
+  - "minecraft:block.note_block.hat|1.0|1.0"
+close_sounds:
+  - "minecraft:block.barrel.close|1.0|0.7"
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+
+items:
+  header:
+    slot: 4
+    material: NAME_TAG
+    name: "<gradient:{primary}:{secondary_light}>Hologramme</gradient>"
+    lore:
+      - "{letters_black}Hologramm-Einstellungen"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Wo neue Hologramme stehen und"
+      - " {letters}wie weit man sie sieht."
+
+  holograms-spawn-height:
+    slot: 12
+    material: LADDER
+    name: "{letters}Hologramme {letters_black}▸ <gradient:{primary}:{secondary_light}>Spawn-Höhe</gradient>"
+    lore:
+      - "{letters_black}Hologramm-Einstellung"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Wie weit über deinen Füßen ein"
+      - " {letters}neues Hologramm steht (Blöcke)."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:map} {letters}Höhe{letters_black}: %holograms_holograms_spawn_height%"
+      - "  {letters_black}· {info}{icon:book} {letters}Standard{letters_black}: %holograms_holograms_spawn_height_default%"
+      - ""
+      - "%holograms_holograms_spawn_height_click%"
+    actions:
+      - "exyliadisplays:setting holograms holograms.spawn-height"
+
+  holograms-default-view-distance:
+    slot: 13
+    material: SPYGLASS
+    name: "{letters}Hologramme {letters_black}▸ <gradient:{primary}:{secondary_light}>Sichtweite</gradient>"
+    lore:
+      - "{letters_black}Hologramm-Einstellung"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Wie weit entfernt ein neues"
+      - " {letters}Hologramm sichtbar ist (Blöcke)."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:compass} {letters}Distanz{letters_black}: %holograms_holograms_default_view_distance%"
+      - "  {letters_black}· {info}{icon:book} {letters}Standard{letters_black}: %holograms_holograms_default_view_distance_default%"
+      - ""
+      - "%holograms_holograms_default_view_distance_click%"
+    actions:
+      - "exyliadisplays:setting holograms holograms.default-view-distance"
+
+  holograms-near-radius:
+    slot: 14
+    material: COMPASS
+    name: "{letters}Hologramme {letters_black}▸ <gradient:{primary}:{secondary_light}>Nah-Radius</gradient>"
+    lore:
+      - "{letters_black}Hologramm-Einstellung"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Der Radius, den {highlight}/holoadmin near"
+      - " {letters}{letters}ohne Angabe verwendet."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:compass} {letters}Radius{letters_black}: %holograms_holograms_near_radius%"
+      - "  {letters_black}· {info}{icon:book} {letters}Standard{letters_black}: %holograms_holograms_near_radius_default%"
+      - ""
+      - "%holograms_holograms_near_radius_click%"
+    actions:
+      - "exyliadisplays:setting holograms holograms.near-radius"
+
+  back:
+    slot: 22
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: "{letters}Zurück {letters_black}▸ <gradient:{error}:{error_light}>Einstellungen</gradient>"
+    lore:
+      - "{error}{icon:click} Klicke, um zurückzugehen"
+    actions:
+      - "exyliadisplays:settings_hub"

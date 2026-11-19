@@ -1,0 +1,192 @@
+# DO NOT EDIT — REGENERATED ON EVERY STARTUP.
+#
+# Die Zeilen eines Hologramms, oben zuerst.
+
+title: "{primary}&lZEILEN {letters_black}» {highlight}%holo_name% {muted}%current_page%/%total_pages%"
+size: 54
+type: PAGINATION
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+  pagination:
+    material: LIGHT_GRAY_STAINED_GLASS_PANE
+    name: "{muted}Keine weiteren Zeilen"
+    lore:
+      - "{letters_black}Füge unten Text, Item, Block oder Kopf hinzu."
+    hide_tooltip: false
+  custom:
+    page_first:
+      slots: '48'
+      material: GRAY_DYE
+      name: "{muted}← Erste Seite"
+    page_last:
+      slots: '50'
+      material: GRAY_DYE
+      name: "{muted}Letzte Seite →"
+
+pagination:
+  slots: '0-35'
+
+  item_template:
+    material: "%line_icon%"
+    name: "{letters}Zeile {letters_black}▸ <gradient:{primary}:{secondary_light}>#%line_number%</gradient>"
+    lore:
+      - "{letters_black}Hologramm-Zeile"
+      - ""
+      - "{primary}✎ Lautet"
+      - " {letters}%line_text%"
+      - ""
+      - "{primary}✦ Tags"
+      - " {info}%line_tags%%line_style%"
+      - ""
+      - "{primary}{icon:click} Linksklick {letters_black}· {letters}Text bearbeiten"
+      - "{primary}{icon:right_click} Rechtsklick {letters_black}· {letters}Stil, Bewegung, Sichtbarkeit"
+      - "{primary}{icon:click} Shift-Linksklick {letters_black}· {letters}nach oben"
+      - "{primary}{icon:right_click} Shift-Rechtsklick {letters_black}· {letters}nach unten"
+      - "{primary}{icon:click} F {letters_black}· {letters}duplizieren"
+      - "{error}{icon:click} Q {letters_black}· {letters}entfernen"
+      - "{letters_black}Du musst es bestätigen."
+    actions:
+      - "left: exyliadisplays:holo_line_text"
+      - "right: exyliadisplays:holo_line_style"
+      - "shift_left: exyliadisplays:holo_line_up"
+      - "shift_right: exyliadisplays:holo_line_down"
+      - "swap: exyliadisplays:holo_line_duplicate"
+      - "drop: exyliadisplays:holo_line_delete"
+
+  navigation:
+    previous:
+      slot: 48
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGExZDU1YjNmOTg5NDEwYTM0NzUyNjUwZTI0OGM5YjZjMTc4M2E3ZWMyYWEzZmQ3Nzg3YmRjNGQwZTYzN2QzOSJ9fX0='
+      name: "{letters}Seite {letters_black}▸ <gradient:{error}:{error_light}>← Zurück</gradient>"
+      lore:
+        - "  {letters_black}· {letters}Seite{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
+      actions:
+        - 'previous_page'
+    next:
+      slot: 50
+      sound: "minecraft:item.book.page_turn|1.0|1.0"
+      material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4N2UzZDk2ZTFjZmViOWNjZmIzYmE1M2EyMTdmYWY1MjQ5ZTI4NTUzM2IyNzFhMmZiMjg0YzMwZGJkOTgyOSJ9fX0='
+      name: "{letters}Seite {letters_black}▸ <gradient:{success}:{success_light}>Weiter →</gradient>"
+      lore:
+        - "  {letters_black}· {letters}Seite{letters_black}: {info}%current_page%{letters_black}/{info}%total_pages%"
+      actions:
+        - 'next_page'
+
+items:
+  add-text:
+    slot: 45
+    material: OAK_SIGN
+    name: "{letters}Zeilen {letters_black}▸ <gradient:{success}:{success_light}>Text hinzufügen</gradient>"
+    lore:
+      - "{letters_black}Neue Zeile"
+      - ""
+      - "{success}✎ Information"
+      - " {letters}Eine neue Zeile ganz unten."
+      - ""
+      - "{success}{icon:click} Klicke zum Schreiben"
+    actions:
+      - "exyliadisplays:holo_add_line"
+
+  add-item:
+    slot: 46
+    material: ITEM_FRAME
+    name: "{letters}Zeilen {letters_black}▸ <gradient:{success}:{success_light}>Item hinzufügen</gradient>"
+    lore:
+      - "{letters_black}Neue Zeile"
+      - ""
+      - "{success}✎ Information"
+      - " {letters}Ein schwebendes Item zum Spieler hin."
+      - ""
+      - "{success}{icon:click} Klicke zum Auswählen"
+    actions:
+      - "exyliadisplays:holo_add_item"
+
+  add-block:
+    slot: 47
+    material: GRASS_BLOCK
+    name: "{letters}Zeilen {letters_black}▸ <gradient:{success}:{success_light}>Block hinzufügen</gradient>"
+    lore:
+      - "{letters_black}Neue Zeile"
+      - ""
+      - "{success}✎ Information"
+      - " {letters}Ein schwebender Block; gib ihm {highlight}spin"
+      - " {letters}im Stil, damit er sich dreht."
+      - ""
+      - "{success}{icon:click} Klicke zum Auswählen"
+    actions:
+      - "exyliadisplays:holo_add_block"
+
+  add-head:
+    slot: 51
+    material: PLAYER_HEAD
+    name: "{letters}Zeilen {letters_black}▸ <gradient:{success}:{success_light}>Kopf hinzufügen</gradient>"
+    lore:
+      - "{letters_black}Neue Zeile"
+      - ""
+      - "{success}✎ Information"
+      - " {letters}Ein Spielerkopf per Name, UUID,"
+      - " {letters}Textur oder Skin-URL. Mach ihn"
+      - " {letters}mit {highlight}size {letters}klein oder groß."
+      - ""
+      - "{success}{icon:click} Klicke zum Auswählen"
+    actions:
+      - "exyliadisplays:holo_add_head"
+
+  pages:
+    slot: 52
+    material: BOOK
+    name: "{letters}Zeilen {letters_black}▸ <gradient:{primary}:{secondary_light}>Seite</gradient> {letters_black}[{info}%holo_page%{letters_black}/{info}%holo_pages%{letters_black}]"
+    lore:
+      - "{letters_black}Hologramm-Seiten"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Jeder Spieler sieht immer eine"
+      - " {letters}Seite; ein {highlight}[PAGE]"
+      - " {highlight}next {letters}Klick blättert weiter."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:paper} {letters}Bearbeitest{letters_black}: {info}Seite %holo_page%"
+      - "  {letters_black}· {info}{icon:clock} {letters}Wechselt alle{letters_black}: {info}%holo_page_interval% Ticks"
+      - ""
+      - "{primary}{icon:click} Linksklick {letters_black}· {letters}nächste Seite"
+      - "{primary}{icon:right_click} Rechtsklick {letters_black}· {letters}vorherige Seite"
+      - "{primary}{icon:click} Shift-Linksklick {letters_black}· {letters}Seite hinzufügen"
+      - "{primary}{icon:right_click} Shift-Rechtsklick {letters_black}· {letters}Klick-Aktionen der Seite"
+      - "{error}{icon:click} Q {letters_black}· {letters}diese Seite entfernen"
+      - "{letters_black}Du musst es bestätigen."
+    actions:
+      - "left: exyliadisplays:holo_page_next"
+      - "right: exyliadisplays:holo_page_previous"
+      - "shift_left: exyliadisplays:holo_page_add"
+      - "shift_right: exyliadisplays:holo_page_click"
+      - "drop: exyliadisplays:holo_page_delete"
+
+  back:
+    slot: 49
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: "{letters}Zurück {letters_black}▸ <gradient:{error}:{error_light}>Hologramm</gradient>"
+    lore:
+      - "{error}{icon:click} Klicke zum Zurückgehen"
+    actions:
+      - "exyliadisplays:holo_open_hub"
+
+  all-lines:
+    slot: 53
+    material: WRITABLE_BOOK
+    name: "{letters}Zeilen {letters_black}▸ <gradient:{primary}:{secondary_light}>Alle auf einmal bearbeiten</gradient>"
+    lore:
+      - "{letters_black}Hologramm-Aktion"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Alle Zeilen in einem Feld, eine"
+      - " {letters}pro Reihe: am schnellsten für ein"
+      - " {letters}ganzes Hologramm, samt Tags."
+      - ""
+      - "{primary}{icon:click} Klicke zum Öffnen"
+    actions:
+      - "exyliadisplays:holo_all_lines"

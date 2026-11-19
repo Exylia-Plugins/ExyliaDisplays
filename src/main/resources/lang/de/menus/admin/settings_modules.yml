@@ -1,0 +1,98 @@
+# DO NOT EDIT — REGENERIERT BEI JEDEM START.
+#
+# Welche Teile des Plugins laufen. Änderungen gelten nach einem Neustart.
+
+title: "{primary}&lEINSTELLUNGEN {letters_black}» {highlight}Module"
+size: 27
+type: SIMPLE
+
+open_sounds:
+  - "minecraft:block.ender_chest.open|1.0|1.4"
+click_sounds:
+  - "minecraft:block.note_block.hat|1.0|1.0"
+close_sounds:
+  - "minecraft:block.barrel.close|1.0|0.7"
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+
+items:
+  header:
+    slot: 4
+    material: REDSTONE_TORCH
+    name: "<gradient:{primary}:{secondary_light}>Module</gradient>"
+    lore:
+      - "{letters_black}Modul-Einstellungen"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Schalte ein Modul aus, damit es"
+      - " {letters}nicht lädt. Gilt nach Neustart."
+
+  modules-holograms:
+    slot: 12
+    material: NAME_TAG
+    name: "{letters}Module {letters_black}▸ <gradient:{primary}:{secondary_light}>Hologramme</gradient>"
+    lore:
+      - "{letters_black}Modul-Einstellung"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Aus: keine Hologramme, Befehle"
+      - " {letters}oder Menüs. Neustart nötig."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:redstone} {letters}Modul{letters_black}: %modules_modules_holograms%"
+      - "  {letters_black}· {info}{icon:book} {letters}Standard{letters_black}: %modules_modules_holograms_default%"
+      - ""
+      - "%modules_modules_holograms_click%"
+    actions:
+      - "exyliadisplays:setting modules modules.holograms"
+
+  modules-leaderboards:
+    slot: 13
+    material: LECTERN
+    name: "{letters}Module {letters_black}▸ <gradient:{primary}:{secondary_light}>Bestenlisten</gradient>"
+    lore:
+      - "{letters_black}Modul-Einstellung"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Aus: Listen aktualisieren sich"
+      - " {letters}nicht und bleiben leer. Neustart nötig."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:redstone} {letters}Modul{letters_black}: %modules_modules_leaderboards%"
+      - "  {letters_black}· {info}{icon:book} {letters}Standard{letters_black}: %modules_modules_leaderboards_default%"
+      - ""
+      - "%modules_modules_leaderboards_click%"
+    actions:
+      - "exyliadisplays:setting modules modules.leaderboards"
+
+  modules-npcs:
+    slot: 14
+    material: ARMOR_STAND
+    name: "{letters}Module {letters_black}▸ <gradient:{primary}:{secondary_light}>NPCs</gradient>"
+    lore:
+      - "{letters_black}Modul-Einstellung"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Aus: keine NPCs, Befehle"
+      - " {letters}oder Menüs. Neustart nötig."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:redstone} {letters}Modul{letters_black}: %modules_modules_npcs%"
+      - "  {letters_black}· {info}{icon:book} {letters}Standard{letters_black}: %modules_modules_npcs_default%"
+      - ""
+      - "%modules_modules_npcs_click%"
+    actions:
+      - "exyliadisplays:setting modules modules.npcs"
+
+  back:
+    slot: 22
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: "{letters}Zurück {letters_black}▸ <gradient:{error}:{error_light}>Einstellungen</gradient>"
+    lore:
+      - "{error}{icon:click} Klicke, um zurückzugehen"
+    actions:
+      - "exyliadisplays:settings_hub"

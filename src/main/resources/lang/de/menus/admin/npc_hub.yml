@@ -1,0 +1,293 @@
+# DO NOT EDIT — REGENERIERT BEIM START JEDES MAL NEU.
+#
+# Ein NPC: sein Zustand und je eine Karte für jeden Teil davon.
+
+title: "{primary}&lNPC {letters_black}» {highlight}%npc_name%"
+size: 36
+type: SIMPLE
+
+filler:
+  global:
+    material: GRAY_STAINED_GLASS_PANE
+    hide_tooltip: true
+
+items:
+  header:
+    slot: 4
+    material: "%npc_icon%"
+    name: "<gradient:{primary}:{secondary_light}>%npc_name%</gradient>"
+    lore:
+      - "{letters_black}NPC-Status"
+      - ""
+      - "{primary}✦ Information"
+      - "  {letters_black}· {info}{icon:sign} {letters}Label{letters_black}: %npc_preview%"
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:redstone} {letters}Zustand{letters_black}: %status%"
+      - "  {letters_black}· {info}{icon:eye} {letters}Aktuell gesehen von{letters_black}: {info}%npc_viewers% {letters}Spielern"
+      - ""
+      - "{primary}{icon:click} Linksklick {letters_black}· {letters}ein-/ausblenden"
+      - "{primary}{icon:right_click} Rechtsklick {letters_black}· {letters}umbenennen"
+    actions:
+      - "left: exyliadisplays:npc_toggle"
+      - "right: exyliadisplays:npc_rename"
+
+  appearance:
+    slot: 11
+    material: ARMOR_STAND
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Aussehen</gradient>"
+    lore:
+      - "{letters_black}NPC-Einstellung"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Skin, Pose, Größe und Umriss."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:tag} {letters}Skin{letters_black}: %skin%"
+      - "  {letters_black}· {info}{icon:tag} {letters}Pose{letters_black}: {info}%pose%"
+      - "  {letters_black}· {info}{icon:iron} {letters}Größe{letters_black}: {info}%scale%"
+      - "  {letters_black}· {info}{icon:glint} {letters}Leuchten{letters_black}: %glow%"
+      - ""
+      - "{primary}{icon:click} Linksklick {letters_black}· {letters}Skin"
+      - "{primary}{icon:right_click} Rechtsklick {letters_black}· {letters}Pose, Größe, Umriss, Sitzen"
+    actions:
+      - "left: exyliadisplays:npc_appearance"
+      - "right: exyliadisplays:npc_appearance_body"
+
+  equipment:
+    slot: 12
+    material: DIAMOND_CHESTPLATE
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Ausrüstung</gradient>"
+    lore:
+      - "{letters_black}NPC-Einstellung"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Was er trägt und hält, übernommen"
+      - " {letters}vom Item in {highlight}deiner Hand{letters}."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:armor} {letters}Trägt{letters_black}: %equipment%"
+      - ""
+      - "{primary}{icon:click} Klicke zum Öffnen"
+    actions:
+      - "exyliadisplays:npc_open_equipment"
+
+  label:
+    slot: 14
+    material: NAME_TAG
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Label</gradient>"
+    lore:
+      - "{letters_black}NPC-Einstellung"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Die Zeilen über seinem Kopf, mit"
+      - " {letters}allen {highlight}Hologramm-Tags{letters}, oder ein ganzes"
+      - " {letters}Hologramm, das ihm folgt."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:sign} {letters}Label{letters_black}: %label%"
+      - "  {letters_black}· {info}{icon:iron} {letters}Abstand{letters_black}: {info}%npc_height% {letters}Blöcke"
+      - "  {letters_black}· {info}{icon:book} {letters}Hologramm{letters_black}: %link%"
+      - ""
+      - "{primary}{icon:click} Linksklick {letters_black}· {letters}Label bearbeiten"
+      - "{primary}{icon:right_click} Rechtsklick {letters_black}· {letters}Hologramm verknüpfen"
+    actions:
+      - "left: exyliadisplays:npc_label"
+      - "right: exyliadisplays:npc_link"
+
+  animations:
+    slot: 15
+    material: FEATHER
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Animationen</gradient>"
+    lore:
+      - "{letters_black}NPC-Einstellung"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Gesten wie {highlight}Winken{letters}, {highlight}Nicken{letters},"
+      - " {highlight}Verbeugen{letters}... oder eine"
+      - " {highlight}Ganzkörper-Performance{letters}, per Klick,"
+      - " {letters}von allein oder zur Begrüßung"
+      - " {letters}eines Spielers in der Nähe."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:click} {letters}Linksklick{letters_black}: %anim_left%"
+      - "  {letters_black}· {info}{icon:right_click} {letters}Rechtsklick{letters_black}: %anim_right%"
+      - "  {letters_black}· {info}{icon:note} {letters}Von allein{letters_black}: %anim_idle% {letters_black}· {info}%anim_idle_every%"
+      - "  {letters_black}· {info}{icon:note} {letters}Begrüßung{letters_black}: %anim_greet% {letters_black}· {info}%anim_greet_range% {letters}Blöcke"
+      - "  {letters_black}· {info}{icon:check} {letters}Sitzen{letters_black}: %sitting%"
+      - "  {letters_black}· {info}{icon:compass} {letters}Performances im Umkreis{letters_black}: {info}%anim_perform_range% {letters}Blöcke"
+      - "  {letters_black}· {info}{icon:note} {letters}Dauer-Idle{letters_black}: %anim_idle_continuous%"
+      - "  {letters_black}· {info}{icon:tag} {letters}Gruppe{letters_black}: %group%"
+      - "  {letters_black}· {info}{icon:redstone} {letters}Zustand{letters_black}: %npc_motion%"
+      - ""
+      - "{primary}{icon:click} Linksklick {letters_black}· {letters}was ein Klick abspielt"
+      - "{primary}{icon:right_click} Rechtsklick {letters_black}· {letters}Idle, Begrüßung und Gruppe"
+      - "{primary}{icon:click} Shift-Linksklick {letters_black}· {letters}Performance wählen"
+      - "{primary}{icon:right_click} Shift-Rechtsklick {letters_black}· {letters}pausieren oder fortsetzen"
+    actions:
+      - "left: exyliadisplays:npc_animations"
+      - "right: exyliadisplays:npc_animations_auto"
+      - "shift_left: exyliadisplays:npc_open_performances"
+      - "shift_right: exyliadisplays:npc_pause_toggle"
+
+  interactions:
+    slot: 21
+    material: LEVER
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Interaktionen</gradient>"
+    lore:
+      - "{letters_black}NPC-Einstellung"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Was ein Klick bewirkt: auf einen"
+      - " {letters}Server schicken, Befehle ausführen,"
+      - " {highlight}sprechen {letters}in einer Sprechblase, schwingen,"
+      - " {letters}mit getrenntem {highlight}Links- {letters}und {highlight}Rechtsklick{letters}."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:book} {letters}Bei Klick{letters_black}: %actions%"
+      - "  {letters_black}· {info}{icon:tag} {letters}Nutzbar von{letters_black}: %use_permission%"
+      - "  {letters_black}· {info}{icon:clock} {letters}Cooldown{letters_black}: {info}%cooldown%s"
+      - "  {letters_black}· {info}{icon:check} {letters}Dreht sich zum Klicker{letters_black}: %face_clicker%"
+      - ""
+      - "{primary}{icon:click} Linksklick {letters_black}· {letters}was ein Klick bewirkt"
+      - "{primary}{icon:right_click} Rechtsklick {letters_black}· {letters}wer ihn nutzen darf und wie oft"
+    actions:
+      - "left: exyliadisplays:npc_interactions"
+      - "right: exyliadisplays:npc_interactions_rules"
+
+  visibility:
+    slot: 22
+    material: ENDER_EYE
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Sichtbarkeit</gradient>"
+    lore:
+      - "{letters_black}NPC-Einstellung"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Wohin er den Kopf dreht, wer"
+      - " {letters}ihn sieht und aus welcher Distanz."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:eye} {letters}Blickt{letters_black}: {info}%look%"
+      - "  {letters_black}· {info}{icon:compass} {letters}Drehreichweite{letters_black}: {info}%look_range% {letters}Blöcke"
+      - "  {letters_black}· {info}{icon:key} {letters}Sichtbar für{letters_black}: %permission%"
+      - "  {letters_black}· {info}{icon:compass} {letters}Distanz{letters_black}: {info}%view_distance% {letters}Blöcke"
+      - ""
+      - "{primary}{icon:click} Klicke zum Bearbeiten"
+    actions:
+      - "exyliadisplays:npc_visibility"
+
+  location:
+    slot: 23
+    material: COMPASS
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Position</gradient>"
+    lore:
+      - "{letters_black}NPC-Einstellung"
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:map} {letters}Welt{letters_black}: {info}%world%"
+      - "  {letters_black}· {info}{icon:compass} {letters}Position{letters_black}: {info}%xyz%"
+      - "  {letters_black}· {info}{icon:compass} {letters}Blickrichtung{letters_black}: {info}%yaw%° {letters_black}· {info}%pitch%°"
+      - ""
+      - "{primary}{icon:click} Linksklick {letters_black}· {letters}genaue Position und Drehung"
+      - "{primary}{icon:right_click} Rechtsklick {letters_black}· {letters}verschieben · hingehen, Sneak-Klick"
+      - "{primary}{icon:click} Shift-Linksklick {letters_black}· {letters}auf seinem Block zentrieren"
+      - "{primary}{icon:right_click} Shift-Rechtsklick {letters_black}· {letters}zu mir drehen"
+    actions:
+      - "left: exyliadisplays:npc_location"
+      - "right: exyliadisplays:npc_move_here"
+      - "shift_left: exyliadisplays:npc_centre"
+      - "shift_right: exyliadisplays:npc_face_me"
+
+  teleport:
+    slot: 27
+    material: ENDER_PEARL
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Teleport</gradient>"
+    lore:
+      - "{letters_black}NPC-Aktion"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Geh zu ihm, mit Blick auf ihn."
+      - ""
+      - "{primary}{icon:click} Klicke zum Teleportieren"
+    actions:
+      - "exyliadisplays:npc_teleport"
+
+  clone:
+    slot: 28
+    material: PAPER
+    name: "{letters}NPC {letters_black}▸ <gradient:{success}:{success_light}>Duplizieren</gradient>"
+    lore:
+      - "{letters_black}NPC-Aktion"
+      - ""
+      - "{success}✎ Information"
+      - " {letters}Eine Kopie unter neuem Namen,"
+      - " {letters}am selben Ort."
+      - ""
+      - "{success}{icon:click} Klicke zum Duplizieren"
+    actions:
+      - "exyliadisplays:npc_clone"
+
+  adjust:
+    slot: 29
+    material: SPYGLASS
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Feinjustierung</gradient>"
+    lore:
+      - "{letters_black}NPC-Aktion"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Verschiebe, drehe und skaliere ihn mit dem"
+      - " {highlight}Mausrad{letters}, während du ihn ansiehst."
+      - ""
+      - "{primary}✦ Steuerung"
+      - "  {letters_black}· {letters}Scrollen{letters_black}: {info}Wert ändern"
+      - "  {letters_black}· {letters}Sneak + Scrollen{letters_black}: {info}Schrittweite"
+      - "  {letters_black}· {letters}F{letters_black}: {info}nächste Achse"
+      - "  {letters_black}· {letters}Sneak + Klick{letters_black}: {info}einrasten"
+      - "  {letters_black}· {letters}Klick{letters_black}: {info}speichern"
+      - ""
+      - "{primary}{icon:click} Klicke zum Starten"
+    actions:
+      - "exyliadisplays:npc_adjust"
+
+  back:
+    slot: 31
+    sound: "minecraft:item.bundle.remove_one|1.0|0.5"
+    material: 'basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIzZmI2NzQyOTcxNmIyMWJjNmU4ZTdkNjY5Y2VkZGY2NWIxM2UwNzkwYTVjZTU1YjJlMDc3YjgyZDE5ZTEyNCJ9fX0='
+    name: "{letters}Zurück {letters_black}▸ <gradient:{error}:{error_light}>NPCs</gradient>"
+    lore:
+      - "{error}{icon:click} Klicke, um zurückzugehen"
+    actions:
+      - "exyliadisplays:npc_open_list"
+
+  undo:
+    slot: 33
+    material: CLOCK
+    name: "{letters}NPC {letters_black}▸ <gradient:{primary}:{secondary_light}>Rückgängig</gradient>"
+    lore:
+      - "{letters_black}NPC-Aktion"
+      - ""
+      - "{primary}✎ Information"
+      - " {letters}Nimmt die letzte Änderung zurück,"
+      - " {letters}ob hier, per Befehl oder in der Datei."
+      - ""
+      - "{primary}✦ Status"
+      - "  {letters_black}· {info}{icon:iron} {letters}Rückgängig machbar{letters_black}: {info}%npc_undo%"
+      - ""
+      - "{primary}{icon:click} Klicke zum Rückgängigmachen"
+    actions:
+      - "exyliadisplays:npc_undo"
+
+  delete:
+    slot: 35
+    material: BARRIER
+    name: "{letters}NPC {letters_black}▸ <gradient:{error}:{error_light}>Löschen</gradient>"
+    lore:
+      - "{letters_black}Gefahrenzone"
+      - ""
+      - "{error}✎ Information"
+      - " {letters}Entfernt ihn endgültig."
+      - ""
+      - "{error}{icon:click} Klicke zum Löschen"
+      - "{letters_black}Du wirst um Bestätigung gebeten."
+    actions:
+      - "exyliadisplays:npc_delete"
