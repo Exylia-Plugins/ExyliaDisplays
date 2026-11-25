@@ -336,8 +336,10 @@ public final class NpcRenderer implements Listener {
      * Every second: reads the placeholder skins nobody read yet, and all of them once
      * {@code skin-refresh} has passed. An NPC is drawn again only when the account changed.
      *
-     * <p>On the main thread, where PlaceholderAPI may be asked, and for any player online: a
-     * leaderboard's top name is the same for everybody. With nobody online nobody sees it either.
+     * <p>Read on the thread of any player online, which may ask about that player: a
+     * leaderboard's top name is the same for everybody. On Folia the global thread owns no
+     * player, and a placeholder reading one there is an off-thread read. The NPCs are then
+     * redrawn back on the global thread. With nobody online nobody sees it either.
      */
     private void readSkins() {
         long now = System.currentTimeMillis();
@@ -346,16 +348,28 @@ public final class NpcRenderer implements Listener {
         Player reader = plugin.getServer().getOnlinePlayers().stream().findFirst().orElse(null);
         if (reader == null) return;
         if (due) nextSkinRead = now + NpcsConfig.get().skinRefresh().toMillis();
+        Map<String, StoredNpc> asked = new java.util.HashMap<>();
         shown.forEach((name, npc) -> {
             if (!npc.skin().isPlaceholder() || !(due || unread.contains(name))) return;
             unread.remove(name);
-            String account = StoredNpc.Skin.account(Placeholders.apply(npc.skin().player(), reader));
-            String named = account == null ? "" : account;
-            String before = wearing.put(name, named);
-            if (named.equals(before == null ? "" : before)) return;
-            core.getDebug().debug("NPC " + name + " now wears " + (account == null ? "its fallback" : account));
-            live(name).ifPresent(placed -> placed.update(spec(name, npc)));
+            asked.put(name, npc);
         });
+        if (asked.isEmpty()) return;
+        core.getTasks().runAtEntity(reader, () -> {
+            Map<String, String> accounts = new java.util.HashMap<>();
+            asked.forEach((name, npc) -> {
+                String account = StoredNpc.Skin.account(Placeholders.apply(npc.skin().player(), reader));
+                accounts.put(name, account == null ? "" : account);
+            });
+            core.getTasks().execute(() -> accounts.forEach((name, named) -> {
+                StoredNpc npc = shown.get(name);
+                if (npc == null) return;
+                String before = wearing.put(name, named);
+                if (named.equals(before == null ? "" : before)) return;
+                core.getDebug().debug("NPC " + name + " now wears " + (named.isEmpty() ? "its fallback" : named));
+                live(name).ifPresent(placed -> placed.update(spec(name, npc)));
+            }));
+        }, () -> unread.addAll(asked.keySet()));
     }
 
     @EventHandler
